@@ -1,26 +1,328 @@
-@import "tailwindcss";
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-bg: #040314;
+  --color-primary: #5EC1F3;
+  --color-primary-rgb: 94, 193, 243;
+  --color-text-white: #ffffff;
+  --color-text-dim: #8b929b;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-bg);
+  color: var(--color-text-white);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  width: 100vw;
+}
+
+.bg-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -30%);
+  width: 120vw;
+  height: 120vh;
+  background: radial-gradient(circle, rgba(var(--color-primary-rgb), 0.18) 0%, rgba(4, 3, 20, 0) 50%);
+  filter: blur(80px);
+  z-index: 0;
+  pointer-events: none;
+  transition: background 0.8s ease;
+  border-radius: 50%;
+}
+
+.content-wrapper {
+  z-index: 10;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.step-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.hero-title {
+  text-align: center;
+  font-size: clamp(2.5rem, 4.5vw, 4rem);
+  line-height: 1.1;
+  margin-bottom: 3.5rem;
+  letter-spacing: -0.02em;
+}
+
+.line {
+  display: block;
+}
+
+.word {
+  display: inline-block;
+  will-change: transform, filter, opacity;
+}
+
+.word.white {
+  color: var(--color-text-white);
+}
+
+.word.dim {
+  color: var(--color-text-dim);
+  font-weight: 500;
+}
+
+.word.bold {
+  font-weight: 700;
+}
+
+/* Button Glassmorphism */
+.hero-button {
+  position: relative;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  padding: 0.85rem 2.5rem;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease, border-color 0.3s ease;
+  backdrop-filter: blur(12px);
+  margin-bottom: 1.5rem;
+}
+
+.hero-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(var(--color-primary-rgb), 0.45) 0%, rgba(var(--color-primary-rgb), 0) 80%);
+  z-index: -1;
+  pointer-events: none;
+  transition: background 0.8s ease;
+}
+
+.hero-button:hover {
+  transform: translateY(-2px) scale(1.02);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(var(--color-primary-rgb), 0.4);
+}
+
+.hero-button:active {
+  transform: translateY(1px);
+}
+
+/* Color Options */
+.color-options {
+  display: flex;
+  gap: 1.8rem;
+  margin-bottom: 4rem;
+  justify-content: center;
+}
+
+.color-btn {
+  width: 75px;
+  height: 75px;
+  border-radius: 22px;
+  border: 2px solid transparent;
+  background: linear-gradient(135deg, rgb(var(--btn-color-rgb)) 0%, rgba(0, 0, 0, 0.6) 100%);
+  cursor: pointer;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.color-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%);
+  pointer-events: none;
+}
+
+.color-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 25px -5px rgba(var(--btn-color-rgb), 0.3);
+}
+
+.color-btn.active {
+  border-color: #ffffff;
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: 0 15px 30px -5px rgba(var(--btn-color-rgb), 0.5);
+}
+
+.ommit-btn {
+  background: transparent;
+  border: none;
+  color: var(--color-text-dim);
+  font-family: inherit;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 0.5rem 1rem;
+}
+
+.ommit-btn:hover {
+  color: var(--color-text-white);
+}
+
+/* --- STEP 3: MAIN HERO & NAVIGATION --- */
+
+.main-nav {
+  position: absolute;
+  top: 2rem;
+  left: 0;
+  width: 100vw;
+  padding: 0 4rem;
+  display: flex;
+  align-items: center;
+  z-index: 20;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+}
+
+.nav-brand img {
+  width: 120px;
+
+}
+
+.nav-menu {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  padding: 0.5rem;
+  gap: 0.5rem;
+  overflow: hidden;
+}
+
+.nav-menu-light {
+  position: absolute;
+  bottom: 0px;
+  height: 3px;
+  background: var(--color-primary);
+  box-shadow: 0 -5px 20px 5px rgba(var(--color-primary-rgb), 0.8), 0 0 10px 2px #fff;
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+  z-index: 1;
+  border-radius: 5px 5px 0 0;
+  pointer-events: none;
+}
+
+.nav-item {
+  color: var(--color-text-dim);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  transition: color 0.3s ease;
+}
+
+.nav-item.active,
+.nav-item:hover {
+  color: #fff;
+}
+
+.nav-contact {
+  margin-left: auto;
+  margin-bottom: 0px;
+}
+
+/* Orbits Background */
+.orbit-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.orbit-bg svg,
+.orbit-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* ReactBits Laser Container */
+.laser-container {
+  position: absolute;
+  right: -5vw;
+  bottom: -2%;
+  width: 1000px;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  /* THIS IS A MUST TO MASK OUT THE SOLID BLACK BACKGROUND FROM THE SHADER! */
+}
+
+/* Hero Content */
+.hero-content {
+  position: absolute;
+  left: 4%;
+  bottom: 4%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hero-heading {
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  margin-bottom: 2rem;
+  letter-spacing: -0.03em;
+  text-align: left;
+}
+
+.hero-highlight {
+  color: var(--color-primary);
+  transition: color 0.5s ease;
 }
