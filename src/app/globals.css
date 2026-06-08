@@ -323,6 +323,123 @@ body {
 }
 
 .hero-highlight {
-  color: var(--color-primary);
+  color: rgba(var(--color-primary-rgb), 0.7);
   transition: color 0.5s ease;
+}
+
+.hero-char {
+  display: inline-block;
+  will-change: transform, filter, opacity;
+}
+
+/* ---- SCROLLABLE STEP 3 LAYOUT ---- */
+
+.page-container.is-scrollable {
+  overflow: visible;
+  justify-content: flex-start;
+  align-items: stretch;
+  min-height: 100vh;
+}
+
+.step-3 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* ---- CORE SECTION ---- */
+
+.core-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8rem 8vw;
+  z-index: 2;
+}
+
+.core-section::before {
+  content: "";
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80vw;
+  height: 60vh;
+  background: radial-gradient(ellipse at center, rgba(var(--color-primary-rgb), 0.06) 0%, transparent 65%);
+  filter: blur(60px);
+  pointer-events: none;
+  transition: background 0.8s ease;
+}
+
+.core-title {
+  font-size: clamp(3.5rem, 7vw, 5.625rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0 0 4.5rem 0;
+  text-align: center;
+  will-change: transform, filter, opacity;
+  opacity: 0;
+}
+
+.core-columns {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  max-width: 1160px;
+  margin-bottom: 4.5rem;
+}
+
+.core-col {
+  flex: 1;
+  padding: 0 3.5rem;
+  will-change: transform, opacity;
+  opacity: 0;
+}
+
+.core-col:first-child {
+  padding-left: 0;
+}
+
+.core-col:last-child {
+  padding-right: 0;
+}
+
+.core-col p {
+  font-size: clamp(0.88rem, 1.1vw, 1rem);
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: 400;
+  margin: 0;
+}
+
+.core-divider {
+  width: 1px;
+  align-self: stretch;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  flex-shrink: 0;
+  transform-origin: top center;
+  transform: scaleY(0);
+  will-change: transform;
+}
+
+.core-btn {
+  padding: 0.9rem 2.8rem;
+  margin-bottom: 0;
 }

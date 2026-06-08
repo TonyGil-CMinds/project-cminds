@@ -1,10 +1,32 @@
 "use client";
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, ReactNode } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
+
+interface AnimatedContentProps {
+  children: ReactNode;
+  container?: HTMLElement | string | null;
+  distance?: number;
+  direction?: 'vertical' | 'horizontal';
+  reverse?: boolean;
+  duration?: number;
+  ease?: string;
+  initialOpacity?: number;
+  animateOpacity?: boolean;
+  scale?: number;
+  threshold?: number;
+  delay?: number;
+  disappearAfter?: number;
+  disappearDuration?: number;
+  disappearEase?: string;
+  onComplete?: () => void;
+  onDisappearanceComplete?: () => void;
+  className?: string;
+  [key: string]: any;
+}
 
 const AnimatedContent = ({
   children,
@@ -26,17 +48,21 @@ const AnimatedContent = ({
   onDisappearanceComplete,
   className = '',
   ...props
-}) => {
+}: AnimatedContentProps) => {
   const ref = useRef(null);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    let scrollerTarget = container || document.getElementById('snap-main-container') || null;
-
-    if (typeof scrollerTarget === 'string') {
-      scrollerTarget = document.querySelector(scrollerTarget);
+    let scrollerTarget: HTMLElement | null = null;
+    
+    if (typeof container === 'string') {
+      scrollerTarget = document.querySelector(container) as HTMLElement;
+    } else if (container instanceof HTMLElement) {
+      scrollerTarget = container;
+    } else {
+      scrollerTarget = document.getElementById('snap-main-container');
     }
 
     const axis = direction === 'horizontal' ? 'x' : 'y';

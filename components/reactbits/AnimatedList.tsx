@@ -1,12 +1,20 @@
 "use client";
 
-import { useRef, useState, useEffect, useCallback } from 'react';
-import { motion, useInView } from 'motion/react';
+import { useRef, useState, useEffect, useCallback, ReactNode } from 'react';
+import { motion, useInView } from 'framer-motion';
 import './AnimatedList.css';
 
-const AnimatedItem = ({ children, delay = 0, index, onMouseEnter, onClick }) => {
+interface AnimatedItemProps {
+  children: ReactNode;
+  delay?: number;
+  index?: number;
+  onMouseEnter?: () => void;
+  onClick?: () => void;
+}
+
+const AnimatedItem = ({ children, delay = 0, index, onMouseEnter, onClick }: AnimatedItemProps) => {
   const ref = useRef(null);
-  const inView = useInView(ref, { amount: 0.5, triggerOnce: false });
+  const inView = useInView(ref, { amount: 0.5, once: false });
   return (
     <motion.div
       ref={ref}
@@ -22,6 +30,17 @@ const AnimatedItem = ({ children, delay = 0, index, onMouseEnter, onClick }) => 
     </motion.div>
   );
 };
+
+interface AnimatedListProps {
+  items?: string[];
+  onItemSelect?: (item: string, index: number) => void;
+  showGradients?: boolean;
+  enableArrowNavigation?: boolean;
+  className?: string;
+  itemClassName?: string;
+  displayScrollbar?: boolean;
+  initialSelectedIndex?: number;
+}
 
 const AnimatedList = ({
   items = [
@@ -48,19 +67,19 @@ const AnimatedList = ({
   itemClassName = '',
   displayScrollbar = true,
   initialSelectedIndex = -1
-}) => {
-  const listRef = useRef(null);
+}: AnimatedListProps) => {
+  const listRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(initialSelectedIndex);
   const [keyboardNav, setKeyboardNav] = useState(false);
   const [topGradientOpacity, setTopGradientOpacity] = useState(0);
   const [bottomGradientOpacity, setBottomGradientOpacity] = useState(1);
 
-  const handleItemMouseEnter = useCallback(index => {
+  const handleItemMouseEnter = useCallback((index: number) => {
     setSelectedIndex(index);
   }, []);
 
   const handleItemClick = useCallback(
-    (item, index) => {
+    (item: string, index: number) => {
       setSelectedIndex(index);
       if (onItemSelect) {
         onItemSelect(item, index);
@@ -69,8 +88,9 @@ const AnimatedList = ({
     [onItemSelect]
   );
 
-  const handleScroll = useCallback(e => {
-    const { scrollTop, scrollHeight, clientHeight } = e.target;
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    const target = e.target as HTMLDivElement;
+    const { scrollTop, scrollHeight, clientHeight } = target;
     setTopGradientOpacity(Math.min(scrollTop / 50, 1));
     const bottomDistance = scrollHeight - (scrollTop + clientHeight);
     setBottomGradientOpacity(scrollHeight <= clientHeight ? 0 : Math.min(bottomDistance / 50, 1));
@@ -78,7 +98,7 @@ const AnimatedList = ({
 
   useEffect(() => {
     if (!enableArrowNavigation) return;
-    const handleKeyDown = e => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowDown' || (e.key === 'Tab' && !e.shiftKey)) {
         e.preventDefault();
         setKeyboardNav(true);
@@ -104,7 +124,7 @@ const AnimatedList = ({
   useEffect(() => {
     if (!keyboardNav || selectedIndex < 0 || !listRef.current) return;
     const container = listRef.current;
-    const selectedItem = container.querySelector(`[data-index="${selectedIndex}"]`);
+    const selectedItem = container.querySelector(`[data-index="${selectedIndex}"]`) as HTMLElement;
     if (selectedItem) {
       const extraMargin = 50;
       const containerScrollTop = container.scrollTop;
