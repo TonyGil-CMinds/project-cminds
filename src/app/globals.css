@@ -4,6 +4,66 @@
   box-sizing: border-box;
 }
 
+/* ---- LOADER ---- */
+
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: all;
+}
+
+.loader-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--color-bg);
+  z-index: 0;
+}
+
+.loader-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.loader-svg {
+  width: 110px;
+  height: auto;
+  filter: drop-shadow(0 0 18px rgba(var(--color-primary-rgb), 0.25));
+}
+
+.loader-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.loader-progress-track {
+  width: 200px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.loader-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--color-primary-rgb), 0.2) 0%,
+    var(--color-primary) 45%,
+    rgba(var(--color-primary-rgb), 0.7) 100%
+  );
+  border-radius: 9999px;
+  transition: background 0.8s ease;
+}
+
 :root {
   --color-bg: #040314;
   --color-primary: #5EC1F3;

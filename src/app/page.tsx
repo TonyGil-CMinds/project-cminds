@@ -5,6 +5,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import LaserFlow from "../../components/reactbits/LaserFlow";
+import Loader from "../components/Loader";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -32,6 +33,7 @@ const setColorCookie = (hex: string) => {
 };
 
 export default function Hero() {
+  const [loaderDone, setLoaderDone] = useState(false);
   const [step, setStep] = useState(1);
   const [color, setColor] = useState(COLORS[0]);
   const [currentWord, setCurrentWord] = useState(CYCLING_WORDS[0]);
@@ -61,20 +63,20 @@ export default function Hero() {
     document.documentElement.style.setProperty('--color-primary-rgb', hexToRgb(color));
   }, [color]);
 
-  // Allow window-level scroll on step 3, clip it on steps 1-2
+  // Enable window scroll only after loader exits to avoid scrollbar reflow flash
   useEffect(() => {
-    if (step === 3) {
+    if (step === 3 && loaderDone) {
       document.body.style.overflowX = 'hidden';
       document.body.style.overflowY = 'auto';
     } else {
-      document.body.style.overflowX = '';
-      document.body.style.overflowY = '';
+      document.body.style.overflowX = 'hidden';
+      document.body.style.overflowY = 'hidden';
     }
     return () => {
       document.body.style.overflowX = '';
       document.body.style.overflowY = '';
     };
-  }, [step]);
+  }, [step, loaderDone]);
 
   // Animate in each new word char-by-char (skip initial mount)
   useGSAP(() => {
@@ -90,9 +92,9 @@ export default function Hero() {
     );
   }, [currentWord]);
 
-  // Cycle words while on hero
+  // Cycle words while on hero — wait for loader first
   useEffect(() => {
-    if (step !== 3) return;
+    if (step !== 3 || !loaderDone) return;
     const id = setInterval(() => {
       if (!cyclingRef.current) return;
       const chars = cyclingRef.current.querySelectorAll<HTMLSpanElement>('.hero-char');
@@ -106,7 +108,7 @@ export default function Hero() {
       });
     }, 2800);
     return () => clearInterval(id);
-  }, [step]);
+  }, [step, loaderDone]);
 
   // Sync Nav Indicator
   useEffect(() => {
@@ -145,6 +147,9 @@ export default function Hero() {
         { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, delay: 1, ease: "power2.out" }
       );
     } else if (step === 3) {
+      // Hide immediately so nothing flashes before the loader exits
+      gsap.set([".main-nav", ".hero-line-anim", ".hero-scroll-btn", ".laser-container", ".orbit-bg"], { opacity: 0 });
+      if (!loaderDone) return;
       // Hero entrance
       gsap.fromTo(".main-nav", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" });
       gsap.fromTo(".hero-line-anim", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1.2, stagger: 0.2, ease: "power3.out", delay: 0.2 });
@@ -187,7 +192,7 @@ export default function Hero() {
 
       gsap.delayedCall(0.1, () => ScrollTrigger.refresh());
     }
-  }, [step]);
+  }, [step, loaderDone]);
 
   const goNextStep2 = () => {
     gsap.to(".step-1", {
@@ -203,6 +208,8 @@ export default function Hero() {
   };
 
   return (
+    <>
+    {!loaderDone && <Loader onDone={() => setLoaderDone(true)} />}
     <main ref={container} className={`page-container${step === 3 ? " is-scrollable" : ""}`}>
       {/* Background elements visible overall */}
       <div className="bg-glow"></div>
@@ -408,5 +415,6 @@ export default function Hero() {
         </div>
       )}
     </main>
+    </>
   );
 }
