@@ -298,6 +298,7 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
   const emaDtRef = useRef<number>(16.7);
   const pausedRef = useRef<boolean>(false);
   const inViewRef = useRef<boolean>(true);
+  const reduceMotionRef = useRef<boolean>(false);
 
   const hexToRGB = (hex: string) => {
     let c = hex.trim();
@@ -426,11 +427,40 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
     const ro = new ResizeObserver(scheduleResize);
     ro.observe(mount);
 
-    // Removing IntersectionObserver as GSAP's initial opacity: 0 breaks it.
-    inViewRef.current = true;
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    reduceMotionRef.current = motionQuery.matches;
+    if (reduceMotionRef.current) {
+      uniforms.uFade.value = 1;
+      hasFadedRef.current = true;
+      fade = 1;
+    }
+
+    const onMotionChange = (event: MediaQueryListEvent) => {
+      reduceMotionRef.current = event.matches;
+      if (event.matches) {
+        uniforms.uFade.value = 1;
+        hasFadedRef.current = true;
+        fade = 1;
+        renderer.render(scene, camera);
+      }
+    };
+
+    motionQuery.addEventListener('change', onMotionChange);
+
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        inViewRef.current = entry.isIntersecting;
+        if (entry.isIntersecting) {
+          pausedRef.current = document.hidden || reduceMotionRef.current;
+          scheduleResize();
+        }
+      },
+      { root: null, threshold: 0.01 }
+    );
+    io.observe(mount);
 
     const onVis = () => {
-      pausedRef.current = document.hidden;
+      pausedRef.current = document.hidden || reduceMotionRef.current || !inViewRef.current;
     };
     document.addEventListener('visibilitychange', onVis, { passive: true });
 
@@ -502,6 +532,7 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
 
     const animate = () => {
       raf = requestAnimationFrame(animate);
+      pausedRef.current = document.hidden || reduceMotionRef.current || !inViewRef.current;
       if (pausedRef.current) return;
 
       const t = (performance.now() - startTime) / 1000;
@@ -541,6 +572,8 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
     return () => {
       cancelAnimationFrame(raf);
       ro.disconnect();
+      io.disconnect();
+      motionQuery.removeEventListener('change', onMotionChange);
       document.removeEventListener('visibilitychange', onVis);
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('pointerdown', onMove);

@@ -67,7 +67,7 @@ export default function Loader({ onDone }: LoaderProps) {
     // Progress bar fills in parallel
     tl.fromTo(progressRef.current,
       { width: "0%" },
-      { width: "100%", duration: 2, ease: "power2.inOut" },
+      { width: "100%", duration: 0.9, ease: "power2.inOut" },
       0
     );
 
@@ -75,18 +75,18 @@ export default function Loader({ onDone }: LoaderProps) {
     tl.to(logoSorted, {
       x:        0,
       y:        0,
-      duration: 0.42,
-      stagger:  0.009,
+      duration: 0.34,
+      stagger:  0.004,
       ease:     "power3.inOut",
-    }, 1.4);
+    }, 0.55);
 
     // Exit — bg + track fade after logo is fully drawn
     tl.to([bgRef.current, trackRef.current], {
       opacity:    0,
-      duration:   0.45,
+      duration:   0.28,
       ease:       "power2.in",
       onComplete: onDone,
-    }, 2.5);
+    }, 1.05);
 
   }, { scope: containerRef });
 

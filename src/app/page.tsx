@@ -1,13 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import LaserFlow from "../../components/reactbits/LaserFlow";
 import Loader from "../components/Loader";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const LaserFlow = dynamic(() => import("../../components/reactbits/LaserFlow"), {
+  ssr: false,
+  loading: () => null,
+});
 
 const hexToRgb = (hex: string) => {
   const bigint = parseInt(hex.slice(1), 16);
@@ -22,6 +27,7 @@ const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "The Archive", "Careers"];
 const CYCLING_WORDS = ["Biodiversity", "Communities", "Oceans", "Cities"];
 const COOKIE_KEY = "cminds_color";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
+const LOADER_SESSION_KEY = "cminds_loader_seen";
 
 const getColorCookie = (): string | null => {
   const match = document.cookie.match(/(?:^|;\s*)cminds_color=([^;]+)/);
@@ -43,6 +49,10 @@ export default function Hero() {
 
   // Skip onboarding if user already chose a color
   useEffect(() => {
+    if (window.sessionStorage.getItem(LOADER_SESSION_KEY) === "1") {
+      setLoaderDone(true);
+    }
+
     const saved = getColorCookie();
     if (saved && COLORS.includes(saved)) {
       setColor(saved);
@@ -207,9 +217,14 @@ export default function Hero() {
     });
   };
 
+  const handleLoaderDone = () => {
+    window.sessionStorage.setItem(LOADER_SESSION_KEY, "1");
+    setLoaderDone(true);
+  };
+
   return (
     <>
-    {!loaderDone && <Loader onDone={() => setLoaderDone(true)} />}
+    {!loaderDone && <Loader onDone={handleLoaderDone} />}
     <main ref={container} className={`page-container${step === 3 ? " is-scrollable" : ""}`}>
       {/* Background elements visible overall */}
       <div className="bg-glow"></div>
