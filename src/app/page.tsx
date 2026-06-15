@@ -70,6 +70,8 @@ const ORBIT_WORDS = [
   "EMERGING TECHNOLOGIES",
 ];
 
+const HWW_WORDS = ["governments", "civil society", "organizations", "local communities"];
+
 const COOKIE_KEY = "cminds_color";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 const LOADER_SESSION_KEY = "cminds_loader_seen";
@@ -91,6 +93,12 @@ export default function Hero() {
   const wordIndexRef = useRef(0);
   const cyclingRef = useRef<HTMLSpanElement>(null);
   const wordInitialized = useRef(false);
+
+  const [hwwWord, setHwwWord] = useState(HWW_WORDS[0]);
+  const hwwWordIndexRef = useRef(0);
+  const hwwCyclingRef = useRef<HTMLSpanElement>(null);
+  const hwwEnteredRef = useRef(false);
+  const hwwAnimatingRef = useRef(false);
 
   // Skip onboarding if user already chose a color
   useEffect(() => {
@@ -146,6 +154,17 @@ export default function Hero() {
       { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.55, stagger: 0.05, ease: 'power2.out' }
     );
   }, [currentWord]);
+
+  // Animate in new hww cycling word when state changes (only after section entered)
+  useGSAP(() => {
+    if (!hwwEnteredRef.current || !hwwCyclingRef.current) return;
+    const spans = hwwCyclingRef.current.querySelectorAll<HTMLSpanElement>('.hww-cw');
+    gsap.fromTo(spans,
+      { opacity: 0, y: 22, filter: 'blur(10px)' },
+      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.5, stagger: 0.08, ease: 'power2.out' }
+    );
+  }, [hwwWord]);
+
 
   // Word particles: appear at cursor, each letter falls with gravity
   useEffect(() => {
@@ -209,6 +228,11 @@ export default function Hero() {
       if (section) {
         const r = section.getBoundingClientRect();
         if (r.top > 0 || r.bottom <= 0) return;
+      }
+      const hwwSection = document.querySelector(".hww-section");
+      if (hwwSection) {
+        const r = hwwSection.getBoundingClientRect();
+        if (r.top < window.innerHeight && r.bottom > 0) return;
       }
       // Dead zone around headline text
       const pad = 60;
@@ -397,6 +421,79 @@ export default function Hero() {
         .fromTo("#wwb-line1",  { opacity: 0, y: 24, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.18 }, 0.74)
         .fromTo("#wwb-tang",   { opacity: 0, y: 24, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.18 }, 0.88)
         .fromTo("#wwb-impact", { opacity: 0, y: 24, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.18 }, 0.93);
+
+      // How We Work — entrance with text scale-transform from previous section
+      gsap.fromTo(".hww-video-bg",
+        { opacity: 0, scale: 1.08 },
+        { opacity: 0.38, scale: 1, duration: 1.6, ease: "power2.out",
+          scrollTrigger: { trigger: ".hww-section", start: "top 80%", toggleActions: "play none none reverse" } }
+      );
+      gsap.fromTo(".hww-pill",
+        { opacity: 0, y: 14 },
+        { opacity: 1, y: 0, duration: 0.7, ease: "power2.out",
+          scrollTrigger: { trigger: ".hww-section", start: "top 72%", toggleActions: "play none none reverse" } }
+      );
+      // Entrance: animate title words in on scroll-into-view
+      ScrollTrigger.create({
+        trigger: ".hww-section",
+        start: "top 68%",
+        onEnter: () => {
+          hwwEnteredRef.current = true;
+          gsap.fromTo(".hww-tw",
+            { opacity: 0, y: 28, filter: "blur(12px)" },
+            { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.7, stagger: 0.1, ease: "power3.out" }
+          );
+          gsap.fromTo(".hww-cw",
+            { opacity: 0, y: 28, filter: "blur(12px)" },
+            { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.7, delay: 0.35, stagger: 0.1, ease: "power3.out" }
+          );
+        },
+        onLeaveBack: () => {
+          hwwEnteredRef.current = false;
+          hwwWordIndexRef.current = 0;
+          hwwAnimatingRef.current = false;
+          setHwwWord(HWW_WORDS[0]);
+          gsap.to(".hww-tw", { opacity: 0, y: 28, filter: "blur(12px)", duration: 0.4 });
+          gsap.to(".hww-cw", { opacity: 0, duration: 0.3 });
+        }
+      });
+
+      // Scroll-driven word cycling: 4 words across the sticky scroll range
+      ScrollTrigger.create({
+        trigger: ".hww-section",
+        start: "top top",
+        end: "bottom bottom",
+        onUpdate: (self) => {
+          if (!hwwEnteredRef.current) return;
+          const idx = Math.min(HWW_WORDS.length - 1, Math.floor(self.progress * HWW_WORDS.length));
+          if (idx === hwwWordIndexRef.current || hwwAnimatingRef.current) return;
+          const isForward = idx > hwwWordIndexRef.current;
+          hwwAnimatingRef.current = true;
+          const spans = hwwCyclingRef.current
+            ? Array.from(hwwCyclingRef.current.querySelectorAll<HTMLSpanElement>('.hww-cw'))
+            : [];
+          const doSwap = () => {
+            hwwWordIndexRef.current = idx;
+            setHwwWord(HWW_WORDS[idx]);
+            hwwAnimatingRef.current = false;
+          };
+          if (spans.length > 0) {
+            gsap.to(spans, {
+              opacity: 0, y: isForward ? -22 : 22, filter: 'blur(8px)',
+              duration: 0.25, stagger: { each: 0.03, from: isForward ? 'end' : 'start' },
+              ease: 'power2.in', onComplete: doSwap,
+            });
+          } else {
+            doSwap();
+          }
+        }
+      });
+      gsap.fromTo(".hww-word",
+        { opacity: 0, y: 10, filter: "blur(5px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)",
+          duration: 0.45, stagger: 0.04, ease: "power2.out",
+          scrollTrigger: { trigger: ".hww-body", start: "top 82%", toggleActions: "play none none reverse" } }
+      );
 
       gsap.delayedCall(0.1, () => ScrollTrigger.refresh());
     }
@@ -717,6 +814,101 @@ export default function Hero() {
               </div>
             </div>
           </section>
+
+          {/* ── How We Work Section ── */}
+          <section className="hww-section">
+            <div className="hww-inner">
+            <video
+              className="hww-video-bg"
+              autoPlay muted loop playsInline
+              src="https://video.wixstatic.com/video/fd7443_8d4268b7cebd401a92344d1f0fa57e50/1080p/mp4/file.mp4"
+            />
+            <div className="hww-overlay" />
+
+            <div className="hww-content">
+              <div className="hww-pill">
+                <span style={{ color: "var(--color-primary)" }}>•</span> How we work
+              </div>
+              <h2 className="hww-title">
+                <div className="hww-title-line">
+                  <span className="hww-tw">We</span>{" "}
+                  <span className="hww-tw">collaborate</span>
+                </div>
+                <div className="hww-title-line">
+                  <span className="hww-tw">with</span>{" "}
+                  <span className="hww-cycling-word" ref={hwwCyclingRef}>
+                    {hwwWord.split(" ").map((w, i, arr) => (
+                      <span key={i} className="hww-cw">{w}{i < arr.length - 1 ? " " : ""}</span>
+                    ))}
+                  </span>
+                </div>
+              </h2>
+              <p className="hww-body">
+                {"We explore how technologies like GenAI, IoT, blockchain can help accelerate and scale impact contextually. We are rooted in the value of fairness. We prototype what doesn't yet exist—and scale what's already working.".split(" ").map((word, i) => (
+                  <span key={i} className="hww-word">{word}{" "}</span>
+                ))}
+              </p>
+            </div>
+            </div>
+          </section>
+
+          {/* Footer */}
+          <footer className="site-footer">
+            <div className="footer-cta">
+              <h2>Bold &amp; Meaningful<br />Changes</h2>
+              <button className="footer-cta-btn">Contact us</button>
+            </div>
+
+            <div className="footer-main">
+              <div className="footer-brand-block">
+                <img src="/logo.svg" alt="C Minds" className="footer-logo" />
+                <p className="footer-copy desktop-copy">© 2025 C Minds All rights reserved.</p>
+              </div>
+
+              <div className="footer-column footer-site-map">
+                <h3>SITE MAP</h3>
+                <a href="#core">Core</a>
+                <a href="#mindscope">Mindscope</a>
+                <a href="#careers">Careers</a>
+              </div>
+
+              <div className="footer-column footer-resources">
+                <h3>RESOURCES</h3>
+                <a href="#terms">Terms &amp; conditions</a>
+                <a href="#privacy">Privacy policy</a>
+                <a href="#ethics">Code of ethics</a>
+              </div>
+
+              <div className="footer-join">
+                <h3>JOIN US</h3>
+                <form className="footer-form">
+                  <label className="sr-only" htmlFor="footer-email">Email</label>
+                  <input id="footer-email" type="email" placeholder="I name@email.com" />
+                  <button type="submit">Suscribe</button>
+                </form>
+
+                <div className="footer-socials" aria-label="Social links">
+                  <a href="#linkedin" aria-label="LinkedIn">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.7 8.6h3v9h-3v-9Zm1.5-4.2c1 0 1.7.7 1.7 1.6s-.7 1.6-1.7 1.6S6.5 6.9 6.5 6s.7-1.6 1.7-1.6Zm3.2 4.2h2.9v1.2h.1c.4-.7 1.3-1.4 2.7-1.4 2.9 0 3.4 1.9 3.4 4.3v4.9h-3v-4.4c0-1 0-2.4-1.5-2.4s-1.7 1.1-1.7 2.3v4.5h-3v-9Z" /></svg>
+                  </a>
+                  <a href="#instagram" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.1 4.8h7.8c1.8 0 3.3 1.5 3.3 3.3v7.8c0 1.8-1.5 3.3-3.3 3.3H8.1c-1.8 0-3.3-1.5-3.3-3.3V8.1c0-1.8 1.5-3.3 3.3-3.3Zm0 1.6c-.9 0-1.7.8-1.7 1.7v7.8c0 .9.8 1.7 1.7 1.7h7.8c.9 0 1.7-.8 1.7-1.7V8.1c0-.9-.8-1.7-1.7-1.7H8.1Zm3.9 2.3a3.3 3.3 0 1 1 0 6.6 3.3 3.3 0 0 1 0-6.6Zm0 1.6a1.7 1.7 0 1 0 0 3.4 1.7 1.7 0 0 0 0-3.4Zm4-2.4a.8.8 0 1 1 0 1.6.8.8 0 0 1 0-1.6Z" /></svg>
+                  </a>
+                  <a href="#x" aria-label="X">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.4 5.4 5 6.7-5.3 6.5h1.8l4.3-5.2 3.9 5.2h4.1l-5.3-7.1 5-6.1h-1.8l-4 4.8-3.6-4.8H6.4Zm2.6 1.3h.9l7.7 10.6h-.9L9 6.7Z" /></svg>
+                  </a>
+                  <a href="#facebook" aria-label="Facebook">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.4 20v-7.3h2.4l.4-2.8h-2.8V8.1c0-.8.2-1.4 1.4-1.4h1.5V4.2C16 4.1 15.1 4 14 4c-2.2 0-3.7 1.3-3.7 3.8v2.1H7.8v2.8h2.5V20h3.1Z" /></svg>
+                  </a>
+                  <a href="#youtube" aria-label="YouTube">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 8.2c-.2-.9-.9-1.5-1.7-1.7C17.2 6.1 12 6.1 12 6.1s-5.2 0-6.7.4c-.8.2-1.5.9-1.7 1.7-.4 1.5-.4 3.8-.4 3.8s0 2.4.4 3.8c.2.9.9 1.5 1.7 1.7 1.5.4 6.7.4 6.7.4s5.2 0 6.7-.4c.8-.2 1.5-.9 1.7-1.7.4-1.5.4-3.8.4-3.8s0-2.4-.4-3.8ZM10.2 14.5v-5l4.5 2.5-4.5 2.5Z" /></svg>
+                  </a>
+                </div>
+              </div>
+
+              <p className="footer-copy mobile-copy">© 2025 C Minds All rights reserved.</p>
+            </div>
+          </footer>
 
         </div>
       )}
