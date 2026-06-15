@@ -23,8 +23,43 @@ const hexToRgb = (hex: string) => {
 };
 
 const COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
-const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "The Archive", "Careers"];
+const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
 const CYCLING_WORDS = ["Biodiversity", "Communities", "Oceans", "Cities"];
+
+const INITIATIVES = [
+  {
+    id: "ntl",
+    image: "/home/featured-ntl.png",
+    pills: ["Regenerative", "Innovation"],
+    label: "Purposeful Tech for Biodiversity",
+    titleA: "NaturaTech",
+    titleB: "LAC",
+  },
+  {
+    id: "t4n",
+    image: "/home/featured-t4n.png",
+    pills: ["Conservation", "Local leadership"],
+    label: "AI-powered biodiversity monitoring platform",
+    titleA: "Tech4",
+    titleB: "Nature",
+  },
+  {
+    id: "vo",
+    image: "/home/featured-vo.png",
+    pills: ["Ocean", "Protection"],
+    label: "Community-led Marine Protected Areas",
+    titleA: "Vital",
+    titleB: "Oceans",
+  },
+  {
+    id: "a4m",
+    image: "/home/featured-a4m.png",
+    pills: ["AI systems", "Conservation"],
+    label: "A Machine Learning Approach",
+    titleA: "AI for",
+    titleB: "Manatees",
+  },
+];
 const COOKIE_KEY = "cminds_color";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 const LOADER_SESSION_KEY = "cminds_loader_seen";
@@ -199,6 +234,47 @@ export default function Hero() {
           scrollTrigger: { trigger: ".core-columns", start: "top 50%", toggleActions: "play none none reverse" }
         }
       );
+
+      // Featured Initiatives
+      gsap.fromTo(".initiatives-header",
+        { opacity: 0, y: 40 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: "power3.out",
+          scrollTrigger: { trigger: ".initiatives-section", start: "top 82%", toggleActions: "play none none reverse" }
+        }
+      );
+
+      gsap.utils.toArray<HTMLElement>(".initiative-card").forEach((card) => {
+        gsap.fromTo(card,
+          { opacity: 0, y: 55 },
+          {
+            opacity: 1, y: 0, duration: 0.9, ease: "power3.out",
+            scrollTrigger: { trigger: card, start: "top 88%", toggleActions: "play none none reverse" }
+          }
+        );
+      });
+
+      // Bold Changes — CSS sticky + scrub (no GSAP pin)
+      const boldTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".bold-section",
+          scrub: 1.5,
+          start: "top top",
+          end: "bottom bottom",
+        }
+      });
+      boldTl
+        .fromTo(".bold-bg-glow", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 0)
+        // ovals fly in simultaneously with the text
+        .fromTo(".bold-oval-1", { y: -560, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "none" }, 0)
+        .fromTo(".bold-oval-2", { y: -880, opacity: 0 }, { y: 0, opacity: 1, duration: 1.0, ease: "none" }, 0)
+        .fromTo(".bold-oval-3", { y:  880, opacity: 0 }, { y: 0, opacity: 1, duration: 1.0, ease: "none" }, 0.05)
+        .fromTo(".bold-oval-4", { y:  560, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "none" }, 0.05)
+        // text writes itself during oval arrival — all complete by ~1.0
+        .fromTo("#bw-bold",       { opacity: 0, y: 22, filter: "blur(10px)" }, { opacity: 1,    y: 0, filter: "blur(0px)", duration: 0.2 }, 0.25)
+        .fromTo("#bw-and",        { opacity: 0, y: 22, filter: "blur(10px)" }, { opacity: 1,    y: 0, filter: "blur(0px)", duration: 0.2 }, 0.44)
+        .fromTo("#bw-meaningful", { opacity: 0, y: 22, filter: "blur(10px)" }, { opacity: 0.48, y: 0, filter: "blur(0px)", duration: 0.2 }, 0.63)
+        .fromTo("#bw-changes",    { opacity: 0, y: 22, filter: "blur(10px)" }, { opacity: 0.20, y: 0, filter: "blur(0px)", duration: 0.2 }, 0.80);
 
       gsap.delayedCall(0.1, () => ScrollTrigger.refresh());
     }
@@ -425,6 +501,67 @@ export default function Hero() {
             </div>
 
             <button className="hero-button core-btn">Learn more</button>
+          </section>
+
+          {/* ── Featured Initiatives ── */}
+          <section className="initiatives-section">
+            <div className="initiatives-header">
+              <h2 className="initiatives-heading">Featured Initiatives</h2>
+              <p className="initiatives-subheading">Some of our selected projects we launched</p>
+            </div>
+
+            <div className="initiatives-list">
+              {INITIATIVES.map((item) => (
+                <div
+                  key={item.id}
+                  className="initiative-card"
+                >
+                  <div
+                    className="initiative-bg"
+                    style={{ backgroundImage: `url(${item.image})` }}
+                  />
+                  <div className="initiative-overlay" />
+                  <div className="initiative-content">
+                    <div className="initiative-pills">
+                      {item.pills.map((pill) => (
+                        <span key={pill} className="initiative-pill">{pill}</span>
+                      ))}
+                    </div>
+                    <div className="initiative-meta">
+                      <p className="initiative-label">{item.label}</p>
+                      <h3 className="initiative-title">{item.titleA} {item.titleB}</h3>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* ── Bold Changes Section ── */}
+          <section className="bold-section">
+            <div className="bold-inner">
+              <div className="bold-bg-glow" />
+
+              <div className="bold-ovals">
+                <div className="bold-oval bold-oval-1"><img src="/home/svgs/oval.svg" alt="" /></div>
+                <div className="bold-oval bold-oval-2"><img src="/home/svgs/oval.svg" alt="" /></div>
+                <div className="bold-oval bold-oval-3"><img src="/home/svgs/oval.svg" alt="" /></div>
+                <div className="bold-oval bold-oval-4"><img src="/home/svgs/oval.svg" alt="" /></div>
+              </div>
+
+              <div className="bold-text">
+                <div className="bold-line">
+                  <span className="bold-word" id="bw-bold">BOLD</span>
+                  <span className="bold-word" id="bw-and">&nbsp;AND</span>
+                </div>
+                <div className="bold-line">
+                  <span className="bold-word" id="bw-meaningful">MEANINGFUL</span>
+                </div>
+                <div className="bold-line">
+                  <span className="bold-word" id="bw-changes">CHANGES</span>
+                </div>
+              </div>
+            </div>
           </section>
 
         </div>
