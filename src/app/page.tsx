@@ -60,6 +60,16 @@ const INITIATIVES = [
     titleB: "Manatees",
   },
 ];
+const ORBIT_WORDS = [
+  "TANGIBLE IMPACT",
+  "INCUBATION",
+  "REGIONAL STRATEGIES",
+  "POLICIES",
+  "GOVERNANCE FRAMEWORKS",
+  "SCALE INITIATIVES",
+  "EMERGING TECHNOLOGIES",
+];
+
 const COOKIE_KEY = "cminds_color";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 const LOADER_SESSION_KEY = "cminds_loader_seen";
@@ -136,6 +146,95 @@ export default function Hero() {
       { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.55, stagger: 0.05, ease: 'power2.out' }
     );
   }, [currentWord]);
+
+  // Word particles: appear at cursor, each letter falls with gravity
+  useEffect(() => {
+    if (step !== 3 || !loaderDone) return;
+    let lastX = 0, lastY = 0, dist = 0;
+    const TRIGGER_PX = 110;
+    const active = new Set<HTMLDivElement>();
+    const activePos = new Map<HTMLDivElement, { x: number; y: number }>();
+    const MIN_GAP = 180;
+
+    const spawnWord = (x: number, y: number) => {
+      const offsetX = (Math.random() - 0.5) * 100;
+      const offsetY = (Math.random() - 0.5) * 50;
+      const spawnX = x + offsetX;
+      const spawnY = y + offsetY;
+
+      // Reject if too close to an existing particle
+      for (const pos of activePos.values()) {
+        const dx = spawnX - pos.x;
+        const dy = spawnY - pos.y;
+        if (Math.sqrt(dx * dx + dy * dy) < MIN_GAP) return;
+      }
+
+      const text = ORBIT_WORDS[Math.floor(Math.random() * ORBIT_WORDS.length)];
+
+      const wrap = document.createElement("div");
+      wrap.className = "wwd-word-particle";
+      wrap.style.left = `${spawnX}px`;
+      wrap.style.top  = `${spawnY}px`;
+      document.body.appendChild(wrap);
+      active.add(wrap);
+      activePos.set(wrap, { x: spawnX, y: spawnY });
+
+      const letters = text.split("").map((ch) => {
+        const s = document.createElement("span");
+        s.textContent = ch === " " ? " " : ch;
+        wrap.appendChild(s);
+        return s;
+      });
+
+      gsap.set(letters, { opacity: 0, y: -6 });
+
+      gsap.timeline({
+        onComplete: () => { wrap.remove(); active.delete(wrap); activePos.delete(wrap); }
+      })
+        .to(letters, {
+          opacity: 1, y: 0,
+          duration: 0.3, stagger: 0.04, ease: "back.out(1.4)",
+        })
+        .to(letters, {
+          opacity: 0,
+          y: (i: number) => 130 + i * 8 + Math.random() * 120,
+          duration: 1.6,
+          stagger: { each: 0.06, from: "random" },
+          ease: "power2.in",
+        }, "+=0.25");
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const section = document.querySelector(".wwd-section");
+      if (section) {
+        const r = section.getBoundingClientRect();
+        if (r.top > 0 || r.bottom <= 0) return;
+      }
+      // Dead zone around headline text
+      const pad = 60;
+      const headlines = document.querySelectorAll(".wwd-headline");
+      for (const h of headlines) {
+        const r = h.getBoundingClientRect();
+        if (e.clientX >= r.left - pad && e.clientX <= r.right + pad &&
+            e.clientY >= r.top  - pad && e.clientY <= r.bottom + pad) return;
+      }
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      dist += Math.sqrt(dx * dx + dy * dy);
+      lastX = e.clientX;
+      lastY = e.clientY;
+      if (dist < TRIGGER_PX) return;
+      dist = 0;
+      spawnWord(e.clientX, e.clientY);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      active.forEach(p => { gsap.killTweensOf(p.querySelectorAll("span")); p.remove(); });
+      activePos.clear();
+    };
+  }, [step, loaderDone]);
 
   // Cycle words while on hero — wait for loader first
   useEffect(() => {
@@ -275,6 +374,29 @@ export default function Hero() {
         .fromTo("#bw-and",        { opacity: 0, y: 22, filter: "blur(10px)" }, { opacity: 1,    y: 0, filter: "blur(0px)", duration: 0.2 }, 0.44)
         .fromTo("#bw-meaningful", { opacity: 0, y: 22, filter: "blur(10px)" }, { opacity: 0.48, y: 0, filter: "blur(0px)", duration: 0.2 }, 0.63)
         .fromTo("#bw-changes",    { opacity: 0, y: 22, filter: "blur(10px)" }, { opacity: 0.20, y: 0, filter: "blur(0px)", duration: 0.2 }, 0.80);
+
+      // What We Do — CSS sticky + scrub
+      const wwdTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".wwd-section",
+          scrub: 1,
+          start: "top top",
+          end: "bottom bottom",
+        }
+      });
+      // Phase A: headline words + pill
+      wwdTl
+        .fromTo(".wwd-pill",    { opacity: 0, scale: 0.88 }, { opacity: 1, scale: 1, duration: 0.1 }, 0)
+        .fromTo("#wwa-we",      { opacity: 0, y: 24, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.16 }, 0.06)
+        .fromTo("#wwa-codesign",{ opacity: 0, y: 24, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.16 }, 0.20)
+        .fromTo("#wwa-visions", { opacity: 0, y: 24, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.16 }, 0.32)
+        .fromTo("#wwa-with",    { opacity: 0, y: 24, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.16 }, 0.42);
+      // Phase A → B transition
+      wwdTl
+        .to(".wwd-phase-a",    { opacity: 0, y: -18, filter: "blur(8px)", duration: 0.16 }, 0.66)
+        .fromTo("#wwb-line1",  { opacity: 0, y: 24, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.18 }, 0.74)
+        .fromTo("#wwb-tang",   { opacity: 0, y: 24, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.18 }, 0.88)
+        .fromTo("#wwb-impact", { opacity: 0, y: 24, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.18 }, 0.93);
 
       gsap.delayedCall(0.1, () => ScrollTrigger.refresh());
     }
@@ -559,6 +681,38 @@ export default function Hero() {
                 </div>
                 <div className="bold-line">
                   <span className="bold-word" id="bw-changes">CHANGES</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* ── What We Do Section ── */}
+          <section className="wwd-section">
+            <div className="wwd-inner">
+              <div className="wwd-pill">
+                <span style={{ color: "var(--color-primary)" }}>•</span> What we do
+              </div>
+
+              {/* Phase A */}
+              <div className="wwd-headline wwd-phase-a">
+                <div className="wwd-hl-line">
+                  <span className="wwd-w" id="wwa-we">We</span>
+                  <span className="wwd-w wwd-accent" id="wwa-codesign">codesign</span>
+                  <span className="wwd-w wwd-accent" id="wwa-visions">visions</span>
+                </div>
+                <div className="wwd-hl-line">
+                  <span className="wwd-w" id="wwa-with">with our partners</span>
+                </div>
+              </div>
+
+              {/* Phase B — 2 lines */}
+              <div className="wwd-headline wwd-phase-b">
+                <div className="wwd-hl-line">
+                  <span className="wwd-w" id="wwb-line1">We transform these into</span>
+                </div>
+                <div className="wwd-hl-line">
+                  <span className="wwd-w wwd-accent" id="wwb-tang">tangible </span>
+                  <span className="wwd-w wwd-accent" id="wwb-impact">impact</span>
                 </div>
               </div>
             </div>
