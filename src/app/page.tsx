@@ -72,6 +72,23 @@ const ORBIT_WORDS = [
 
 const HWW_WORDS = ["governments", "civil society", "organizations", "local communities"];
 
+const AWARDS = [
+  {
+    id: "paris-peace-forum",
+    logo: "/home/svgs/logo-parispeaceforum.svg",
+    alt: "Paris Peace Forum",
+    title: "Scale-up Program\n2024-25",
+    body: "Emerging technologies, new conditions for the planet",
+  },
+  {
+    id: "forbes",
+    logo: "/home/svgs/logo-forbes.svg",
+    alt: "Forbes",
+    title: "Leaders of AI in\nMéxico 2024",
+    body: "Honor for Contanza Gómez Mont, Founder of C Minds, Director of NaturaTech LAC",
+  },
+];
+
 const COOKIE_KEY = "cminds_color";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
 const LOADER_SESSION_KEY = "cminds_loader_seen";
@@ -99,6 +116,7 @@ export default function Hero() {
   const hwwCyclingRef = useRef<HTMLSpanElement>(null);
   const hwwEnteredRef = useRef(false);
   const hwwAnimatingRef = useRef(false);
+  const awardCardRefs = useRef<(HTMLElement | null)[]>([]);
 
   // Skip onboarding if user already chose a color
   useEffect(() => {
@@ -495,9 +513,86 @@ export default function Hero() {
           scrollTrigger: { trigger: ".hww-body", start: "top 82%", toggleActions: "play none none reverse" } }
       );
 
+      gsap.fromTo(".awards-pill",
+        { opacity: 0, y: 14, filter: "blur(8px)" },
+        {
+          opacity: 1, y: 0, filter: "blur(0px)", duration: 0.7, ease: "power2.out",
+          scrollTrigger: { trigger: ".awards-section", start: "top 78%", toggleActions: "play none none reverse" }
+        }
+      );
+
+      gsap.fromTo(".awards-title-line",
+        { opacity: 0, y: 34, filter: "blur(14px)" },
+        {
+          opacity: 1, y: 0, filter: "blur(0px)", duration: 0.9, stagger: 0.11, ease: "power3.out",
+          scrollTrigger: { trigger: ".awards-section", start: "top 74%", toggleActions: "play none none reverse" }
+        }
+      );
+
+      gsap.utils.toArray<HTMLElement>(".award-card").forEach((card) => {
+        const logo = card.querySelector(".award-logo");
+        gsap.fromTo(card,
+          { opacity: 0, y: 58, scale: 0.96, filter: "blur(12px)" },
+          {
+            opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.95, ease: "power3.out",
+            scrollTrigger: { trigger: card, start: "top 88%", toggleActions: "play none none reverse" }
+          }
+        );
+        gsap.fromTo(logo,
+          { opacity: 0, y: 24, scale: 0.92, filter: "blur(10px)" },
+          {
+            opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.85, delay: 0.14, ease: "power3.out",
+            scrollTrigger: { trigger: card, start: "top 88%", toggleActions: "play none none reverse" }
+          }
+        );
+      });
+
       gsap.delayedCall(0.1, () => ScrollTrigger.refresh());
     }
   }, [step, loaderDone]);
+
+  const setAwardHover = (card: HTMLElement | null, isHovering: boolean) => {
+    if (!card) return;
+    const logo = card.querySelector(".award-logo-wrap");
+    const copy = card.querySelector(".award-copy");
+    const words = card.querySelectorAll(".award-copy-word");
+
+    gsap.killTweensOf([logo, copy, words]);
+
+    if (isHovering) {
+      gsap.timeline()
+        .to(logo, {
+          opacity: 0,
+          y: -34,
+          filter: "blur(9px)",
+          duration: 0.32,
+          ease: "power2.in",
+        }, 0)
+        .set(copy, { opacity: 1 }, 0.08)
+        .fromTo(words,
+          { opacity: 0, y: 22, filter: "blur(10px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.56, stagger: 0.035, ease: "power3.out" },
+          0.14
+        );
+      return;
+    }
+
+    gsap.timeline()
+      .to(words, {
+        opacity: 0,
+        y: 18,
+        filter: "blur(8px)",
+        duration: 0.25,
+        stagger: { each: 0.015, from: "end" },
+        ease: "power2.in",
+      }, 0)
+      .to(copy, { opacity: 0, duration: 0.15 }, 0.08)
+      .fromTo(logo,
+        { opacity: 0, y: 34, filter: "blur(9px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power3.out" },
+        0.12
+      );
+  };
 
   const goNextStep2 = () => {
     gsap.to(".step-1", {
@@ -849,6 +944,61 @@ export default function Hero() {
                 ))}
               </p>
             </div>
+            </div>
+          </section>
+
+          {/* Awards Section */}
+          <section className="awards-section">
+            <div className="awards-inner">
+              <div className="awards-pill">
+                <span style={{ color: "var(--color-primary)" }}>•</span> Awards
+              </div>
+
+              <h2 className="awards-title">
+                <span className="awards-title-line">C Minds and our team</span>
+                <span className="awards-title-line">have been awarded</span>
+              </h2>
+
+              <div className="awards-grid">
+                {AWARDS.map((award, index) => (
+                  <article
+                    key={award.id}
+                    ref={(el) => { awardCardRefs.current[index] = el; }}
+                    className="award-card"
+                    tabIndex={0}
+                    onMouseEnter={() => setAwardHover(awardCardRefs.current[index], true)}
+                    onMouseLeave={() => setAwardHover(awardCardRefs.current[index], false)}
+                    onFocus={() => setAwardHover(awardCardRefs.current[index], true)}
+                    onBlur={() => setAwardHover(awardCardRefs.current[index], false)}
+                  >
+                    <span className="award-border-glow" aria-hidden="true" />
+                    <span className="award-card-light" aria-hidden="true" />
+                    <div className="award-logo-wrap">
+                      <img className={`award-logo award-logo-${award.id}`} src={award.logo} alt={award.alt} />
+                    </div>
+                    <div className="award-copy">
+                      <h3>
+                        {award.title.split("\n").map((line, lineIndex) => (
+                          <span className="award-copy-line" key={`${award.id}-title-${lineIndex}`}>
+                            {line.split(" ").map((word, wordIndex) => (
+                              <span className="award-copy-word" key={`${award.id}-title-${lineIndex}-${wordIndex}`}>
+                                {word}{wordIndex < line.split(" ").length - 1 ? "\u00a0" : ""}
+                              </span>
+                            ))}
+                          </span>
+                        ))}
+                      </h3>
+                      <p>
+                        {award.body.split(" ").map((word, wordIndex) => (
+                          <span className="award-copy-word" key={`${award.id}-body-${wordIndex}`}>
+                            {word}{wordIndex < award.body.split(" ").length - 1 ? "\u00a0" : ""}
+                          </span>
+                        ))}
+                      </p>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </div>
           </section>
 
