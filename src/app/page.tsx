@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, startTransition } from "react";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -157,6 +158,27 @@ export default function Hero() {
     }
   }, []);
   const container = useRef<HTMLDivElement>(null);
+
+  const router = useRouter();
+
+  const navigateWithTransition = (path: string) => {
+    sessionStorage.setItem("vt_from", "home");
+    const doNavigate = () => {
+      if (typeof document !== "undefined" && "startViewTransition" in document) {
+        (document as any).startViewTransition(() => {
+          startTransition(() => { router.push(path); });
+        });
+      } else {
+        router.push(path);
+      }
+    };
+    // Animate hero text/button out, then trigger transition
+    gsap.to([".hero-line-anim", ".hero-scroll-btn"], {
+      opacity: 0, y: -22, filter: "blur(8px)",
+      duration: 0.28, stagger: 0.04, ease: "power2.in",
+      onComplete: doNavigate,
+    });
+  };
 
   // Nav state
   const [activeNav, setActiveNav] = useState(0);
@@ -359,11 +381,20 @@ export default function Hero() {
         { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, delay: 1, ease: "power2.out" }
       );
     } else if (step === 3) {
-      // Hide immediately so nothing flashes before the loader exits
-      gsap.set([".main-nav", ".hero-line-anim", ".hero-scroll-btn", ".laser-container", ".orbit-bg"], { opacity: 0 });
+      const fromCore = typeof sessionStorage !== "undefined" && sessionStorage.getItem("vt_from") === "core";
+      if (fromCore) sessionStorage.removeItem("vt_from");
+
+      // When returning from /core, nav is already visible via view transition — don't hide it
+      const hideTargets: string[] = [".hero-line-anim", ".hero-scroll-btn", ".laser-container", ".orbit-bg"];
+      if (!fromCore) hideTargets.unshift(".main-nav");
+      gsap.set(hideTargets, { opacity: 0 });
+
       if (!loaderDone) return;
-      // Hero entrance
-      gsap.fromTo(".main-nav", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" });
+
+      // Nav entrance only on fresh load, not on return from /core
+      if (!fromCore) {
+        gsap.fromTo(".main-nav", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" });
+      }
       gsap.fromTo(".hero-line-anim", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1.2, stagger: 0.2, ease: "power3.out", delay: 0.2 });
       gsap.fromTo(".hero-scroll-btn", { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 1, ease: "power2.out", delay: 1 });
       gsap.fromTo(".laser-container", { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 2, ease: "power3.out", delay: 0.5 });
@@ -730,7 +761,10 @@ export default function Hero() {
                     ref={(el) => { navRefs.current[idx] = el }}
                     className={`nav-item ${activeNav === idx ? 'active' : ''}`}
                     onMouseEnter={() => setHoverNav(idx)}
-                    onClick={() => setActiveNav(idx)}
+                    onClick={() => {
+                      setActiveNav(idx);
+                      if (item === "Core") navigateWithTransition("/core");
+                    }}
                   >
                     {item}
                   </div>
@@ -852,7 +886,7 @@ export default function Hero() {
               </div>
             </div>
 
-            <button className="hero-button core-btn">Learn more</button>
+            <button className="hero-button core-btn" onClick={() => navigateWithTransition("/core")}>Learn more</button>
           </section>
 
           {/* ── Featured Initiatives ── */}

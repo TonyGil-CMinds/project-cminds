@@ -290,6 +290,7 @@ body {
   display: flex;
   align-items: center;
   z-index: 20;
+  view-transition-name: main-nav;
 }
 
 .nav-brand {
@@ -2040,4 +2041,131 @@ body {
 .nf-home-btn:hover {
   background: rgba(var(--color-primary-rgb), 0.3);
   border-color: rgba(var(--color-primary-rgb), 0.8);
+}
+
+/* ---- VIEW TRANSITIONS ---- */
+
+::view-transition-old(root) {
+  animation: 220ms ease both vt-fade-out;
+}
+
+::view-transition-new(root) {
+  animation: 320ms 80ms ease both vt-fade-in;
+}
+
+@keyframes vt-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes vt-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ---- CORE PAGE ---- */
+
+.core-page {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--color-bg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.core-hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 0 2rem;
+  margin-top: 16vh;
+}
+
+.core-pill {
+  opacity: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 5px 14px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  margin-bottom: 1.4rem;
+}
+
+.core-h1 {
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  margin-bottom: 1.8rem;
+  white-space: nowrap;
+}
+
+.core-word {
+  display: inline-block;
+  opacity: 0;
+}
+
+.core-still {
+  background: linear-gradient(90deg, var(--color-primary) 0%, #ffffff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.core-para-text {
+  opacity: 0;
+  max-width: 560px;
+  font-size: clamp(0.88rem, 1.1vw, 1rem);
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  margin-bottom: 2.8rem;
+}
+
+.core-orbit-wrap {
+  position: absolute;
+  bottom: -20%;
+  left: 50%;
+  margin-left: -500px;
+  width: 1000px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.85;
+}
+
+.core-orbit-wrap .orbit-svg {
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .core-h1 {
+    white-space: normal;
+    font-size: clamp(2.4rem, 9vw, 4rem);
+  }
+
+  .core-orbit-wrap {
+    width: 700px;
+    margin-left: -350px;
+    bottom: -10%;
+  }
+
+  .core-hero-content {
+    padding: 0 1.4rem;
+    margin-top: 14vh;
+  }
 }
