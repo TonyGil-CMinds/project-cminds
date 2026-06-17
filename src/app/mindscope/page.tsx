@@ -1,0 +1,308 @@
+"use client";
+
+import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "react";
+import { useGSAP } from "@gsap/react";
+import { useRouter } from "next/navigation";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
+
+const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
+const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
+
+function hexToRgb(hex: string) {
+  const n = parseInt(hex.slice(1), 16);
+  return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
+}
+
+function fmtDate(d: string) {
+  return new Date(d + "T00:00:00").toLocaleDateString("en-US", {
+    month: "short", day: "numeric", year: "numeric",
+  });
+}
+
+const FEATURED = {
+  date: "June 26",
+  readTime: "3 min",
+  title: "A New era for C Minds",
+  excerpt: "A new chapter of interconnection and collective future",
+};
+
+const ITEM_H = 84;        // px — visual height of each drum row
+const SCROLL_PER_ITEM = 180; // px of page-scroll to advance one item
+
+// Background colors — visually distinct dark hues per post
+const REEL_BG = [
+  "#071828",  // deep navy
+  "#180820",  // deep violet
+  "#062014",  // deep forest
+  "#1e0c06",  // deep amber
+  "#06141e",  // deep teal
+  "#160618",  // deep magenta-dark
+  "#1a1206",  // deep ochre
+  "#061016",  // deep steel
+];
+
+type ReelPost = {
+  id: string;
+  title: string;
+  slug: string;
+  cover_image: string;
+  published_date: string;
+  reading_time_minutes: number;
+  language: string;
+  author: { name: string; photo_url: string };
+};
+
+export default function MindscopePage() {
+  const containerRef    = useRef<HTMLDivElement>(null);
+  const msItemRef       = useRef<HTMLDivElement>(null);
+  const navLightRef     = useRef<HTMLDivElement>(null);
+  const reelRef         = useRef<HTMLDivElement>(null);
+  const trackRef        = useRef<HTMLDivElement>(null);
+  const reelActiveRef   = useRef(0);
+
+  const [posts, setPosts]           = useState<ReelPost[]>([]);
+  const [reelActive, setReelActive] = useState(0); // absolute index into loopedPosts
+  const router = useRouter();
+
+  // ── Fetch blog feed ────────────────────────────────────────
+  useEffect(() => {
+    fetch("https://cminds.base44.app/api/apps/6925f38be89e0d268185fecc/functions/publicBlogFeed")
+      .then((r) => r.json())
+      .then((data) => setPosts(data.posts ?? []))
+      .catch(() => {});
+  }, []);
+
+  // ── Reel: RAF-driven drum + step state for bg/image ────────
+  useEffect(() => {
+    if (posts.length === 0) return;
+    const loopLen = posts.length * 3;
+    let rafId: number;
+
+    const update = () => {
+      if (!reelRef.current || !trackRef.current) return;
+      const scrolled  = Math.max(0, -reelRef.current.getBoundingClientRect().top);
+      const floatIdx  = Math.min(scrolled / SCROLL_PER_ITEM, loopLen - 0.001);
+      // Center active row on the drum's midpoint (drum is 60vh → center = 30vh)
+      const drumCenter = window.innerHeight * 0.3;
+      trackRef.current.style.transform =
+        `translateY(${drumCenter - floatIdx * ITEM_H - ITEM_H / 2}px)`;
+
+      const newActive = Math.floor(floatIdx);
+      if (newActive !== reelActiveRef.current) {
+        reelActiveRef.current = newActive;
+        setReelActive(newActive);
+      }
+    };
+
+    const onScroll = () => { cancelAnimationFrame(rafId); rafId = requestAnimationFrame(update); };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    update(); // seed on mount
+    return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(rafId); };
+  }, [posts.length]);
+
+  // ── Color cookie ──────────────────────────────────────────
+  useLayoutEffect(() => {
+    const match = document.cookie.match(/(?:^|;\s*)cminds_color=([^;]+)/);
+    if (match) {
+      const hex = decodeURIComponent(match[1]);
+      if (VALID_COLORS.includes(hex)) {
+        document.documentElement.style.setProperty("--color-primary", hex);
+        document.documentElement.style.setProperty("--color-primary-rgb", hexToRgb(hex));
+      }
+    }
+  }, []);
+
+  // ── Nav indicator ─────────────────────────────────────────
+  useLayoutEffect(() => {
+    if (!msItemRef.current || !navLightRef.current) return;
+    const item   = msItemRef.current;
+    const parent = item.parentElement!;
+    navLightRef.current.style.left  = `${item.getBoundingClientRect().left - parent.getBoundingClientRect().left}px`;
+    navLightRef.current.style.width = `${item.getBoundingClientRect().width}px`;
+  }, []);
+
+  // ── Page navigation ───────────────────────────────────────
+  const navigateWithTransition = (path: string) => {
+    sessionStorage.setItem("vt_from", "mindscope");
+    const doNavigate = () => {
+      if (typeof document !== "undefined" && "startViewTransition" in document) {
+        (document as any).startViewTransition(() => {
+          startTransition(() => { router.push(path); });
+        });
+      } else {
+        router.push(path);
+      }
+    };
+    gsap.to([".ms-pill", ".ms-word", ".ms-subscribe-wrap", ".ms-feat-section"], {
+      opacity: 0, y: -16, filter: "blur(8px)",
+      duration: 0.25, stagger: 0.04, ease: "power2.in",
+      onComplete: doNavigate,
+    });
+  };
+
+  // ── GSAP animations ───────────────────────────────────────
+  useGSAP(() => {
+    gsap.fromTo(".ms-pill",
+      { opacity: 0, y: 20, scale: 0.9 },
+      { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "power2.out", delay: 0.3 }
+    );
+    gsap.fromTo(".ms-word",
+      { opacity: 0, y: 36, filter: "blur(12px)" },
+      { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.75, stagger: 0.12, ease: "power3.out", delay: 0.5 }
+    );
+    gsap.fromTo(".ms-subscribe-wrap",
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", delay: 0.9 }
+    );
+
+    const wrap   = containerRef.current?.querySelector<HTMLElement>(".ms-feat-wrap");
+    const cardEl = containerRef.current?.querySelector<HTMLElement>(".ms-feat-card");
+    const textEl = containerRef.current?.querySelector<HTMLElement>(".ms-feat-text");
+    if (!wrap || !cardEl || !textEl) return;
+
+    const mm = gsap.matchMedia();
+    mm.add("(min-width: 769px)", () => {
+      const centerX = (wrap.clientWidth - cardEl.clientWidth) / 2;
+      gsap.set(cardEl, { x: centerX, scale: 1.28, transformOrigin: "center center" });
+      gsap.set(textEl, { opacity: 0, x: 30 });
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: ".ms-feat-section",
+          start: "top 75%",
+          end: "+=400",
+          scrub: 1,
+        },
+      });
+      tl.to(cardEl, { x: 0, scale: 1, duration: 1.2, ease: "power2.inOut" }, 0);
+      tl.to(textEl, { opacity: 1, x: 0, duration: 0.8, ease: "power2.out" }, 0.8);
+    });
+  }, { scope: containerRef });
+
+  const loopedPosts = posts.length > 0 ? [...posts, ...posts, ...posts] : [];
+  const displayIdx  = reelActive % Math.max(posts.length, 1);
+  const activeBg    = REEL_BG[displayIdx % REEL_BG.length];
+
+  return (
+    <div ref={containerRef} className="ms-page">
+      <div className="bg-glow" />
+
+      {/* Navigation */}
+      <nav className="main-nav">
+        <div className="nav-brand" style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/")}>
+          <img src="/logo.svg" alt="C Minds" />
+        </div>
+        <div className="nav-menu">
+          <div className="nav-menu-light" ref={navLightRef} />
+          {NAV_ITEMS.map((item) => (
+            <div
+              key={item}
+              ref={item === "Mindscope ®" ? msItemRef : undefined}
+              className={`nav-item${item === "Mindscope ®" ? " active" : ""}`}
+              onClick={() => {
+                if (item === "Home") navigateWithTransition("/");
+                if (item === "Core") navigateWithTransition("/core");
+              }}
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+        <button className="hero-button nav-contact">Contact us</button>
+      </nav>
+
+      {/* Hero */}
+      <section className="ms-hero">
+        <div className="ms-pill">
+          <span style={{ color: "var(--color-primary)" }}>•</span> Mindscope ®
+        </div>
+        <h1 className="ms-heading">
+          <span className="ms-word">Unfolds Multiple</span>
+          <span className="ms-word ms-gradient-word">Dimensions</span>
+        </h1>
+        <div className="ms-subscribe-wrap">
+          <form className="ms-form" onSubmit={(e) => e.preventDefault()}>
+            <span className="ms-input-prefix">|</span>
+            <input type="email" className="ms-input" placeholder="name@email.com" />
+            <button type="submit" className="ms-subscribe-btn">Suscribe</button>
+          </form>
+        </div>
+      </section>
+
+      {/* Featured */}
+      <section className="ms-feat-section">
+        <div className="ms-feat-wrap">
+          <div className="ms-feat-card">
+            <div className="ms-feat-card-dots" />
+            <img src="/loader-logo.svg" className="ms-feat-card-logo" alt="" aria-hidden="true" />
+          </div>
+          <div className="ms-feat-text">
+            <p className="ms-feat-meta">{FEATURED.date} · {FEATURED.readTime}</p>
+            <h2 className="ms-feat-title">{FEATURED.title}</h2>
+            <p className="ms-feat-excerpt">{FEATURED.excerpt}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Reel — scroll-driven color list with fixed right image */}
+      {posts.length > 0 && (
+        <div
+          ref={reelRef}
+          className="ms-reel-section"
+          style={{ height: `calc(${posts.length * 3 * SCROLL_PER_ITEM}px + 100vh)` }}
+        >
+          <div className="ms-reel-sticky" style={{ background: activeBg }}>
+
+            {/* progress indicator */}
+            <div className="ms-reel-progress">
+              <div
+                className="ms-reel-progress-thumb"
+                style={{ top: `${(displayIdx / Math.max(posts.length - 1, 1)) * 100}%` }}
+              />
+            </div>
+
+            {/* left: header + drum */}
+            <div className="ms-reel-left">
+              <div className="ms-reel-header">
+                <span>Date</span>
+                <span>Author</span>
+                <span>Title</span>
+              </div>
+
+              {/* drum viewport — items flow past the center trigger line */}
+              <div className="ms-reel-drum">
+                <div className="ms-reel-drum-center-line" />
+                <div className="ms-reel-drum-track" ref={trackRef}>
+                  {loopedPosts.map((post, i) => (
+                    <div
+                      key={`${post.id}-${Math.floor(i / posts.length)}`}
+                      className={`ms-reel-item${i === reelActive ? " ms-reel-active" : ""}`}
+                    >
+                      <span className="ms-reel-date">{fmtDate(post.published_date)}</span>
+                      <span className="ms-reel-cat">{post.author.name}</span>
+                      <p className="ms-reel-title">{post.title}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* right: image panel — all images stacked, active one fades in */}
+            <div className="ms-reel-right">
+              {posts.map((post, i) => (
+                <div
+                  key={post.id}
+                  className={`ms-reel-feat-img${i === displayIdx ? " ms-reel-feat-active" : ""}`}
+                  style={{ backgroundImage: `url(${post.cover_image})` }}
+                />
+              ))}
+            </div>
+
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

@@ -394,7 +394,7 @@ body {
 }
 
 .hero-heading {
-  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-size: clamp(3rem, 7vw, 7rem);
   font-weight: 700;
   line-height: 1.05;
   margin-bottom: 2rem;
@@ -2163,5 +2163,448 @@ body {
   .core-hero-content {
     padding: 0 1.4rem;
     margin-top: 14vh;
+  }
+}
+
+/* ── Mindscope Page ──────────────────────────── */
+.ms-page {
+  position: relative;
+  background: var(--color-bg);
+  min-height: 100vh;
+  overflow-x: clip;
+}
+
+.ms-hero {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 110px);
+  padding: 6rem 2rem 3rem;
+  text-align: center;
+}
+
+.ms-pill {
+  opacity: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 100px;
+  padding: 0.3rem 0.9rem;
+  margin-bottom: 1.6rem;
+}
+
+.ms-heading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: clamp(2.6rem, 7vw, 6.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 2.2rem;
+  gap: 0.05em;
+}
+
+.ms-word {
+  opacity: 0;
+  display: block;
+  color: white;
+}
+
+.ms-gradient-word {
+  background: linear-gradient(90deg, var(--color-primary) 0%, rgba(255, 255, 255, 0.92) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.ms-subscribe-wrap {
+  opacity: 0;
+}
+
+.ms-form {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 100px;
+  padding: 0.35rem 0.35rem 0.35rem 1.1rem;
+  backdrop-filter: blur(10px);
+}
+
+.ms-input-prefix {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.9rem;
+  line-height: 1;
+  user-select: none;
+}
+
+.ms-input {
+  background: none;
+  border: none;
+  outline: none;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: inherit;
+  font-size: 0.875rem;
+  width: 190px;
+}
+
+.ms-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.ms-subscribe-btn {
+  background: white;
+  color: #040314;
+  border: none;
+  border-radius: 100px;
+  padding: 0.55rem 1.3rem;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.ms-subscribe-btn:hover {
+  opacity: 0.85;
+}
+
+/* Featured two-column scroll section */
+.ms-feat-section {
+  position: relative;
+  z-index: 2;
+  padding: 2rem 5rem 35vh 7rem;
+}
+
+.ms-feat-wrap {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+  width: 100%;
+}
+
+/* Card — 60% of section content width */
+.ms-feat-card {
+  flex: 0 0 60%;
+  height: 410px;
+  border-radius: 20px;
+  background: linear-gradient(140deg, #f8fcff 0%, #d8eef8 55%, #b4d8f2 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Very subtle dot grid in the lower portion only */
+.ms-feat-card-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(4, 3, 40, 0.14) 1px, transparent 1px);
+  background-size: 14px 14px;
+  mask-image: radial-gradient(ellipse 50% 40% at 50% 62%, black 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 50% 40% at 50% 62%, black 0%, transparent 100%);
+}
+
+/* C Minds orbital mark — loader-logo.svg is just the mark (no text), 120×122px */
+.ms-feat-card-logo {
+  position: absolute;
+  width: 190px;
+  height: auto;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.82;
+  filter: brightness(0.28) saturate(0.7);
+  pointer-events: none;
+}
+
+/* Text column */
+.ms-feat-text {
+  flex: 1;
+  min-width: 0;
+  max-width: 340px;
+}
+
+.ms-feat-meta {
+  font-size: 0.85rem;
+  color: var(--color-text-dim);
+  margin-bottom: 1rem;
+  letter-spacing: 0.02em;
+}
+
+.ms-feat-title {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 700;
+  color: white;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-bottom: 1.1rem;
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1px;
+  text-decoration-color: rgba(255, 255, 255, 0.4);
+}
+
+.ms-feat-excerpt {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.7;
+}
+
+@media (max-width: 768px) {
+  .ms-hero {
+    min-height: calc(100vh - 80px);
+    padding: 6rem 1.4rem 2rem;
+  }
+
+  .ms-heading {
+    font-size: clamp(2.4rem, 9vw, 4rem);
+  }
+
+  .ms-form {
+    flex-wrap: wrap;
+    border-radius: 16px;
+    padding: 0.75rem 1rem;
+    gap: 0.6rem;
+  }
+
+  .ms-input {
+    width: 100%;
+  }
+
+  .ms-subscribe-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .ms-feat-section {
+    padding: 0 1.4rem 4rem;
+  }
+
+  .ms-feat-wrap {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .ms-feat-card {
+    width: 100%;
+    height: 220px;
+  }
+}
+
+/* ── Mindscope Reel Section ──────────────────── */
+.ms-reel-section {
+  position: relative;
+}
+
+.ms-reel-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 5rem;
+  align-items: center;
+  padding: 0 5rem 0 7rem;
+  transition: background 0.75s ease;
+  overflow: hidden;
+}
+
+/* progress bar — sits outside the grid, absolute positioned */
+.ms-reel-progress {
+  position: absolute;
+  right: 1.5rem;
+  top: 18%;
+  height: 64%;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 2px;
+}
+
+.ms-reel-progress-thumb {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 10px var(--color-primary);
+  transition: top 0.5s ease;
+}
+
+/* left column: header + list */
+.ms-reel-left {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+}
+
+.ms-reel-header {
+  display: grid;
+  grid-template-columns: 160px 180px 1fr;
+  padding: 0 0 1.2rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.28);
+  flex-shrink: 0;
+  margin-bottom: 0;
+}
+
+/* drum viewport — items translate past the center line, no scroll */
+.ms-reel-drum {
+  position: relative;
+  height: 60vh;
+  overflow: hidden;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+}
+
+/* center trigger indicator — the item crossing this line becomes active */
+.ms-reel-drum-center-line {
+  position: absolute;
+  left: -4rem;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.ms-reel-drum-center-line::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -42px;
+  height: 84px;
+  background: rgba(255, 255, 255, 0.028);
+  pointer-events: none;
+}
+
+/* translateY controlled by JavaScript via RAF */
+.ms-reel-drum-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  will-change: transform;
+}
+
+.ms-reel-item {
+  display: grid;
+  grid-template-columns: 160px 180px 1fr;
+  align-items: center;
+  height: 84px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  opacity: 0.22;
+  transition: opacity 0.3s ease;
+  cursor: default;
+}
+
+.ms-reel-active {
+  opacity: 1;
+}
+
+.ms-reel-date {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.ms-reel-cat {
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.ms-reel-title {
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1.35;
+  margin: 0;
+  transition: font-size 0.3s ease, color 0.3s ease, font-weight 0.3s ease;
+}
+
+.ms-reel-active .ms-reel-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+}
+
+/* right column: stacked cover images that crossfade */
+.ms-reel-right {
+  position: relative;
+  height: 380px;
+  border-radius: 16px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.ms-reel-feat-img {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  border-radius: 16px;
+  opacity: 0;
+  transform: scale(1.04);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+.ms-reel-feat-active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (max-width: 768px) {
+  .ms-reel-sticky {
+    grid-template-columns: 1fr;
+    padding: 0 1.4rem;
+    gap: 0;
+  }
+
+  .ms-reel-right {
+    display: none;
+  }
+
+  .ms-reel-drum {
+    height: 55vh;
+  }
+
+  .ms-reel-header {
+    grid-template-columns: 110px 1fr;
+  }
+
+  .ms-reel-header span:last-child {
+    display: none;
+  }
+
+  .ms-reel-item {
+    grid-template-columns: 110px 1fr;
+  }
+
+  .ms-reel-cat {
+    display: none;
+  }
+
+  .ms-reel-title {
+    font-size: 0.9rem;
+  }
+
+  .ms-reel-active .ms-reel-title {
+    font-size: 1.1rem;
   }
 }

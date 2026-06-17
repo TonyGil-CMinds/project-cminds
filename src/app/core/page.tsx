@@ -105,6 +105,7 @@ export default function CorePage() {
               className={`nav-item${item === "Core" ? " active" : ""}`}
               onClick={() => {
                 if (item === "Home") navigateWithTransition("/");
+                if (item === "Mindscope ®") navigateWithTransition("/mindscope");
               }}
             >
               {item}

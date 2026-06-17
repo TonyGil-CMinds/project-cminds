@@ -767,6 +767,7 @@ export default function Hero() {
                     onClick={() => {
                       setActiveNav(idx);
                       if (item === "Core") navigateWithTransition("/core");
+                      if (item === "Mindscope ®") navigateWithTransition("/mindscope");
                     }}
                   >
                     {item}
@@ -1140,7 +1141,7 @@ export default function Hero() {
               <div className="footer-column footer-site-map">
                 <h3>SITE MAP</h3>
                 <a style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/core")}>Core</a>
-                <a href="#mindscope">Mindscope</a>
+                <a style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/mindscope")}>Mindscope</a>
                 <a href="#careers">Careers</a>
               </div>
 
