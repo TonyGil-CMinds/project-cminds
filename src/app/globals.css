@@ -2138,10 +2138,11 @@ body {
 
 .core-orbit-wrap {
   position: absolute;
-  bottom: -20%;
+  top: 50%;
   left: 50%;
-  margin-left: -500px;
-  width: 1000px;
+  width: 100vw;
+  height: 100vh;
+  transform: translate(-50%, -50%);
   pointer-events: none;
   z-index: 0;
   opacity: 0.85;
@@ -2149,19 +2150,14 @@ body {
 
 .core-orbit-wrap .orbit-svg {
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
 }
 
 @media (max-width: 768px) {
   .core-h1 {
     white-space: normal;
     font-size: clamp(2.4rem, 9vw, 4rem);
-  }
-
-  .core-orbit-wrap {
-    width: 700px;
-    margin-left: -350px;
-    bottom: -10%;
   }
 
   .core-hero-content {

@@ -382,7 +382,6 @@ export default function Hero() {
       );
     } else if (step === 3) {
       const fromCore = typeof sessionStorage !== "undefined" && sessionStorage.getItem("vt_from") === "core";
-      if (fromCore) sessionStorage.removeItem("vt_from");
 
       // When returning from /core, nav is already visible via view transition — don't hide it
       const hideTargets: string[] = [".hero-line-anim", ".hero-scroll-btn", ".laser-container", ".orbit-bg"];
@@ -390,6 +389,10 @@ export default function Hero() {
       gsap.set(hideTargets, { opacity: 0 });
 
       if (!loaderDone) return;
+
+      // Consume the flag only after loaderDone check — otherwise a double-fire
+      // (loaderDone=false then true) removes it on the first (no-op) pass
+      if (fromCore) sessionStorage.removeItem("vt_from");
 
       // Nav entrance only on fresh load, not on return from /core
       if (!fromCore) {
@@ -749,7 +752,7 @@ export default function Hero() {
 
             {/* Navigation */}
             <nav className="main-nav">
-              <div className="nav-brand">
+              <div className="nav-brand" style={{ cursor: "pointer" }} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
                 <img src="/logo.svg" alt="C Minds Logo" />
               </div>
 
@@ -1136,7 +1139,7 @@ export default function Hero() {
 
               <div className="footer-column footer-site-map">
                 <h3>SITE MAP</h3>
-                <a href="#core">Core</a>
+                <a style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/core")}>Core</a>
                 <a href="#mindscope">Mindscope</a>
                 <a href="#careers">Careers</a>
               </div>

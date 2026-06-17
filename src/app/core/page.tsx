@@ -60,19 +60,15 @@ export default function CorePage() {
   };
 
   useGSAP(() => {
-    // Nav entrance
-    gsap.fromTo(".core-page .main-nav",
-      { opacity: 0, y: -20 },
-      { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }
+    // Orbit: fromTo with xPercent/yPercent so GSAP owns the centering math correctly.
+    // The CSS sets the same initial position as the home orbit (top:50% left:50% 100vw×100vh),
+    // and GSAP immediately applies the "from" state (immediateRender:true by default) so the
+    // view transition captures the orbit at viewport center before the first paint.
+    gsap.fromTo(".core-orbit-wrap",
+      { xPercent: -50, yPercent: -50, scale: 1 },
+      { xPercent: -50, yPercent: -50, scale: 0.68, y: "74vh",
+        duration: 1.55, ease: "power3.inOut", delay: 0.05 }
     );
-
-    // Orbit always starts at home-page apparent size and shrinks to core position
-    // This makes the orbit feel continuous whether coming from home or direct visit
-    gsap.set(".core-orbit-wrap", { scale: 1.5, y: "-32vh" });
-    gsap.to(".core-orbit-wrap", {
-      scale: 0.68, y: "0vh",
-      duration: 1.55, ease: "power3.inOut", delay: 0.05,
-    });
 
     // Content stagger — always runs
     gsap.fromTo(".core-pill",
@@ -96,8 +92,8 @@ export default function CorePage() {
   return (
     <div ref={containerRef} className="core-page">
       {/* Navigation */}
-      <nav className="main-nav" style={{ opacity: 0 }}>
-        <div className="nav-brand">
+      <nav className="main-nav">
+        <div className="nav-brand" style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/")}>
           <img src="/logo.svg" alt="C Minds" />
         </div>
         <div className="nav-menu">
