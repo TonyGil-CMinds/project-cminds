@@ -69,11 +69,24 @@ export default function MindscopePage() {
 
   // ── Fetch blog feed ────────────────────────────────────────
   useEffect(() => {
-    fetch("https://cminds.base44.app/api/apps/6925f38be89e0d268185fecc/functions/publicBlogFeed")
-      .then((r) => r.json())
-      .then((data) => setPosts(data.posts ?? []))
-      .catch(() => {});
-  }, []);
+  const fetchPosts = async () => {
+    try {
+      const res = await fetch(
+        "https://cminds.base44.app/api/apps/6925f38be89e0d268185fecc/functions/publicBlogFeed?limit=84"
+      );
+
+      if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+
+      const data = await res.json();
+      setPosts(data.posts ?? []);
+    } catch (error) {
+      console.error("Error fetching blog feed:", error);
+      setPosts([]);
+    }
+  };
+
+  fetchPosts();
+}, []);
 
   // ── Reel: RAF-driven drum + step state for bg/image ────────
   useEffect(() => {
