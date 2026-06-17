@@ -99,7 +99,7 @@ export default function NotFound() {
       {/* ── Footer ── */}
       <footer className="site-footer">
         <div className="footer-cta">
-          <h2>Bold &amp; Meaningful<br />Changes</h2>
+          <h2>Bold &amp; Meaningful<br />Transformations</h2>
           <button className="footer-cta-btn">Contact us</button>
         </div>
 

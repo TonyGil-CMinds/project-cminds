@@ -72,6 +72,32 @@ const ORBIT_WORDS = [
 
 const HWW_WORDS = ["governments", "civil society", "organizations", "local communities"];
 
+const PARTNERS_ROW1 = [
+  { src: "/partners/logo-bidlab-fila1.svg",           alt: "BID Lab" },
+  { src: "/partners/logo-sucia-fila1.svg",            alt: "Suecia Sverige" },
+  { src: "/partners/logo-francia-fila1.svg",          alt: "Gouvernement France" },
+  { src: "/partners/logo-amazonia-fila1.svg",         alt: "Amazonia" },
+  { src: "/partners/logo-climatecollective-fila1.svg",alt: "Climate Collective" },
+  { src: "/partners/logo-upy-fila1.svg",              alt: "UPY" },
+];
+const PARTNERS_ROW2 = [
+  { src: "/partners/logo-iucn-fila2.svg",      alt: "IUCN" },
+  { src: "/partners/logo-greenlist-fila2.svg", alt: "Green List" },
+  { src: "/partners/logo-tech4all-fila2.svg",  alt: "Tech4All" },
+  { src: "/partners/logo-huawei-fila2.svg",    alt: "Huawei" },
+  { src: "/partners/logo-sds-fila2.svg",       alt: "SDS" },
+  { src: "/partners/logo-pronatura-fila2.svg", alt: "Pro Natura" },
+  { src: "/partners/logo-pachamama-fila2.svg", alt: "Pachamama" },
+];
+const PARTNERS_ROW3 = [
+  { src: "/partners/logo-unichile-fila3.svg", alt: "Universidad de Chile" },
+  { src: "/partners/logo-ecosur-fila3.svg",   alt: "Ecosur" },
+  { src: "/partners/logo-google-fila3.svg",   alt: "Google.org" },
+  { src: "/partners/logo-dolphin-fila3.svg",  alt: "Dolphin" },
+  { src: "/partners/logo-cesco-fila3.svg",    alt: "CESCO" },
+  { src: "/partners/logo-kinray-fila3.svg",   alt: "Kinray Hub" },
+];
+
 const AWARDS = [
   {
     id: "paris-peace-forum",
@@ -513,6 +539,18 @@ export default function Hero() {
           scrollTrigger: { trigger: ".hww-body", start: "top 82%", toggleActions: "play none none reverse" } }
       );
 
+      // Partners section entrance
+      gsap.fromTo(".partners-title",
+        { opacity: 0, y: 30, filter: "blur(12px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.9, ease: "power3.out",
+          scrollTrigger: { trigger: ".partners-section", start: "top 78%", toggleActions: "play none none reverse" } }
+      );
+      gsap.fromTo(".marquee-row",
+        { opacity: 0, y: 20 },
+        { opacity: 1, y: 0, duration: 0.7, stagger: 0.18, ease: "power2.out",
+          scrollTrigger: { trigger: ".partners-section", start: "top 72%", toggleActions: "play none none reverse" } }
+      );
+
       gsap.fromTo(".awards-pill",
         { opacity: 0, y: 14, filter: "blur(8px)" },
         {
@@ -872,7 +910,7 @@ export default function Hero() {
                   <span className="bold-word" id="bw-meaningful">MEANINGFUL</span>
                 </div>
                 <div className="bold-line">
-                  <span className="bold-word" id="bw-changes">CHANGES</span>
+                  <span className="bold-word" id="bw-changes">TRANSFORMATIONS</span>
                 </div>
               </div>
             </div>
@@ -881,30 +919,33 @@ export default function Hero() {
           {/* ── What We Do Section ── */}
           <section className="wwd-section">
             <div className="wwd-inner">
-              <div className="wwd-pill">
-                <span style={{ color: "var(--color-primary)" }}>•</span> What we do
-              </div>
+              <div className="wwd-group">
+                <div className="wwd-pill">
+                  <span style={{ color: "var(--color-primary)" }}>•</span> What we do
+                </div>
+                <div className="wwd-phases">
+                  {/* Phase A */}
+                  <div className="wwd-headline wwd-phase-a">
+                    <div className="wwd-hl-line">
+                      <span className="wwd-w" id="wwa-we">We</span>
+                      <span className="wwd-w wwd-accent" id="wwa-codesign">codesign</span>
+                      <span className="wwd-w wwd-accent" id="wwa-visions">visions</span>
+                    </div>
+                    <div className="wwd-hl-line">
+                      <span className="wwd-w" id="wwa-with">with our partners</span>
+                    </div>
+                  </div>
 
-              {/* Phase A */}
-              <div className="wwd-headline wwd-phase-a">
-                <div className="wwd-hl-line">
-                  <span className="wwd-w" id="wwa-we">We</span>
-                  <span className="wwd-w wwd-accent" id="wwa-codesign">codesign</span>
-                  <span className="wwd-w wwd-accent" id="wwa-visions">visions</span>
-                </div>
-                <div className="wwd-hl-line">
-                  <span className="wwd-w" id="wwa-with">with our partners</span>
-                </div>
-              </div>
-
-              {/* Phase B — 2 lines */}
-              <div className="wwd-headline wwd-phase-b">
-                <div className="wwd-hl-line">
-                  <span className="wwd-w" id="wwb-line1">We transform these into</span>
-                </div>
-                <div className="wwd-hl-line">
-                  <span className="wwd-w wwd-accent" id="wwb-tang">tangible </span>
-                  <span className="wwd-w wwd-accent" id="wwb-impact">impact</span>
+                  {/* Phase B — overlays Phase A */}
+                  <div className="wwd-headline wwd-phase-b">
+                    <div className="wwd-hl-line">
+                      <span className="wwd-w" id="wwb-line1">We transform these into</span>
+                    </div>
+                    <div className="wwd-hl-line">
+                      <span className="wwd-w wwd-accent" id="wwb-tang">tangible </span>
+                      <span className="wwd-w wwd-accent" id="wwb-impact">impact</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -944,6 +985,50 @@ export default function Hero() {
                 ))}
               </p>
             </div>
+            </div>
+          </section>
+
+          {/* Partners Section */}
+          <section className="partners-section">
+            <div className="partners-inner">
+              <h2 className="partners-title">
+                Our partners<br />in change
+              </h2>
+
+              <div className="marquee-rows">
+                {/* Row 1 — right */}
+                <div className="marquee-row">
+                  <div className="marquee-track marquee-right">
+                    {[...PARTNERS_ROW1, ...PARTNERS_ROW1, ...PARTNERS_ROW1, ...PARTNERS_ROW1].map((p, i) => (
+                      <div key={i} className="partner-card">
+                        <img src={p.src} alt={p.alt} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Row 2 — left */}
+                <div className="marquee-row">
+                  <div className="marquee-track marquee-left">
+                    {[...PARTNERS_ROW2, ...PARTNERS_ROW2, ...PARTNERS_ROW2, ...PARTNERS_ROW2].map((p, i) => (
+                      <div key={i} className="partner-card">
+                        <img src={p.src} alt={p.alt} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Row 3 — right */}
+                <div className="marquee-row">
+                  <div className="marquee-track marquee-right">
+                    {[...PARTNERS_ROW3, ...PARTNERS_ROW3, ...PARTNERS_ROW3, ...PARTNERS_ROW3].map((p, i) => (
+                      <div key={i} className="partner-card">
+                        <img src={p.src} alt={p.alt} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -1005,7 +1090,7 @@ export default function Hero() {
           {/* Footer */}
           <footer className="site-footer">
             <div className="footer-cta">
-              <h2>Bold &amp; Meaningful<br />Changes</h2>
+              <h2>Bold &amp; Meaningful<br />Transformations</h2>
               <button className="footer-cta-btn">Contact us</button>
             </div>
 
