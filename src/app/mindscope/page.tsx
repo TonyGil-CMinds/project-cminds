@@ -22,26 +22,20 @@ function fmtDate(d: string) {
   });
 }
 
-const FEATURED = {
-  date: "June 26",
-  readTime: "3 min",
-  title: "A New era for C Minds",
-  excerpt: "A new chapter of interconnection and collective future",
-};
 
 const ITEM_H = 84;        // px — visual height of each drum row
 const SCROLL_PER_ITEM = 180; // px of page-scroll to advance one item
 
 // Background colors — visually distinct dark hues per post
 const REEL_BG = [
-  "#071828",  // deep navy
+  "#040314",  // matches page bg — seamless entry from the featured section
   "#180820",  // deep violet
   "#062014",  // deep forest
   "#1e0c06",  // deep amber
   "#06141e",  // deep teal
   "#160618",  // deep magenta-dark
   "#1a1206",  // deep ochre
-  "#061016",  // deep steel
+  "#071828",  // deep navy
 ];
 
 type ReelPost = {
@@ -61,6 +55,7 @@ export default function MindscopePage() {
   const navLightRef     = useRef<HTMLDivElement>(null);
   const reelRef         = useRef<HTMLDivElement>(null);
   const trackRef        = useRef<HTMLDivElement>(null);
+  const drumRef         = useRef<HTMLDivElement>(null);
   const reelActiveRef   = useRef(0);
 
   const [posts, setPosts]           = useState<ReelPost[]>([]);
@@ -78,7 +73,7 @@ export default function MindscopePage() {
       if (!res.ok) throw new Error(`HTTP error ${res.status}`);
 
       const data = await res.json();
-      setPosts(data.posts ?? []);
+      setPosts((data.posts ?? []).filter((p: ReelPost) => p.language === "en"));
     } catch (error) {
       console.error("Error fetching blog feed:", error);
       setPosts([]);
@@ -98,8 +93,8 @@ export default function MindscopePage() {
       if (!reelRef.current || !trackRef.current) return;
       const scrolled  = Math.max(0, -reelRef.current.getBoundingClientRect().top);
       const floatIdx  = Math.min(scrolled / SCROLL_PER_ITEM, loopLen - 0.001);
-      // Center active row on the drum's midpoint (drum is 60vh → center = 30vh)
-      const drumCenter = window.innerHeight * 0.3;
+      // Center active row on the drum's actual midpoint (measured from DOM)
+      const drumCenter = drumRef.current ? drumRef.current.offsetHeight / 2 : window.innerHeight * 0.4;
       trackRef.current.style.transform =
         `translateY(${drumCenter - floatIdx * ITEM_H - ITEM_H / 2}px)`;
 
@@ -197,6 +192,9 @@ export default function MindscopePage() {
   const loopedPosts = posts.length > 0 ? [...posts, ...posts, ...posts] : [];
   const displayIdx  = reelActive % Math.max(posts.length, 1);
   const activeBg    = REEL_BG[displayIdx % REEL_BG.length];
+  const featPost    = posts.length > 0
+    ? [...posts].sort((a, b) => b.published_date.localeCompare(a.published_date))[0]
+    : null;
 
   return (
     <div ref={containerRef} className="ms-page">
@@ -247,14 +245,22 @@ export default function MindscopePage() {
       {/* Featured */}
       <section className="ms-feat-section">
         <div className="ms-feat-wrap">
-          <div className="ms-feat-card">
-            <div className="ms-feat-card-dots" />
-            <img src="/loader-logo.svg" className="ms-feat-card-logo" alt="" aria-hidden="true" />
+          <div
+            className="ms-feat-card"
+            style={featPost?.cover_image
+              ? { background: `url(${featPost.cover_image}) center/cover no-repeat` }
+              : undefined}
+          >
+            {!featPost?.cover_image && <div className="ms-feat-card-dots" />}
+            {!featPost?.cover_image && (
+              <img src="/loader-logo.svg" className="ms-feat-card-logo" alt="" aria-hidden="true" />
+            )}
           </div>
           <div className="ms-feat-text">
-            <p className="ms-feat-meta">{FEATURED.date} · {FEATURED.readTime}</p>
-            <h2 className="ms-feat-title">{FEATURED.title}</h2>
-            <p className="ms-feat-excerpt">{FEATURED.excerpt}</p>
+            <p className="ms-feat-meta">
+              {featPost ? `${fmtDate(featPost.published_date)} · ${featPost.reading_time_minutes} min` : ""}
+            </p>
+            <h2 className="ms-feat-title">{featPost?.title ?? ""}</h2>
           </div>
         </div>
       </section>
@@ -280,12 +286,11 @@ export default function MindscopePage() {
             <div className="ms-reel-left">
               <div className="ms-reel-header">
                 <span>Date</span>
-                <span>Author</span>
                 <span>Title</span>
               </div>
 
               {/* drum viewport — items flow past the center trigger line */}
-              <div className="ms-reel-drum">
+              <div className="ms-reel-drum" ref={drumRef}>
                 <div className="ms-reel-drum-center-line" />
                 <div className="ms-reel-drum-track" ref={trackRef}>
                   {loopedPosts.map((post, i) => (
@@ -294,7 +299,6 @@ export default function MindscopePage() {
                       className={`ms-reel-item${i === reelActive ? " ms-reel-active" : ""}`}
                     >
                       <span className="ms-reel-date">{fmtDate(post.published_date)}</span>
-                      <span className="ms-reel-cat">{post.author.name}</span>
                       <p className="ms-reel-title">{post.title}</p>
                     </div>
                   ))}

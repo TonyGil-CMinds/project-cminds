@@ -2284,7 +2284,10 @@ body {
 .ms-feat-section {
   position: relative;
   z-index: 2;
-  padding: 2rem 5rem 35vh 7rem;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 0 5rem 0 7rem;
 }
 
 .ms-feat-wrap {
@@ -2296,8 +2299,8 @@ body {
 
 /* Card — 60% of section content width */
 .ms-feat-card {
-  flex: 0 0 60%;
-  height: 410px;
+  flex: 0 0 48%;
+  height: 480px;
   border-radius: 20px;
   background: linear-gradient(140deg, #f8fcff 0%, #d8eef8 55%, #b4d8f2 100%);
   position: relative;
@@ -2331,7 +2334,6 @@ body {
 .ms-feat-text {
   flex: 1;
   min-width: 0;
-  max-width: 340px;
 }
 
 .ms-feat-meta {
@@ -2387,7 +2389,8 @@ body {
   }
 
   .ms-feat-section {
-    padding: 0 1.4rem 4rem;
+    height: 100vh;
+    padding: 0 1.4rem;
   }
 
   .ms-feat-wrap {
@@ -2396,8 +2399,9 @@ body {
   }
 
   .ms-feat-card {
+    flex: none;
     width: 100%;
-    height: 220px;
+    height: 240px;
   }
 }
 
@@ -2413,46 +2417,31 @@ body {
   display: grid;
   grid-template-columns: 1fr 300px;
   gap: 5rem;
-  align-items: center;
-  padding: 0 5rem 0 7rem;
+  align-items: stretch;
+  padding: 2.5rem 5rem 2.5rem 7rem;
   transition: background 0.75s ease;
   overflow: hidden;
 }
 
-/* progress bar — sits outside the grid, absolute positioned */
+/* progress bar — hidden */
 .ms-reel-progress {
-  position: absolute;
-  right: 1.5rem;
-  top: 18%;
-  height: 64%;
-  width: 2px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 2px;
+  display: none;
 }
 
 .ms-reel-progress-thumb {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  box-shadow: 0 0 10px var(--color-primary);
-  transition: top 0.5s ease;
+  display: none;
 }
 
-/* left column: header + list */
+/* left column: header + drum filling all remaining space */
 .ms-reel-left {
   display: flex;
   flex-direction: column;
   height: 100%;
-  justify-content: center;
 }
 
 .ms-reel-header {
   display: grid;
-  grid-template-columns: 160px 180px 1fr;
+  grid-template-columns: 160px 1fr;
   padding: 0 0 1.2rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.7rem;
@@ -2463,23 +2452,24 @@ body {
   margin-bottom: 0;
 }
 
-/* drum viewport — items translate past the center line, no scroll */
+/* drum viewport — fills all remaining space in the left column */
 .ms-reel-drum {
   position: relative;
-  height: 60vh;
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
-  mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 86%, transparent 100%);
 }
 
-/* center trigger indicator — the item crossing this line becomes active */
+/* center trigger indicator — low opacity, just a subtle guide */
 .ms-reel-drum-center-line {
   position: absolute;
   left: -4rem;
   right: 0;
   top: 50%;
   height: 1px;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
   pointer-events: none;
   z-index: 3;
 }
@@ -2491,7 +2481,7 @@ body {
   right: 0;
   top: -42px;
   height: 84px;
-  background: rgba(255, 255, 255, 0.028);
+  background: rgba(255, 255, 255, 0.008);
   pointer-events: none;
 }
 
@@ -2506,7 +2496,7 @@ body {
 
 .ms-reel-item {
   display: grid;
-  grid-template-columns: 160px 180px 1fr;
+  grid-template-columns: 160px 1fr;
   align-items: center;
   height: 84px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -2547,10 +2537,10 @@ body {
 /* right column: stacked cover images that crossfade */
 .ms-reel-right {
   position: relative;
-  height: 380px;
+  height: min(460px, calc(100vh - 5rem));
+  align-self: center;
   border-radius: 16px;
   overflow: hidden;
-  flex-shrink: 0;
 }
 
 .ms-reel-feat-img {
