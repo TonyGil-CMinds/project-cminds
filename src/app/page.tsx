@@ -15,6 +15,7 @@ const LaserFlow = dynamic(() => import("../../components/reactbits/LaserFlow"), 
   loading: () => null,
 });
 
+
 const hexToRgb = (hex: string) => {
   const bigint = parseInt(hex.slice(1), 16);
   const r = (bigint >> 16) & 255;
@@ -22,6 +23,7 @@ const hexToRgb = (hex: string) => {
   const b = bigint & 255;
   return `${r}, ${g}, ${b}`;
 };
+
 
 const COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
@@ -749,7 +751,6 @@ export default function Hero() {
 
           {/* ── Hero viewport ── */}
           <div className="hero-section">
-
             {/* Navigation */}
             <nav className="main-nav">
               <div className="nav-brand" style={{ cursor: "pointer" }} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
@@ -768,6 +769,7 @@ export default function Hero() {
                       setActiveNav(idx);
                       if (item === "Core") navigateWithTransition("/core");
                       if (item === "Mindscope ®") navigateWithTransition("/mindscope");
+                      if (item === "Careers") navigateWithTransition("/careers");
                     }}
                   >
                     {item}

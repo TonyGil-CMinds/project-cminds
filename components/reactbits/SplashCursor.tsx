@@ -17,7 +17,8 @@ function SplashCursor({
   SHADING = true,
   COLOR_UPDATE_SPEED = 10,
   BACK_COLOR = { r: 0.5, g: 0, b: 0 },
-  TRANSPARENT = true
+  TRANSPARENT = true,
+  SPLAT_COLOR = null,
 }) {
   const canvasRef = useRef(null);
 
@@ -53,7 +54,8 @@ function SplashCursor({
       COLOR_UPDATE_SPEED,
       PAUSED: false,
       BACK_COLOR,
-      TRANSPARENT
+      TRANSPARENT,
+      SPLAT_COLOR,
     };
 
     let pointers = [new pointerPrototype()];
@@ -878,6 +880,11 @@ function SplashCursor({
     }
 
     function generateColor() {
+      if (config.SPLAT_COLOR) {
+        const { r, g, b } = config.SPLAT_COLOR;
+        const v = 0.85 + Math.random() * 0.3;
+        return { r: r * v * 0.45, g: g * v * 0.45, b: b * v * 0.45 };
+      }
       let c = HSVtoRGB(Math.random(), 1.0, 1.0);
       c.r *= 0.15;
       c.g *= 0.15;
@@ -1045,16 +1052,17 @@ function SplashCursor({
     SHADING,
     COLOR_UPDATE_SPEED,
     BACK_COLOR,
-    TRANSPARENT
+    TRANSPARENT,
+    SPLAT_COLOR,
   ]);
 
   return (
     <div
       style={{
-        position: 'fixed',
+        position: 'absolute',
         top: 0,
         left: 0,
-        zIndex: 50,
+        zIndex: 2,
         pointerEvents: 'none',
         width: '100%',
         height: '100%'
@@ -1064,8 +1072,8 @@ function SplashCursor({
         ref={canvasRef}
         id="fluid"
         style={{
-          width: '100vw',
-          height: '100vh',
+          width: '100%',
+          height: '100%',
           display: 'block'
         }}
       />

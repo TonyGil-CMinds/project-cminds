@@ -4,7 +4,6 @@ import { useRef, useLayoutEffect, startTransition } from "react";
 import { useGSAP } from "@gsap/react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
-
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 
@@ -12,6 +11,7 @@ function hexToRgb(hex: string) {
   const n = parseInt(hex.slice(1), 16);
   return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
 }
+
 
 export default function CorePage() {
   const containerRef = useRef<HTMLDivElement>(null);

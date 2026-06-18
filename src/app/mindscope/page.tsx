@@ -5,7 +5,6 @@ import { useGSAP } from "@gsap/react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
 gsap.registerPlugin(ScrollTrigger);
 
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
@@ -15,6 +14,7 @@ function hexToRgb(hex: string) {
   const n = parseInt(hex.slice(1), 16);
   return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
 }
+
 
 function fmtDate(d: string) {
   return new Date(d + "T00:00:00").toLocaleDateString("en-US", {
@@ -215,6 +215,7 @@ export default function MindscopePage() {
               onClick={() => {
                 if (item === "Home") navigateWithTransition("/");
                 if (item === "Core") navigateWithTransition("/core");
+                if (item === "Careers") navigateWithTransition("/careers");
               }}
             >
               {item}
@@ -226,13 +227,15 @@ export default function MindscopePage() {
 
       {/* Hero */}
       <section className="ms-hero">
-        <div className="ms-pill">
-          <span style={{ color: "var(--color-primary)" }}>•</span> Mindscope ®
+        <div className="ms-hero-group">
+          <div className="ms-pill">
+            <span style={{ color: "var(--color-primary)" }}>•</span> Mindscope ®
+          </div>
+          <h1 className="ms-heading">
+            <span className="ms-word">Unfolds Multiple</span>
+            <span className="ms-word ms-gradient-word">Dimensions</span>
+          </h1>
         </div>
-        <h1 className="ms-heading">
-          <span className="ms-word">Unfolds Multiple</span>
-          <span className="ms-word ms-gradient-word">Dimensions</span>
-        </h1>
         <div className="ms-subscribe-wrap">
           <form className="ms-form" onSubmit={(e) => e.preventDefault()}>
             <span className="ms-input-prefix">|</span>
