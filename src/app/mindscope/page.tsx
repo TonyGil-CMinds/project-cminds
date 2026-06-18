@@ -297,6 +297,13 @@ export default function MindscopePage() {
                     <div
                       key={`${post.id}-${Math.floor(i / posts.length)}`}
                       className={`ms-reel-item${i === reelActive ? " ms-reel-active" : ""}`}
+                      onClick={() => {
+                        if (!reelRef.current) return;
+                        window.scrollTo({
+                          top: reelRef.current.offsetTop + i * SCROLL_PER_ITEM,
+                          behavior: "smooth",
+                        });
+                      }}
                     >
                       <span className="ms-reel-date">{fmtDate(post.published_date)}</span>
                       <p className="ms-reel-title">{post.title}</p>

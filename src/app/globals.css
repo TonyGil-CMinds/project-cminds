@@ -2502,7 +2502,7 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   opacity: 0.22;
   transition: opacity 0.3s ease;
-  cursor: default;
+  cursor: pointer;
 }
 
 .ms-reel-active {
