@@ -15,27 +15,24 @@ function hexToRgb(hex: string) {
   return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
 }
 
-
 function fmtDate(d: string) {
   return new Date(d + "T00:00:00").toLocaleDateString("en-US", {
     month: "short", day: "numeric", year: "numeric",
   });
 }
 
+const ITEM_H = 84;
+const SCROLL_PER_ITEM = 180;
 
-const ITEM_H = 84;        // px — visual height of each drum row
-const SCROLL_PER_ITEM = 180; // px of page-scroll to advance one item
-
-// Background colors — visually distinct dark hues per post
 const REEL_BG = [
-  "#040314",  // matches page bg — seamless entry from the featured section
-  "#180820",  // deep violet
-  "#062014",  // deep forest
-  "#1e0c06",  // deep amber
-  "#06141e",  // deep teal
-  "#160618",  // deep magenta-dark
-  "#1a1206",  // deep ochre
-  "#071828",  // deep navy
+  "#040314",
+  "#180820",
+  "#062014",
+  "#1e0c06",
+  "#06141e",
+  "#160618",
+  "#1a1206",
+  "#071828",
 ];
 
 type ReelPost = {
@@ -50,40 +47,37 @@ type ReelPost = {
 };
 
 export default function MindscopePage() {
-  const containerRef    = useRef<HTMLDivElement>(null);
-  const msItemRef       = useRef<HTMLDivElement>(null);
-  const navLightRef     = useRef<HTMLDivElement>(null);
-  const reelRef         = useRef<HTMLDivElement>(null);
-  const trackRef        = useRef<HTMLDivElement>(null);
-  const drumRef         = useRef<HTMLDivElement>(null);
-  const reelActiveRef   = useRef(0);
+  const containerRef  = useRef<HTMLDivElement>(null);
+  const msItemRef     = useRef<HTMLDivElement>(null);
+  const navLightRef   = useRef<HTMLDivElement>(null);
+  const reelRef       = useRef<HTMLDivElement>(null);
+  const trackRef      = useRef<HTMLDivElement>(null);
+  const drumRef       = useRef<HTMLDivElement>(null);
+  const reelActiveRef = useRef(0);
 
   const [posts, setPosts]           = useState<ReelPost[]>([]);
-  const [reelActive, setReelActive] = useState(0); // absolute index into loopedPosts
+  const [reelActive, setReelActive] = useState(0);
   const router = useRouter();
 
   // ── Fetch blog feed ────────────────────────────────────────
   useEffect(() => {
-  const fetchPosts = async () => {
-    try {
-      const res = await fetch(
-        "https://cminds.base44.app/api/apps/6925f38be89e0d268185fecc/functions/publicBlogFeed?limit=84"
-      );
+    const fetchPosts = async () => {
+      try {
+        const res = await fetch(
+          "https://cminds.base44.app/api/apps/6925f38be89e0d268185fecc/functions/publicBlogFeed?limit=84"
+        );
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+        const data = await res.json();
+        setPosts((data.posts ?? []).filter((p: ReelPost) => p.language === "en"));
+      } catch (error) {
+        console.error("Error fetching blog feed:", error);
+        setPosts([]);
+      }
+    };
+    fetchPosts();
+  }, []);
 
-      if (!res.ok) throw new Error(`HTTP error ${res.status}`);
-
-      const data = await res.json();
-      setPosts((data.posts ?? []).filter((p: ReelPost) => p.language === "en"));
-    } catch (error) {
-      console.error("Error fetching blog feed:", error);
-      setPosts([]);
-    }
-  };
-
-  fetchPosts();
-}, []);
-
-  // ── Reel: RAF-driven drum + step state for bg/image ────────
+  // ── Reel: RAF-driven drum ──────────────────────────────────
   useEffect(() => {
     if (posts.length === 0) return;
     const loopLen = posts.length * 3;
@@ -91,13 +85,11 @@ export default function MindscopePage() {
 
     const update = () => {
       if (!reelRef.current || !trackRef.current) return;
-      const scrolled  = Math.max(0, -reelRef.current.getBoundingClientRect().top);
-      const floatIdx  = Math.min(scrolled / SCROLL_PER_ITEM, loopLen - 0.001);
-      // Center active row on the drum's actual midpoint (measured from DOM)
+      const scrolled   = Math.max(0, -reelRef.current.getBoundingClientRect().top);
+      const floatIdx   = Math.min(scrolled / SCROLL_PER_ITEM, loopLen - 0.001);
       const drumCenter = drumRef.current ? drumRef.current.offsetHeight / 2 : window.innerHeight * 0.4;
       trackRef.current.style.transform =
         `translateY(${drumCenter - floatIdx * ITEM_H - ITEM_H / 2}px)`;
-
       const newActive = Math.floor(floatIdx);
       if (newActive !== reelActiveRef.current) {
         reelActiveRef.current = newActive;
@@ -107,7 +99,7 @@ export default function MindscopePage() {
 
     const onScroll = () => { cancelAnimationFrame(rafId); rafId = requestAnimationFrame(update); };
     window.addEventListener("scroll", onScroll, { passive: true });
-    update(); // seed on mount
+    update();
     return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(rafId); };
   }, [posts.length]);
 
@@ -151,7 +143,18 @@ export default function MindscopePage() {
     });
   };
 
-  // ── GSAP animations ───────────────────────────────────────
+  const openPost = (slug: string) => {
+    sessionStorage.setItem("vt_from", "mindscope");
+    if (typeof document !== "undefined" && "startViewTransition" in document) {
+      (document as any).startViewTransition(() => {
+        startTransition(() => { router.push(`/mindscope/${slug}`); });
+      });
+    } else {
+      router.push(`/mindscope/${slug}`);
+    }
+  };
+
+  // ── GSAP page animations ──────────────────────────────────
   useGSAP(() => {
     gsap.fromTo(".ms-pill",
       { opacity: 0, y: 20, scale: 0.9 },
@@ -253,6 +256,7 @@ export default function MindscopePage() {
             style={featPost?.cover_image
               ? { background: `url(${featPost.cover_image}) center/cover no-repeat` }
               : undefined}
+            onClick={() => featPost && openPost(featPost.slug)}
           >
             {!featPost?.cover_image && <div className="ms-feat-card-dots" />}
             {!featPost?.cover_image && (
@@ -268,7 +272,7 @@ export default function MindscopePage() {
         </div>
       </section>
 
-      {/* Reel — scroll-driven color list with fixed right image */}
+      {/* Reel */}
       {posts.length > 0 && (
         <div
           ref={reelRef}
@@ -276,23 +280,17 @@ export default function MindscopePage() {
           style={{ height: `calc(${posts.length * 3 * SCROLL_PER_ITEM}px + 100vh)` }}
         >
           <div className="ms-reel-sticky" style={{ background: activeBg }}>
-
-            {/* progress indicator */}
             <div className="ms-reel-progress">
               <div
                 className="ms-reel-progress-thumb"
                 style={{ top: `${(displayIdx / Math.max(posts.length - 1, 1)) * 100}%` }}
               />
             </div>
-
-            {/* left: header + drum */}
             <div className="ms-reel-left">
               <div className="ms-reel-header">
                 <span>Date</span>
                 <span>Title</span>
               </div>
-
-              {/* drum viewport — items flow past the center trigger line */}
               <div className="ms-reel-drum" ref={drumRef}>
                 <div className="ms-reel-drum-center-line" />
                 <div className="ms-reel-drum-track" ref={trackRef}>
@@ -300,13 +298,7 @@ export default function MindscopePage() {
                     <div
                       key={`${post.id}-${Math.floor(i / posts.length)}`}
                       className={`ms-reel-item${i === reelActive ? " ms-reel-active" : ""}`}
-                      onClick={() => {
-                        if (!reelRef.current) return;
-                        window.scrollTo({
-                          top: reelRef.current.offsetTop + i * SCROLL_PER_ITEM,
-                          behavior: "smooth",
-                        });
-                      }}
+                      onClick={() => openPost(post.slug)}
                     >
                       <span className="ms-reel-date">{fmtDate(post.published_date)}</span>
                       <p className="ms-reel-title">{post.title}</p>
@@ -315,18 +307,16 @@ export default function MindscopePage() {
                 </div>
               </div>
             </div>
-
-            {/* right: image panel — all images stacked, active one fades in */}
             <div className="ms-reel-right">
               {posts.map((post, i) => (
                 <div
                   key={post.id}
                   className={`ms-reel-feat-img${i === displayIdx ? " ms-reel-feat-active" : ""}`}
-                  style={{ backgroundImage: `url(${post.cover_image})` }}
+                  style={{ backgroundImage: `url(${post.cover_image})`, cursor: "pointer" }}
+                  onClick={() => openPost(post.slug)}
                 />
               ))}
             </div>
-
           </div>
         </div>
       )}
