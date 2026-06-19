@@ -4,6 +4,7 @@ import { useRef, useLayoutEffect, startTransition } from "react";
 import { useGSAP } from "@gsap/react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
+import CoreScrollSection from "../../components/CoreScrollSection";
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 
@@ -90,6 +91,8 @@ export default function CorePage() {
   }, { scope: containerRef });
 
   return (
+    <>
+    {/* ── Hero viewport — self-contained 100vh block ── */}
     <div ref={containerRef} className="core-page">
       {/* Navigation */}
       <nav className="main-nav">
@@ -141,7 +144,7 @@ export default function CorePage() {
         </button>
       </div>
 
-      {/* Orbital SVG */}
+      {/* Orbital SVG — absolute within core-page only */}
       <div className="core-orbit-wrap">
         <svg viewBox="0 0 1213 616" fill="none" xmlns="http://www.w3.org/2000/svg" className="orbit-svg">
           <defs>
@@ -201,5 +204,9 @@ export default function CorePage() {
         </svg>
       </div>
     </div>
+
+    {/* "We are a…" scroll section — outside core-page so orbit stays anchored */}
+    <CoreScrollSection />
+    </>
   );
 }

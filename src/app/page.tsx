@@ -120,7 +120,6 @@ const AWARDS = [
 
 const COOKIE_KEY = "cminds_color";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
-const LOADER_SESSION_KEY = "cminds_loader_seen";
 
 const getColorCookie = (): string | null => {
   const match = document.cookie.match(/(?:^|;\s*)cminds_color=([^;]+)/);
