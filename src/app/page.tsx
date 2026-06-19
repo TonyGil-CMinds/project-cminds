@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, startTransition } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, startTransition } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
@@ -120,6 +120,7 @@ const AWARDS = [
 
 const COOKIE_KEY = "cminds_color";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
+const LOADER_KEY = "cminds_loader_shown";
 
 const getColorCookie = (): string | null => {
   const match = document.cookie.match(/(?:^|;\s*)cminds_color=([^;]+)/);
@@ -132,6 +133,12 @@ const setColorCookie = (hex: string) => {
 
 export default function Hero() {
   const [loaderDone, setLoaderDone] = useState(false);
+
+  // Skip the loader on every visit after the first.
+  // useLayoutEffect fires before the browser paints, so the user never sees a flash.
+  useLayoutEffect(() => {
+    if (localStorage.getItem(LOADER_KEY) === "1") setLoaderDone(true);
+  }, []);
   const [step, setStep] = useState(1);
   const [color, setColor] = useState(COLORS[0]);
   const [currentWord, setCurrentWord] = useState(CYCLING_WORDS[0]);
@@ -677,6 +684,7 @@ export default function Hero() {
   };
 
   const handleLoaderDone = () => {
+    localStorage.setItem(LOADER_KEY, "1");
     setLoaderDone(true);
   };
 

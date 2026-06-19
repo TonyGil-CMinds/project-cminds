@@ -241,6 +241,57 @@ export default function CorePage() {
         <div ref={globalDotRef}  className="cs-progress-dot"  style={{ top: "calc(0% - 10px)" }} />
       </div>
     </div>
+
+    <footer className="site-footer">
+      <div className="footer-cta">
+        <h2>Bold &amp; Meaningful<br />Transformations</h2>
+        <button className="footer-cta-btn">Contact us</button>
+      </div>
+
+      <div className="footer-main">
+        <div className="footer-brand-block">
+          <img src="/logo.svg" alt="C Minds" className="footer-logo" />
+          <p className="footer-copy desktop-copy">© 2025 C Minds All rights reserved.</p>
+        </div>
+
+        <div className="footer-column footer-site-map">
+          <h3>SITE MAP</h3>
+          <a style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/")}>Home</a>
+          <a style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/mindscope")}>Mindscope</a>
+          <a style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/careers")}>Careers</a>
+        </div>
+
+        <div className="footer-column footer-resources">
+          <h3>RESOURCES</h3>
+          <a href="#terms">Terms &amp; conditions</a>
+          <a href="#privacy">Privacy policy</a>
+          <a href="#ethics">Code of ethics</a>
+        </div>
+
+        <div className="footer-join">
+          <h3>JOIN US</h3>
+          <form className="footer-form">
+            <label className="sr-only" htmlFor="core-footer-email">Email</label>
+            <input id="core-footer-email" type="email" placeholder="I name@email.com" />
+            <button type="submit">Suscribe</button>
+          </form>
+
+          <div className="footer-socials" aria-label="Social links">
+            <a href="#linkedin" aria-label="LinkedIn">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.7 8.6h3v9h-3v-9Zm1.5-4.2c1 0 1.7.7 1.7 1.6s-.7 1.6-1.7 1.6S6.5 6.9 6.5 6s.7-1.6 1.7-1.6Zm3.2 4.2h2.9v1.2h.1c.4-.7 1.3-1.4 2.7-1.4 2.9 0 3.4 1.9 3.4 4.3v4.9h-3v-4.4c0-1 0-2.4-1.5-2.4s-1.7 1.1-1.7 2.3v4.5h-3v-9Z" /></svg>
+            </a>
+            <a href="#instagram" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069ZM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0Zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881Z" /></svg>
+            </a>
+            <a href="#x" aria-label="X / Twitter">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.738l7.726-8.84L1.254 2.25H8.08l4.261 5.636 5.903-5.636Zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+            </a>
+          </div>
+        </div>
+
+        <p className="footer-copy mobile-copy">© 2025 C Minds All rights reserved.</p>
+      </div>
+    </footer>
 </>
   );
 }
