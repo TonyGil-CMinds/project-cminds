@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Loader from "../components/Loader";
+import HexLoader from "../components/HexLoader";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -147,12 +147,8 @@ export default function Hero() {
   const hwwAnimatingRef = useRef(false);
   const awardCardRefs = useRef<(HTMLElement | null)[]>([]);
 
-  // Skip onboarding if user already chose a color
+  // Restore color preference; loader always plays on every page load
   useEffect(() => {
-    if (window.sessionStorage.getItem(LOADER_SESSION_KEY) === "1") {
-      setLoaderDone(true);
-    }
-
     const saved = getColorCookie();
     if (saved && COLORS.includes(saved)) {
       setColor(saved);
@@ -682,13 +678,12 @@ export default function Hero() {
   };
 
   const handleLoaderDone = () => {
-    window.sessionStorage.setItem(LOADER_SESSION_KEY, "1");
     setLoaderDone(true);
   };
 
   return (
     <>
-    {!loaderDone && <Loader onDone={handleLoaderDone} />}
+    {!loaderDone && <HexLoader onComplete={handleLoaderDone} />}
     <main ref={container} className={`page-container${step === 3 ? " is-scrollable" : ""}`}>
       {/* Background elements visible overall */}
       <div className="bg-glow"></div>
