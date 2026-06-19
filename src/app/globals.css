@@ -3014,6 +3014,108 @@ body {
   box-shadow: 0 0 18px rgba(var(--color-primary-rgb), 0.9);
 }
 
+/* ---- Manifesto Section ---- */
+
+.mf-section {
+  position: relative;
+}
+
+.mf-pin {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background: #030e1c;
+}
+
+/* Atmospheric spotlight — uses user's color preference */
+.mf-spotlight {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% -2%,
+      rgba(255, 255, 255, 0.10) 0%,
+      rgba(var(--color-primary-rgb), 0.38) 18%,
+      rgba(var(--color-primary-rgb), 0.18) 42%,
+      transparent 68%
+    );
+  pointer-events: none;
+}
+
+/* Pill label top-left */
+.mf-label {
+  position: absolute;
+  top: clamp(2rem, 5vh, 3.5rem);
+  left: clamp(2.5rem, 7vw, 6rem);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.50);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+/* Quote container — left+right gives it real width (max-width alone collapses it) */
+.mf-quotes-wrap {
+  position: absolute;
+  top: 50%;
+  left: 32%;
+  right: 3rem;
+  transform: translateY(-58%);
+  min-height: clamp(12rem, 30vh, 22rem);
+}
+
+.mf-quote {
+  position: absolute;
+  inset: 0;
+  font-size: clamp(2.4rem, 4.2vw, 4.2rem);
+  font-weight: 700;
+  line-height: 1.28;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+}
+
+/* Each word is inline-block; margin-right provides inter-word spacing
+   (space text-nodes inside inline-block collapse, so we use margin instead) */
+.mf-word {
+  display: inline-block;
+  margin-right: 0.28em;
+  color: #ffffff;
+  will-change: opacity, transform, filter;
+}
+
+/* Odometer counter — bottom left */
+.mf-counter {
+  position: absolute;
+  bottom: clamp(2.5rem, 6vh, 5rem);
+  left: clamp(2.5rem, 7vw, 6rem);
+  display: flex;
+  align-items: baseline;
+  line-height: 1;
+}
+
+.mf-digit-wrap {
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+}
+
+.mf-digit-tens,
+.mf-digit-units {
+  display: block;
+  font-size: clamp(3.5rem, 7vw, 6.5rem);
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 1;
+  will-change: transform, opacity;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0.03) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 /* ---- Core Scroll Section ---- */
 
 .cs-section {
@@ -3151,6 +3253,19 @@ body {
   box-shadow:
     0 0 0 1px rgba(var(--color-primary-rgb), 0.5),
     0 0 10px 3px rgba(var(--color-primary-rgb), 0.5);
+}
+
+/* ---- Combined scroll-sections progress (fixed, shared by CoreScroll + Manifesto) ---- */
+
+.combined-progress {
+  position: fixed;
+  right: 1.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
 }
 
 /* ---- Hex Loader ---- */

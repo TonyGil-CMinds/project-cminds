@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, useLayoutEffect, startTransition } from "react";
+import { useRef, useLayoutEffect, useCallback, startTransition } from "react";
 import { useGSAP } from "@gsap/react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import CoreScrollSection from "../../components/CoreScrollSection";
+import ManifestoSection  from "../../components/ManifestoSection";
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 
@@ -15,10 +16,33 @@ function hexToRgb(hex: string) {
 
 
 export default function CorePage() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const coreItemRef = useRef<HTMLDivElement>(null);
-  const navLightRef = useRef<HTMLDivElement>(null);
+  const containerRef   = useRef<HTMLDivElement>(null);
+  const coreItemRef    = useRef<HTMLDivElement>(null);
+  const navLightRef    = useRef<HTMLDivElement>(null);
+  const scrollWrapRef  = useRef<HTMLDivElement>(null);
+  const globalProgRef  = useRef<HTMLDivElement>(null);
+  const globalFillRef  = useRef<HTMLDivElement>(null);
+  const globalDotRef   = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  // Combined progress indicator driven by callbacks from child sections.
+  // CoreScrollSection spans 3 scroll-units, ManifestoSection spans 4 (total = 7).
+  // Each section reports its own 0→1 progress; we map them to a shared 0→1 range.
+  const handleScrollProgress = useCallback(
+    (p: number, section: "core-scroll" | "manifesto") => {
+      const fill = globalFillRef.current;
+      const dot  = globalDotRef.current;
+      const prog = globalProgRef.current;
+      if (!fill || !dot || !prog) return;
+
+      const gp = section === "core-scroll" ? p * (3 / 7) : (3 / 7) + p * (4 / 7);
+
+      fill.style.height  = `${gp * 100}%`;
+      dot.style.top      = `calc(${gp * 100}% - 10px)`;
+      prog.style.opacity = gp > 0.005 ? "1" : "0";
+    },
+    []
+  );
 
   // Apply color from cookie + position nav indicator — both before first paint
   useLayoutEffect(() => {
@@ -205,8 +229,18 @@ export default function CorePage() {
       </div>
     </div>
 
-    {/* "We are a…" scroll section — outside core-page so orbit stays anchored */}
-    <CoreScrollSection />
-    </>
+    <div ref={scrollWrapRef}>
+      <CoreScrollSection onScrollProgress={handleScrollProgress} />
+      <ManifestoSection  onScrollProgress={handleScrollProgress} />
+    </div>
+
+    {/* Single fixed progress indicator for both scroll sections */}
+    <div ref={globalProgRef} className="combined-progress">
+      <div className="cs-progress-track">
+        <div ref={globalFillRef} className="cs-progress-fill" style={{ height: "0%" }} />
+        <div ref={globalDotRef}  className="cs-progress-dot"  style={{ top: "calc(0% - 10px)" }} />
+      </div>
+    </div>
+</>
   );
 }

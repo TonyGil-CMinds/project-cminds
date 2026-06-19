@@ -88,12 +88,14 @@ function makeGlowSprite(hexColor: string): THREE.Sprite {
   return sprite;
 }
 
-export default function CoreScrollSection() {
+interface Props {
+  onScrollProgress?: (p: number, section: "core-scroll" | "manifesto") => void;
+}
+
+export default function CoreScrollSection({ onScrollProgress }: Props) {
   const sectionRef   = useRef<HTMLElement>(null);
   const pinRef       = useRef<HTMLDivElement>(null);
   const cvRef        = useRef<HTMLCanvasElement>(null);
-  const progFillRef  = useRef<HTMLDivElement>(null);
-  const progDotRef   = useRef<HTMLDivElement>(null);
   const phraseRefs   = useRef<(HTMLSpanElement | null)[]>([null, null, null]);
   const paraRefs     = useRef<(HTMLParagraphElement | null)[]>([null, null, null]);
   const lastPhaseRef = useRef(0);
@@ -155,6 +157,23 @@ export default function CoreScrollSection() {
     function transitionPhrase(from: number, to: number) {
       const isForward = to > from;
 
+      // Kill any running tweens on all phrases before starting new ones.
+      // This prevents stacking when the user scrubs back and forth quickly.
+      phraseRefs.current.forEach((el, i) => {
+        if (!el) return;
+        const words = el.querySelectorAll<HTMLSpanElement>(".cs-pw");
+        gsap.killTweensOf(words);
+        // Reset any phrase that is neither source nor target to fully hidden
+        if (i !== from && i !== to) {
+          gsap.set(words, { opacity: 0, y: 0, filter: "blur(12px)" });
+        }
+      });
+      paraRefs.current.forEach((el, i) => {
+        if (!el) return;
+        gsap.killTweensOf(el);
+        if (i !== from && i !== to) gsap.set(el, { opacity: 0, filter: "blur(8px)" });
+      });
+
       const oldEl = phraseRefs.current[from];
       if (oldEl) {
         const words = oldEl.querySelectorAll<HTMLSpanElement>(".cs-pw");
@@ -189,8 +208,7 @@ export default function CoreScrollSection() {
 
     // ── Scroll callback ───────────────────────────────────────────
     function onScrollUpdate(p: number) {
-      if (progFillRef.current) progFillRef.current.style.height = `${p * 100}%`;
-      if (progDotRef.current)  progDotRef.current.style.top     = `calc(${p * 100}% - 10px)`;
+      onScrollProgress?.(p, "core-scroll");
 
       let fromIdx: number, toIdx: number, morphP: number;
       if      (p < 0.28) { fromIdx = 0; toIdx = 0; morphP = 0; }
@@ -267,13 +285,6 @@ export default function CoreScrollSection() {
               {text}
             </p>
           ))}
-        </div>
-
-        <div className="cs-progress">
-          <div className="cs-progress-track">
-            <div ref={progFillRef} className="cs-progress-fill" style={{ height: "0%" }} />
-            <div ref={progDotRef}  className="cs-progress-dot"  style={{ top: "calc(0% - 10px)" }} />
-          </div>
         </div>
 
       </div>
