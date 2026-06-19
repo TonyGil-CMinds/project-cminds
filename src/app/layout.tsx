@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import ConstructionBanner from "../components/ConstructionBanner";
 
 const satoshi = localFont({
   src: [
@@ -47,6 +48,7 @@ export default function RootLayout({
     <html lang="en" className={`${satoshi.variable} h-full antialiased`}>
       <body className={`${satoshi.className} min-h-full flex flex-col`}>
         {children}
+        <ConstructionBanner />
       </body>
     </html>
   );

@@ -3268,6 +3268,78 @@ body {
   pointer-events: none;
 }
 
+/* ---- Construction Banner ---- */
+
+.cb-wrap {
+  position: fixed;
+  bottom: 1.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.75rem 1.1rem 0.75rem 1rem;
+  max-width: min(680px, calc(100vw - 2rem));
+  width: max-content;
+  border-radius: 15px;
+  background: rgba(10, 12, 28, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  pointer-events: all;
+}
+
+.cb-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  color: var(--color-primary);
+  filter: drop-shadow(0 0 5px rgba(var(--color-primary-rgb), 0.5));
+}
+
+.cb-text {
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.60);
+  margin: 0;
+  white-space: normal;
+}
+
+.cb-text strong {
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 600;
+}
+
+.cb-close {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.50);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  padding: 0;
+}
+
+.cb-close:hover {
+  background: rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.90);
+}
+
+.cb-close svg {
+  width: 10px;
+  height: 10px;
+}
+
 /* ---- Hex Loader ---- */
 
 .hex-loader-wrap {
