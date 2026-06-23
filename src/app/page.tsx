@@ -15,6 +15,11 @@ const LaserFlow = dynamic(() => import("../../components/reactbits/LaserFlow"), 
   loading: () => null,
 });
 
+const FluidGlass = dynamic(() => import("../../components/reactbits/FluidGlass"), {
+  ssr: false,
+  loading: () => null,
+});
+
 
 const hexToRgb = (hex: string) => {
   const bigint = parseInt(hex.slice(1), 16);
@@ -187,6 +192,7 @@ export default function Hero() {
   // Nav state
   const [activeNav, setActiveNav] = useState(0);
   const [hoverNav, setHoverNav] = useState<number | null>(null);
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
   const navRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -909,12 +915,19 @@ export default function Hero() {
                 <div
                   key={item.id}
                   className="initiative-card"
+                  onMouseEnter={() => setHoveredCard(item.id)}
+                  onMouseLeave={() => setHoveredCard(null)}
                 >
                   <div
                     className="initiative-bg"
                     style={{ backgroundImage: `url(${item.image})` }}
                   />
                   <div className="initiative-overlay" />
+                  {hoveredCard === item.id && (
+                    <div className="initiative-glass-overlay">
+                      <FluidGlass lensProps={{ scale: 0.22, ior: 1.18, thickness: 5, chromaticAberration: 0.08, imageUrl: item.image }} />
+                    </div>
+                  )}
                   <div className="initiative-content">
                     <div className="initiative-pills">
                       {item.pills.map((pill) => (

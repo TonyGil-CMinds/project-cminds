@@ -7,6 +7,7 @@ import gsap from "gsap";
 import CoreScrollSection from "../../components/CoreScrollSection";
 import ManifestoSection  from "../../components/ManifestoSection";
 import GuidanceSection   from "../../components/GuidanceSection";
+import ConstanzaSection  from "../../components/ConstanzaSection";
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 
@@ -244,6 +245,7 @@ export default function CorePage() {
     </div>
 
     <GuidanceSection />
+    <ConstanzaSection />
 
     <footer className="site-footer">
       <div className="footer-cta">
