@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import CoreScrollSection from "../../components/CoreScrollSection";
 import ManifestoSection  from "../../components/ManifestoSection";
+import GuidanceSection   from "../../components/GuidanceSection";
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 
@@ -241,6 +242,8 @@ export default function CorePage() {
         <div ref={globalDotRef}  className="cs-progress-dot"  style={{ top: "calc(0% - 10px)" }} />
       </div>
     </div>
+
+    <GuidanceSection />
 
     <footer className="site-footer">
       <div className="footer-cta">

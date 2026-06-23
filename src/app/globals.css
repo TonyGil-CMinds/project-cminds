@@ -3255,6 +3255,67 @@ body {
     0 0 10px 3px rgba(var(--color-primary-rgb), 0.5);
 }
 
+/* ---- Guidance Section ---- */
+
+.gd-section {
+  background: var(--color-bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 0 clamp(2.5rem, 8vw, 9rem);
+}
+
+.gd-inner {
+  display: flex;
+  align-items: center;
+  gap: clamp(3rem, 7vw, 8rem);
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Stack wrapper — fixed intrinsic size so Stack fills it properly */
+.gd-stack-wrap {
+  flex-shrink: 0;
+  width: clamp(260px, 32vw, 420px);
+  height: clamp(260px, 32vw, 420px);
+}
+
+.gd-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.gd-heading {
+  font-size: clamp(2.8rem, 5.5vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+  margin: 0 0 1.8rem;
+}
+
+.gd-line {
+  display: inline-block;
+  padding-bottom: 0.12em;
+  will-change: opacity, transform, filter;
+}
+
+.gd-gradient {
+  background: linear-gradient(130deg, #ffffff 20%, var(--color-primary) 110%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gd-body {
+  font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+  line-height: 1.7;
+  color: var(--color-text-dim);
+  max-width: 44ch;
+  margin: 0;
+}
+
 /* ---- Combined scroll-sections progress (fixed, shared by CoreScroll + Manifesto) ---- */
 
 .combined-progress {
@@ -3270,27 +3331,33 @@ body {
 
 /* ---- Construction Banner ---- */
 
-.cb-wrap {
+.cb-shell {
   position: fixed;
   bottom: 1.8rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 9000;
+  max-width: min(680px, calc(100vw - 2rem));
+  width: max-content;
+  pointer-events: all;
+  /* entrance animation driven by GSAP — starts opacity:0 via inline style */
+}
+
+.cb-border-glow {
+  width: 100%;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.cb-panel {
   display: flex;
   align-items: center;
   gap: 0.85rem;
   padding: 0.75rem 1.1rem 0.75rem 1rem;
-  max-width: min(680px, calc(100vw - 2rem));
-  width: max-content;
   border-radius: 15px;
-  background: rgba(10, 12, 28, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.45),
     inset 0 1px 0 rgba(255, 255, 255, 0.06);
-  pointer-events: all;
 }
 
 .cb-icon {
