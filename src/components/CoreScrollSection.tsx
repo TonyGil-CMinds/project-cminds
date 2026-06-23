@@ -84,7 +84,7 @@ function makeGlowSprite(hexColor: string): THREE.Sprite {
   const tex  = new THREE.CanvasTexture(cv);
   const mat  = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
   const sprite = new THREE.Sprite(mat);
-  sprite.scale.set(700, 700, 1);
+  sprite.scale.set(460, 460, 1);
   return sprite;
 }
 

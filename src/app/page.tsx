@@ -413,6 +413,19 @@ export default function Hero() {
       gsap.fromTo(".laser-container", { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 2, ease: "power3.out", delay: 0.5 });
       gsap.fromTo(".orbit-bg", { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: 2, ease: "power2.out", delay: 0.3 });
 
+      // Orbit shrinks and fades as user scrolls away from hero
+      gsap.to(".orbit-bg", {
+        scale: 0.5,
+        opacity: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: ".hero-section",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+        },
+      });
+
       // Core section — ScrollTrigger (window scroller)
       gsap.fromTo(".core-title",
         { opacity: 0, y: 80, filter: "blur(18px)" },
