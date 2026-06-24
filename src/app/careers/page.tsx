@@ -4,6 +4,7 @@ import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "r
 import { useGSAP } from "@gsap/react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
+import SideRays from "../../../components/reactbits/SideRays";
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 
@@ -19,6 +20,7 @@ export default function CareersPage() {
   const navLightRef   = useRef<HTMLDivElement>(null);
   const [hoverNav, setHoverNav]             = useState<number | null>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
+  const [primaryColor, setPrimaryColor]     = useState('#5EC1F3');
   const router        = useRouter();
 
   useLayoutEffect(() => {
@@ -28,6 +30,7 @@ export default function CareersPage() {
       if (VALID_COLORS.includes(hex)) {
         document.documentElement.style.setProperty("--color-primary", hex);
         document.documentElement.style.setProperty("--color-primary-rgb", hexToRgb(hex));
+        setPrimaryColor(hex);
       }
     }
   }, []);
@@ -108,6 +111,22 @@ export default function CareersPage() {
 
       {/* Hero */}
       <section className="careers-hero">
+        {/* SideRays ambient light */}
+        <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
+          <SideRays
+            speed={2.5}
+            rayColor1={primaryColor}
+            rayColor2="#96c8ff"
+            intensity={2}
+            spread={2}
+            origin="top-right"
+            tilt={0}
+            saturation={1.5}
+            blend={0.75}
+            falloff={1.6}
+            opacity={1.0}
+          />
+        </div>
         <div className="careers-hero-inner">
 
 

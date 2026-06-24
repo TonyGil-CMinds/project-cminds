@@ -11,6 +11,7 @@ import ManifestoSection  from "../../components/ManifestoSection";
 import GuidanceSection   from "../../components/GuidanceSection";
 import CoreTeamSection   from "../../components/CoreTeamSection";
 import ConstanzaSection  from "../../components/ConstanzaSection";
+import SideRays          from "../../../components/reactbits/SideRays";
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 
@@ -31,6 +32,7 @@ export default function CorePage() {
   const globalFillRef  = useRef<HTMLDivElement>(null);
   const globalDotRef   = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const [primaryColor, setPrimaryColor] = useState('#5EC1F3');
 
   // Combined progress indicator driven by callbacks from child sections.
   // CoreScrollSection spans 3 scroll-units, ManifestoSection spans 4 (total = 7).
@@ -59,6 +61,7 @@ export default function CorePage() {
       if (VALID_COLORS.includes(hex)) {
         document.documentElement.style.setProperty("--color-primary", hex);
         document.documentElement.style.setProperty("--color-primary-rgb", hexToRgb(hex));
+        setPrimaryColor(hex);
       }
     }
   }, []);
@@ -136,6 +139,22 @@ export default function CorePage() {
     <>
     {/* ── Hero viewport — self-contained 100vh block ── */}
     <div ref={containerRef} className="core-page">
+      {/* SideRays ambient light */}
+      <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0, overflow: 'hidden' }}>
+        <SideRays
+          speed={2.5}
+          rayColor1={primaryColor}
+          rayColor2="#96c8ff"
+          intensity={2}
+          spread={2}
+          origin="top-right"
+          tilt={0}
+          saturation={1.5}
+          blend={0.75}
+          falloff={1.6}
+          opacity={1.0}
+        />
+      </div>
       {/* Navigation */}
       <nav className="main-nav">
         <div className="nav-brand" style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/")}>
