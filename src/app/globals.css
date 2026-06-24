@@ -1567,7 +1567,7 @@ body {
   fill: currentColor;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .nav-menu {
     display: none;
   }
@@ -3950,4 +3950,403 @@ body {
     right: 0.8rem;
     width: clamp(160px, 55vw, 220px);
   }
+}
+
+/* ═══════════════════════════════════════════════ MOBILE MENU */
+
+/* Hide desktop nav bars on mobile/tablet */
+@media (max-width: 1024px) {
+  .main-nav { display: none !important; }
+}
+
+/* Fixed top header — mobile only, contains logo + burger ── */
+.mm-header {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2147483647; /* maximum — guaranteed above all page content */
+  height: 88px;
+  padding: 0 16px 0 20px;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(4, 3, 20, 0.72);
+  backdrop-filter: blur(28px) saturate(1.4);
+  -webkit-backdrop-filter: blur(28px) saturate(1.4);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+@media (max-width: 1024px) {
+  .mm-header { display: flex; }
+}
+
+/* Logo */
+.mm-logo-wrap {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Hamburger button — sits inside mm-header ── */
+.mm-burger {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: white;
+  flex-shrink: 0;
+  flex-grow: 0;
+  opacity: 1 !important;
+  visibility: visible !important;
+  -webkit-tap-highlight-color: transparent;
+  z-index: 1;
+}
+
+/* SVG hamburger icon */
+.mm-icon-svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* SVG lines — hamburger → X morph */
+.mm-line {
+  transition: transform 0.35s ease-in-out, opacity 0.15s ease-in-out;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* X state: top line rotates 45°, middle fades, bottom rotates -45° */
+.mm-burger--open .mm-line-1 { transform: translateY(5px) rotate(45deg); }
+.mm-burger--open .mm-line-2 { opacity: 0; }
+.mm-burger--open .mm-line-3 { transform: translateY(-5px) rotate(-45deg); }
+
+/* Red notification dot */
+.mm-dot-badge {
+  position: absolute;
+  top: 9px;
+  right: 8px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #ef4444;
+  pointer-events: none;
+}
+
+/* ── Full-screen overlay ── */
+.mm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9901;
+  background: var(--color-bg);
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* display controlled by GSAP */
+}
+
+/* Overlay top spacer: mirrors the fixed header height + logo */
+.mm-overlay-spacer {
+  height: 88px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  flex-shrink: 0;
+}
+
+.mm-content {
+  padding: 28px 24px 48px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* "Where to?" label */
+.mm-where {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+}
+
+/* Nav columns */
+.mm-nav-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 20px;
+}
+
+.mm-nav-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mm-nav-item {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.9);
+  font-family: var(--font-satoshi, inherit);
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-align: left;
+  padding: 10px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.15;
+  -webkit-tap-highlight-color: transparent;
+  transition: color 0.2s ease;
+}
+
+.mm-nav-item { color: rgba(255,255,255,0.28); }
+
+.mm-nav-item--active { color: rgba(255,255,255,0.92); }
+
+.mm-nav-item:active { color: var(--color-primary); }
+
+.mm-item-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ef4444;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+/* Featured initiatives */
+.mm-feat-block {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mm-feat-label {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-dim);
+}
+
+.mm-feat-card {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+}
+
+.mm-feat-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mm-feat-overlay {
+  position: absolute;
+  inset: 0;
+  padding: 14px 16px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 55%);
+}
+
+.mm-feat-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.92);
+  letter-spacing: -0.01em;
+}
+
+.mm-feat-pill {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+.mm-feat-see-all {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--color-text-dim);
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.mm-feat-see-all:hover,
+.mm-feat-see-all:active {
+  color: var(--color-primary);
+}
+
+/* Social row */
+.mm-bottom {
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.mm-social {
+  color: var(--color-text-dim);
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mm-social:active {
+  color: white;
+}
+
+/* ═══════════════════════════════════════════════ CORE PAGE — RESPONSIVE FIXES
+   Prevents horizontal overflow on mobile/tablet (≤ 1024px).
+   Desktop layout is unchanged. ─────────────────────────────────────────── */
+
+/* iOS Safari doesn't respect overflow-x:hidden on body alone */
+html {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+@media (max-width: 1024px) {
+
+  /* ── Hero ───────────────────────────────────────────────── */
+  .core-orbit-wrap {
+    /* SVG extends beyond viewport; clip it from the parent (.core-page already
+       has overflow:hidden) — this rule ensures it doesn't force body width */
+    max-width: 100vw;
+  }
+
+  /* ── Core Scroll Section ────────────────────────────────── */
+  .cs-section { overflow: hidden; }
+
+  .cs-left {
+    left: clamp(1.2rem, 4vw, 2.5rem);
+    width: calc(100% - clamp(1.2rem, 4vw, 2.5rem) * 2);
+  }
+
+  .cs-static,
+  .cs-phrase-wrap {
+    font-size: clamp(2rem, 6.5vw, 3.5rem);
+  }
+
+  /* Allow phrase text to wrap on narrow screens */
+  .cs-phrase { white-space: normal; }
+  .cs-phrase-wrap { height: auto; min-height: 1.12em; overflow: visible; }
+
+  /* Canvas is heavy and overflows at small sizes — hide on mobile */
+  .cs-canvas-wrap { display: none; }
+
+  .cs-para-wrap {
+    left: clamp(1.2rem, 4vw, 2.5rem);
+    right: clamp(1.2rem, 4vw, 2.5rem);
+  }
+
+  .cs-progress { display: none; }
+
+  /* ── Manifesto Section ──────────────────────────────────── */
+  .mf-section { overflow: hidden; }
+
+  /* Replace the fixed 32% left offset with padding-based positioning */
+  .mf-quotes-wrap {
+    left: 1.4rem;
+    right: 1.4rem;
+  }
+
+  .mf-quote { font-size: clamp(1.8rem, 5.5vw, 3rem); }
+
+  /* ── Guidance Section ───────────────────────────────────── */
+  .gd-section {
+    padding: 3.5rem 1.4rem;
+    min-height: auto;
+    position: relative;
+  }
+
+  .gd-inner {
+    flex-direction: column;
+    align-items: center;
+    gap: 2rem;
+  }
+
+  .gd-stack-wrap {
+    width: clamp(200px, 72vw, 320px);
+    height: clamp(200px, 72vw, 320px);
+  }
+
+  .gd-heading { font-size: clamp(2rem, 7vw, 3.2rem); }
+  .gd-body { max-width: 100%; }
+
+  /* ── Constanza Section ──────────────────────────────────── */
+  .cz-section {
+    height: auto;
+    min-height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Stack left text + slider vertically */
+  .cz-top {
+    flex-direction: column;
+    height: auto;
+    padding: 5rem 1.4rem 3rem;
+    gap: 2.5rem;
+    align-items: flex-start;
+  }
+
+  .cz-left {
+    width: 100%;
+    height: auto;
+    min-width: 0;
+  }
+
+  .cz-slider {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Large decorative photo overflows on mobile — hide it */
+  .cz-photo { display: none; }
+
+  /* ── Core Team Section ──────────────────────────────────── */
+  .ct-section { overflow: hidden; }
+
+  .ct-left {
+    left: 1.4rem;
+    right: 1.4rem;
+    width: auto;
+    height: auto;
+    transform: translateY(-50%);
+  }
+
+  .ct-heading { font-size: clamp(2rem, 6.5vw, 3.2rem); }
+  .ct-sub { font-size: 1.4rem; }
+
+  .ct-info {
+    right: 1rem;
+    width: clamp(150px, 36vw, 240px);
+  }
+
+  .ct-name { font-size: clamp(1.5rem, 5vw, 2.4rem); }
 }
