@@ -4004,6 +4004,7 @@ body {
   backdrop-filter: blur(28px) saturate(1.4);
   -webkit-backdrop-filter: blur(10px) saturate(1.4);
   border-bottom: 1px solid rgba(255,255,255,0.08);
+  will-change: transform, opacity;
 }
 
 @media (max-width: 1024px) {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useCallback, startTransition } from "react";
+import { useRef, useState, useCallback, useEffect, startTransition } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import gsap from "gsap";
 
@@ -10,12 +10,41 @@ export default function MobileMenu() {
   const overlayRef  = useRef<HTMLDivElement>(null);
   const btnRef      = useRef<HTMLButtonElement>(null);
   const contentRef  = useRef<HTMLDivElement>(null);
+  const headerRef   = useRef<HTMLElement>(null);
+  const hiddenRef   = useRef(false);
   const router      = useRouter();
+
+  // ── Auto-hide when scrolled past hero ─────────────────────────
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+
+    const onScroll = () => {
+      const past = window.scrollY > window.innerHeight * 0.85;
+      if (past === hiddenRef.current) return;
+      hiddenRef.current = past;
+      if (past) {
+        gsap.to(header, { yPercent: -110, opacity: 0, duration: 0.4, ease: "power2.inOut" });
+      } else {
+        gsap.to(header, { yPercent: 0, opacity: 1, duration: 0.5, ease: "power3.out" });
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const openMenu = useCallback(() => {
     const btn     = btnRef.current;
     const overlay = overlayRef.current;
+    const header  = headerRef.current;
     if (!btn || !overlay) return;
+
+    // Restore header so burger stays accessible while overlay is open
+    if (hiddenRef.current && header) {
+      gsap.to(header, { yPercent: 0, opacity: 1, duration: 0.3, ease: "power3.out" });
+      hiddenRef.current = false;
+    }
 
     const rect = btn.getBoundingClientRect();
     const cx = rect.left + rect.width  / 2;
@@ -66,6 +95,13 @@ export default function MobileMenu() {
         gsap.set(overlay, { display: "none" });
         setOpen(false);
         document.body.style.overflow = "";
+
+        // Re-hide header if user is still scrolled past the hero
+        const header = headerRef.current;
+        if (header && window.scrollY > window.innerHeight * 0.85) {
+          gsap.to(header, { yPercent: -110, opacity: 0, duration: 0.4, ease: "power2.inOut" });
+          hiddenRef.current = true;
+        }
       },
     });
   }, []);
@@ -87,7 +123,7 @@ export default function MobileMenu() {
   return (
     <>
       {/* ── Mobile header: logo + burger together ─────────────── */}
-      <header className="mm-header">
+      <header ref={headerRef} className="mm-header">
         <div className="mm-logo-wrap" onClick={() => navigate("/")}>
           <img src="/logo.svg" alt="C Minds" width={80} height={80} />
         </div>
