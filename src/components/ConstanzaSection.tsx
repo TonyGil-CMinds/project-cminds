@@ -109,7 +109,7 @@ export default function ConstanzaSection() {
         <div className="cz-left">
           <div className="cz-left-head">
             <h2 className="cz-name" style={{ opacity: 0 }}>Constanza<br />Gómez Mont</h2>
-            <p className="cz-founder-title" style={{ opacity: 0 }}>Founder</p>
+            <p className="cz-founder-title" style={{ opacity: 0 }}>Founder and Chief Executive Officer</p>
           </div>
           <p className="cz-bio" style={{ opacity: 0 }}>
             Founder & CEO of C Minds, AI ethics strategist, and social entrepreneur advancing responsible technology and AI for good in emerging economies.
