@@ -4203,72 +4203,71 @@ body {
 .cb-shell {
   position: fixed;
   bottom: 1.8rem;
-  left: 50%;
-  transform: translateX(-50%);
+  right: 2rem;
   z-index: 9000;
-  max-width: min(680px, calc(100vw - 2rem));
-  width: max-content;
+  width: 268px;
   pointer-events: all;
-  /* entrance animation driven by GSAP — starts opacity:0 via inline style */
 }
 
 .cb-border-glow {
   width: 100%;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
 
 .cb-panel {
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.85rem;
-  padding: 0.75rem 1.1rem 0.75rem 1rem;
-  border-radius: 15px;
-  box-shadow:
-    0 8px 32px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  gap: 1rem;
+  padding: 1.6rem 1.4rem 1.5rem;
+  text-align: center;
 }
 
 .cb-icon {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  color: var(--color-primary);
-  filter: drop-shadow(0 0 5px rgba(var(--color-primary-rgb), 0.5));
+  height: 54px;
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 4px 18px rgba(227, 19, 82, 0.55));
 }
 
 .cb-text {
-  font-size: 0.76rem;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.60);
+  font-size: 0.775rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.55);
   margin: 0;
-  white-space: normal;
 }
 
 .cb-text strong {
-  color: rgba(255, 255, 255, 0.88);
+  display: block;
+  margin-bottom: 0.3rem;
+  color: rgba(255, 255, 255, 0.90);
   font-weight: 600;
+  font-size: 0.85rem;
 }
 
 .cb-close {
-  flex-shrink: 0;
+  position: absolute;
+  top: 0.65rem;
+  right: 0.65rem;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.50);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: rgba(255, 255, 255, 0.40);
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
   padding: 0;
 }
 
 .cb-close:hover {
-  background: rgba(255, 255, 255, 0.14);
-  color: rgba(255, 255, 255, 0.90);
+  background: rgba(255, 255, 255, 0.13);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .cb-close svg {
