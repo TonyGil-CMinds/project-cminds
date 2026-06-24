@@ -1567,6 +1567,7 @@ body {
   fill: currentColor;
 }
 
+/* Nav items hidden on mobile/tablet — burger menu takes over */
 @media (max-width: 1024px) {
   .nav-menu {
     display: none;
@@ -1580,7 +1581,10 @@ body {
     top: 1rem;
     padding: 0 1.2rem;
   }
+}
 
+/* Home page content responsive adjustments — phones only */
+@media (max-width: 768px) {
   .bold-text {
     white-space: normal;
     width: 90vw;
@@ -4224,12 +4228,6 @@ body {
 /* ═══════════════════════════════════════════════ CORE PAGE — RESPONSIVE FIXES
    Prevents horizontal overflow on mobile/tablet (≤ 1024px).
    Desktop layout is unchanged. ─────────────────────────────────────────── */
-
-/* iOS Safari doesn't respect overflow-x:hidden on body alone */
-html {
-  overflow-x: hidden;
-  max-width: 100%;
-}
 
 @media (max-width: 1024px) {
 
