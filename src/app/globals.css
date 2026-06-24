@@ -2173,7 +2173,12 @@ body {
 
   .core-hero-content {
     padding: 0 1.4rem;
-    margin-top: 14vh;
+    margin-top: 28vh;
+  }
+
+  .core-para-text {
+    font-size: clamp(0.95rem, 3.8vw, 1.05rem);
+    margin-bottom: 2.2rem;
   }
 }
 
@@ -3373,6 +3378,10 @@ body {
   -webkit-user-drag: none;
 }
 
+.ct-card-mobile-overlay {
+  display: none;
+}
+
 /* Left text block */
 .ct-left {
   position: absolute;
@@ -3554,7 +3563,7 @@ body {
   z-index: 2;
   height: 100vh;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: flex-start;
   padding: 22vh clamp(2.5rem, 8vw, 9rem) 0;
   gap: 2rem;
@@ -3600,11 +3609,13 @@ body {
   max-width: 30ch;
 }
 
-/* Slider */
+/* Slider — absolute on desktop so it can be moved after .cz-bottom in HTML */
 .cz-slider {
-  flex: 0 0 auto;
+  position: absolute;
+  top: 22vh;
+  right: clamp(2.5rem, 8vw, 9rem);
   width: clamp(260px, 30vw, 360px);
-  margin-top: 1vh;
+  z-index: 3;
 }
 
 .cz-slides-track {
@@ -3641,6 +3652,20 @@ body {
   margin: 0;
   max-width: 34ch;
 }
+
+.cz-article-link {
+  display: none;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.62);
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: color 0.2s;
+}
+
+.cz-article-link:hover { color: var(--color-primary); }
 
 .cz-dots {
   display: flex;
@@ -3975,9 +4000,9 @@ body {
   padding: 0 16px 0 20px;
   align-items: center;
   justify-content: space-between;
-  background: rgba(4, 3, 20, 0.72);
+  background: rgba(4, 3, 20, 0);
   backdrop-filter: blur(28px) saturate(1.4);
-  -webkit-backdrop-filter: blur(28px) saturate(1.4);
+  -webkit-backdrop-filter: blur(10px) saturate(1.4);
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
@@ -4241,26 +4266,74 @@ body {
   /* ── Core Scroll Section ────────────────────────────────── */
   .cs-section { overflow: hidden; }
 
+  /* Column layout: canvas → text → para */
+  .cs-pin {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2.2rem;
+    padding: 3rem 1.4rem;
+  }
+
+  /* Canvas: small square, centered at top — order 1 */
+  .cs-canvas-wrap {
+    display: block;
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+    width: clamp(140px, 42vw, 200px);
+    height: clamp(140px, 42vw, 200px);
+    flex-shrink: 0;
+    align-self: center;
+    order: 1;
+  }
+
+  /* Text block: full width, left-aligned — order 2 */
   .cs-left {
-    left: clamp(1.2rem, 4vw, 2.5rem);
-    width: calc(100% - clamp(1.2rem, 4vw, 2.5rem) * 2);
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    width: 100%;
+    flex-shrink: 0;
+    order: 2;
   }
 
   .cs-static,
   .cs-phrase-wrap {
-    font-size: clamp(2rem, 6.5vw, 3.5rem);
+    font-size: clamp(2.2rem, 7.5vw, 3.2rem);
   }
 
-  /* Allow phrase text to wrap on narrow screens */
+  /* Phrases wrap and stack correctly */
   .cs-phrase { white-space: normal; }
-  .cs-phrase-wrap { height: auto; min-height: 1.12em; overflow: visible; }
+  .cs-phrase-wrap {
+    height: auto;
+    min-height: 4.8rem;
+    overflow: visible;
+    position: relative;
+  }
 
-  /* Canvas is heavy and overflows at small sizes — hide on mobile */
-  .cs-canvas-wrap { display: none; }
-
+  /* Para: full width, below text, left-aligned — order 3 */
   .cs-para-wrap {
-    left: clamp(1.2rem, 4vw, 2.5rem);
-    right: clamp(1.2rem, 4vw, 2.5rem);
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: 100%;
+    height: auto;
+    min-height: 5em;
+    align-items: flex-start;
+    justify-content: flex-start;
+    flex-shrink: 0;
+    order: 3;
+  }
+
+  .cs-para {
+    text-align: left;
+    font-size: clamp(0.9rem, 3.5vw, 1rem);
+    max-width: 100%;
   }
 
   .cs-progress { display: none; }
@@ -4298,53 +4371,192 @@ body {
   .gd-body { max-width: 100%; }
 
   /* ── Constanza Section ──────────────────────────────────── */
+  /* 200vh total: 100vh photo+bio | 65vh quote | 35vh slider */
   .cz-section {
-    height: auto;
-    min-height: 100vh;
+    height: 200vh;
     overflow: hidden;
+    background: var(--color-bg);
   }
 
-  /* Stack left text + slider vertically */
+  /* Strong teal at top (text area, no photo), fades to dark at 50% */
+  .cz-bg {
+    z-index: 2;
+    pointer-events: none;
+    background:
+      linear-gradient(180deg,
+        rgba(var(--color-primary-rgb), 0.82) 0%,
+        rgba(var(--color-primary-rgb), 0.55) 10%,
+        rgba(var(--color-primary-rgb), 0.18) 22%,
+        rgba(4, 3, 20, 0.05) 36%,
+        rgba(4, 3, 20, 0.86) 50%,
+        rgba(4, 3, 20, 0.98) 100%
+      );
+  }
+
+  /* Photo starts at 28vh so the face appears BELOW the text block */
+  .cz-photo {
+    display: block;
+    position: absolute;
+    left: 0;
+    top: 28vh;
+    width: 100%;
+    height: 100vh;
+    object-fit: cover;
+    object-position: center 20%;
+    transform: none;
+    z-index: 1;
+    mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 55%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 6%, black 55%, transparent 100%);
+  }
+
+  /* Name + bio anchored to top; photo fills remaining 100vh naturally */
   .cz-top {
     flex-direction: column;
-    height: auto;
-    padding: 5rem 1.4rem 3rem;
-    gap: 2.5rem;
+    height: 100vh;
+    padding: 4.5rem 1.4rem 0;
+    gap: 0;
     align-items: flex-start;
+    justify-content: flex-start;
+    z-index: 3;
   }
 
   .cz-left {
     width: 100%;
     height: auto;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
   }
 
+  /* Match reference: name big, founder smaller below, bio with top gap */
+  .cz-name         { font-size: clamp(2.2rem, 7vw, 3rem); }
+  .cz-founder-title { font-size: 1.2rem; margin-top: 0.1rem; }
+  .cz-bio          { margin-top: 1.2rem; font-size: 0.9rem; max-width: 42ch; }
+
+  /* Quote — 65vh (100vh–165vh) */
+  .cz-bottom {
+    height: 65vh;
+    padding: 3rem 1.4rem 3rem;
+    z-index: 3;
+    justify-content: flex-start;
+  }
+
+  .cz-quote-text { font-size: clamp(1.15rem, 4vw, 1.55rem); }
+  .cz-quote-mark { font-size: clamp(2.5rem, 6vw, 3.5rem); }
+
+  /* Slider — 35vh (165vh–200vh), compact bar */
   .cz-slider {
+    position: relative;
+    top: auto;
+    right: auto;
     width: 100%;
-    min-width: 0;
+    height: 35vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 1.4rem;
+    z-index: 3;
   }
 
-  /* Large decorative photo overflows on mobile — hide it */
-  .cz-photo { display: none; }
+  /* Collapse track height — text hidden, only badge + link */
+  .cz-slides-track { min-height: 52px; }
+
+  /* Badge + article link side by side */
+  .cz-slide {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .cz-slide-text { display: none; }
+  .cz-article-link { display: inline-flex; }
 
   /* ── Core Team Section ──────────────────────────────────── */
-  .ct-section { overflow: hidden; }
+  /* Section: flex column — heading → card → nav */
+  .ct-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100vh;
+    min-height: unset;
+    padding: 5rem 1.4rem 0;
+    overflow: hidden;
+  }
 
+  /* Heading block: top, full width */
   .ct-left {
-    left: 1.4rem;
-    right: 1.4rem;
-    width: auto;
-    height: auto;
-    transform: translateY(-50%);
+    position: relative;
+    left: auto; top: auto; transform: none;
+    width: 100%;
+    height: auto; min-height: 0;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 0.3rem;
+    padding-bottom: 2rem;
+    z-index: 2;
+    order: -1;
   }
 
-  .ct-heading { font-size: clamp(2rem, 6.5vw, 3.2rem); }
-  .ct-sub { font-size: 1.4rem; }
+  .ct-heading { font-size: clamp(2.2rem, 7vw, 3.2rem); margin-bottom: 0; }
+  .ct-sub     { font-size: 1.1rem; }
+  .ct-links   { display: none; }
 
-  .ct-info {
-    right: 1rem;
-    width: clamp(150px, 36vw, 240px);
+  /* Track: fills remaining height, cards centered inside */
+  .ct-track {
+    position: relative;
+    inset: auto;
+    flex: 1;
+    width: 100%;
+    overflow: visible;
   }
 
-  .ct-name { font-size: clamp(1.5rem, 5vw, 2.4rem); }
+  /* Card: wider on mobile */
+  .ct-card {
+    width: clamp(240px, 72vw, 320px);
+  }
+
+  /* Mobile overlay: name + role + linkedin inside the card */
+  .ct-card-mobile-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 2.5rem 1.2rem 1.4rem;
+    background: linear-gradient(to top, rgba(4,3,20,0.90) 0%, rgba(4,3,20,0.35) 55%, transparent 100%);
+    gap: 0.25rem;
+    pointer-events: none;
+    border-radius: 0 0 26px 26px;
+  }
+
+  .ct-card-mobile-overlay .ct-role {
+    font-size: 0.72rem;
+    margin-bottom: 0.15rem;
+    color: rgba(255,255,255,0.55);
+  }
+
+  .ct-card-mobile-overlay .ct-name {
+    font-size: clamp(1.4rem, 5.5vw, 1.9rem);
+    margin-bottom: 0.6rem;
+  }
+
+  .ct-card-mobile-overlay .ct-linkedin {
+    pointer-events: auto;
+  }
+
+  /* Hide separate info panel — overlay replaces it */
+  .ct-info { display: none; }
+
+  /* Nav: below track, centered */
+  .ct-nav {
+    position: relative;
+    bottom: auto; left: auto;
+    transform: none;
+    margin: 1.5rem 0 2rem;
+    z-index: 3;
+  }
+
+  .ct-btn { width: 44px; height: 44px; }
+  .ct-progress { display: none; }
 }

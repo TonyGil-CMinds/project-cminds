@@ -13,21 +13,25 @@ const SLIDES = [
     icon: "/core/forbes.svg",
     iconH: 22,
     text: "Recognized by Forbes México and NTT DATA as a leader in AI 2024, highlighting her role in advancing AI in Mexico.",
+    href: "#",
   },
   {
     icon: "/core/wef.svg",
     iconH: 30,
     text: "Recognized by the WEF as a Global Shaper",
+    href: "#",
   },
   {
     icon: "/core/govuk.svg",
     iconH: 14,
     text: "Recognized by the UK Government as an International Leader",
+    href: "#",
   },
   {
     icon: "/core/parispeace.svg",
     iconH: 26,
     text: "Have won the Paris Peace Forum Award for one of the 10 most promising initiatives.",
+    href: "#",
   },
 ];
 
@@ -104,7 +108,7 @@ export default function ConstanzaSection() {
     <section ref={sectionRef} className="cz-section">
       <div className="cz-bg" />
 
-      {/* ── Top 100vh: text + slider ── */}
+      {/* ── Top: name + bio (50vh on mobile, 100vh on desktop) ── */}
       <div className="cz-top">
         <div className="cz-left">
           <div className="cz-left-head">
@@ -114,35 +118,6 @@ export default function ConstanzaSection() {
           <p className="cz-bio" style={{ opacity: 0 }}>
             Founder & CEO of C Minds, AI ethics strategist, and social entrepreneur advancing responsible technology and AI for good in emerging economies.
           </p>
-        </div>
-
-        {/* Slider */}
-        <div className="cz-slider" style={{ opacity: 0 }}>
-          <div className="cz-slides-track">
-            {SLIDES.map((slide, i) => (
-              <div
-                key={i}
-                ref={(el) => { slideRefs.current[i] = el; }}
-                className="cz-slide"
-              >
-                <div className="cz-logo-badge">
-                  <img src={slide.icon} alt="" style={{ height: slide.iconH, width: "auto", display: "block" }} />
-                </div>
-                <p className="cz-slide-text">{slide.text}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="cz-dots">
-            {SLIDES.map((_, i) => (
-              <button
-                key={i}
-                className={`cz-dot${activeDot === i ? " cz-dot--active" : ""}`}
-                onClick={() => goToSlide(i)}
-                aria-label={`Reconocimiento ${i + 1}`}
-              />
-            ))}
-          </div>
         </div>
       </div>
 
@@ -154,7 +129,7 @@ export default function ConstanzaSection() {
         draggable={false}
       />
 
-      {/* ── Bottom 50vh: quote ── */}
+      {/* ── Quote (50vh) ── */}
       <div className="cz-bottom">
         <div className="cz-divider" />
         <div className="cz-quote-wrap">
@@ -164,6 +139,43 @@ export default function ConstanzaSection() {
             ))}
           </p>
           <span className="cz-quote-mark" style={{ opacity: 0 }}>&rdquo;</span>
+        </div>
+      </div>
+
+      {/* ── Slider (desktop: abs top-right; mobile: below quote) ── */}
+      <div className="cz-slider" style={{ opacity: 0 }}>
+        <div className="cz-slides-track">
+          {SLIDES.map((slide, i) => (
+            <div
+              key={i}
+              ref={(el) => { slideRefs.current[i] = el; }}
+              className="cz-slide"
+            >
+              <div className="cz-logo-badge">
+                <img src={slide.icon} alt="" style={{ height: slide.iconH, width: "auto", display: "block" }} />
+              </div>
+              <p className="cz-slide-text">{slide.text}</p>
+              <a
+                className="cz-article-link"
+                href={slide.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Ir al articulo →
+              </a>
+            </div>
+          ))}
+        </div>
+
+        <div className="cz-dots">
+          {SLIDES.map((_, i) => (
+            <button
+              key={i}
+              className={`cz-dot${activeDot === i ? " cz-dot--active" : ""}`}
+              onClick={() => goToSlide(i)}
+              aria-label={`Reconocimiento ${i + 1}`}
+            />
+          ))}
         </div>
       </div>
     </section>

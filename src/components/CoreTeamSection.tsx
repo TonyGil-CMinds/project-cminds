@@ -22,6 +22,7 @@ export default function CoreTeamSection() {
   const infoRef               = useRef<HTMLDivElement>(null);
   const sectionRef            = useRef<HTMLElement>(null);
   const [display, setDisplay] = useState(TEAM[0]);
+  const touchStartX           = useRef(0);
 
   // Set initial card positions before first paint
   useLayoutEffect(() => {
@@ -125,7 +126,16 @@ export default function CoreTeamSection() {
   };
 
   return (
-    <section ref={sectionRef} className="ct-section">
+    <section
+      ref={sectionRef}
+      className="ct-section"
+      onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+      onTouchEnd={(e) => {
+        const delta = e.changedTouches[0].clientX - touchStartX.current;
+        if (Math.abs(delta) < 40) return;
+        goTo(activeRef.current + (delta < 0 ? 1 : -1));
+      }}
+    >
 
       {/* ── Photo cards ── */}
       <div className="ct-track">
@@ -136,6 +146,16 @@ export default function CoreTeamSection() {
             className="ct-card"
           >
             <img src={m.img} alt={m.name} draggable={false} />
+            {/* Mobile overlay: role + name + linkedin inside card */}
+            <div className="ct-card-mobile-overlay">
+              <p className="ct-role">{m.role}</p>
+              <h3 className="ct-name">{m.name}</h3>
+              <a href={m.linkedin} className="ct-linkedin" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                  <path d="M6.7 8.6h3v9h-3v-9Zm1.5-4.2c1 0 1.7.7 1.7 1.6s-.7 1.6-1.7 1.6S6.5 6.9 6.5 6s.7-1.6 1.7-1.6Zm3.2 4.2h2.9v1.2h.1c.4-.7 1.3-1.4 2.7-1.4 2.9 0 3.4 1.9 3.4 4.3v4.9h-3v-4.4c0-1 0-2.4-1.5-2.4s-1.7 1.1-1.7 2.3v4.5h-3v-9Z" />
+                </svg>
+              </a>
+            </div>
           </div>
         ))}
       </div>

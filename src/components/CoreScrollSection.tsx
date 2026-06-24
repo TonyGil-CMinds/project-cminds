@@ -107,8 +107,10 @@ export default function CoreScrollSection({ onScrollProgress }: Props) {
     if (!section || !pin || !cv) return;
 
     const canvasWrap = cv.parentElement as HTMLDivElement;
-    const W = canvasWrap.clientWidth  || Math.round(window.innerWidth  * 0.38);
-    const H = canvasWrap.clientHeight || Math.round(window.innerHeight * 0.55);
+    const isMobile = window.innerWidth <= 1024;
+    const mobileSize = Math.round(Math.min(window.innerWidth * 0.42, 200));
+    const W = canvasWrap.clientWidth  || (isMobile ? mobileSize : Math.round(window.innerWidth  * 0.38));
+    const H = canvasWrap.clientHeight || (isMobile ? mobileSize : Math.round(window.innerHeight * 0.55));
 
     // ── Three.js ──────────────────────────────────────────────────
     const renderer = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: true });
