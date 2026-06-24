@@ -4,20 +4,98 @@ import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "r
 import { useGSAP } from "@gsap/react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SideRays from "../../../components/reactbits/SideRays";
-const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
+import BorderGlow from "../../../components/reactbits/BorderGlow";
+gsap.registerPlugin(ScrollTrigger);
+const NAV_ITEMS    = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
+
+const PEOPLE = [
+  {
+    name: "Xiomy Vázquez",
+    role: "Lead of Branding",
+    img:  "/core/member-xio.png",
+    quote: "Working remotely gives me the flexibility to do my best work, from presenting to clients in New York to collaborating with my team across Europe.",
+  },
+  {
+    name: "Tony Gil",
+    role: "Lead of Design",
+    img:  "/core/member-tony.png",
+    quote: "Every great project starts with understanding people. Design isn't decoration — it's how we communicate what matters most and why it's worth building.",
+  },
+  {
+    name: "Eduardo García",
+    role: "Lead of Technology",
+    img:  "/core/member-eduardo.png",
+    quote: "The most exciting part of this work is knowing that the technology we build today shapes opportunities for people tomorrow.",
+  },
+];
+
+const BENEFITS = [
+  {
+    icon:  "/assets/glass/Home.svg",
+    title: "Working your way",
+    desc:  "We're fully remote by design, not by default. That means no commute, more autonomy, and the freedom to do your best work — wherever that happens to be.",
+    wide:  false,
+  },
+  {
+    icon:  "/assets/glass/Learn.svg",
+    title: "Love to learn.",
+    desc:  "Curious minds thrive here. Use your $500 annual learning stipend on whatever helps you grow — design conferences, dev workshops, or something unexpected.",
+    wide:  false,
+  },
+  {
+    icon:  "/assets/glass/getTogether.svg",
+    title: "Get Together.",
+    desc:  "Every month, we bring the whole team together — face-to-face, human-to-human. Expect good food, shared ideas, and the kind of conversations that don't happen on Zoom.",
+    wide:  true,
+  },
+];
+
+const POSITIONS = [
+  { title: "Project Manager", type: "Full time", location: "LATAM", mode: "Remote", status: "Closed" as const },
+];
 
 function hexToRgb(hex: string) {
   const n = parseInt(hex.slice(1), 16);
   return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
 }
 
+function hexToHsl(hex: string): string {
+  const n = parseInt(hex.slice(1), 16);
+  let r = ((n >> 16) & 255) / 255;
+  let g = ((n >> 8) & 255) / 255;
+  let b = (n & 255) / 255;
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h = 0, s = 0;
+  const l = (max + min) / 2;
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+      case g: h = ((b - r) / d + 2) / 6; break;
+      case b: h = ((r - g) / d + 4) / 6; break;
+    }
+  }
+  return `${Math.round(h * 360)} ${Math.round(s * 100)} ${Math.round(l * 100)}`;
+}
+
 
 export default function CareersPage() {
-  const containerRef  = useRef<HTMLDivElement>(null);
-  const navItemRefs   = useRef<(HTMLDivElement | null)[]>([]);
-  const navLightRef   = useRef<HTMLDivElement>(null);
+  const containerRef         = useRef<HTMLDivElement>(null);
+  const culturePinRef        = useRef<HTMLElement>(null);
+  const cultureProgressFill  = useRef<HTMLDivElement>(null);
+  const cultureProgressDot   = useRef<HTMLDivElement>(null);
+  const peopleImgRef         = useRef<HTMLImageElement>(null);
+  const peopleContentRef     = useRef<HTMLDivElement>(null);
+  const peopleTextRef        = useRef<HTMLDivElement>(null);
+  const activePersonRef      = useRef(0);
+  const peopleTouchStartX    = useRef(0);
+  const navItemRefs          = useRef<(HTMLDivElement | null)[]>([]);
+  const navLightRef          = useRef<HTMLDivElement>(null);
+  const [activePerson, setActivePerson]     = useState(0);
   const [hoverNav, setHoverNav]             = useState<number | null>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
   const [primaryColor, setPrimaryColor]     = useState('#5EC1F3');
@@ -42,6 +120,15 @@ export default function CareersPage() {
     if (el) setIndicatorStyle({ left: el.offsetLeft, width: el.offsetWidth, opacity: 1 });
   }, [hoverNav]);
 
+  const scrollToSection = (id: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    gsap.fromTo(e.currentTarget,
+      { color: primaryColor, scale: 1.06 },
+      { color: 'rgba(255,255,255,0.5)', scale: 1, duration: 0.55, ease: 'power2.out' }
+    );
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   const navigateWithTransition = (path: string) => {
     sessionStorage.setItem("vt_from", "careers");
     const doNavigate = () => {
@@ -53,29 +140,132 @@ export default function CareersPage() {
         router.push(path);
       }
     };
-    gsap.to([".careers-pill", ".careers-word", ".careers-sub", ".careers-ctas"], {
+    gsap.to([".careers-word", ".careers-scroll-btn", ".careers-anchor-links"], {
       opacity: 0, y: -16, filter: "blur(8px)",
       duration: 0.25, stagger: 0.04, ease: "power2.in",
       onComplete: doNavigate,
     });
   };
 
+  const goToPerson = (idx: number) => {
+    const next = ((idx % PEOPLE.length) + PEOPLE.length) % PEOPLE.length;
+    if (next === activePersonRef.current) return;
+    // Photo: simple opacity cross-fade
+    gsap.to(peopleImgRef.current, { opacity: 0, duration: 0.25, ease: "power2.in" });
+    // Text (quote + byline): Core's exact pattern — y:8 out, y:14 in
+    gsap.to(peopleTextRef.current, {
+      opacity: 0, y: 8, duration: 0.18, ease: "power2.in",
+      onComplete: () => {
+        activePersonRef.current = next;
+        setActivePerson(next);
+        requestAnimationFrame(() => {
+          gsap.to(peopleImgRef.current, { opacity: 1, duration: 0.5, ease: "power3.out" });
+          gsap.fromTo(peopleTextRef.current,
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }
+          );
+        });
+      },
+    });
+  };
+
   useGSAP(() => {
-    gsap.fromTo(".careers-pill",
-      { opacity: 0, y: 20, scale: 0.9 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "power2.out", delay: 0.3 }
-    );
     gsap.fromTo(".careers-word",
       { opacity: 0, y: 36, filter: "blur(12px)" },
-      { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.75, stagger: 0.1, ease: "power3.out", delay: 0.5 }
+      { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.75, stagger: 0.1, ease: "power3.out", delay: 0.4 }
     );
-    gsap.fromTo(".careers-sub",
+    gsap.fromTo(".careers-scroll-btn",
       { opacity: 0, y: 18 },
-      { opacity: 1, y: 0, duration: 0.65, ease: "power2.out", delay: 0.85 }
+      { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", delay: 0.75 }
     );
-    gsap.fromTo(".careers-ctas",
+    gsap.fromTo(".careers-anchor-links",
+      { opacity: 0, y: 12 },
+      { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 0.95 }
+    );
+
+    // Positions section entrance
+    gsap.fromTo(".careers-positions-section",
+      { opacity: 0, y: 28 },
+      { opacity: 1, y: 0, duration: 0.7, ease: "power2.out",
+        scrollTrigger: { trigger: ".careers-positions-section", start: "top 82%", toggleActions: "play none none none" },
+      }
+    );
+
+    // Team photo: start narrow, grow to full width on scroll
+    gsap.set(".careers-team-img", { width: "52%", marginLeft: "auto", marginRight: "auto" });
+    gsap.to(".careers-team-img", {
+      width: "100%",
+      ease: "none",
+      scrollTrigger: {
+        trigger: ".careers-team-section",
+        start: "top 88%",
+        end: "center 52%",
+        scrub: 1.5,
+      },
+    });
+
+    // Culture section: pinned word-by-word scroll fill
+    const culturePin = culturePinRef.current;
+    if (culturePin) {
+      const words     = Array.from(culturePin.querySelectorAll<HTMLSpanElement>(".careers-culture-word"));
+      const fill      = cultureProgressFill.current;
+      const dot       = cultureProgressDot.current;
+
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: culturePin,
+          start: "top top",
+          end: "+=220%",
+          pin: true,
+          scrub: 1.5,
+          onUpdate: (self) => {
+            if (fill) fill.style.height = `${self.progress * 100}%`;
+            if (dot)  dot.style.top     = `calc(${self.progress * 100}% - 10px)`;
+          },
+        },
+      });
+
+      tl.fromTo(
+        words,
+        { opacity: 0.12, filter: "blur(2.5px)" },
+        { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power1.out", stagger: 0.055 },
+        0
+      );
+    }
+
+    // Benefits — layer 1: cards slide up
+    gsap.fromTo(".careers-benefit-card",
+      { opacity: 0, y: 36 },
+      { opacity: 1, y: 0, duration: 0.65, stagger: 0.12, ease: "power3.out",
+        scrollTrigger: { trigger: "#benefits", start: "top 82%", toggleActions: "play none none none" } }
+    );
+
+    // Benefits — layer 2: icon-wrap frame drifts in slightly after cards
+    gsap.fromTo(".careers-benefit-icon-wrap",
       { opacity: 0, y: 14 },
-      { opacity: 1, y: 0, duration: 0.5, ease: "power2.out", delay: 1.05 }
+      { opacity: 1, y: 0, duration: 0.5, stagger: 0.12, ease: "power2.out",
+        scrollTrigger: { trigger: "#benefits", start: "top 80%", toggleActions: "play none none none" },
+        delay: 0.2 }
+    );
+
+    // Benefits — layer 3: crisp icon pops in with spring scale (shadow layers start invisible via CSS)
+    gsap.fromTo(".careers-benefit-icon",
+      { opacity: 0, scale: 0.5, filter: "blur(10px)" },
+      { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.65, stagger: 0.12, ease: "back.out(1.7)",
+        scrollTrigger: { trigger: "#benefits", start: "top 80%", toggleActions: "play none none none" },
+        delay: 0.38 }
+    );
+
+    // People section entrance
+    gsap.fromTo(".careers-people-photo",
+      { opacity: 0, x: -40, filter: "blur(12px)" },
+      { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.9, ease: "power3.out",
+        scrollTrigger: { trigger: "#people", start: "top 78%", toggleActions: "play none none none" } }
+    );
+    gsap.fromTo(".careers-people-content",
+      { opacity: 0, x: 24, filter: "blur(8px)" },
+      { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.75, ease: "power3.out",
+        scrollTrigger: { trigger: "#people", start: "top 78%", toggleActions: "play none none none" }, delay: 0.15 }
     );
   }, { scope: containerRef });
 
@@ -128,49 +318,229 @@ export default function CareersPage() {
           />
         </div>
         <div className="careers-hero-inner">
-
-
           <h1 className="careers-h1">
-            <span className="careers-word">Shape the frontiers</span>
-            <span className="careers-word careers-word-accent">of collective intelligence</span>
+            <span className="careers-word">Join the team</span>
+            <span className="careers-word careers-word-accent">shaping what&apos;s next.</span>
           </h1>
 
-          <p className="careers-sub">
-            We build at the intersection of technology, governance, and human potential.
-            Join a team that turns ambition into systemic change.
-          </p>
+          <button className="hero-button careers-scroll-btn" style={{ padding: "0.9rem 2rem", opacity: 0 }}>
+            Scroll down ↓
+          </button>
 
-          <div className="careers-ctas">
-            <button
-              className="hero-button careers-btn-primary"
-              onClick={() => navigateWithTransition("/")}
-            >
-              See open roles
-            </button>
-            <button className="careers-btn-ghost">
-              Contact us
-            </button>
-          </div>
-        </div>
-
-        {/* Ambient stats row */}
-        <div className="careers-stats careers-ctas">
-          <div className="careers-stat">
-            <span className="careers-stat-n">12+</span>
-            <span className="careers-stat-l">Countries</span>
-          </div>
-          <div className="careers-stat-divider" />
-          <div className="careers-stat">
-            <span className="careers-stat-n">40+</span>
-            <span className="careers-stat-l">Team members</span>
-          </div>
-          <div className="careers-stat-divider" />
-          <div className="careers-stat">
-            <span className="careers-stat-n">100%</span>
-            <span className="careers-stat-l">Mission-driven</span>
+          <div className="careers-anchor-links" style={{ opacity: 0 }}>
+            <a href="#open-positions" className="careers-anchor-link" onClick={(e) => scrollToSection('open-positions', e)}>Open positions</a>
+            <a href="#culture"        className="careers-anchor-link" onClick={(e) => scrollToSection('culture', e)}>Culture</a>
+            <a href="#people"         className="careers-anchor-link" onClick={(e) => scrollToSection('people', e)}>People</a>
+            <a href="#benefits"       className="careers-anchor-link" onClick={(e) => scrollToSection('benefits', e)}>Benefits</a>
           </div>
         </div>
       </section>
+
+      {/* Team photo */}
+      <section className="careers-team-section">
+        <img
+          src="/careers/team-placeholder.webp"
+          alt="C Minds team"
+          className="careers-team-img"
+          draggable={false}
+        />
+      </section>
+
+      {/* Open positions */}
+      <section id="open-positions" className="careers-positions-section" style={{ opacity: 0 }}>
+        <div className="careers-positions-header">
+          <span className="careers-section-dot" />
+          <h2 className="careers-section-label">Positions</h2>
+        </div>
+
+        <div className="careers-positions-list">
+          {POSITIONS.map((pos, i) => (
+            <div key={i} className={`careers-position-card careers-position-card--${pos.status.toLowerCase()}`}>
+              <div className="careers-position-left">
+                <p className="careers-position-title">{pos.title}</p>
+                <p className="careers-position-tags">{pos.type} · {pos.location} · {pos.mode}</p>
+              </div>
+              <span className={`careers-position-status careers-position-status--${pos.status.toLowerCase()}`}>
+                {pos.status}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <p className="careers-positions-empty">Not more positions available</p>
+      </section>
+
+      {/* Culture section */}
+      <section id="culture" className="careers-culture-section" ref={culturePinRef}>
+        <div className="careers-positions-header">
+          <span className="careers-section-dot" />
+          <h2 className="careers-section-label">Culture</h2>
+        </div>
+        <p className="careers-culture-text">
+          {"We are a collaborative, growth-minded team that values curiosity, mentorship, meaningful work, and the people behind it.".split(" ").map((word, i) => (
+            <span key={i} className="careers-culture-word">{word}{" "}</span>
+          ))}
+        </p>
+        <div className="careers-culture-progress-indicator">
+          <div className="cs-progress-track">
+            <div ref={cultureProgressFill} className="cs-progress-fill" style={{ height: "0%" }} />
+            <div ref={cultureProgressDot}  className="cs-progress-dot"  style={{ top: "calc(0% - 10px)" }} />
+          </div>
+        </div>
+      </section>
+
+      {/* People section */}
+      <section
+        id="people"
+        className="careers-people-section"
+        onTouchStart={(e) => { peopleTouchStartX.current = e.touches[0].clientX; }}
+        onTouchEnd={(e) => {
+          const delta = e.changedTouches[0].clientX - peopleTouchStartX.current;
+          if (Math.abs(delta) < 40) return;
+          goToPerson(activePersonRef.current + (delta < 0 ? 1 : -1));
+        }}
+      >
+        <div className="careers-positions-header">
+          <span className="careers-section-dot" />
+          <h2 className="careers-section-label">People</h2>
+        </div>
+
+        <div className="careers-people-inner">
+          {/* Photo */}
+          <div className="careers-people-photo-wrap">
+            <img
+              ref={peopleImgRef}
+              src={PEOPLE[activePerson].img}
+              alt={PEOPLE[activePerson].name}
+              className="careers-people-photo"
+              draggable={false}
+              style={{ opacity: 0 }}
+            />
+          </div>
+
+          {/* Quote + byline + nav */}
+          <div ref={peopleContentRef} className="careers-people-content" style={{ opacity: 0 }}>
+            {/* Static — no transition animation */}
+            <span className="careers-people-quote-mark">&ldquo;</span>
+
+            {/* Animated on person change — matches Core ct-info pattern */}
+            <div ref={peopleTextRef} className="careers-people-text-wrap">
+              <p className="careers-people-quote">{PEOPLE[activePerson].quote}</p>
+              <div className="careers-people-byline">
+                <span className="careers-people-name">{PEOPLE[activePerson].name}</span>
+                <span className="careers-people-sep">·</span>
+                <span className="careers-people-role">{PEOPLE[activePerson].role}</span>
+              </div>
+            </div>
+
+            {/* Static — no transition animation */}
+            <div className="careers-people-nav">
+              <button className="careers-people-btn" onClick={() => goToPerson(activePersonRef.current - 1)} aria-label="Previous">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="14" height="14">
+                  <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+              <button className="careers-people-btn" onClick={() => goToPerson(activePersonRef.current + 1)} aria-label="Next">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="14" height="14">
+                  <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits section */}
+      <section id="benefits" className="careers-benefits-section">
+        <div className="careers-positions-header">
+          <span className="careers-section-dot" />
+          <h2 className="careers-section-label">Benefits</h2>
+        </div>
+
+        <div className="careers-benefits-grid">
+          {BENEFITS.map((b, i) => (
+            <BorderGlow
+              key={i}
+              className={`careers-benefit-card${b.wide ? " careers-benefit-card--wide" : ""}`}
+              colors={[primaryColor, `${primaryColor}80`, primaryColor]}
+              glowColor={hexToHsl(primaryColor)}
+              backgroundColor="#07061a"
+              borderRadius={20}
+              glowRadius={32}
+              glowIntensity={1.1}
+              edgeSensitivity={26}
+              fillOpacity={0.12}
+            >
+              <div className="careers-benefit-icon-wrap">
+                <img src={b.icon} aria-hidden draggable={false} className="careers-benefit-icon-layer careers-benefit-icon-layer--1" />
+                <img src={b.icon} aria-hidden draggable={false} className="careers-benefit-icon-layer careers-benefit-icon-layer--2" />
+                <img src={b.icon} alt="" className="careers-benefit-icon" draggable={false} />
+              </div>
+              <div className="careers-benefit-body">
+                <h3 className="careers-benefit-title">{b.title}</h3>
+                <p className="careers-benefit-desc">{b.desc}</p>
+              </div>
+            </BorderGlow>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="site-footer">
+        <div className="footer-cta">
+          <h2>Bold &amp; Meaningful<br />Transformations</h2>
+          <button className="footer-cta-btn">Contact us</button>
+        </div>
+
+        <div className="footer-main">
+          <div className="footer-brand-block">
+            <img src="/logo.svg" alt="C Minds" className="footer-logo" />
+            <p className="footer-copy desktop-copy">© 2025 C Minds All rights reserved.</p>
+          </div>
+
+          <div className="footer-column footer-site-map">
+            <h3>SITE MAP</h3>
+            <a style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/")}>Home</a>
+            <a style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/mindscope")}>Mindscope</a>
+            <a style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/core")}>Core</a>
+          </div>
+
+          <div className="footer-column footer-resources">
+            <h3>RESOURCES</h3>
+            <a href="#terms">Terms &amp; conditions</a>
+            <a href="#privacy">Privacy policy</a>
+            <a href="#ethics">Code of ethics</a>
+          </div>
+
+          <div className="footer-join">
+            <h3>JOIN US</h3>
+            <form className="footer-form" onSubmit={(e) => e.preventDefault()}>
+              <label className="sr-only" htmlFor="careers-footer-email">Email</label>
+              <input id="careers-footer-email" type="email" placeholder="I name@email.com" />
+              <button type="submit">Suscribe</button>
+            </form>
+            <div className="footer-socials" aria-label="Social links">
+              <a href="#linkedin" aria-label="LinkedIn">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.7 8.6h3v9h-3v-9Zm1.5-4.2c1 0 1.7.7 1.7 1.6s-.7 1.6-1.7 1.6S6.5 6.9 6.5 6s.7-1.6 1.7-1.6Zm3.2 4.2h2.9v1.2h.1c.4-.7 1.3-1.4 2.7-1.4 2.9 0 3.4 1.9 3.4 4.3v4.9h-3v-4.4c0-1 0-2.4-1.5-2.4s-1.7 1.1-1.7 2.3v4.5h-3v-9Z" /></svg>
+              </a>
+              <a href="#instagram" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.1 4.8h7.8c1.8 0 3.3 1.5 3.3 3.3v7.8c0 1.8-1.5 3.3-3.3 3.3H8.1c-1.8 0-3.3-1.5-3.3-3.3V8.1c0-1.8 1.5-3.3 3.3-3.3Zm0 1.6c-.9 0-1.7.8-1.7 1.7v7.8c0 .9.8 1.7 1.7 1.7h7.8c.9 0 1.7-.8 1.7-1.7V8.1c0-.9-.8-1.7-1.7-1.7H8.1Zm3.9 2.3a3.3 3.3 0 1 1 0 6.6 3.3 3.3 0 0 1 0-6.6Zm0 1.6a1.7 1.7 0 1 0 0 3.4 1.7 1.7 0 0 0 0-3.4Zm4-2.4a.8.8 0 1 1 0 1.6.8.8 0 0 1 0-1.6Z" /></svg>
+              </a>
+              <a href="#x" aria-label="X / Twitter">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.4 5.4 5 6.7-5.3 6.5h1.8l4.3-5.2 3.9 5.2h4.1l-5.3-7.1 5-6.1h-1.8l-4 4.8-3.6-4.8H6.4Zm2.6 1.3h.9l7.7 10.6h-.9L9 6.7Z" /></svg>
+              </a>
+              <a href="#facebook" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.4 20v-7.3h2.4l.4-2.8h-2.8V8.1c0-.8.2-1.4 1.4-1.4h1.5V4.2C16 4.1 15.1 4 14 4c-2.2 0-3.7 1.3-3.7 3.8v2.1H7.8v2.8h2.5V20h3.1Z" /></svg>
+              </a>
+              <a href="#youtube" aria-label="YouTube">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 8.2c-.2-.9-.9-1.5-1.7-1.7C17.2 6.1 12 6.1 12 6.1s-5.2 0-6.7.4c-.8.2-1.5.9-1.7 1.7-.4 1.5-.4 3.8-.4 3.8s0 2.4.4 3.8c.2.9.9 1.5 1.7 1.7 1.5.4 6.7.4 6.7.4s5.2 0 6.7-.4c.8-.2 1.5-.9 1.7-1.7.4-1.5.4-3.8.4-3.8s0-2.4-.4-3.8ZM10.2 14.5v-5l4.5 2.5-4.5 2.5Z" /></svg>
+              </a>
+            </div>
+          </div>
+
+          <p className="footer-copy mobile-copy">© 2025 C Minds All rights reserved.</p>
+        </div>
+      </footer>
     </div>
   );
 }
