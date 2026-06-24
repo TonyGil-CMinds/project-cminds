@@ -48,15 +48,17 @@ type ReelPost = {
 
 export default function MindscopePage() {
   const containerRef  = useRef<HTMLDivElement>(null);
-  const msItemRef     = useRef<HTMLDivElement>(null);
+  const navItemRefs   = useRef<(HTMLDivElement | null)[]>([]);
   const navLightRef   = useRef<HTMLDivElement>(null);
   const reelRef       = useRef<HTMLDivElement>(null);
   const trackRef      = useRef<HTMLDivElement>(null);
   const drumRef       = useRef<HTMLDivElement>(null);
   const reelActiveRef = useRef(0);
 
-  const [posts, setPosts]           = useState<ReelPost[]>([]);
-  const [reelActive, setReelActive] = useState(0);
+  const [posts, setPosts]               = useState<ReelPost[]>([]);
+  const [reelActive, setReelActive]     = useState(0);
+  const [hoverNav, setHoverNav]         = useState<number | null>(null);
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
   const router = useRouter();
 
   // ── Fetch blog feed ────────────────────────────────────────
@@ -116,13 +118,12 @@ export default function MindscopePage() {
   }, []);
 
   // ── Nav indicator ─────────────────────────────────────────
-  useLayoutEffect(() => {
-    if (!msItemRef.current || !navLightRef.current) return;
-    const item   = msItemRef.current;
-    const parent = item.parentElement!;
-    navLightRef.current.style.left  = `${item.getBoundingClientRect().left - parent.getBoundingClientRect().left}px`;
-    navLightRef.current.style.width = `${item.getBoundingClientRect().width}px`;
-  }, []);
+  useEffect(() => {
+    const activeIdx = 2; // "Mindscope ®" is index 2
+    const targetIdx = hoverNav !== null ? hoverNav : activeIdx;
+    const el = navItemRefs.current[targetIdx];
+    if (el) setIndicatorStyle({ left: el.offsetLeft, width: el.offsetWidth, opacity: 1 });
+  }, [hoverNav]);
 
   // ── Page navigation ───────────────────────────────────────
   const navigateWithTransition = (path: string) => {
@@ -208,13 +209,14 @@ export default function MindscopePage() {
         <div className="nav-brand" style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/")}>
           <img src="/logo.svg" alt="C Minds" />
         </div>
-        <div className="nav-menu">
-          <div className="nav-menu-light" ref={navLightRef} />
-          {NAV_ITEMS.map((item) => (
+        <div className="nav-menu" onMouseLeave={() => setHoverNav(null)}>
+          <div className="nav-menu-light" ref={navLightRef} style={indicatorStyle} />
+          {NAV_ITEMS.map((item, idx) => (
             <div
               key={item}
-              ref={item === "Mindscope ®" ? msItemRef : undefined}
+              ref={(el) => { navItemRefs.current[idx] = el; }}
               className={`nav-item${item === "Mindscope ®" ? " active" : ""}`}
+              onMouseEnter={() => setHoverNav(idx)}
               onClick={() => {
                 if (item === "Home") navigateWithTransition("/");
                 if (item === "Core") navigateWithTransition("/core");
@@ -231,9 +233,7 @@ export default function MindscopePage() {
       {/* Hero */}
       <section className="ms-hero">
         <div className="ms-hero-group">
-          <div className="ms-pill">
-            <span style={{ color: "var(--color-primary)" }}>•</span> Mindscope ®
-          </div>
+
           <h1 className="ms-heading">
             <span className="ms-word">Unfolds Multiple</span>
             <span className="ms-word ms-gradient-word">Dimensions</span>

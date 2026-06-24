@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useLayoutEffect, startTransition } from "react";
+import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "react";
 import { useGSAP } from "@gsap/react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
@@ -15,8 +15,10 @@ function hexToRgb(hex: string) {
 
 export default function CareersPage() {
   const containerRef  = useRef<HTMLDivElement>(null);
-  const careersRef    = useRef<HTMLDivElement>(null);
+  const navItemRefs   = useRef<(HTMLDivElement | null)[]>([]);
   const navLightRef   = useRef<HTMLDivElement>(null);
+  const [hoverNav, setHoverNav]             = useState<number | null>(null);
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
   const router        = useRouter();
 
   useLayoutEffect(() => {
@@ -30,13 +32,12 @@ export default function CareersPage() {
     }
   }, []);
 
-  useLayoutEffect(() => {
-    if (!careersRef.current || !navLightRef.current) return;
-    const item   = careersRef.current;
-    const parent = item.parentElement!;
-    navLightRef.current.style.left  = `${item.getBoundingClientRect().left - parent.getBoundingClientRect().left}px`;
-    navLightRef.current.style.width = `${item.getBoundingClientRect().width}px`;
-  }, []);
+  useEffect(() => {
+    const activeIdx = 3; // "Careers" is index 3
+    const targetIdx = hoverNav !== null ? hoverNav : activeIdx;
+    const el = navItemRefs.current[targetIdx];
+    if (el) setIndicatorStyle({ left: el.offsetLeft, width: el.offsetWidth, opacity: 1 });
+  }, [hoverNav]);
 
   const navigateWithTransition = (path: string) => {
     sessionStorage.setItem("vt_from", "careers");
@@ -84,13 +85,14 @@ export default function CareersPage() {
         <div className="nav-brand" style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/")}>
           <img src="/logo.svg" alt="C Minds" />
         </div>
-        <div className="nav-menu">
-          <div className="nav-menu-light" ref={navLightRef} />
-          {NAV_ITEMS.map((item) => (
+        <div className="nav-menu" onMouseLeave={() => setHoverNav(null)}>
+          <div className="nav-menu-light" ref={navLightRef} style={indicatorStyle} />
+          {NAV_ITEMS.map((item, idx) => (
             <div
               key={item}
-              ref={item === "Careers" ? careersRef : undefined}
+              ref={(el) => { navItemRefs.current[idx] = el; }}
               className={`nav-item${item === "Careers" ? " active" : ""}`}
+              onMouseEnter={() => setHoverNav(idx)}
               onClick={() => {
                 if (item === "Home") navigateWithTransition("/");
                 if (item === "Core") navigateWithTransition("/core");
@@ -107,9 +109,7 @@ export default function CareersPage() {
       {/* Hero */}
       <section className="careers-hero">
         <div className="careers-hero-inner">
-          <div className="careers-pill">
-            <span style={{ color: "var(--color-primary)" }}>•</span> Careers
-          </div>
+
 
           <h1 className="careers-h1">
             <span className="careers-word">Shape the frontiers</span>

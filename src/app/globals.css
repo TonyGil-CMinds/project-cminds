@@ -3327,6 +3327,201 @@ body {
   margin: 0;
 }
 
+/* ── Core Team Section ── */
+
+.ct-section {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  background: var(--color-bg);
+  z-index: 3;
+}
+
+/* Full-width layer that holds the three absolutely-positioned photo cards */
+.ct-track {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ct-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(230px, 17vw, 285px);
+  aspect-ratio: 3 / 4;
+  border-radius: 26px;
+  overflow: hidden;
+  will-change: transform, opacity;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  pointer-events: auto;
+}
+
+.ct-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Left text block */
+.ct-left {
+  position: absolute;
+  left: clamp(2.5rem, 6vw, 8rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(260px, 26vw, 390px);
+  height: clamp(300px, 48vh, 430px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 2;
+}
+
+.ct-heading {
+  font-size: clamp(2.8rem, 5vw, 5.5rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin: 0 0 0.8rem;
+}
+
+.ct-sub {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.ct-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.ct-link {
+  font-size: clamp(0.78rem, 0.85vw, 0.88rem);
+  color: rgba(255, 255, 255, 0.45);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.ct-link:hover {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+/* Right member info */
+.ct-info {
+  position: absolute;
+  right: clamp(2.5rem, 6vw, 8rem);
+  top: 50%;
+  transform: translateY(-50%);
+  width: clamp(220px, 22vw, 320px);
+  z-index: 2;
+  will-change: opacity, transform;
+}
+
+.ct-role {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  margin: 0 0 0.8rem;
+  font-weight: 500;
+}
+
+.ct-name {
+  font-size: clamp(2rem, 3.2vw, 3.8rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: #fff;
+  margin: 0 0 1.6rem;
+}
+
+.ct-linkedin {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.65);
+  text-decoration: none;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.ct-linkedin:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* Nav arrows */
+.ct-nav {
+  position: absolute;
+  bottom: 18%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  z-index: 3;
+}
+
+.ct-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.ct-btn:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Vertical progress bar */
+.ct-progress {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 3;
+}
+
+.ct-prog-track {
+  position: relative;
+  width: 3px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+}
+
+.ct-prog-thumb {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 9px;
+  height: 22px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.88);
+  transition: top 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 /* ── Constanza Section ── */
 .cz-section {
   position: relative;

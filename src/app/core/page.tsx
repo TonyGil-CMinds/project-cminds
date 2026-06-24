@@ -1,12 +1,15 @@
 "use client";
 
-import { useRef, useLayoutEffect, useCallback, startTransition } from "react";
+import { useRef, useLayoutEffect, useEffect, useState, useCallback, startTransition } from "react";
 import { useGSAP } from "@gsap/react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(ScrollTrigger);
 import CoreScrollSection from "../../components/CoreScrollSection";
 import ManifestoSection  from "../../components/ManifestoSection";
 import GuidanceSection   from "../../components/GuidanceSection";
+import CoreTeamSection   from "../../components/CoreTeamSection";
 import ConstanzaSection  from "../../components/ConstanzaSection";
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
@@ -19,8 +22,10 @@ function hexToRgb(hex: string) {
 
 export default function CorePage() {
   const containerRef   = useRef<HTMLDivElement>(null);
-  const coreItemRef    = useRef<HTMLDivElement>(null);
+  const navItemRefs    = useRef<(HTMLDivElement | null)[]>([]);
   const navLightRef    = useRef<HTMLDivElement>(null);
+  const [hoverNav, setHoverNav]           = useState<number | null>(null);
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
   const scrollWrapRef  = useRef<HTMLDivElement>(null);
   const globalProgRef  = useRef<HTMLDivElement>(null);
   const globalFillRef  = useRef<HTMLDivElement>(null);
@@ -58,14 +63,28 @@ export default function CorePage() {
     }
   }, []);
 
-  useLayoutEffect(() => {
-    if (!coreItemRef.current || !navLightRef.current) return;
-    const item = coreItemRef.current;
-    const parent = item.parentElement!;
-    const itemRect = item.getBoundingClientRect();
-    const parentRect = parent.getBoundingClientRect();
-    navLightRef.current.style.left = `${itemRect.left - parentRect.left}px`;
-    navLightRef.current.style.width = `${itemRect.width}px`;
+  useEffect(() => {
+    const activeIdx = 1; // "Core" is index 1
+    const targetIdx = hoverNav !== null ? hoverNav : activeIdx;
+    const el = navItemRefs.current[targetIdx];
+    if (el) setIndicatorStyle({ left: el.offsetLeft, width: el.offsetWidth, opacity: 1 });
+  }, [hoverNav]);
+
+  // Hide the progress indicator once the scroll sections leave the viewport
+  useEffect(() => {
+    const wrap = scrollWrapRef.current;
+    const prog = globalProgRef.current;
+    if (!wrap || !prog) return;
+
+    const st = ScrollTrigger.create({
+      trigger: wrap,
+      start: "bottom bottom",
+      end: "bottom top",
+      onLeave:      () => gsap.to(prog, { opacity: 0, duration: 0.45, ease: "power2.out" }),
+      onEnterBack:  () => gsap.to(prog, { opacity: 1, duration: 0.35, ease: "power2.out" }),
+    });
+
+    return () => st.kill();
   }, []);
 
   const navigateWithTransition = (path: string) => {
@@ -79,7 +98,7 @@ export default function CorePage() {
         router.push(path);
       }
     };
-    gsap.to([".core-pill", ".core-word", ".core-para-text", ".core-scroll-btn"], {
+    gsap.to([".core-word", ".core-para-text", ".core-scroll-btn"], {
       opacity: 0, y: -22, filter: "blur(8px)",
       duration: 0.28, stagger: 0.04, ease: "power2.in",
       onComplete: doNavigate,
@@ -98,10 +117,7 @@ export default function CorePage() {
     );
 
     // Content stagger — always runs
-    gsap.fromTo(".core-pill",
-      { opacity: 0, y: 20, scale: 0.88 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "power2.out", delay: 0.35 }
-    );
+
     gsap.fromTo(".core-word",
       { opacity: 0, y: 36, filter: "blur(12px)" },
       { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.75, stagger: 0.11, ease: "power3.out", delay: 0.55 }
@@ -125,16 +141,18 @@ export default function CorePage() {
         <div className="nav-brand" style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/")}>
           <img src="/logo.svg" alt="C Minds" />
         </div>
-        <div className="nav-menu">
-          <div className="nav-menu-light" ref={navLightRef} />
-          {NAV_ITEMS.map((item) => (
+        <div className="nav-menu" onMouseLeave={() => setHoverNav(null)}>
+          <div className="nav-menu-light" ref={navLightRef} style={indicatorStyle} />
+          {NAV_ITEMS.map((item, idx) => (
             <div
               key={item}
-              ref={item === "Core" ? coreItemRef : undefined}
+              ref={(el) => { navItemRefs.current[idx] = el; }}
               className={`nav-item${item === "Core" ? " active" : ""}`}
+              onMouseEnter={() => setHoverNav(idx)}
               onClick={() => {
                 if (item === "Home") navigateWithTransition("/");
                 if (item === "Mindscope ®") navigateWithTransition("/mindscope");
+                if (item === "Careers") navigateWithTransition("/careers");
               }}
             >
               {item}
@@ -146,9 +164,7 @@ export default function CorePage() {
 
       {/* Hero content */}
       <div className="core-hero-content">
-        <div className="core-pill">
-          <span style={{ color: "var(--color-primary)" }}>•</span> Core
-        </div>
+
 
         <h1 className="core-h1">
           <span className="core-word">We are.</span>
@@ -246,6 +262,7 @@ export default function CorePage() {
 
     <GuidanceSection />
     <ConstanzaSection />
+    <CoreTeamSection />
 
     <footer className="site-footer">
       <div className="footer-cta">
@@ -286,10 +303,16 @@ export default function CorePage() {
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.7 8.6h3v9h-3v-9Zm1.5-4.2c1 0 1.7.7 1.7 1.6s-.7 1.6-1.7 1.6S6.5 6.9 6.5 6s.7-1.6 1.7-1.6Zm3.2 4.2h2.9v1.2h.1c.4-.7 1.3-1.4 2.7-1.4 2.9 0 3.4 1.9 3.4 4.3v4.9h-3v-4.4c0-1 0-2.4-1.5-2.4s-1.7 1.1-1.7 2.3v4.5h-3v-9Z" /></svg>
             </a>
             <a href="#instagram" aria-label="Instagram">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069ZM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0Zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324ZM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881Z" /></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.1 4.8h7.8c1.8 0 3.3 1.5 3.3 3.3v7.8c0 1.8-1.5 3.3-3.3 3.3H8.1c-1.8 0-3.3-1.5-3.3-3.3V8.1c0-1.8 1.5-3.3 3.3-3.3Zm0 1.6c-.9 0-1.7.8-1.7 1.7v7.8c0 .9.8 1.7 1.7 1.7h7.8c.9 0 1.7-.8 1.7-1.7V8.1c0-.9-.8-1.7-1.7-1.7H8.1Zm3.9 2.3a3.3 3.3 0 1 1 0 6.6 3.3 3.3 0 0 1 0-6.6Zm0 1.6a1.7 1.7 0 1 0 0 3.4 1.7 1.7 0 0 0 0-3.4Zm4-2.4a.8.8 0 1 1 0 1.6.8.8 0 0 1 0-1.6Z" /></svg>
             </a>
             <a href="#x" aria-label="X / Twitter">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.738l7.726-8.84L1.254 2.25H8.08l4.261 5.636 5.903-5.636Zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.4 5.4 5 6.7-5.3 6.5h1.8l4.3-5.2 3.9 5.2h4.1l-5.3-7.1 5-6.1h-1.8l-4 4.8-3.6-4.8H6.4Zm2.6 1.3h.9l7.7 10.6h-.9L9 6.7Z" /></svg>
+            </a>
+            <a href="#facebook" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.4 20v-7.3h2.4l.4-2.8h-2.8V8.1c0-.8.2-1.4 1.4-1.4h1.5V4.2C16 4.1 15.1 4 14 4c-2.2 0-3.7 1.3-3.7 3.8v2.1H7.8v2.8h2.5V20h3.1Z" /></svg>
+            </a>
+            <a href="#youtube" aria-label="YouTube">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 8.2c-.2-.9-.9-1.5-1.7-1.7C17.2 6.1 12 6.1 12 6.1s-5.2 0-6.7.4c-.8.2-1.5.9-1.7 1.7-.4 1.5-.4 3.8-.4 3.8s0 2.4.4 3.8c.2.9.9 1.5 1.7 1.7 1.5.4 6.7.4 6.7.4s5.2 0 6.7-.4c.8-.2 1.5-.9 1.7-1.7.4-1.5.4-3.8.4-3.8s0-2.4-.4-3.8ZM10.2 14.5v-5l4.5 2.5-4.5 2.5Z" /></svg>
             </a>
           </div>
         </div>
