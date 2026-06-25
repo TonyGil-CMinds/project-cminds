@@ -39,6 +39,7 @@ const CYCLING_WORDS = ["Biodiversity", "Communities", "Oceans", "Cities"];
 const INITIATIVES = [
   {
     id: "ntl",
+    url: "https://naturatech.org",
     image: "/home/featured-ntl.png",
     pills: ["Regenerative", "Innovation"],
     label: "Purposeful Tech for Biodiversity",
@@ -47,6 +48,7 @@ const INITIATIVES = [
   },
   {
     id: "t4n",
+    url: "https://youtu.be/4cKLMpL_des?si=UaqwBqQWkqbFSdLb",
     image: "/home/featured-t4n.png",
     pills: ["Conservation", "Local leadership"],
     label: "AI-powered biodiversity monitoring platform",
@@ -55,6 +57,7 @@ const INITIATIVES = [
   },
   {
     id: "vo",
+    url: "https://oceanosvitales.org",
     image: "/home/featured-vo.png",
     pills: ["Ocean", "Protection"],
     label: "Community-led Marine Protected Areas",
@@ -63,6 +66,7 @@ const INITIATIVES = [
   },
   {
     id: "a4m",
+    url: "https://youtu.be/_O1yxttZ2m8?si=m8G08n1JI4oCYn4G",
     image: "/home/featured-a4m.png",
     pills: ["AI systems", "Conservation"],
     label: "A Machine Learning Approach",
@@ -936,6 +940,8 @@ export default function Hero() {
                   className="initiative-card"
                   onMouseEnter={() => setHoveredCard(item.id)}
                   onMouseLeave={() => setHoveredCard(null)}
+                  onClick={() => window.open(item.url, "_blank", "noopener,noreferrer")}
+                  style={{ cursor: "pointer" }}
                 >
                   <div
                     className="initiative-bg"

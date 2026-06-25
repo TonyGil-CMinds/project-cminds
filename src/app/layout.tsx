@@ -36,8 +36,35 @@ const satoshi = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "C Minds | Action Tank",
-  description: "Welcome to a new era for C Minds",
+  metadataBase: new URL("https://cminds.co"),
+  title: {
+    default: "C Minds | Action Tank",
+    template: "%s | C Minds",
+  },
+  description:
+    "C Minds is a systemic innovation action tank that integrates technological, financial, business, and governance frontiers to drive new logics and strategies aimed at equitable prosperity and biodiversity conservation.",
+  openGraph: {
+    type: "website",
+    siteName: "C Minds",
+    title: "C Minds | A New Era Begins",
+    description:
+      "C Minds is a systemic innovation action tank that integrates technological, financial, business, and governance frontiers to drive new logics and strategies aimed at equitable prosperity and biodiversity conservation.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "C Minds — A new era begins",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "C Minds | A New Era Begins",
+    description:
+      "C Minds is a systemic innovation action tank that integrates technological, financial, business, and governance frontiers to drive new logics and strategies aimed at equitable prosperity and biodiversity conservation.",
+    images: ["/og-image.jpg"],
+  },
 };
 
 export default function RootLayout({
