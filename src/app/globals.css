@@ -5488,3 +5488,243 @@ body {
   .ct-btn { width: 44px; height: 44px; }
   .ct-progress { display: none; }
 }
+
+/* ═══════════════════════════════════════════════ BIO PAGE */
+
+.bio-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 120px;
+  overflow-x: hidden;
+}
+
+/* ── Orbit + Logo ── */
+.bio-orbit-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  height: 220px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* gradient overlay: primary color top → transparent bottom */
+.bio-orbit-wrap::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--color-primary-rgb), 0.22) 0%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bio-orbit-svg {
+  position: absolute;
+  top: -160px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 700px;
+  max-width: none;
+  pointer-events: none;
+  user-select: none;
+}
+
+.bio-logo {
+  position: absolute;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 54px;
+  height: auto;
+  pointer-events: none;
+  user-select: none;
+  filter: drop-shadow(0 0 18px rgba(var(--color-primary-rgb), 0.45));
+}
+
+/* ── Content ── */
+.bio-content {
+  width: 100%;
+  max-width: 380px;
+  padding: 0 1.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+}
+
+.bio-title {
+  opacity: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+/* ── Visit button — gradient bg + gradient border ── */
+.bio-visit-btn {
+  opacity: 0;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(0.65rem + 1px) calc(2rem + 1px);
+  border-radius: 100px;
+  background: linear-gradient(
+    to bottom,
+    rgba(var(--color-primary-rgb), 0.55) 0%,
+    rgba(var(--color-primary-rgb), 0.08) 100%
+  );
+  color: white;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: filter 0.25s;
+}
+
+/* gradient border: white top → transparent bottom */
+.bio-visit-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  padding: 1px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.bio-visit-btn:hover {
+  filter: brightness(1.12);
+}
+
+/* ── Link cards ── */
+.bio-links {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+.bio-link-card {
+  opacity: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.82);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-decoration: none;
+  text-align: center;
+  transition: background 0.22s, color 0.22s;
+  cursor: pointer;
+}
+
+/* gradient border: white top → transparent bottom */
+.bio-link-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  padding: 1px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.04) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.bio-link-card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+/* ── Footer — pinned, progressive blur ── */
+.bio-footer {
+  opacity: 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.5rem 1.25rem 1.25rem;
+  pointer-events: none;
+  /* gradient background for the fade effect */
+  background: linear-gradient(to bottom, transparent 0%, rgba(4, 3, 20, 0.96) 38%);
+}
+
+/* full-coverage blur layer — no mask (mask breaks backdrop-filter in Chrome) */
+.bio-footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  backdrop-filter: blur(18px) saturate(1.3);
+  z-index: -1;
+}
+
+.bio-socials {
+  display: flex;
+  gap: 0.75rem;
+  pointer-events: all;
+}
+
+.bio-social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.bio-social-btn:hover {
+  background: rgba(var(--color-primary-rgb), 0.12);
+  border-color: rgba(var(--color-primary-rgb), 0.35);
+  color: var(--color-primary);
+}
+
+.bio-social-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+.bio-copyright {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.32);
+  text-align: center;
+  pointer-events: none;
+}
+
+body.bio-page-active .mm-header,
+body.bio-page-active .mm-overlay {
+  display: none !important;
+}

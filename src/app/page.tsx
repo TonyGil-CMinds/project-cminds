@@ -141,19 +141,13 @@ const getColorCookie = (): string | null => {
   return match ? decodeURIComponent(match[1]) : null;
 };
 
-const setColorCookie = (hex: string) => {
-  document.cookie = `${COOKIE_KEY}=${encodeURIComponent(hex)}; max-age=${COOKIE_MAX_AGE}; path=/; SameSite=Lax`;
-};
 
 export default function Hero() {
   const [loaderDone, setLoaderDone] = useState(false);
 
-  // Skip the loader on every visit after the first.
-  // useLayoutEffect fires before the browser paints, so the user never sees a flash.
   useLayoutEffect(() => {
     if (localStorage.getItem(LOADER_KEY) === "1") setLoaderDone(true);
   }, []);
-  const [step, setStep] = useState(1);
   const [color, setColor] = useState(COLORS[0]);
   const [currentWord, setCurrentWord] = useState(CYCLING_WORDS[0]);
   const wordIndexRef = useRef(0);
@@ -167,12 +161,11 @@ export default function Hero() {
   const hwwAnimatingRef = useRef(false);
   const awardCardRefs = useRef<(HTMLElement | null)[]>([]);
 
-  // Restore color preference; loader always plays on every page load
+  // Restore color preference from cookie
   useEffect(() => {
     const saved = getColorCookie();
     if (saved && COLORS.includes(saved)) {
       setColor(saved);
-      setStep(3);
     }
   }, []);
   const container = useRef<HTMLDivElement>(null);
@@ -213,18 +206,13 @@ export default function Hero() {
 
   // Enable window scroll only after loader exits to avoid scrollbar reflow flash
   useEffect(() => {
-    if (step === 3 && loaderDone) {
-      document.body.style.overflowX = 'hidden';
-      document.body.style.overflowY = 'auto';
-    } else {
-      document.body.style.overflowX = 'hidden';
-      document.body.style.overflowY = 'hidden';
-    }
+    document.body.style.overflowX = 'hidden';
+    document.body.style.overflowY = loaderDone ? 'auto' : 'hidden';
     return () => {
       document.body.style.overflowX = '';
       document.body.style.overflowY = '';
     };
-  }, [step, loaderDone]);
+  }, [loaderDone]);
 
   // Animate in each new word char-by-char (skip initial mount)
   useGSAP(() => {
@@ -253,7 +241,7 @@ export default function Hero() {
 
   // Word particles: appear at cursor, each letter falls with gravity
   useEffect(() => {
-    if (step !== 3 || !loaderDone) return;
+    if (!loaderDone) return;
     let lastX = 0, lastY = 0, dist = 0;
     const TRIGGER_PX = 110;
     const active = new Set<HTMLDivElement>();
@@ -343,11 +331,11 @@ export default function Hero() {
       active.forEach(p => { gsap.killTweensOf(p.querySelectorAll("span")); p.remove(); });
       activePos.clear();
     };
-  }, [step, loaderDone]);
+  }, [loaderDone]);
 
   // Cycle words while on hero — wait for loader first
   useEffect(() => {
-    if (step !== 3 || !loaderDone) return;
+    if (!loaderDone) return;
     const id = setInterval(() => {
       if (!cyclingRef.current) return;
       const chars = cyclingRef.current.querySelectorAll<HTMLSpanElement>('.hero-char');
@@ -361,7 +349,7 @@ export default function Hero() {
       });
     }, 2800);
     return () => clearInterval(id);
-  }, [step, loaderDone]);
+  }, [loaderDone]);
 
   // Sync Nav Indicator
   useEffect(() => {
@@ -374,32 +362,10 @@ export default function Hero() {
         opacity: 1
       });
     }
-  }, [hoverNav, activeNav, step]);
+  }, [hoverNav, activeNav]);
 
   useGSAP(() => {
-    if (step === 1) {
-      gsap.fromTo(".step-1 .word",
-        { opacity: 0, y: 20, filter: "blur(12px)" },
-        { opacity: 1, y: 0, filter: "blur(0px)", duration: 1.2, stagger: 0.12, ease: "power3.out" }
-      );
-      gsap.fromTo(".step-1 .hero-button",
-        { opacity: 0, y: 15, filter: "blur(5px)" },
-        { opacity: 1, y: 0, filter: "blur(0px)", duration: 1, delay: 1.3, ease: "power2.out" }
-      );
-    } else if (step === 2) {
-      gsap.fromTo(".step-2 .word",
-        { opacity: 0, filter: "blur(8px)", y: 10 },
-        { opacity: 1, filter: "blur(0px)", y: 0, duration: 1, stagger: 0.1, ease: "power2.out" }
-      );
-      gsap.fromTo(".color-btn",
-        { opacity: 0, y: 20, scale: 0.9 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.8, stagger: 0.1, delay: 0.5, ease: "back.out(1.5)" }
-      );
-      gsap.fromTo([".step-2 .hero-button", ".ommit-btn"],
-        { opacity: 0, y: 10 },
-        { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, delay: 1, ease: "power2.out" }
-      );
-    } else if (step === 3) {
+    {
       const fromCore = typeof sessionStorage !== "undefined" && sessionStorage.getItem("vt_from") === "core";
 
       // When returning from /core, nav is already visible via view transition — don't hide it
@@ -655,7 +621,7 @@ export default function Hero() {
 
       gsap.delayedCall(0.1, () => ScrollTrigger.refresh());
     }
-  }, [step, loaderDone]);
+  }, [loaderDone]);
 
   const setAwardHover = (card: HTMLElement | null, isHovering: boolean) => {
     if (!card) return;
@@ -700,19 +666,6 @@ export default function Hero() {
       );
   };
 
-  const goNextStep2 = () => {
-    gsap.to(".step-1", {
-      opacity: 0, y: -30, duration: 0.6, ease: "power2.in", onComplete: () => setStep(2)
-    });
-  };
-
-  const goNextStep3 = () => {
-    setColorCookie(color);
-    gsap.to(".step-2", {
-      opacity: 0, y: -30, duration: 0.6, ease: "power2.in", onComplete: () => setStep(3)
-    });
-  };
-
   const handleLoaderDone = () => {
     localStorage.setItem(LOADER_KEY, "1");
     setLoaderDone(true);
@@ -722,65 +675,10 @@ export default function Hero() {
     <>
     <Analytics />
     {!loaderDone && <HexLoader onComplete={handleLoaderDone} />}
-    <main ref={container} className={`page-container${step === 3 ? " is-scrollable" : ""}`}>
-      {/* Background elements visible overall */}
+    <main ref={container} className="page-container is-scrollable">
       <div className="bg-glow"></div>
 
-      {/* STEP 1: WELCOME */}
-      {step === 1 && (
-        <div className="step-container step-1">
-          <h1 className="hero-title">
-            <div className="line">
-              <span className="word white bold">Welcome</span>{" "}
-              <span className="word dim">to</span>
-            </div>
-            <div className="line" style={{ marginTop: "0.1em" }}>
-              <span className="word dim">a</span>{" "}
-              <span className="word dim">new</span>{" "}
-              <span className="word dim">era</span>{" "}
-              <span className="word white bold">for</span>{" "}
-              <span className="word white bold">C</span>{" "}
-              <span className="word white bold">Minds</span>
-            </div>
-          </h1>
-          <button className="hero-button" onClick={goNextStep2}>
-            Press to continue
-          </button>
-        </div>
-      )}
-
-      {/* STEP 2: COLOR SCHEMA */}
-      {step === 2 && (
-        <div className="step-container step-2">
-          <h2 className="hero-title" style={{ marginBottom: "3rem" }}>
-            <span className="word dim">Select a</span>{" "}
-            <span className="word white bold">color schema</span>
-          </h2>
-
-          <div className="color-options">
-            {COLORS.map((c) => (
-              <button
-                key={c}
-                className={`color-btn ${color === c ? "active" : ""}`}
-                style={{ "--btn-color-rgb": hexToRgb(c) } as React.CSSProperties}
-                onClick={() => setColor(c)}
-                aria-label={`Select color ${c}`}
-              />
-            ))}
-          </div>
-
-          <button className="hero-button" onClick={goNextStep3}>
-            Press to continue
-          </button>
-          <button className="ommit-btn" onClick={goNextStep3}>
-            Ommit
-          </button>
-        </div>
-      )}
-
-      {/* STEP 3: MAIN HERO PAGE */}
-      {step === 3 && (
-        <div className="step-3">
+      <div className="step-3">
 
           {/* ── Hero viewport ── */}
           <div className="hero-section">
@@ -1175,7 +1073,6 @@ export default function Hero() {
       <SiteFooter />
 
         </div>
-      )}
     </main>
     </>
   );
