@@ -17,7 +17,7 @@ const COLOR_IMGS = [
   "/brand/usage-whitebg.png",
   "/brand/usage-monocolorbg.png",
   "/brand/usage-blackbg.png",
-  "/brand/usage-gradientbg.png",
+  "/brand/usage-gradientbg.webp",
 ];
 
 const INCORRECT = [
@@ -209,7 +209,7 @@ export default function BrandPage() {
             </div>
           </div>
           <div className="brand-img-card">
-            <HoverImg src="/brand/primary-logo.png" hover="/brand/primary-logo-hover.png" alt="C Minds primary logo" />
+            <HoverImg src="/brand/primary-logo.png" hover="/brand/primary-logo-hover.webp" alt="C Minds primary logo" />
           </div>
         </section>
 
@@ -222,7 +222,7 @@ export default function BrandPage() {
             </div>
           </div>
           <div className="brand-img-card">
-            <HoverImg src="/brand/hexagone.png" hover="/brand/hexagone-hover.png" alt="C Minds hexagone symbol" />
+            <HoverImg src="/brand/hexagone.png" hover="/brand/hexagone-hover.webp" alt="C Minds hexagone symbol" />
           </div>
         </section>
 
@@ -235,7 +235,7 @@ export default function BrandPage() {
             </div>
           </div>
           <div className="brand-img-card">
-            <HoverImg src="/brand/Cleaspace.png" hover="/brand/Clearspace-hover.png" alt="C Minds logo clearspace guide" />
+            <HoverImg src="/brand/Cleaspace.png" hover="/brand/Clearspace-hover.webp" alt="C Minds logo clearspace guide" />
           </div>
         </section>
 
@@ -248,7 +248,7 @@ export default function BrandPage() {
             </div>
           </div>
           <div className="brand-img-card">
-            <HoverImg src="/brand/partnership.png" hover="/brand/partnership-hover.png" alt="C Minds partnership logo usage" />
+            <HoverImg src="/brand/partnership.png" hover="/brand/partnership-hover.webp" alt="C Minds partnership logo usage" />
           </div>
         </section>
 
