@@ -114,6 +114,7 @@ const AWARDS = [
     alt: "Paris Peace Forum",
     title: "Scale-up Program\n2024-25",
     body: "Emerging technologies, new conditions for the planet",
+    url: "https://parispeaceforum.org/projects/ai-for-climate/",
   },
   {
     id: "forbes",
@@ -121,6 +122,7 @@ const AWARDS = [
     alt: "Forbes",
     title: "Leaders of AI in\nMéxico 2024",
     body: "Honor for Contanza Gómez Mont, Founder of C Minds, Director of NaturaTech LAC",
+    url: "https://forbes.com.mx/la-ia-avanza-en-mexico/",
   },
 ];
 
@@ -1122,6 +1124,8 @@ export default function Hero() {
                     ref={(el) => { awardCardRefs.current[index] = el; }}
                     className="award-card"
                     tabIndex={0}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => window.open(award.url, "_blank", "noopener,noreferrer")}
                     onMouseEnter={() => setAwardHover(awardCardRefs.current[index], true)}
                     onMouseLeave={() => setAwardHover(awardCardRefs.current[index], false)}
                     onFocus={() => setAwardHover(awardCardRefs.current[index], true)}
