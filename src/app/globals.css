@@ -3959,24 +3959,35 @@ body {
   z-index: 2;
 }
 
-/* ambient glow with user's primary color — hidden until hover */
+/* ambient glow — hidden until hover */
 .ct-card::after {
   content: '';
   position: absolute;
-  bottom: 0;
+  bottom: -10%;
   left: 50%;
   transform: translateX(-50%);
   width: 110%;
   height: 65%;
-  background: radial-gradient(ellipse at center bottom, rgba(var(--color-primary-rgb), 0.35) 0%, transparent 70%);
+  background: radial-gradient(ellipse at center bottom, rgba(var(--color-primary-rgb), 0.45) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
   opacity: 0;
   transition: opacity 0.45s ease;
+  filter: blur(12px);
 }
 
 .ct-card:hover::after {
   opacity: 1;
+}
+
+/* outer card glow + drop-shadow following the person's silhouette */
+.ct-card {
+  transition: box-shadow 0.45s ease, filter 0.45s ease;
+}
+
+.ct-card:hover {
+  box-shadow: 0 12px 60px rgba(var(--color-primary-rgb), 0.35);
+  filter: drop-shadow(0 0 22px rgba(var(--color-primary-rgb), 0.5));
 }
 
 .ct-card img {
