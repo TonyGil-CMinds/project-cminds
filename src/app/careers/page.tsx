@@ -15,22 +15,64 @@ const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 
 const PEOPLE = [
   {
-    name: "Xiomy Vázquez",
-    role: "Lead of Branding",
-    img:  "/core/member-xio.png",
-    quote: "Working remotely gives me the flexibility to do my best work, from presenting to clients in New York to collaborating with my team across Europe.",
+    name: "Alex Muñoz",
+    role: "Director, Vital Oceans",
+    img:  "/team/AlexMunos.png",
+    quote: "The ocean covers more than 70% of our planet, yet we understand so little of it. Every decision we make at Vital Oceans is a step toward closing that gap — before it's too late.",
   },
   {
-    name: "Tony Gil",
-    role: "Lead of Design",
-    img:  "/core/member-tony.png",
+    name: "Ángel Escalante",
+    role: "Lead, Digital Product",
+    img:  "/team/Angel Escalante.png",
+    quote: "A great digital product doesn't just work — it earns trust. The best interfaces are the ones people forget they're using because everything just flows.",
+  },
+  {
+    name: "Antonio Gil",
+    role: "Lead, Interactive Design",
+    img:  "/team/Tony Gil.png",
     quote: "Every great project starts with understanding people. Design isn't decoration — it's how we communicate what matters most and why it's worth building.",
   },
   {
+    name: "Camila Valdez",
+    role: "Editorial Design",
+    img:  "/team/Camila Valdes.png",
+    quote: "Visual storytelling is how complex ideas become accessible. Good editorial design doesn't just present information — it makes people feel something before they've read a single word.",
+  },
+  {
+    name: "Carlo Angeles",
+    role: "Head of Impact",
+    img:  "/team/Carlo Angeles.png",
+    quote: "Impact without measurement is just intention. Our job is to make sure that what we do in rooms and boardrooms actually reaches the people and ecosystems we're working for.",
+  },
+  {
     name: "Eduardo Gómez Restrepo",
-    role: "Lead of Technology",
-    img:  "/core/member-eduardo.png",
-    quote: "The most exciting part of this work is knowing that the technology we build today shapes opportunities for people tomorrow.",
+    role: "Head, ScaleUp Studio",
+    img:  "/team/Eduardo Gómez.png",
+    quote: "Scaling an idea isn't just about growth — it's about making sure the right things grow in the right way. The ScaleUp Studio exists to make that distinction matter.",
+  },
+  {
+    name: "Enrique Portillo",
+    role: "Administration Lead",
+    img:  "/team/Enrique Portillo.png",
+    quote: "Every great initiative runs on trust and structure. Behind every launch, every partnership, every milestone — there's a foundation that makes it all possible.",
+  },
+  {
+    name: "Fernanda Reséndiz",
+    role: "Communication",
+    img:  "/team/Fernanda Resendiz.png",
+    quote: "Telling the right story to the right audience at the right moment is a craft. Communication is how we turn our work into something the world can understand and believe in.",
+  },
+  {
+    name: "Regina Cervera",
+    role: "Head, Nature Innovation Programs",
+    img:  "/team/Regina Cervera.png",
+    quote: "Innovation for nature isn't a metaphor — it's a necessity. Every program we design has to meet the urgency of what's at stake and the ambition of what's possible.",
+  },
+  {
+    name: "Xiomy Vázquez",
+    role: "Lead, Branding",
+    img:  "/team/Xiomy Vazquez.png",
+    quote: "A brand is a promise. My job is to make sure C Minds keeps that promise consistently — in every color, every word, and every experience we put into the world.",
   },
 ];
 
