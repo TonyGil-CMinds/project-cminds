@@ -9,7 +9,7 @@ gsap.registerPlugin(ScrollTrigger);
 const TEAM = [
   { name: "Xiomy Vázquez",    role: "Lead of Branding",    img: "/core/member-xio.png",     linkedin: "#" },
   { name: "Tony Gil",         role: "Lead of Design",       img: "/core/member-tony.png",    linkedin: "#" },
-  { name: "Eduardo García",   role: "Lead of Technology",   img: "/core/member-eduardo.png", linkedin: "#" },
+  { name: "Eduardo Gómez Restrepo", role: "Lead of Technology",   img: "/core/member-eduardo.png", linkedin: "#" },
 ];
 
 const N      = TEAM.length;

@@ -27,7 +27,7 @@ const PEOPLE = [
     quote: "Every great project starts with understanding people. Design isn't decoration — it's how we communicate what matters most and why it's worth building.",
   },
   {
-    name: "Eduardo García",
+    name: "Eduardo Gómez Restrepo",
     role: "Lead of Technology",
     img:  "/core/member-eduardo.png",
     quote: "The most exciting part of this work is knowing that the technology we build today shapes opportunities for people tomorrow.",
