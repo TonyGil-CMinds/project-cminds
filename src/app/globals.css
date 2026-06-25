@@ -4,6 +4,16 @@
   box-sizing: border-box;
 }
 
+::selection {
+  background: var(--color-primary);
+  color: var(--color-bg);
+}
+
+::-moz-selection {
+  background: var(--color-primary);
+  color: var(--color-bg);
+}
+
 /* ---- LOADER ---- */
 
 .loader-overlay {
