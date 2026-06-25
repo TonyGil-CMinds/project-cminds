@@ -2469,6 +2469,10 @@ body {
   padding: clamp(4rem, 8vh, 7rem) clamp(1.4rem, 5vw, 6rem);
   gap: 2.5rem;
   position: relative;
+  /* When pinned (position:fixed), the background covers everything below
+     and z-index ensures it sits on top of the previous section. */
+  background: var(--color-bg);
+  z-index: 20;
 }
 
 .careers-culture-text {

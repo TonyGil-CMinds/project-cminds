@@ -217,7 +217,12 @@ export default function CareersPage() {
           start: "top top",
           end: "+=220%",
           pin: true,
+          pinSpacing: true,
           scrub: 1.5,
+          // onLeave: section has already faded out via the timeline tween below.
+          // We just hide it so it doesn't re-appear at its natural DOM position.
+          onLeave:      () => { gsap.set(culturePin, { visibility: "hidden" }); },
+          onEnterBack:  () => { gsap.set(culturePin, { autoAlpha: 1 }); },
           onUpdate: (self) => {
             if (fill) fill.style.height = `${self.progress * 100}%`;
             if (dot)  dot.style.top     = `calc(${self.progress * 100}% - 10px)`;
@@ -225,12 +230,15 @@ export default function CareersPage() {
         },
       });
 
+      // Phase 1: words fill in
       tl.fromTo(
         words,
         { opacity: 0.12, filter: "blur(2.5px)" },
         { opacity: 1, filter: "blur(0px)", duration: 0.5, ease: "power1.out", stagger: 0.055 },
         0
       );
+      // Phase 2: whole section fades out smoothly before the pin releases
+      tl.to(culturePin, { opacity: 0, duration: 0.3, ease: "power2.in" }, ">");
     }
 
     // Benefits — layer 1: cards slide up
