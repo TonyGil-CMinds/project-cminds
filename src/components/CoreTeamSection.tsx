@@ -102,6 +102,30 @@ export default function CoreTeamSection() {
     return () => { tl.kill(); };
   }, []);
 
+  const handleCardMouseMove = (e: React.MouseEvent<HTMLDivElement>, i: number) => {
+    const card = cardRefs.current[i];
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const rx = ((e.clientY - cy) / (rect.height / 2)) * -10;
+    const ry = ((e.clientX - cx) / (rect.width / 2)) * 10;
+    gsap.to(card, {
+      rotateX: rx, rotateY: ry,
+      transformPerspective: 800,
+      duration: 0.25, ease: "power2.out", overwrite: "auto",
+    });
+  };
+
+  const handleCardMouseLeave = (i: number) => {
+    const card = cardRefs.current[i];
+    if (!card) return;
+    gsap.to(card, {
+      rotateX: 0, rotateY: 0,
+      duration: 0.7, ease: "elastic.out(1, 0.45)", overwrite: "auto",
+    });
+  };
+
   const goTo = (idx: number) => {
     const newActive = ((idx % N) + N) % N;
     if (newActive === activeRef.current) return;
@@ -146,6 +170,8 @@ export default function CoreTeamSection() {
             key={m.name}
             ref={(el) => { cardRefs.current[i] = el; }}
             className="ct-card"
+            onMouseMove={(e) => handleCardMouseMove(e, i)}
+            onMouseLeave={() => handleCardMouseLeave(i)}
           >
             <img src={m.img} alt={m.name} draggable={false} />
             <div className="ct-card-mobile-overlay">

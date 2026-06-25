@@ -3959,18 +3959,24 @@ body {
   z-index: 2;
 }
 
-/* ambient glow with user's primary color */
+/* ambient glow with user's primary color — hidden until hover */
 .ct-card::after {
   content: '';
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
-  height: 55%;
-  background: radial-gradient(ellipse at center bottom, rgba(var(--color-primary-rgb), 0.22) 0%, transparent 70%);
+  width: 110%;
+  height: 65%;
+  background: radial-gradient(ellipse at center bottom, rgba(var(--color-primary-rgb), 0.35) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+}
+
+.ct-card:hover::after {
+  opacity: 1;
 }
 
 .ct-card img {
