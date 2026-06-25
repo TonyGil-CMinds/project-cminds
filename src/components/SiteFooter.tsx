@@ -2,6 +2,7 @@
 
 import { startTransition, useId } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import ContactButton from "./ContactButton";
 
 const SITE_MAP = [
   { label: "Home",      path: "/" },
@@ -31,7 +32,7 @@ export default function SiteFooter() {
     <footer className="site-footer">
       <div className="footer-cta">
         <h2>Bold &amp; Meaningful<br />Transformations</h2>
-        <a href="mailto:info@cminds.co" className="footer-cta-btn">Contact us</a>
+        <ContactButton variant="footer" />
       </div>
 
       <div className="footer-main">

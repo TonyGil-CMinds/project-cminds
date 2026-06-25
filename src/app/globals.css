@@ -361,6 +361,87 @@ body {
   text-decoration: none;
 }
 
+/* ── Contact button popover ── */
+.contact-btn-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.contact-popover {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(8, 6, 28, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 6px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 176px;
+  z-index: 9999;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255,255,255,0.05) inset;
+  animation: popover-in 0.18s ease;
+}
+
+.contact-popover--down {
+  top: calc(100% + 8px);
+}
+
+.contact-popover--up {
+  bottom: calc(100% + 8px);
+}
+
+@keyframes popover-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.contact-popover--up {
+  animation-name: popover-in-up;
+}
+
+@keyframes popover-in-up {
+  from { opacity: 0; transform: translateX(-50%) translateY(-6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.contact-popover-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 13px;
+  border-radius: 9px;
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+}
+
+.contact-popover-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+
+.contact-popover-icon {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-dim);
+}
+
+.contact-popover-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
 /* Orbits Background */
 .orbit-bg {
   position: fixed;

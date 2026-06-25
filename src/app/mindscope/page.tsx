@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SideRays from "../../../components/reactbits/SideRays";
+import ContactButton from "../../components/ContactButton";
 gsap.registerPlugin(ScrollTrigger);
 
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
@@ -230,7 +231,7 @@ export default function MindscopePage() {
             </div>
           ))}
         </div>
-        <a href="mailto:info@cminds.co" className="hero-button nav-contact">Contact us</a>
+        <ContactButton variant="nav" />
       </nav>
 
       {/* Hero */}

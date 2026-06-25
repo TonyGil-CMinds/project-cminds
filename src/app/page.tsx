@@ -8,6 +8,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HexLoader from "../components/HexLoader";
 import SiteFooter from "../components/SiteFooter";
+import ContactButton from "../components/ContactButton";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -803,7 +804,7 @@ export default function Hero() {
                 ))}
               </div>
 
-              <a href="mailto:info@cminds.co" className="hero-button nav-contact">Contact us</a>
+              <ContactButton variant="nav" />
             </nav>
 
             {/* Orbit background */}

@@ -4,6 +4,7 @@ import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "r
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import SiteFooter from "../../components/SiteFooter";
+import ContactButton from "../../components/ContactButton";
 
 const NAV_ITEMS    = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
@@ -117,7 +118,7 @@ export default function EthicsPage() {
             >{item}</div>
           ))}
         </div>
-        <a href="mailto:info@cminds.co" className="hero-button nav-contact">Contact us</a>
+        <ContactButton variant="nav" />
       </nav>
 
       {/* Page header */}
