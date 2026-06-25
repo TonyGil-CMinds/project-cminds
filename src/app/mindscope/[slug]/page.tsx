@@ -79,8 +79,9 @@ export default function PostPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const msItemRef    = useRef<HTMLDivElement>(null);
   const navLightRef  = useRef<HTMLDivElement>(null);
-  const trackElRef   = useRef<HTMLDivElement>(null);
-  const isDragging   = useRef(false);
+  const trackElRef      = useRef<HTMLDivElement>(null);
+  const isDragging      = useRef(false);
+  const swipeTouchStart = useRef<number | null>(null);
   const sectionsRef  = useRef<Section[]>([]);
 
   const [post, setPost]             = useState<Post | null>(null);
@@ -313,6 +314,23 @@ export default function PostPage() {
     scrollToSection(sections[idx]?.id ?? "");
   };
 
+  const handleCardTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+    swipeTouchStart.current = e.touches[0].clientX;
+  };
+
+  const handleCardTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (swipeTouchStart.current === null) return;
+    const delta = e.changedTouches[0].clientX - swipeTouchStart.current;
+    swipeTouchStart.current = null;
+    if (Math.abs(delta) < 40) return;
+    const next = delta < 0
+      ? Math.min(activeSection + 1, sections.length - 1)
+      : Math.max(activeSection - 1, 0);
+    if (next === activeSection) return;
+    setActiveSection(next);
+    scrollToSection(sections[next]?.id ?? "");
+  };
+
   const thumbPct = sections.length > 1
     ? (activeSection / (sections.length - 1)) * 100
     : 0;
@@ -403,7 +421,11 @@ export default function PostPage() {
               </div>
 
               {/* Track card */}
-              <div className="ms-slider-track-card">
+              <div
+                className="ms-slider-track-card"
+                onTouchStart={handleCardTouchStart}
+                onTouchEnd={handleCardTouchEnd}
+              >
                 <div
                   ref={trackElRef}
                   className="ms-slider-track"
