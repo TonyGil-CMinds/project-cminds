@@ -3851,7 +3851,7 @@ body {
   top: 0;
   z-index: 1;
   background: var(--color-bg);
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   padding: 0 clamp(2.5rem, 8vw, 9rem);
@@ -5270,9 +5270,9 @@ body {
   .gd-body { max-width: 100%; }
 
   /* ── Constanza Section ──────────────────────────────────── */
-  /* 200vh total: 100vh photo+bio | 65vh quote | 35vh slider */
+  /* 175vh total: 100vh photo+bio | 40vh quote | 35vh slider */
   .cz-section {
-    height: 200vh;
+    height: 175vh;
     overflow: hidden;
     background: var(--color-bg);
   }
@@ -5333,9 +5333,9 @@ body {
   .cz-founder-title { font-size: 1.2rem; margin-top: 0.1rem; }
   .cz-bio          { margin-top: 1.2rem; font-size: 0.9rem; max-width: 42ch; }
 
-  /* Quote — 65vh (100vh–165vh) */
+  /* Quote — 40vh (100vh–140vh) */
   .cz-bottom {
-    height: 65vh;
+    height: 40vh;
     padding: 3rem 1.4rem 3rem;
     z-index: 3;
     justify-content: flex-start;
@@ -5427,6 +5427,7 @@ body {
     gap: 0.25rem;
     pointer-events: none;
     border-radius: 0 0 26px 26px;
+    z-index: 2;
   }
 
   .ct-card-mobile-overlay .ct-role {
@@ -5452,8 +5453,11 @@ body {
     position: relative;
     bottom: auto; left: auto;
     transform: none;
-    margin: 1.5rem 0 2rem;
+    margin: 1.5rem auto 2rem;
     z-index: 3;
+    display: flex;
+    justify-content: center;
+    width: 100%;
   }
 
   .ct-btn { width: 44px; height: 44px; }

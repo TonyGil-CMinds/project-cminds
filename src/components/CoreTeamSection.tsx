@@ -194,7 +194,7 @@ export default function CoreTeamSection() {
           <p className="ct-sub" style={{ opacity: 0 }}>Our core team</p>
         </div>
         <div className="ct-links">
-          <a className="ct-link" href="#" style={{ opacity: 0 }}>Want to join our team?</a>
+          <a className="ct-link" href="/careers" style={{ opacity: 0 }}>Want to join our team?</a>
           <a className="ct-link" href="#" style={{ opacity: 0 }}>Want to join the LAC ecosystem?</a>
         </div>
       </div>
