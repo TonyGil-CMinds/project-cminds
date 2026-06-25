@@ -81,7 +81,7 @@ export default function SiteFooter() {
           </div>
         </div>
 
-        <p className="footer-copy mobile-copy">© 2025 C Minds All rights reserved.</p>
+        <p className="footer-copy mobile-copy">© 2026 C Minds All rights reserved.</p>
       </div>
     </footer>
   );
