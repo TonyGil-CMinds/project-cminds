@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SideRays from "../../../components/reactbits/SideRays";
+import Dock from "../../../components/reactbits/Dock";
 import ContactButton from "../../components/ContactButton";
 gsap.registerPlugin(ScrollTrigger);
 
@@ -62,6 +63,8 @@ export default function MindscopePage() {
   const [hoverNav, setHoverNav]         = useState<number | null>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
   const [primaryColor, setPrimaryColor] = useState('#5EC1F3');
+  const [subscribed, setSubscribed]     = useState(false);
+  const [ringing, setRinging]           = useState(false);
   const router = useRouter();
 
   // ── Fetch blog feed ────────────────────────────────────────
@@ -141,7 +144,7 @@ export default function MindscopePage() {
         router.push(path);
       }
     };
-    gsap.to([".ms-pill", ".ms-word", ".ms-subscribe-wrap", ".ms-feat-section"], {
+    gsap.to([".ms-pill", ".ms-word", ".ms-subscribe-wrap", ".ms-dock-wrap", ".ms-feat-section"], {
       opacity: 0, y: -16, filter: "blur(8px)",
       duration: 0.25, stagger: 0.04, ease: "power2.in",
       onComplete: doNavigate,
@@ -172,6 +175,10 @@ export default function MindscopePage() {
     gsap.fromTo(".ms-subscribe-wrap",
       { opacity: 0, y: 20 },
       { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", delay: 0.9 }
+    );
+    gsap.fromTo(".ms-dock-wrap",
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.6, ease: "power2.out", delay: 1.1 }
     );
 
     const wrap   = containerRef.current?.querySelector<HTMLElement>(".ms-feat-wrap");
@@ -253,20 +260,64 @@ export default function MindscopePage() {
           />
         </div>
         <div className="ms-hero-group">
-
+          <div className="ms-pill">
+            <span style={{ color: "var(--color-primary)" }}>•</span>
+            Mindscope ®
+          </div>
           <h1 className="ms-heading">
             <span className="ms-word">Unfolds Multiple</span>
             <span className="ms-word ms-gradient-word">Dimensions</span>
           </h1>
         </div>
         <div className="ms-subscribe-wrap">
-          <form className="ms-form" onSubmit={(e) => e.preventDefault()}>
-            <span className="ms-input-prefix">|</span>
-            <input type="email" className="ms-input" placeholder="name@email.com" />
-            <button type="submit" className="ms-subscribe-btn">Suscribe</button>
-          </form>
+          <button
+            className={`ms-bell-btn${subscribed ? " ms-bell-subscribed" : ""}`}
+            onClick={() => {
+              if (subscribed) return;
+              setRinging(true);
+              setSubscribed(true);
+              setTimeout(() => setRinging(false), 750);
+            }}
+          >
+            <span className="ms-bell-text">
+              {subscribed ? "Subscribed" : "Subscribe to receive updates"}
+            </span>
+            <span className={`ms-bell-icon${ringing ? " ms-bell-ring" : ""}`}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+              </svg>
+            </span>
+          </button>
         </div>
       </section>
+
+      {/* Fixed dock — always visible while scrolling */}
+      <div className="ms-dock-wrap">
+        <Dock
+          items={[
+            {
+              icon: <img src="/mindscope/publicaciones.svg" width={19} height={19} alt="Publicaciones" />,
+              label: "Publicaciones",
+              onClick: () => {},
+            },
+            {
+              icon: <img src="/mindscope/reportes.svg" width={22} height={22} alt="Reportes" />,
+              label: "Reportes",
+              onClick: () => {},
+            },
+            {
+              icon: <img src="/mindscope/busqueda.svg" width={18} height={18} alt="Búsqueda" />,
+              label: "Búsqueda",
+              onClick: () => {},
+            },
+          ]}
+          panelHeight={60}
+          baseItemSize={46}
+          magnification={62}
+          distance={180}
+        />
+      </div>
 
       {/* Featured */}
       <section className="ms-feat-section">
