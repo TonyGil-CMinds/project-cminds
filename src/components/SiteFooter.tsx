@@ -52,7 +52,7 @@ export default function SiteFooter() {
 
         <div className="footer-column footer-resources">
           <h3>RESOURCES</h3>
-          <a href="#terms">MediaKit</a>
+          <a href="/brand">MediaKit</a>
           <a style={{ cursor: "pointer" }} onClick={() => navigate("/privacy")}>Privacy policy</a>
           <a style={{ cursor: "pointer" }} onClick={() => navigate("/ethics")}>Code of ethics</a>
         </div>
