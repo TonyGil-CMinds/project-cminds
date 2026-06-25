@@ -35,8 +35,20 @@ const satoshi = localFont({
   variable: "--font-satoshi",
 });
 
+const siteUrl = new URL(
+  process.env.NEXT_PUBLIC_SITE_URL ??
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "https://www.cminds.co")
+);
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://cminds.co"),
+  metadataBase: siteUrl,
+  alternates: {
+    canonical: "/",
+  },
   title: {
     default: "C Minds — Systemic Innovation & Biodiversity Action Tank",
     template: "%s | C Minds",
@@ -51,10 +63,11 @@ export const metadata: Metadata = {
       "C Minds integrates technology, finance, business, and governance to drive equitable prosperity and biodiversity conservation.",
     images: [
       {
-        url: "https://cminds.co/og-image.jpg",
+        url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "C Minds — A new era begins",
+        type: "image/jpeg",
+        alt: "C Minds - A new era begins",
       },
     ],
   },
@@ -63,7 +76,12 @@ export const metadata: Metadata = {
     title: "C Minds — A New Era Begins",
     description:
       "C Minds is an action tank integrating technology, finance, business, and governance to drive equitable prosperity and biodiversity conservation.",
-    images: ["https://cminds.co/og-image.jpg"],
+    images: [
+      {
+        url: "/og-image.jpg",
+        alt: "C Minds - A new era begins",
+      },
+    ],
   },
 };
 
