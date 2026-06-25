@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
@@ -266,7 +266,7 @@ export default function CoreScrollSection({ onScrollProgress }: Props) {
                 className="cs-phrase"
               >
                 {ph.split(" ").map((word, j) => (
-                  <span key={j} className="cs-pw">{word}{j < ph.split(" ").length - 1 ? " " : ""}</span>
+                  <span key={j} className="cs-pw" style={i !== 0 ? { opacity: 0 } : undefined}>{word}{j < ph.split(" ").length - 1 ? " " : ""}</span>
                 ))}
               </span>
             ))}
