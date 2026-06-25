@@ -799,7 +799,7 @@ export default function Hero() {
                 ))}
               </div>
 
-              <button className="hero-button nav-contact">Contact us</button>
+              <a href="mailto:info@cminds.co" className="hero-button nav-contact">Contact us</a>
             </nav>
 
             {/* Orbit background */}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
@@ -344,7 +344,7 @@ export default function PostPage() {
             </div>
           ))}
         </div>
-        <button className="hero-button nav-contact">Contact us</button>
+        <a href="mailto:info@cminds.co" className="hero-button nav-contact">Contact us</a>
       </nav>
 
       {/* Post content */}

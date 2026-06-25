@@ -348,6 +348,7 @@ body {
 .nav-contact {
   margin-left: auto;
   margin-bottom: 0px;
+  text-decoration: none;
 }
 
 /* Orbits Background */
@@ -1410,6 +1411,10 @@ body {
   cursor: pointer;
   backdrop-filter: blur(12px);
   transition: transform 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .footer-cta-btn:hover {

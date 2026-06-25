@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { startTransition, useId } from "react";
 import { useRouter, usePathname } from "next/navigation";
@@ -31,7 +31,7 @@ export default function SiteFooter() {
     <footer className="site-footer">
       <div className="footer-cta">
         <h2>Bold &amp; Meaningful<br />Transformations</h2>
-        <button className="footer-cta-btn">Contact us</button>
+        <a href="mailto:info@cminds.co" className="footer-cta-btn">Contact us</a>
       </div>
 
       <div className="footer-main">
