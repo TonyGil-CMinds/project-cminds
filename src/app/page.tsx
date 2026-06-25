@@ -9,6 +9,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HexLoader from "../components/HexLoader";
 import SiteFooter from "../components/SiteFooter";
 import ContactButton from "../components/ContactButton";
+import { Analytics } from '@vercel/analytics/next';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -719,6 +720,7 @@ export default function Hero() {
 
   return (
     <>
+    <Analytics />
     {!loaderDone && <HexLoader onComplete={handleLoaderDone} />}
     <main ref={container} className={`page-container${step === 3 ? " is-scrollable" : ""}`}>
       {/* Background elements visible overall */}
