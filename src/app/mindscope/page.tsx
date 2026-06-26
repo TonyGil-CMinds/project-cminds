@@ -3,12 +3,14 @@
 import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "react";
 import { useGSAP } from "@gsap/react";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SideRays from "../../../components/reactbits/SideRays";
 import Dock from "../../../components/reactbits/Dock";
 import ContactButton from "../../components/ContactButton";
 import { useSubscribeModal } from "../../components/SubscribeModalProvider";
+const TheArchive = dynamic(() => import("../../components/TheArchive"), { ssr: false });
 gsap.registerPlugin(ScrollTrigger);
 
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
@@ -470,6 +472,8 @@ export default function MindscopePage() {
           </div>
         </div>
       )}
+
+      <TheArchive visible={dockActive === 1} />
     </div>
   );
 }
