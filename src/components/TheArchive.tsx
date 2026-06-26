@@ -225,9 +225,10 @@ function ArchCard({ item, index, progress, carouselOff, activeIdx, hoverIdx, onH
       tDim   = 1.0;
     } else if (isActive) {
       /* ── Expanded: grows, moves left-center, faces camera ── */
-      tx = -1.8; ty = 0; tz = 1.2;
+      const mob = window.innerWidth < 768;
+      tx = mob ? 0 : -1.8; ty = mob ? 1.0 : 0; tz = 1.2;
       tRX = 0; tRY = 0; tRZ = 0;
-      tScale = 1.68;
+      tScale = mob ? 1.1 : 1.68;
       tGray  = 0.0;
       tDim   = 1.0;
     } else {
@@ -392,13 +393,17 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
 
   /* Panel show / switch / hide */
   useEffect(() => {
+    const mob = window.innerWidth < 768;
+    const outProps  = mob ? { y: "100%", opacity: 1 } : { x: "55%", opacity: 0 };
+    const outTween  = { ...(mob ? { y: "100%" } : { x: "55%", opacity: 0 }) };
+
     if (activeIdx !== null) {
       if (!panelVisRef.current) {
         panelVisRef.current = true;
         setPanelItem(ITEMS[activeIdx]);
       } else {
         gsap.to(panelRef.current, {
-          x: "55%", opacity: 0, duration: 0.2, ease: "power2.in",
+          ...outTween, duration: 0.2, ease: "power2.in",
           onComplete: () => { setPanelItem(ITEMS[activeIdx]); },
         });
       }
@@ -406,22 +411,26 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
       panelVisRef.current = false;
       if (panelRef.current) {
         gsap.to(panelRef.current, {
-          x: "55%", opacity: 0, duration: 0.3, ease: "power3.in",
+          ...outTween, duration: 0.3, ease: "power3.in",
           onComplete: () => setPanelItem(null),
         });
       } else {
         setPanelItem(null);
       }
     }
+    void outProps;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeIdx]);
 
   /* Animate panel in whenever panelItem mounts/changes */
   useEffect(() => {
     if (!panelItem || !panelRef.current) return;
+    const mob = window.innerWidth < 768;
     gsap.fromTo(panelRef.current,
-      { x: "55%", opacity: 0 },
-      { x: 0, opacity: 1, duration: 0.48, ease: "power3.out" }
+      mob ? { y: "100%", opacity: 1 } : { x: "55%", opacity: 0 },
+      mob
+        ? { y: 0, opacity: 1, duration: 0.48, ease: "power3.out" }
+        : { x: 0,  opacity: 1, duration: 0.48, ease: "power3.out" }
     );
   }, [panelItem]);
 
