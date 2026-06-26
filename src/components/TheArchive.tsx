@@ -326,10 +326,12 @@ interface TheArchiveProps {
 }
 
 export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
-  const wrapRef     = useRef<HTMLDivElement>(null);
-  const panelRef    = useRef<HTMLDivElement>(null);
-  const progressRef = useRef(0);
-  const panelVisRef = useRef(false);
+  const wrapRef        = useRef<HTMLDivElement>(null);
+  const panelRef       = useRef<HTMLDivElement>(null);
+  const progressRef    = useRef(0);
+  const panelVisRef    = useRef(false);
+  const touchStartRef  = useRef<{ x: number; y: number } | null>(null);
+  const touchRawRef    = useRef(0);
 
   const [progress,    setProgress]    = useState(0);
   const [carouselOff, setCarouselOff] = useState(CAROUSEL_HALF);
@@ -377,6 +379,50 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
       setPanelItem(null);
     }
   }, [visible]);
+
+  /* touch drag (mobile) */
+  useEffect(() => {
+    if (!visible) return;
+
+    const onStart = (e: TouchEvent) => {
+      if (activeIdx !== null) return;
+      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      touchRawRef.current   = progressRef.current;
+    };
+
+    const onMove = (e: TouchEvent) => {
+      if (!touchStartRef.current || activeIdx !== null) return;
+      e.preventDefault();
+      const dx  = e.touches[0].clientX - touchStartRef.current.x;
+      const dy  = e.touches[0].clientY - touchStartRef.current.y;
+      const raw = touchRawRef.current;
+
+      let newRaw: number;
+      if (raw < 1.0) {
+        // vertical drag → orbit → carousel
+        newRaw = Math.max(0, Math.min(2, raw - dy / (window.innerHeight * 0.45)));
+      } else {
+        // horizontal drag → carousel scroll
+        newRaw = Math.max(0, Math.min(2, raw - dx / (window.innerWidth * 0.55)));
+      }
+
+      progressRef.current = newRaw;
+      setProgress(Math.min(1, newRaw));
+      const t = Math.max(0, Math.min(1, newRaw - 1));
+      setCarouselOff(CAROUSEL_HALF * (1 - 2 * t));
+    };
+
+    const onEnd = () => { touchStartRef.current = null; };
+
+    window.addEventListener("touchstart", onStart, { passive: true });
+    window.addEventListener("touchmove",  onMove,  { passive: false });
+    window.addEventListener("touchend",   onEnd);
+    return () => {
+      window.removeEventListener("touchstart", onStart);
+      window.removeEventListener("touchmove",  onMove);
+      window.removeEventListener("touchend",   onEnd);
+    };
+  }, [visible, activeIdx]);
 
   /* Escape to close */
   useEffect(() => {
