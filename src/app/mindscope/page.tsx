@@ -57,6 +57,7 @@ export default function MindscopePage() {
   const trackRef      = useRef<HTMLDivElement>(null);
   const drumRef       = useRef<HTMLDivElement>(null);
   const reelActiveRef = useRef(0);
+  const pubSectionRef = useRef<HTMLElement>(null);
 
   const [posts, setPosts]               = useState<ReelPost[]>([]);
   const [reelActive, setReelActive]     = useState(0);
@@ -367,7 +368,7 @@ export default function MindscopePage() {
               icon: <img src="/mindscope/publicaciones.svg" width={19} height={19} alt="Publications" />,
               label: "Publications",
               className: dockActive === 0 ? 'dock-item--active' : '',
-              onClick: () => setDockActive(0),
+              onClick: () => { setDockActive(0); pubSectionRef.current?.scrollIntoView({ behavior: 'smooth' }); },
             },
             {
               icon: <img src="/mindscope/reportes.svg" width={22} height={22} alt="Reports" />,
@@ -390,7 +391,7 @@ export default function MindscopePage() {
       </div>
 
       {/* Featured */}
-      <section className="ms-feat-section">
+      <section ref={pubSectionRef} className="ms-feat-section">
         <div className="ms-feat-wrap">
           <div
             className="ms-feat-card"

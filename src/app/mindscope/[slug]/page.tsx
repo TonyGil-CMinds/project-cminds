@@ -91,6 +91,13 @@ export default function PostPage() {
   const [loading, setLoading]       = useState(true);
   const [nextPost, setNextPost]     = useState<Post | null>(null);
   const [nextProgress, setNextProgress] = useState(0);
+  const [copied, setCopied]         = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(window.location.href).catch(() => {});
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const nextPostRef     = useRef<Post | null>(null);
   const isNavigatingRef = useRef(false);
@@ -392,6 +399,21 @@ export default function PostPage() {
             className="ms-post-body"
             dangerouslySetInnerHTML={{ __html: postHtml || "<p>No content available.</p>" }}
           />
+
+          {/* Share row */}
+          <div className="ms-share-row">
+            <span className="ms-share-text">Share with friends</span>
+            <button className="ms-share-btn" onClick={handleCopy} aria-label="Copy link">
+              <span className="ms-share-tooltip">Copy to share</span>
+              {copied ? (
+                <svg key="check" className="ms-share-icon-enter" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              ) : (
+                <img key="link" src="/link.svg" width={17} height={10} alt="Copy link" />
+              )}
+            </button>
+          </div>
 
           {/* Next post scroll buffer */}
           {nextPost && (

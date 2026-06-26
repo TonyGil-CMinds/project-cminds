@@ -3595,6 +3595,70 @@ body {
 }
 .ms-post-body li { margin-bottom: 0.4rem; }
 
+/* ── Share row ── */
+.ms-share-row {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 1.4rem 2.5rem 2.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ms-share-text {
+  font-size: 0.88rem;
+  color: var(--color-text-dim);
+  letter-spacing: 0.01em;
+}
+
+.ms-share-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.55);
+  transition: color 0.2s;
+}
+
+.ms-share-btn:hover { color: rgba(255, 255, 255, 0.9); }
+
+.ms-share-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  white-space: nowrap;
+  background: rgba(4, 3, 20, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 0.28rem 0.7rem;
+  font-size: 0.74rem;
+  color: rgba(255, 255, 255, 0.72);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.ms-share-btn:hover .ms-share-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+@keyframes ms-share-enter {
+  from { opacity: 0; transform: scale(0.5) rotate(-15deg); }
+  to   { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+.ms-share-icon-enter {
+  animation: ms-share-enter 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
 /* ── Reading slider — fixed bottom-right ── */
 .ms-slider {
   position: fixed;
