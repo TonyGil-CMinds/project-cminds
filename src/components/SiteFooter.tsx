@@ -3,6 +3,7 @@
 import { startTransition, useId } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import ContactButton from "./ContactButton";
+import { useSubscribeModal } from "./SubscribeModalProvider";
 
 const SITE_MAP = [
   { label: "Home",      path: "/" },
@@ -15,6 +16,7 @@ export default function SiteFooter() {
   const router   = useRouter();
   const pathname = usePathname();
   const emailId  = useId();
+  const { open: openSubscribeModal } = useSubscribeModal();
 
   const navigate = (path: string) => {
     if (typeof document !== "undefined" && document.startViewTransition) {
@@ -59,11 +61,11 @@ export default function SiteFooter() {
 
         <div className="footer-join">
           <h3>JOIN US</h3>
-          <form className="footer-form" onSubmit={(e) => e.preventDefault()}>
+          <div className="footer-form">
             <label className="sr-only" htmlFor={emailId}>Email</label>
-            <input id={emailId} type="email" placeholder="I name@email.com" />
-            <button type="submit">Suscribe</button>
-          </form>
+            <input id={emailId} type="email" placeholder="I name@email.com" readOnly onClick={() => openSubscribeModal()} style={{ cursor: 'pointer' }} />
+            <button type="button" onClick={() => openSubscribeModal()}>Suscribe</button>
+          </div>
 
           <div className="footer-socials" aria-label="Social links">
             <a href="https://www.linkedin.com/company/c-minds/" aria-label="LinkedIn">

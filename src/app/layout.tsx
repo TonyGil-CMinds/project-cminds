@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import ConstructionBanner from "../components/ConstructionBanner";
 import MobileMenu from "../components/MobileMenu";
+import SubscribeModalProvider from "../components/SubscribeModalProvider";
 
 const satoshi = localFont({
   src: [
@@ -93,9 +94,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${satoshi.variable} h-full antialiased`}>
       <body className={`${satoshi.className} min-h-full flex flex-col`}>
-        <MobileMenu />
-        {children}
-        <ConstructionBanner />
+        <SubscribeModalProvider>
+          <MobileMenu />
+          {children}
+          <ConstructionBanner />
+        </SubscribeModalProvider>
       </body>
     </html>
   );

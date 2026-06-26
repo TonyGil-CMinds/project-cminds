@@ -8,6 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SideRays from "../../../components/reactbits/SideRays";
 import Dock from "../../../components/reactbits/Dock";
 import ContactButton from "../../components/ContactButton";
+import { useSubscribeModal } from "../../components/SubscribeModalProvider";
 gsap.registerPlugin(ScrollTrigger);
 
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
@@ -72,6 +73,7 @@ export default function MindscopePage() {
   const bellBtnRef     = useRef<HTMLButtonElement>(null);
   const bellMountedRef = useRef(false);
   const router = useRouter();
+  const { open: openSubscribeModal } = useSubscribeModal();
 
   // ── Fetch blog feed ────────────────────────────────────────
   useEffect(() => {
@@ -117,16 +119,19 @@ export default function MindscopePage() {
     return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(rafId); };
   }, [posts.length]);
 
-  // ── Color cookie ──────────────────────────────────────────
+  // ── Color + subscribed cookies ────────────────────────────
   useLayoutEffect(() => {
-    const match = document.cookie.match(/(?:^|;\s*)cminds_color=([^;]+)/);
-    if (match) {
-      const hex = decodeURIComponent(match[1]);
+    const colorMatch = document.cookie.match(/(?:^|;\s*)cminds_color=([^;]+)/);
+    if (colorMatch) {
+      const hex = decodeURIComponent(colorMatch[1]);
       if (VALID_COLORS.includes(hex)) {
         document.documentElement.style.setProperty("--color-primary", hex);
         document.documentElement.style.setProperty("--color-primary-rgb", hexToRgb(hex));
         setPrimaryColor(hex);
       }
+    }
+    if (/(?:^|;\s*)cminds_subscribed=1/.test(document.cookie)) {
+      setSubscribed(true);
     }
   }, []);
 
@@ -159,6 +164,7 @@ export default function MindscopePage() {
   const handleUnsubscribe = (e: React.MouseEvent) => {
     e.stopPropagation();
     setTooltipOpen(false);
+    document.cookie = "cminds_subscribed=; path=/; max-age=0";
     const chars = Array.from(
       bellTextRef.current?.querySelectorAll<HTMLSpanElement>('.ms-bell-char') ?? []
     ).reverse();
@@ -316,17 +322,19 @@ export default function MindscopePage() {
             className={`ms-bell-btn${subscribed ? " ms-bell-subscribed" : ""}`}
             onClick={() => {
               if (subscribed) { setTooltipOpen(v => !v); return; }
-              const chars = Array.from(
-                bellTextRef.current?.querySelectorAll<HTMLSpanElement>('.ms-bell-char') ?? []
-              ).reverse();
-              gsap.to(chars, {
-                opacity: 0, y: -3, filter: 'blur(3px)', scaleX: 0, width: 0,
-                duration: 0.06, stagger: 0.022, ease: 'expo.in',
-                onComplete: () => {
-                  setRinging(true);
-                  setSubscribed(true);
-                  setTimeout(() => setRinging(false), 750);
-                },
+              openSubscribeModal(() => {
+                const chars = Array.from(
+                  bellTextRef.current?.querySelectorAll<HTMLSpanElement>('.ms-bell-char') ?? []
+                ).reverse();
+                gsap.to(chars, {
+                  opacity: 0, y: -3, filter: 'blur(3px)', scaleX: 0, width: 0,
+                  duration: 0.06, stagger: 0.022, ease: 'expo.in',
+                  onComplete: () => {
+                    setRinging(true);
+                    setSubscribed(true);
+                    setTimeout(() => setRinging(false), 750);
+                  },
+                });
               });
             }}
           >

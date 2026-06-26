@@ -45,4 +45,6 @@ next-env.d.ts
 
 #AI Markdowns
 *CLAUDE.md
-*AGENTS.md
+*AGENTS.md.env
+
+/generated/prisma
