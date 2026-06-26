@@ -65,7 +65,10 @@ export default function MindscopePage() {
   const [primaryColor, setPrimaryColor] = useState('#5EC1F3');
   const [subscribed, setSubscribed]     = useState(false);
   const [ringing, setRinging]           = useState(false);
+  const [tooltipOpen, setTooltipOpen]   = useState(false);
+  const [dockActive, setDockActive]     = useState(0);
   const bellTextRef    = useRef<HTMLSpanElement>(null);
+  const bellBtnRef     = useRef<HTMLButtonElement>(null);
   const bellMountedRef = useRef(false);
   const router = useRouter();
 
@@ -130,11 +133,40 @@ export default function MindscopePage() {
   useEffect(() => {
     if (!bellMountedRef.current) { bellMountedRef.current = true; return; }
     const chars = Array.from(bellTextRef.current?.querySelectorAll<HTMLSpanElement>('.ms-bell-char') ?? []);
-    gsap.fromTo(chars,
-      { opacity: 0, y: 4, filter: 'blur(4px)', scaleX: 0 },
-      { opacity: 1, y: 0, filter: 'blur(0px)', scaleX: 1, duration: 0.12, stagger: 0.05, ease: 'power2.out' }
-    );
+    const widths = chars.map(c => c.offsetWidth);
+    gsap.set(chars, { opacity: 0, y: 4, filter: 'blur(4px)', scaleX: 0, width: 0, overflow: 'hidden' });
+    chars.forEach((c, i) => {
+      gsap.to(c, {
+        opacity: 1, y: 0, filter: 'blur(0px)', scaleX: 1, width: widths[i],
+        duration: 0.07, delay: i * 0.028, ease: 'expo.out',
+        onComplete: () => { c.style.removeProperty('width'); c.style.removeProperty('overflow'); },
+      });
+    });
   }, [subscribed]);
+
+  // ── Close tooltip on outside click ────────────────────────
+  useEffect(() => {
+    if (!tooltipOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (!bellBtnRef.current?.contains(e.target as Node)) setTooltipOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [tooltipOpen]);
+
+  // ── Unsubscribe ────────────────────────────────────────────
+  const handleUnsubscribe = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setTooltipOpen(false);
+    const chars = Array.from(
+      bellTextRef.current?.querySelectorAll<HTMLSpanElement>('.ms-bell-char') ?? []
+    ).reverse();
+    gsap.to(chars, {
+      opacity: 0, y: -3, filter: 'blur(3px)', scaleX: 0, width: 0,
+      duration: 0.06, stagger: 0.022, ease: 'expo.in',
+      onComplete: () => setSubscribed(false),
+    });
+  };
 
   // ── Nav indicator ─────────────────────────────────────────
   useEffect(() => {
@@ -279,15 +311,16 @@ export default function MindscopePage() {
         </div>
         <div className="ms-subscribe-wrap">
           <button
+            ref={bellBtnRef}
             className={`ms-bell-btn${subscribed ? " ms-bell-subscribed" : ""}`}
             onClick={() => {
-              if (subscribed) return;
+              if (subscribed) { setTooltipOpen(v => !v); return; }
               const chars = Array.from(
                 bellTextRef.current?.querySelectorAll<HTMLSpanElement>('.ms-bell-char') ?? []
               ).reverse();
               gsap.to(chars, {
-                opacity: 0, y: -4, filter: 'blur(4px)', scaleX: 0,
-                duration: 0.1, stagger: 0.04, ease: 'power2.in',
+                opacity: 0, y: -3, filter: 'blur(3px)', scaleX: 0, width: 0,
+                duration: 0.06, stagger: 0.022, ease: 'expo.in',
                 onComplete: () => {
                   setRinging(true);
                   setSubscribed(true);
@@ -296,7 +329,10 @@ export default function MindscopePage() {
               });
             }}
           >
-            <span className="ms-bell-tooltip">
+            <span
+              className={`ms-bell-tooltip${subscribed && tooltipOpen ? ' ms-bell-tooltip--open' : ''}`}
+              onClick={subscribed ? handleUnsubscribe : undefined}
+            >
               {subscribed
                 ? <>Cancel subscription <span style={{ fontSize: '1rem', lineHeight: 1 }}>×</span></>
                 : 'You will be notified about new releases.'}
@@ -330,17 +366,20 @@ export default function MindscopePage() {
             {
               icon: <img src="/mindscope/publicaciones.svg" width={19} height={19} alt="Publications" />,
               label: "Publications",
-              onClick: () => {},
+              className: dockActive === 0 ? 'dock-item--active' : '',
+              onClick: () => setDockActive(0),
             },
             {
               icon: <img src="/mindscope/reportes.svg" width={22} height={22} alt="Reports" />,
               label: "Reports",
-              onClick: () => {},
+              className: dockActive === 1 ? 'dock-item--active' : '',
+              onClick: () => setDockActive(1),
             },
             {
               icon: <img src="/mindscope/busqueda.svg" width={18} height={18} alt="Search" />,
               label: "Search",
-              onClick: () => {},
+              className: dockActive === 2 ? 'dock-item--active' : '',
+              onClick: () => setDockActive(2),
             },
           ]}
           panelHeight={60}
