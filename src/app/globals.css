@@ -2998,10 +2998,8 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.7rem;
-  background:
-    rgba(3, 3, 20, 0.55) padding-box,
-    linear-gradient(90deg, var(--color-primary), transparent) border-box;
-  border: 1px solid transparent;
+  background: rgba(4, 3, 20, 0.82);
+  border: none;
   border-radius: 100px;
   padding: 0.6rem 1rem 0.6rem 1.4rem;
   backdrop-filter: blur(12px);
@@ -3015,6 +3013,22 @@ body {
   overflow: visible;
 }
 
+/* gradient border ring via mask technique */
+.ms-bell-btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  padding: 1px;
+  background: linear-gradient(90deg, var(--color-primary), rgba(var(--color-primary-rgb), 0.12));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* subscribed fill via ::before */
 .ms-bell-btn::before {
   content: '';
   position: absolute;
@@ -3024,7 +3038,7 @@ body {
   opacity: 0;
   transition: opacity 0.55s ease;
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
 }
 
 .ms-bell-btn.ms-bell-subscribed {
@@ -3073,6 +3087,11 @@ body {
 
 .ms-bell-text {
   white-space: nowrap;
+  display: inline-flex;
+}
+
+.ms-bell-char {
+  display: inline-block;
 }
 
 .ms-bell-icon {

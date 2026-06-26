@@ -131,8 +131,8 @@ export default function MindscopePage() {
     if (!bellMountedRef.current) { bellMountedRef.current = true; return; }
     const chars = Array.from(bellTextRef.current?.querySelectorAll<HTMLSpanElement>('.ms-bell-char') ?? []);
     gsap.fromTo(chars,
-      { opacity: 0, y: 4, filter: 'blur(4px)' },
-      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.12, stagger: 0.05, ease: 'power2.out' }
+      { opacity: 0, y: 4, filter: 'blur(4px)', scaleX: 0 },
+      { opacity: 1, y: 0, filter: 'blur(0px)', scaleX: 1, duration: 0.12, stagger: 0.05, ease: 'power2.out' }
     );
   }, [subscribed]);
 
@@ -286,7 +286,7 @@ export default function MindscopePage() {
                 bellTextRef.current?.querySelectorAll<HTMLSpanElement>('.ms-bell-char') ?? []
               ).reverse();
               gsap.to(chars, {
-                opacity: 0, y: -4, filter: 'blur(4px)',
+                opacity: 0, y: -4, filter: 'blur(4px)', scaleX: 0,
                 duration: 0.1, stagger: 0.04, ease: 'power2.in',
                 onComplete: () => {
                   setRinging(true);
