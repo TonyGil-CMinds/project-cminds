@@ -297,18 +297,18 @@ export default function MindscopePage() {
         <Dock
           items={[
             {
-              icon: <img src="/mindscope/publicaciones.svg" width={19} height={19} alt="Publicaciones" />,
-              label: "Publicaciones",
+              icon: <img src="/mindscope/publicaciones.svg" width={19} height={19} alt="Publications" />,
+              label: "Publications",
               onClick: () => {},
             },
             {
-              icon: <img src="/mindscope/reportes.svg" width={22} height={22} alt="Reportes" />,
-              label: "Reportes",
+              icon: <img src="/mindscope/reportes.svg" width={22} height={22} alt="Reports" />,
+              label: "Reports",
               onClick: () => {},
             },
             {
-              icon: <img src="/mindscope/busqueda.svg" width={18} height={18} alt="Búsqueda" />,
-              label: "Búsqueda",
+              icon: <img src="/mindscope/busqueda.svg" width={18} height={18} alt="Search" />,
+              label: "Search",
               onClick: () => {},
             },
           ]}
