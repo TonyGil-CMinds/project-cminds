@@ -6689,3 +6689,33 @@ body.brand-page-active {
   .sub-sheet { padding: 1.75rem 1.25rem 2.5rem; }
   .sub-row { grid-template-columns: 1fr; }
 }
+
+/* ===== SUBSCRIBE TOAST ===== */
+
+.sub-toast {
+  position: fixed;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.7rem 1.2rem;
+  background: rgba(4, 3, 20, 0.96);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.35);
+  border-radius: 100px;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 0 28px rgba(var(--color-primary-rgb), 0.12), 0 4px 20px rgba(0, 0, 0, 0.45);
+}
+
+.sub-toast-icon {
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}

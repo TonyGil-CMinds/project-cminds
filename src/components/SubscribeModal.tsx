@@ -3,8 +3,10 @@
 import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
 
+export type CloseResult = "success" | "already_subscribed" | false;
+
 interface SubscribeModalProps {
-  onClose: (success?: boolean) => void;
+  onClose: (result: CloseResult) => void;
 }
 
 export default function SubscribeModal({ onClose }: SubscribeModalProps) {
@@ -30,7 +32,7 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
     gsap.fromTo(sheetRef.current,   { y: "100%" },  { y: 0, duration: 0.85, ease: "elastic.out(1, 0.72)" });
   }, []);
 
-  const animateClose = (success = false) => {
+  const animateClose = (result: CloseResult) => {
     if (closingRef.current) return;
     closingRef.current = true;
     gsap.to(overlayRef.current, { opacity: 0, duration: 0.25 });
@@ -38,7 +40,7 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
       y: "100%",
       duration: 0.35,
       ease: "power3.in",
-      onComplete: () => onClose(success),
+      onComplete: () => onClose(result),
     });
   };
 
@@ -56,12 +58,19 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
+
+      if (res.status === 409) {
+        animateClose("already_subscribed");
+        return;
+      }
+
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || "Submission failed. Please try again.");
       }
+
       document.cookie = "cminds_subscribed=1; path=/; max-age=31536000; SameSite=Lax";
-      animateClose(true);
+      animateClose("success");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
       setSubmitting(false);
@@ -69,9 +78,9 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
   };
 
   return (
-    <div ref={overlayRef} className="sub-overlay" onClick={() => animateClose()}>
+    <div ref={overlayRef} className="sub-overlay" onClick={() => animateClose(false)}>
       <div ref={sheetRef} className="sub-sheet" onClick={(e) => e.stopPropagation()}>
-        <button className="sub-close" onClick={() => animateClose()} aria-label="Close">
+        <button className="sub-close" onClick={() => animateClose(false)} aria-label="Close">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
@@ -84,7 +93,6 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
         </div>
 
         <form className="sub-form" onSubmit={handleSubmit} noValidate>
-          {/* Form of address */}
           <div className="sub-field">
             <div className="sub-select-wrap">
               <select
@@ -101,82 +109,42 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
             </div>
           </div>
 
-          {/* Name + Last name */}
           <div className="sub-row">
             <div className="sub-field">
-              <input
-                className="sub-input"
-                type="text"
-                placeholder="Name"
-                value={form.name}
-                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                required
-              />
+              <input className="sub-input" type="text" placeholder="Name" value={form.name}
+                onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
             </div>
             <div className="sub-field">
-              <input
-                className="sub-input"
-                type="text"
-                placeholder="Last name"
-                value={form.lastname}
-                onChange={(e) => setForm((f) => ({ ...f, lastname: e.target.value }))}
-                required
-              />
+              <input className="sub-input" type="text" placeholder="Last name" value={form.lastname}
+                onChange={(e) => setForm((f) => ({ ...f, lastname: e.target.value }))} required />
             </div>
           </div>
 
-          {/* Email */}
           <div className="sub-field">
-            <input
-              className="sub-input"
-              type="email"
-              placeholder="Email"
-              value={form.email}
-              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-              required
-            />
+            <input className="sub-input" type="email" placeholder="Email" value={form.email}
+              onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} required />
           </div>
 
-          {/* Organization + Country */}
           <div className="sub-row">
             <div className="sub-field">
-              <input
-                className="sub-input"
-                type="text"
-                placeholder="Organization"
-                value={form.organization}
-                onChange={(e) => setForm((f) => ({ ...f, organization: e.target.value }))}
-              />
+              <input className="sub-input" type="text" placeholder="Organization" value={form.organization}
+                onChange={(e) => setForm((f) => ({ ...f, organization: e.target.value }))} />
             </div>
             <div className="sub-field">
-              <input
-                className="sub-input"
-                type="text"
-                placeholder="Country"
-                value={form.country}
-                onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))}
-              />
+              <input className="sub-input" type="text" placeholder="Country" value={form.country}
+                onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))} />
             </div>
           </div>
 
-          {/* Checkboxes */}
           <div className="sub-checks">
             <label className="sub-check-label">
-              <input
-                type="checkbox"
-                className="sub-checkbox"
-                checked={form.data_agreement}
-                onChange={(e) => setForm((f) => ({ ...f, data_agreement: e.target.checked }))}
-              />
+              <input type="checkbox" className="sub-checkbox" checked={form.data_agreement}
+                onChange={(e) => setForm((f) => ({ ...f, data_agreement: e.target.checked }))} />
               <span>I accept the <a href="/privacy" target="_blank" rel="noopener noreferrer">Privacy Notice</a></span>
             </label>
             <label className="sub-check-label">
-              <input
-                type="checkbox"
-                className="sub-checkbox"
-                checked={form.policy_agreement}
-                onChange={(e) => setForm((f) => ({ ...f, policy_agreement: e.target.checked }))}
-              />
+              <input type="checkbox" className="sub-checkbox" checked={form.policy_agreement}
+                onChange={(e) => setForm((f) => ({ ...f, policy_agreement: e.target.checked }))} />
               <span>I accept the <a href="/ethics" target="_blank" rel="noopener noreferrer">Code of Ethics</a></span>
             </label>
           </div>

@@ -10,11 +10,26 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Name, last name and email are required." }, { status: 400 });
     }
 
-    const contact = await prisma.contact.upsert({
-      where: { email },
-      update: { name, lastname, gender: gender || null, organization: organization || null, country: country || null, data_agreement: Boolean(data_agreement), policy_agreement: Boolean(policy_agreement) },
-      create: { name, lastname, email, gender: gender || null, organization: organization || null, country: country || null, data_agreement: Boolean(data_agreement), policy_agreement: Boolean(policy_agreement) },
-    });
+    const existing = await prisma.contact.findUnique({ where: { email } });
+
+    if (existing?.active) {
+      return NextResponse.json({ code: "already_subscribed" }, { status: 409 });
+    }
+
+    const fields = {
+      name,
+      lastname,
+      gender: gender || null,
+      organization: organization || null,
+      country: country || null,
+      active: true,
+      data_agreement: Boolean(data_agreement),
+      policy_agreement: Boolean(policy_agreement),
+    };
+
+    const contact = existing
+      ? await prisma.contact.update({ where: { email }, data: fields })
+      : await prisma.contact.create({ data: { ...fields, email } });
 
     return NextResponse.json({ id: contact.id }, { status: 201 });
   } catch (err: unknown) {

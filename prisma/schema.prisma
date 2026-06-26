@@ -1,5 +1,3 @@
-// Starter models — replace with your own
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -7,14 +5,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-}
-
-model Subscription {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model Post {
@@ -33,6 +23,7 @@ model Contact {
   gender           String?
   organization     String?
   country          String?
+  active           Boolean  @default(true)
   data_agreement   Boolean  @default(false)
   policy_agreement Boolean  @default(false)
   createdAt        DateTime @default(now())
