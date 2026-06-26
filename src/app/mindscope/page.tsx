@@ -70,7 +70,8 @@ export default function MindscopePage() {
   const [subscribed, setSubscribed]     = useState(false);
   const [ringing, setRinging]           = useState(false);
   const [tooltipOpen, setTooltipOpen]   = useState(false);
-  const [dockActive, setDockActive]     = useState(0);
+  const [dockActive,     setDockActive]     = useState(0);
+  const [cardExpanded,   setCardExpanded]   = useState(false);
   const bellTextRef    = useRef<HTMLSpanElement>(null);
   const bellBtnRef     = useRef<HTMLButtonElement>(null);
   const bellMountedRef = useRef(false);
@@ -151,6 +152,15 @@ export default function MindscopePage() {
       });
     });
   }, [subscribed]);
+
+  // ── Dock slide on card expand ─────────────────────────────
+  useEffect(() => {
+    gsap.to(".ms-dock-wrap", {
+      y: cardExpanded ? 120 : 0,
+      duration: cardExpanded ? 0.38 : 0.55,
+      ease: cardExpanded ? "power3.in" : "elastic.out(1, 0.65)",
+    });
+  }, [cardExpanded]);
 
   // ── Close tooltip on outside click ────────────────────────
   useEffect(() => {
@@ -473,7 +483,7 @@ export default function MindscopePage() {
         </div>
       )}
 
-      <TheArchive visible={dockActive === 1} />
+      <TheArchive visible={dockActive === 1} onExpand={setCardExpanded} />
     </div>
   );
 }

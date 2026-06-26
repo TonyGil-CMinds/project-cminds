@@ -6858,96 +6858,43 @@ body.brand-page-active {
   text-overflow: ellipsis;
 }
 
-/* Expanded detail overlay */
-.archive-detail {
+/* Side info panel */
+.archive-panel {
   position: absolute;
-  inset: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 42%;
   z-index: 10;
-  background: rgba(4, 3, 20, 0.72);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  animation: archive-detail-in 0.38s cubic-bezier(0.16, 1, 0.3, 1);
-  padding: 2rem;
+  padding: 4rem 4rem 4rem 3rem;
+  will-change: transform, opacity;
 }
 
-@keyframes archive-detail-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-.archive-detail-inner {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 3rem;
-  align-items: center;
-  max-width: 920px;
-  width: 100%;
-  animation: archive-panel-in 0.42s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes archive-panel-in {
-  from { opacity: 0; transform: translateY(24px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.archive-detail-close {
+.archive-panel-close {
   position: absolute;
-  top: -1rem;
-  right: -0.5rem;
+  top: 2rem;
+  right: 2rem;
   background: none;
   border: none;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.35);
   cursor: pointer;
-  padding: 0.4rem;
+  padding: 0.5rem;
   transition: color 0.18s;
+  line-height: 0;
 }
 
-.archive-detail-close:hover { color: rgba(255, 255, 255, 0.9); }
+.archive-panel-close:hover { color: rgba(255, 255, 255, 0.85); }
 
-/* Card cover */
-.archive-detail-cover {
-  width: 280px;
-  aspect-ratio: 3 / 4;
-  border-radius: 12px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+.archive-title-wrap--hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
 
-.archive-detail-cover-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-}
-
-.archive-cover-line {
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-align: center;
-}
-
-.archive-cover-footer {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  color: rgba(255, 255, 255, 0.25);
-  font-size: 0.7rem;
-  letter-spacing: 0.12em;
-}
-
-/* Info panel */
+/* Info panel (shared with old detail) */
 .archive-detail-info {
   display: flex;
   flex-direction: column;

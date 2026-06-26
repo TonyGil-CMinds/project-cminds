@@ -6,9 +6,11 @@ import * as THREE from "three";
 import gsap from "gsap";
 
 /* ─── Constants ───────────────────────────────────────────── */
-const CW = 1.65;            // card width  (Three.js units)
-const CH = CW * (4 / 3);   // card height (portrait 3:4)
-const N  = 6;
+const CW               = 1.65;
+const CH               = CW * (4 / 3);
+const N                = 6;
+const CAROUSEL_SPACING = 2.55;
+const CAROUSEL_HALF    = ((N - 1) / 2) * CAROUSEL_SPACING;
 
 /* ─── Types ───────────────────────────────────────────────── */
 interface ArchiveItem {
@@ -85,23 +87,20 @@ function makeTexture(item: ArchiveItem): THREE.CanvasTexture {
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, W, H);
 
-  // thin top border
   ctx.fillStyle = "rgba(255,255,255,0.12)";
   ctx.fillRect(0, 0, W, 1);
 
-  // label lines
-  ctx.fillStyle  = "rgba(255,255,255,0.90)";
-  ctx.font       = "bold 24px sans-serif";
-  ctx.textAlign  = "center";
+  ctx.fillStyle    = "rgba(255,255,255,0.90)";
+  ctx.font         = "bold 24px sans-serif";
+  ctx.textAlign    = "center";
   ctx.textBaseline = "middle";
   const lines = item.label.split("\n");
   const lh = 34;
   const sy = H / 2 - ((lines.length - 1) * lh) / 2;
   lines.forEach((l, i) => ctx.fillText(l, W / 2, sy + i * lh));
 
-  // footer
-  ctx.fillStyle   = "rgba(255,255,255,0.22)";
-  ctx.font        = "11px sans-serif";
+  ctx.fillStyle    = "rgba(255,255,255,0.22)";
+  ctx.font         = "11px sans-serif";
   ctx.textBaseline = "alphabetic";
   ctx.fillText("C MINDS", W / 2, H - 16);
 
@@ -111,7 +110,7 @@ function makeTexture(item: ArchiveItem): THREE.CanvasTexture {
 /* ─── Odometer title ─────────────────────────────────────── */
 function OdometerTitle({ text, className }: { text: string; className?: string }) {
   const [current, setCurrent] = useState(text);
-  const charsRef  = useRef<(HTMLSpanElement | null)[]>([]);
+  const charsRef   = useRef<(HTMLSpanElement | null)[]>([]);
   const mountedRef = useRef(false);
 
   useEffect(() => {
@@ -172,9 +171,6 @@ function BlurDate({ text, className }: { text: string; className?: string }) {
   return <span ref={ref} className={className}>{current}</span>;
 }
 
-const CAROUSEL_SPACING = 2.55;
-const CAROUSEL_HALF    = ((N - 1) / 2) * CAROUSEL_SPACING; // first card starts centered
-
 /* ─── Card mesh ───────────────────────────────────────────── */
 interface CardProps {
   item:        ArchiveItem;
@@ -198,7 +194,6 @@ function ArchCard({ item, index, progress, carouselOff, activeIdx, hoverIdx, onH
     uDim:  { value: 1.0 },
   }), [texture]);
 
-  // carousel x position (shifts left as carouselOff goes negative)
   const cx = (index - (N - 1) / 2) * CAROUSEL_SPACING + carouselOff;
 
   useFrame((state) => {
@@ -206,37 +201,63 @@ function ArchCard({ item, index, progress, carouselOff, activeIdx, hoverIdx, onH
     const mat = matRef.current;
     if (!m || !mat) return;
 
-    const t = state.clock.elapsedTime;
-    const isHovered = hoverIdx  === index;
+    const t          = state.clock.elapsedTime;
+    const isHovered  = hoverIdx  === index;
+    const isActive   = activeIdx === index;
+    const hasActive  = activeIdx !== null;
     const inCarousel = progress > 0.85;
 
-    // ── position lerp ──
-    const floatY = Math.sin(t * 0.7 + index * 1.1) * 0.08 * (1 - progress);
-    const tx = SCAT_POS[index][0] + (cx - SCAT_POS[index][0]) * progress;
-    const ty = SCAT_POS[index][1] * (1 - progress) + floatY;
-    const tz = SCAT_POS[index][2] * (1 - progress);
-    m.position.x += (tx - m.position.x) * 0.1;
-    m.position.y += (ty - m.position.y) * 0.1;
-    m.position.z += (tz - m.position.z) * 0.1;
+    let tx: number, ty: number, tz: number;
+    let tRX: number, tRY: number, tRZ: number;
+    let tScale: number, tGray: number, tDim: number;
 
-    // ── rotation lerp ──
-    m.rotation.x += (SCAT_ROT[index][0] * (1 - progress) - m.rotation.x) * 0.1;
-    m.rotation.y += (SCAT_ROT[index][1] * (1 - progress) - m.rotation.y) * 0.1;
-    m.rotation.z += (SCAT_ROT[index][2] * (1 - progress) - m.rotation.z) * 0.1;
+    if (!hasActive) {
+      /* ── Normal: orbit → carousel ── */
+      const floatY = Math.sin(t * 0.7 + index * 1.1) * 0.08 * (1 - progress);
+      tx  = SCAT_POS[index][0] + (cx - SCAT_POS[index][0]) * progress;
+      ty  = SCAT_POS[index][1] * (1 - progress) + floatY;
+      tz  = SCAT_POS[index][2] * (1 - progress);
+      tRX = SCAT_ROT[index][0] * (1 - progress);
+      tRY = SCAT_ROT[index][1] * (1 - progress);
+      tRZ = SCAT_ROT[index][2] * (1 - progress);
+      tScale = isHovered && inCarousel ? 1.06 : 1.0;
+      tGray  = inCarousel && !isHovered ? 0.88 : 0.0;
+      tDim   = 1.0;
+    } else if (isActive) {
+      /* ── Expanded: grows, moves left-center, faces camera ── */
+      tx = -1.8; ty = 0; tz = 1.2;
+      tRX = 0; tRY = 0; tRZ = 0;
+      tScale = 1.68;
+      tGray  = 0.0;
+      tDim   = 1.0;
+    } else {
+      /* ── Peek or off-screen ── */
+      const ai          = activeIdx as number;
+      const isPeekLeft  = ai - 1 === index;
+      const isPeekRight = ai + 1 === index;
 
-    // ── scale ──
-    const tScale = (!inCarousel || isHovered) ? 1.0 : 1.0;
-    const hoverScale = (isHovered && inCarousel) ? 1.06 : tScale;
-    m.scale.x += (hoverScale - m.scale.x) * 0.1;
-    m.scale.y += (hoverScale - m.scale.y) * 0.1;
+      if (isPeekLeft)        tx = -4.1;
+      else if (isPeekRight)  tx =  4.1;
+      else if (index < ai)   tx = -14;
+      else                   tx =  14;
 
-    // ── grayscale: all gray in carousel, color on hover ──
-    const tGray = (inCarousel && !isHovered) ? 0.88 : 0.0;
+      ty = 0; tz = -0.4;
+      tRX = 0; tRY = 0; tRZ = 0;
+      tScale = (isPeekLeft || isPeekRight) ? 0.80 : 0.4;
+      tGray  = 0.92;
+      tDim   = (isPeekLeft || isPeekRight) ? 0.36 : 0.0;
+    }
+
+    m.position.x += (tx  - m.position.x) * 0.09;
+    m.position.y += (ty  - m.position.y) * 0.09;
+    m.position.z += (tz  - m.position.z) * 0.09;
+    m.rotation.x += (tRX - m.rotation.x) * 0.09;
+    m.rotation.y += (tRY - m.rotation.y) * 0.09;
+    m.rotation.z += (tRZ - m.rotation.z) * 0.09;
+    m.scale.x    += (tScale - m.scale.x)  * 0.08;
+    m.scale.y    += (tScale - m.scale.y)  * 0.08;
     mat.uniforms.uGray.value += (tGray - mat.uniforms.uGray.value) * 0.08;
-
-    // ── dim when another card is expanded (handled by detail overlay for now) ──
-    const tDim = 1.0;
-    mat.uniforms.uDim.value += (tDim - mat.uniforms.uDim.value) * 0.08;
+    mat.uniforms.uDim.value  += (tDim  - mat.uniforms.uDim.value)  * 0.08;
   });
 
   return (
@@ -259,7 +280,7 @@ function ArchCard({ item, index, progress, carouselOff, activeIdx, hoverIdx, onH
   );
 }
 
-/* ─── Scene wrapper (camera tilt) ────────────────────────── */
+/* ─── Scene wrapper ───────────────────────────────────────── */
 interface SceneProps {
   progress:    number;
   carouselOff: number;
@@ -275,8 +296,7 @@ function Scene({ progress, carouselOff, hoverIdx, activeIdx, mouseNY, setHoverId
 
   useFrame(() => {
     const cam = camera as THREE.PerspectiveCamera;
-    const targetX = mouseNY * -0.2;
-    cam.rotation.x += (targetX - cam.rotation.x) * 0.04;
+    cam.rotation.x += (mouseNY * -0.2 - cam.rotation.x) * 0.04;
   });
 
   return (
@@ -300,12 +320,15 @@ function Scene({ progress, carouselOff, hoverIdx, activeIdx, mouseNY, setHoverId
 
 /* ─── Main component ──────────────────────────────────────── */
 interface TheArchiveProps {
-  visible: boolean;
+  visible:   boolean;
+  onExpand?: (active: boolean) => void;
 }
 
-export default function TheArchive({ visible }: TheArchiveProps) {
-  const wrapRef      = useRef<HTMLDivElement>(null);
-  const progressRef  = useRef(0);
+export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
+  const wrapRef     = useRef<HTMLDivElement>(null);
+  const panelRef    = useRef<HTMLDivElement>(null);
+  const progressRef = useRef(0);
+  const panelVisRef = useRef(false);
 
   const [progress,    setProgress]    = useState(0);
   const [carouselOff, setCarouselOff] = useState(CAROUSEL_HALF);
@@ -313,6 +336,7 @@ export default function TheArchive({ visible }: TheArchiveProps) {
   const [activeIdx,   setActiveIdx]   = useState<number | null>(null);
   const [mouseNY,     setMouseNY]     = useState(0);
   const [activeLang,  setActiveLang]  = useState(0);
+  const [panelItem,   setPanelItem]   = useState<ArchiveItem | null>(null);
 
   /* mouse → camera tilt */
   useEffect(() => {
@@ -348,21 +372,78 @@ export default function TheArchive({ visible }: TheArchiveProps) {
       setCarouselOff(CAROUSEL_HALF);
       setActiveIdx(null);
       setHoverIdx(null);
+      panelVisRef.current = false;
+      setPanelItem(null);
     }
   }, [visible]);
 
-  const handleCardClick = useCallback((i: number) => {
-    if (progress < 0.85) return;
-    setActiveIdx(prev => {
-      if (prev === i) return null;
-      setActiveLang(0);
-      return i;
-    });
-  }, [progress]);
+  /* Escape to close */
+  useEffect(() => {
+    const h = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && activeIdx !== null) {
+        setActiveIdx(null);
+        setActiveLang(0);
+        onExpand?.(false);
+      }
+    };
+    window.addEventListener("keydown", h);
+    return () => window.removeEventListener("keydown", h);
+  }, [activeIdx, onExpand]);
 
-  const activeItem = activeIdx !== null ? ITEMS[activeIdx] : null;
-  const hoverItem  = hoverIdx  !== null ? ITEMS[hoverIdx]  : null;
-  const infoItem   = activeItem ?? (progress > 0.85 ? hoverItem : null);
+  /* Panel show / switch / hide */
+  useEffect(() => {
+    if (activeIdx !== null) {
+      if (!panelVisRef.current) {
+        panelVisRef.current = true;
+        setPanelItem(ITEMS[activeIdx]);
+      } else {
+        gsap.to(panelRef.current, {
+          x: "55%", opacity: 0, duration: 0.2, ease: "power2.in",
+          onComplete: () => { setPanelItem(ITEMS[activeIdx]); },
+        });
+      }
+    } else {
+      panelVisRef.current = false;
+      if (panelRef.current) {
+        gsap.to(panelRef.current, {
+          x: "55%", opacity: 0, duration: 0.3, ease: "power3.in",
+          onComplete: () => setPanelItem(null),
+        });
+      } else {
+        setPanelItem(null);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeIdx]);
+
+  /* Animate panel in whenever panelItem mounts/changes */
+  useEffect(() => {
+    if (!panelItem || !panelRef.current) return;
+    gsap.fromTo(panelRef.current,
+      { x: "55%", opacity: 0 },
+      { x: 0, opacity: 1, duration: 0.48, ease: "power3.out" }
+    );
+  }, [panelItem]);
+
+  const handleCardClick = useCallback((i: number) => {
+    if (activeIdx === null) {
+      if (progress < 0.85) return;
+      setActiveIdx(i);
+      setActiveLang(0);
+      onExpand?.(true);
+    } else if (activeIdx === i) {
+      setActiveIdx(null);
+      setActiveLang(0);
+      onExpand?.(false);
+    } else {
+      /* peek card click: switch without collapsing */
+      setActiveIdx(i);
+      setActiveLang(0);
+    }
+  }, [progress, activeIdx, onExpand]);
+
+  const hoverItem = hoverIdx !== null ? ITEMS[hoverIdx] : null;
+  const infoItem  = panelItem ?? (progress > 0.85 ? hoverItem : null);
 
   if (!visible) return null;
 
@@ -387,7 +468,7 @@ export default function TheArchive({ visible }: TheArchiveProps) {
       </Canvas>
 
       {/* ── Title ── */}
-      <div className={`archive-title-wrap${progress > 0.12 ? " archive-title-wrap--up" : ""}`}>
+      <div className={`archive-title-wrap${progress > 0.12 ? " archive-title-wrap--up" : ""}${activeIdx !== null ? " archive-title-wrap--hidden" : ""}`}>
         <h2 className="archive-heading">
           <span className="archive-heading-the">The </span>
           <span className="archive-heading-arc">Archive</span>
@@ -403,71 +484,57 @@ export default function TheArchive({ visible }: TheArchiveProps) {
         </svg>
       </div>
 
-      {/* ── Card info bar (date + title above dock) ── */}
-      <div className={`archive-info-bar${infoItem ? " archive-info-bar--visible" : ""}`}>
-        {infoItem && <>
+      {/* ── Info bar (hover, no active) ── */}
+      <div className={`archive-info-bar${infoItem && activeIdx === null ? " archive-info-bar--visible" : ""}`}>
+        {infoItem && activeIdx === null && <>
           <BlurDate text={infoItem.date} className="archive-info-date" />
           <OdometerTitle text={infoItem.title} className="archive-info-title" />
         </>}
       </div>
 
-      {/* ── Expanded detail view ── */}
-      {activeItem && (
-        <div className="archive-detail" onClick={() => setActiveIdx(null)}>
-          <div className="archive-detail-inner" onClick={(e) => e.stopPropagation()}>
+      {/* ── Side panel (expanded card info) ── */}
+      {panelItem && (
+        <div ref={panelRef} className="archive-panel">
+          <button
+            className="archive-panel-close"
+            onClick={() => { setActiveIdx(null); setActiveLang(0); onExpand?.(false); }}
+            aria-label="Close"
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
 
-            {/* close */}
-            <button className="archive-detail-close" onClick={() => setActiveIdx(null)} aria-label="Close">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-
-            {/* card cover */}
-            <div
-              className="archive-detail-cover"
-              style={{ background: `linear-gradient(145deg, ${activeItem.bg[0]}, ${activeItem.bg[1]})` }}
-            >
-              <div className="archive-detail-cover-inner">
-                {activeItem.label.split("\n").map((l, i) => (
-                  <span key={i} className="archive-cover-line">{l}</span>
-                ))}
-              </div>
-              <span className="archive-cover-footer">C MINDS</span>
-            </div>
-
-            {/* info */}
-            <div className="archive-detail-info">
-              <div className="archive-lang-tabs">
-                {activeItem.languages.map((lang, li) => (
-                  <button
-                    key={lang}
-                    className={`archive-lang-btn${activeLang === li ? " archive-lang-btn--active" : ""}`}
-                    onClick={() => setActiveLang(li)}
-                  >
-                    {lang}
-                  </button>
-                ))}
-              </div>
-              <p className="archive-detail-date">{activeItem.date}</p>
-              <h3 className="archive-detail-title">{activeItem.title}</h3>
-              <p className="archive-detail-desc">{activeItem.description}</p>
-              <a
-                className="archive-download-btn"
-                href={activeItem.downloadUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+          <div className="archive-lang-tabs">
+            {panelItem.languages.map((lang, li) => (
+              <button
+                key={lang}
+                className={`archive-lang-btn${activeLang === li ? " archive-lang-btn--active" : ""}`}
+                onClick={() => setActiveLang(li)}
               >
-                Download
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
-              </a>
-            </div>
+                {lang}
+              </button>
+            ))}
           </div>
+
+          <p className="archive-detail-date">{panelItem.date}</p>
+          <h3 className="archive-detail-title">{panelItem.title}</h3>
+          <p className="archive-detail-desc">{panelItem.description}</p>
+
+          <a
+            className="archive-download-btn"
+            href={panelItem.downloadUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Download
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+          </a>
         </div>
       )}
     </div>
