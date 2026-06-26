@@ -108,18 +108,86 @@ function makeTexture(item: ArchiveItem): THREE.CanvasTexture {
   return new THREE.CanvasTexture(cv);
 }
 
-/* ─── Card mesh ───────────────────────────────────────────── */
-interface CardProps {
-  item:      ArchiveItem;
-  index:     number;
-  progress:  number;
-  activeIdx: number | null;
-  hoverIdx:  number | null;
-  onHover:   (i: number | null) => void;
-  onClick:   (i: number) => void;
+/* ─── Odometer title ─────────────────────────────────────── */
+function OdometerTitle({ text, className }: { text: string; className?: string }) {
+  const [current, setCurrent] = useState(text);
+  const charsRef  = useRef<(HTMLSpanElement | null)[]>([]);
+  const mountedRef = useRef(false);
+
+  useEffect(() => {
+    if (!mountedRef.current) { mountedRef.current = true; return; }
+    const chars = charsRef.current.filter(Boolean) as HTMLSpanElement[];
+    gsap.killTweensOf(chars);
+    gsap.to(chars, {
+      y: 28, opacity: 0, duration: 0.2,
+      stagger: { each: 0.011, from: "start" },
+      ease: "power3.in",
+      onComplete: () => setCurrent(text),
+    });
+  }, [text]);
+
+  useEffect(() => {
+    const chars = charsRef.current.filter(Boolean) as HTMLSpanElement[];
+    gsap.killTweensOf(chars);
+    gsap.fromTo(chars,
+      { y: 22, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.26, stagger: { each: 0.013, from: "start" }, ease: "power2.out" }
+    );
+  }, [current]);
+
+  return (
+    <span className={className}>
+      {current.split("").map((char, i) => (
+        <span key={i} ref={(el) => { charsRef.current[i] = el; }} style={{ display: "inline-block" }}>
+          {char === " " ? " " : char}
+        </span>
+      ))}
+    </span>
+  );
 }
 
-function ArchCard({ item, index, progress, activeIdx, hoverIdx, onHover, onClick }: CardProps) {
+/* ─── Blur-fade date ──────────────────────────────────────── */
+function BlurDate({ text, className }: { text: string; className?: string }) {
+  const [current, setCurrent] = useState(text);
+  const ref        = useRef<HTMLSpanElement>(null);
+  const mountedRef = useRef(false);
+
+  useEffect(() => {
+    if (!mountedRef.current) { mountedRef.current = true; return; }
+    gsap.killTweensOf(ref.current);
+    gsap.to(ref.current, {
+      opacity: 0, filter: "blur(8px)", duration: 0.18, ease: "power2.in",
+      onComplete: () => setCurrent(text),
+    });
+  }, [text]);
+
+  useEffect(() => {
+    gsap.killTweensOf(ref.current);
+    gsap.fromTo(ref.current,
+      { opacity: 0, filter: "blur(8px)" },
+      { opacity: 1, filter: "blur(0px)", duration: 0.26, ease: "power2.out" }
+    );
+  }, [current]);
+
+  return <span ref={ref} className={className}>{current}</span>;
+}
+
+const CAROUSEL_SPACING = 2.55;
+const CAROUSEL_HALF    = ((N - 1) / 2) * CAROUSEL_SPACING; // first card starts centered
+
+/* ─── Card mesh ───────────────────────────────────────────── */
+interface CardProps {
+  item:        ArchiveItem;
+  index:       number;
+  progress:    number;
+  carouselOff: number;
+  activeIdx:   number | null;
+  hoverIdx:    number | null;
+  onHover:     (i: number | null) => void;
+  onClick:     (i: number) => void;
+}
+
+function ArchCard({ item, index, progress, carouselOff, activeIdx, hoverIdx, onHover, onClick }: CardProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const matRef  = useRef<THREE.ShaderMaterial>(null);
 
@@ -130,8 +198,8 @@ function ArchCard({ item, index, progress, activeIdx, hoverIdx, onHover, onClick
     uDim:  { value: 1.0 },
   }), [texture]);
 
-  // carousel x position
-  const cx = (index - (N - 1) / 2) * 2.55;
+  // carousel x position (shifts left as carouselOff goes negative)
+  const cx = (index - (N - 1) / 2) * CAROUSEL_SPACING + carouselOff;
 
   useFrame((state) => {
     const m   = meshRef.current;
@@ -194,6 +262,7 @@ function ArchCard({ item, index, progress, activeIdx, hoverIdx, onHover, onClick
 /* ─── Scene wrapper (camera tilt) ────────────────────────── */
 interface SceneProps {
   progress:    number;
+  carouselOff: number;
   hoverIdx:    number | null;
   activeIdx:   number | null;
   mouseNY:     number;
@@ -201,7 +270,7 @@ interface SceneProps {
   onCardClick: (i: number) => void;
 }
 
-function Scene({ progress, hoverIdx, activeIdx, mouseNY, setHoverIdx, onCardClick }: SceneProps) {
+function Scene({ progress, carouselOff, hoverIdx, activeIdx, mouseNY, setHoverIdx, onCardClick }: SceneProps) {
   const { camera } = useThree();
 
   useFrame(() => {
@@ -218,6 +287,7 @@ function Scene({ progress, hoverIdx, activeIdx, mouseNY, setHoverIdx, onCardClic
           item={item}
           index={i}
           progress={progress}
+          carouselOff={carouselOff}
           activeIdx={activeIdx}
           hoverIdx={hoverIdx}
           onHover={setHoverIdx}
@@ -237,11 +307,12 @@ export default function TheArchive({ visible }: TheArchiveProps) {
   const wrapRef      = useRef<HTMLDivElement>(null);
   const progressRef  = useRef(0);
 
-  const [progress,   setProgress]   = useState(0);
-  const [hoverIdx,   setHoverIdx]   = useState<number | null>(null);
-  const [activeIdx,  setActiveIdx]  = useState<number | null>(null);
-  const [mouseNY,    setMouseNY]    = useState(0);
-  const [activeLang, setActiveLang] = useState(0);
+  const [progress,    setProgress]    = useState(0);
+  const [carouselOff, setCarouselOff] = useState(CAROUSEL_HALF);
+  const [hoverIdx,    setHoverIdx]    = useState<number | null>(null);
+  const [activeIdx,   setActiveIdx]   = useState<number | null>(null);
+  const [mouseNY,     setMouseNY]     = useState(0);
+  const [activeLang,  setActiveLang]  = useState(0);
 
   /* mouse → camera tilt */
   useEffect(() => {
@@ -256,8 +327,11 @@ export default function TheArchive({ visible }: TheArchiveProps) {
     const h = (e: WheelEvent) => {
       if (activeIdx !== null) return;
       e.preventDefault();
-      progressRef.current = Math.max(0, Math.min(1, progressRef.current + e.deltaY * 0.0014));
-      setProgress(progressRef.current);
+      progressRef.current = Math.max(0, Math.min(2, progressRef.current + e.deltaY * 0.0014));
+      const raw = progressRef.current;
+      setProgress(Math.min(1, raw));
+      const t = Math.max(0, Math.min(1, raw - 1));
+      setCarouselOff(CAROUSEL_HALF * (1 - 2 * t));
     };
     window.addEventListener("wheel", h, { passive: false });
     return () => window.removeEventListener("wheel", h);
@@ -271,6 +345,7 @@ export default function TheArchive({ visible }: TheArchiveProps) {
     } else {
       progressRef.current = 0;
       setProgress(0);
+      setCarouselOff(CAROUSEL_HALF);
       setActiveIdx(null);
       setHoverIdx(null);
     }
@@ -302,6 +377,7 @@ export default function TheArchive({ visible }: TheArchiveProps) {
       >
         <Scene
           progress={progress}
+          carouselOff={carouselOff}
           hoverIdx={hoverIdx}
           activeIdx={activeIdx}
           mouseNY={mouseNY}
@@ -330,8 +406,8 @@ export default function TheArchive({ visible }: TheArchiveProps) {
       {/* ── Card info bar (date + title above dock) ── */}
       <div className={`archive-info-bar${infoItem ? " archive-info-bar--visible" : ""}`}>
         {infoItem && <>
-          <span className="archive-info-date">{infoItem.date}</span>
-          <span className="archive-info-title">{infoItem.title}</span>
+          <BlurDate text={infoItem.date} className="archive-info-date" />
+          <OdometerTitle text={infoItem.title} className="archive-info-title" />
         </>}
       </div>
 

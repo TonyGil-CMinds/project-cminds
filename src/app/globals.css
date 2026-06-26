@@ -6792,7 +6792,10 @@ body.brand-page-active {
 }
 
 .archive-heading-arc {
-  color: var(--color-primary);
+  background: linear-gradient(90deg, var(--color-primary) 0%, transparent 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Scroll hint */
@@ -6820,7 +6823,7 @@ body.brand-page-active {
 /* Info bar */
 .archive-info-bar {
   position: absolute;
-  bottom: 5.5rem;
+  bottom: 8.5rem;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
@@ -6841,9 +6844,9 @@ body.brand-page-active {
 }
 
 .archive-info-date {
-  color: var(--color-primary);
+  color: rgba(255, 255, 255, 0.45);
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.06em;
 }
 
