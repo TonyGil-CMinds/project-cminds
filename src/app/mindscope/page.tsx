@@ -260,10 +260,6 @@ export default function MindscopePage() {
           />
         </div>
         <div className="ms-hero-group">
-          <div className="ms-pill">
-            <span style={{ color: "var(--color-primary)" }}>•</span>
-            Mindscope ®
-          </div>
           <h1 className="ms-heading">
             <span className="ms-word">Unfolds Multiple</span>
             <span className="ms-word ms-gradient-word">Dimensions</span>
