@@ -10,7 +10,7 @@ const CW               = 1.65;
 const CH               = CW * (4 / 3);
 const N                = 6;
 const CAROUSEL_SPACING = 2.55;
-const CAROUSEL_HALF    = ((N - 1) / 2) * CAROUSEL_SPACING;
+
 
 /* ─── Types ───────────────────────────────────────────────── */
 interface ArchiveItem {
@@ -24,33 +24,80 @@ interface ArchiveItem {
   label:       string;
 }
 
-/* ─── Dummy data ──────────────────────────────────────────── */
-const ITEMS: ArchiveItem[] = [
-  { id: 0, title: "Reporte de Aprendizajes y Recomendaciones de Política Pública", date: "May 31, 2026", description: "Las recomendaciones de política pública se centran en tres áreas clave. Se sugiere fortalecer la seguridad y privacidad de los datos de las mujeres víctimas, implementando un esquema de portabilidad de datos.", languages: ["ES", "EN", "PT"], downloadUrl: "#", bg: ["#c026d3", "#6366f1"], label: "fAIr LAC\nJalisco" },
-  { id: 1, title: "Tokens Digitales para la Acción Climática y Soluciones Basadas en la Naturaleza", date: "Mar 15, 2026", description: "Exploración de oportunidades y consideraciones para el uso de tokens digitales en iniciativas de acción climática y soluciones basadas en la naturaleza en América Latina.", languages: ["ES", "EN"], downloadUrl: "#", bg: ["#1e3a5f", "#0f172a"], label: "Tokens\nDigitales" },
-  { id: 2, title: "Gobernanza de Datos y las Nuevas Tecnologías de Mejora de la Privacidad", date: "Jan 10, 2026", description: "Panorama global y retos para Latinoamérica y el Caribe sobre gobernanza de datos y las nuevas tecnologías de mejora de la privacidad.", languages: ["ES"], downloadUrl: "#", bg: ["#0f1e3d", "#172554"], label: "Gobernanza\nde Datos" },
-  { id: 3, title: "A Ética en IA para América Latina", date: "Oct 22, 2025", description: "Análisis de los marcos éticos para la inteligencia artificial en el contexto latinoamericano y sus implicaciones para el desarrollo sostenible e inclusivo.", languages: ["ES", "PT"], downloadUrl: "#", bg: ["#111827", "#1f2937"], label: "A Ética\nen IA" },
-  { id: 4, title: "León Innovando para el Futuro del Trabajo — LIFT", date: "Sep 5, 2025", description: "Impulso y fortalecimiento a la inserción laboral de las juventudes en León, México mediante innovación tecnológica y programas de formación.", languages: ["ES"], downloadUrl: "#", bg: ["#0c1a2e", "#1a3a5c"], label: "LIFT\nLeón" },
-  { id: 5, title: "impactIA para la Recuperación Económica Sostenible e Inclusiva de México", date: "Jul 18, 2025", description: "IA para la recuperación económica sostenible e inclusiva de México, con enfoque en tecnologías de inteligencia artificial para el desarrollo social.", languages: ["ES", "EN"], downloadUrl: "#", bg: ["#1a1a2e", "#0f0f1e"], label: "impactIA\nMéxico" },
+/* ─── BG palette (assigned by index when API doesn't provide one) ─ */
+const BG_PALETTE: [string, string][] = [
+  ["#c026d3", "#6366f1"],
+  ["#1e3a5f", "#0f172a"],
+  ["#0f1e3d", "#172554"],
+  ["#111827", "#1f2937"],
+  ["#0c1a2e", "#1a3a5c"],
+  ["#1a1a2e", "#0f0f1e"],
+  ["#0d2137", "#061525"],
+  ["#1b0a2e", "#0d0621"],
 ];
 
-/* ─── Scatter layout (orbit phase) ───────────────────────── */
+/* ─── API response → ArchiveItem ─────────────────────────── */
+function fmtApiDate(raw: string): string {
+  try {
+    return new Date(raw).toLocaleDateString("en-US", {
+      month: "short", day: "numeric", year: "numeric",
+    });
+  } catch {
+    return raw;
+  }
+}
+
+function mapReport(raw: Record<string, unknown>, idx: number): ArchiveItem {
+  const title       = String(raw.title ?? raw.name ?? "Untitled");
+  const words       = title.split(/\s+/).filter(Boolean);
+  const label       = [words.slice(0, 2).join(" "), words.slice(2, 4).join(" ")]
+                        .filter(Boolean).join("\n") || title.slice(0, 12);
+  const dateRaw     = String(raw.published_date ?? raw.date ?? raw.created_at ?? "");
+  const langs: string[] = Array.isArray(raw.languages)
+    ? (raw.languages as string[])
+    : typeof raw.language === "string"
+      ? [raw.language.toUpperCase()]
+      : ["ES"];
+
+  return {
+    id:          idx,
+    title,
+    date:        dateRaw ? fmtApiDate(dateRaw) : "—",
+    description: String(raw.description ?? raw.summary ?? raw.abstract ?? ""),
+    languages:   langs,
+    downloadUrl: String(raw.download_url ?? raw.file_url ?? raw.url ?? "#"),
+    bg:          BG_PALETTE[idx % BG_PALETTE.length],
+    label,
+  };
+}
+
+/* ─── Fallback dummy data ─────────────────────────────────── */
+const DUMMY: ArchiveItem[] = [
+  { id: 0, title: "Reporte de Aprendizajes y Recomendaciones de Política Pública", date: "May 31, 2026", description: "Las recomendaciones de política pública se centran en tres áreas clave.", languages: ["ES", "EN", "PT"], downloadUrl: "#", bg: ["#c026d3", "#6366f1"], label: "fAIr LAC\nJalisco" },
+  { id: 1, title: "Tokens Digitales para la Acción Climática y Soluciones Basadas en la Naturaleza", date: "Mar 15, 2026", description: "Exploración de oportunidades para el uso de tokens digitales en América Latina.", languages: ["ES", "EN"], downloadUrl: "#", bg: ["#1e3a5f", "#0f172a"], label: "Tokens\nDigitales" },
+  { id: 2, title: "Gobernanza de Datos y las Nuevas Tecnologías de Mejora de la Privacidad", date: "Jan 10, 2026", description: "Panorama global y retos para Latinoamérica y el Caribe.", languages: ["ES"], downloadUrl: "#", bg: ["#0f1e3d", "#172554"], label: "Gobernanza\nde Datos" },
+  { id: 3, title: "A Ética en IA para América Latina", date: "Oct 22, 2025", description: "Marcos éticos para la inteligencia artificial en el contexto latinoamericano.", languages: ["ES", "PT"], downloadUrl: "#", bg: ["#111827", "#1f2937"], label: "A Ética\nen IA" },
+  { id: 4, title: "León Innovando para el Futuro del Trabajo — LIFT", date: "Sep 5, 2025", description: "Inserción laboral de las juventudes en León, México.", languages: ["ES"], downloadUrl: "#", bg: ["#0c1a2e", "#1a3a5c"], label: "LIFT\nLeón" },
+  { id: 5, title: "impactIA para la Recuperación Económica Sostenible e Inclusiva de México", date: "Jul 18, 2025", description: "IA para la recuperación económica sostenible e inclusiva de México.", languages: ["ES", "EN"], downloadUrl: "#", bg: ["#1a1a2e", "#0f0f1e"], label: "impactIA\nMéxico" },
+];
+
+/* ─── Scatter layout (orbit phase, up to 16 items) ───────── */
 const SCAT_POS: [number, number, number][] = [
-  [-3.8,  0.9, -1.2],
-  [-2.1, -0.8,  0.6],
-  [-0.5,  1.6, -2.1],
-  [ 0.9, -0.4, -0.7],
-  [ 2.8,  0.7,  0.3],
-  [ 3.6, -1.2, -1.8],
+  [-3.8,  0.9, -1.2], [-2.1, -0.8,  0.6], [-0.5,  1.6, -2.1],
+  [ 0.9, -0.4, -0.7], [ 2.8,  0.7,  0.3], [ 3.6, -1.2, -1.8],
+  [-3.2, -1.4,  0.9], [-1.6,  1.2, -1.5], [ 1.5,  1.4,  0.7],
+  [ 3.0, -0.8,  1.2], [-2.8,  0.3, -0.6], [ 0.3, -1.5,  1.0],
+  [-1.0,  0.8,  1.4], [ 2.1, -1.3, -0.9], [ 3.8,  0.5, -0.4],
+  [-0.2, -0.9, -1.8],
 ];
 
 const SCAT_ROT: [number, number, number][] = [
-  [ 0.08,  0.28, -0.04],
-  [-0.06, -0.22,  0.07],
-  [ 0.18,  0.12, -0.09],
-  [-0.09,  0.24,  0.06],
-  [ 0.04, -0.28, -0.07],
-  [ 0.13,  0.18,  0.09],
+  [ 0.08,  0.28, -0.04], [-0.06, -0.22,  0.07], [ 0.18,  0.12, -0.09],
+  [-0.09,  0.24,  0.06], [ 0.04, -0.28, -0.07], [ 0.13,  0.18,  0.09],
+  [-0.14,  0.10,  0.08], [ 0.07, -0.18,  0.12], [-0.05,  0.22, -0.10],
+  [ 0.11, -0.08,  0.15], [-0.17,  0.14, -0.06], [ 0.09,  0.20,  0.05],
+  [-0.08, -0.12,  0.18], [ 0.16,  0.06, -0.11], [-0.12,  0.24,  0.07],
+  [ 0.05, -0.20, -0.13],
 ];
 
 /* ─── Grayscale shader ────────────────────────────────────── */
@@ -175,6 +222,7 @@ function BlurDate({ text, className }: { text: string; className?: string }) {
 interface CardProps {
   item:        ArchiveItem;
   index:       number;
+  total:       number;
   progress:    number;
   carouselOff: number;
   activeIdx:   number | null;
@@ -183,7 +231,7 @@ interface CardProps {
   onClick:     (i: number) => void;
 }
 
-function ArchCard({ item, index, progress, carouselOff, activeIdx, hoverIdx, onHover, onClick }: CardProps) {
+function ArchCard({ item, index, total, progress, carouselOff, activeIdx, hoverIdx, onHover, onClick }: CardProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const matRef  = useRef<THREE.ShaderMaterial>(null);
 
@@ -194,7 +242,7 @@ function ArchCard({ item, index, progress, carouselOff, activeIdx, hoverIdx, onH
     uDim:  { value: 1.0 },
   }), [texture]);
 
-  const cx = (index - (N - 1) / 2) * CAROUSEL_SPACING + carouselOff;
+  const cx = (index - (total - 1) / 2) * CAROUSEL_SPACING + carouselOff;
 
   useFrame((state) => {
     const m   = meshRef.current;
@@ -283,6 +331,7 @@ function ArchCard({ item, index, progress, carouselOff, activeIdx, hoverIdx, onH
 
 /* ─── Scene wrapper ───────────────────────────────────────── */
 interface SceneProps {
+  items:       ArchiveItem[];
   progress:    number;
   carouselOff: number;
   hoverIdx:    number | null;
@@ -292,7 +341,7 @@ interface SceneProps {
   onCardClick: (i: number) => void;
 }
 
-function Scene({ progress, carouselOff, hoverIdx, activeIdx, mouseNY, setHoverIdx, onCardClick }: SceneProps) {
+function Scene({ items, progress, carouselOff, hoverIdx, activeIdx, mouseNY, setHoverIdx, onCardClick }: SceneProps) {
   const { camera } = useThree();
 
   useFrame(() => {
@@ -302,11 +351,12 @@ function Scene({ progress, carouselOff, hoverIdx, activeIdx, mouseNY, setHoverId
 
   return (
     <>
-      {ITEMS.map((item, i) => (
+      {items.map((item, i) => (
         <ArchCard
           key={item.id}
           item={item}
           index={i}
+          total={items.length}
           progress={progress}
           carouselOff={carouselOff}
           activeIdx={activeIdx}
@@ -333,13 +383,41 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
   const touchStartRef  = useRef<{ x: number; y: number } | null>(null);
   const touchRawRef    = useRef(0);
 
+  const [items,       setItems]       = useState<ArchiveItem[]>(DUMMY);
+  const carouselHalf = useMemo(
+    () => ((items.length - 1) / 2) * CAROUSEL_SPACING,
+    [items.length]
+  );
   const [progress,    setProgress]    = useState(0);
-  const [carouselOff, setCarouselOff] = useState(CAROUSEL_HALF);
+  const [carouselOff, setCarouselOff] = useState(0);
   const [hoverIdx,    setHoverIdx]    = useState<number | null>(null);
   const [activeIdx,   setActiveIdx]   = useState<number | null>(null);
   const [mouseNY,     setMouseNY]     = useState(0);
   const [activeLang,  setActiveLang]  = useState(0);
   const [panelItem,   setPanelItem]   = useState<ArchiveItem | null>(null);
+
+  /* fetch reports */
+  useEffect(() => {
+    if (!visible) return;
+    fetch("/api/reports")
+      .then((r) => r.json())
+      .then((data) => {
+        const raw: Record<string, unknown>[] = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.reports)
+            ? data.reports
+            : Array.isArray(data?.data)
+              ? data.data
+              : [];
+        if (raw.length > 0) {
+          const mapped = raw.slice(0, SCAT_POS.length).map(mapReport);
+          setItems(mapped);
+          setCarouselOff(((mapped.length - 1) / 2) * CAROUSEL_SPACING);
+        }
+      })
+      .catch(() => { /* keep dummy data */ });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible]);
 
   /* mouse → camera tilt */
   useEffect(() => {
@@ -358,7 +436,7 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
       const raw = progressRef.current;
       setProgress(Math.min(1, raw));
       const t = Math.max(0, Math.min(1, raw - 1));
-      setCarouselOff(CAROUSEL_HALF * (1 - 2 * t));
+      setCarouselOff(carouselHalf * (1 - 2 * t));
     };
     window.addEventListener("wheel", h, { passive: false });
     return () => window.removeEventListener("wheel", h);
@@ -372,7 +450,7 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
     } else {
       progressRef.current = 0;
       setProgress(0);
-      setCarouselOff(CAROUSEL_HALF);
+      setCarouselOff(carouselHalf);
       setActiveIdx(null);
       setHoverIdx(null);
       panelVisRef.current = false;
@@ -409,7 +487,7 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
       progressRef.current = newRaw;
       setProgress(Math.min(1, newRaw));
       const t = Math.max(0, Math.min(1, newRaw - 1));
-      setCarouselOff(CAROUSEL_HALF * (1 - 2 * t));
+      setCarouselOff(carouselHalf * (1 - 2 * t));
     };
 
     const onEnd = () => { touchStartRef.current = null; };
@@ -446,11 +524,11 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
     if (activeIdx !== null) {
       if (!panelVisRef.current) {
         panelVisRef.current = true;
-        setPanelItem(ITEMS[activeIdx]);
+        setPanelItem(items[activeIdx]);
       } else {
         gsap.to(panelRef.current, {
           ...outTween, duration: 0.2, ease: "power2.in",
-          onComplete: () => { setPanelItem(ITEMS[activeIdx]); },
+          onComplete: () => { setPanelItem(items[activeIdx]); },
         });
       }
     } else {
@@ -497,7 +575,7 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
     }
   }, [progress, activeIdx, onExpand]);
 
-  const hoverItem = hoverIdx !== null ? ITEMS[hoverIdx] : null;
+  const hoverItem = hoverIdx !== null ? items[hoverIdx] : null;
   const infoItem  = panelItem ?? (progress > 0.85 ? hoverItem : null);
 
   if (!visible) return null;
@@ -512,6 +590,7 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
         className="archive-canvas"
       >
         <Scene
+          items={items}
           progress={progress}
           carouselOff={carouselOff}
           hoverIdx={hoverIdx}
