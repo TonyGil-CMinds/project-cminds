@@ -6455,7 +6455,7 @@ body.brand-page-active {
 .sub-overlay {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: 2147483647; /* above mobile nav */
   background: rgba(0, 0, 0, 0.55);
   backdrop-filter: blur(7px);
   -webkit-backdrop-filter: blur(7px);
@@ -6471,7 +6471,7 @@ body.brand-page-active {
   max-height: 92vh;
   overflow-y: auto;
   overflow-x: hidden;
-  background: rgba(4, 3, 20, 0.98);
+  background: #040314;
   border-radius: 24px 24px 0 0;
   padding: 2.25rem 2rem 3rem;
   will-change: transform;
@@ -6497,23 +6497,19 @@ body.brand-page-active {
   position: absolute;
   top: 1.2rem;
   right: 1.2rem;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: none;
+  border: none;
+  padding: 0.3rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.55);
+  color: rgba(255, 255, 255, 0.35);
   cursor: pointer;
-  transition: background 0.18s, color 0.18s;
-  flex-shrink: 0;
+  transition: color 0.18s;
 }
 
 .sub-close:hover {
-  background: rgba(255, 255, 255, 0.13);
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .sub-header {
@@ -6666,24 +6662,53 @@ body.brand-page-active {
 }
 
 .sub-submit {
+  position: relative;
   width: 100%;
-  padding: 1rem;
-  background: var(--color-primary);
-  color: #040314;
-  font-weight: 700;
-  font-size: 0.97rem;
+  padding: 0.95rem 1.5rem;
+  background: rgba(4, 3, 20, 0.82);
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 600;
+  font-size: 0.95rem;
   font-family: inherit;
   border: none;
-  border-radius: 14px;
+  border-radius: 100px;
   cursor: pointer;
-  transition: opacity 0.18s, transform 0.1s;
+  transition: color 0.2s;
   margin-top: 0.4rem;
-  letter-spacing: 0.01em;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  overflow: visible;
 }
 
-.sub-submit:hover:not(:disabled) { opacity: 0.88; }
+/* gradient border ring */
+.sub-submit::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  padding: 1px;
+  background: linear-gradient(90deg, var(--color-primary), rgba(var(--color-primary-rgb), 0.12));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* subtle gradient fill */
+.sub-submit::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  background: linear-gradient(90deg, rgba(var(--color-primary-rgb), 0.28), rgba(3, 3, 20, 0.55));
+  pointer-events: none;
+  z-index: 1;
+}
+
+.sub-submit:hover:not(:disabled) { color: rgba(255, 255, 255, 1); }
 .sub-submit:active:not(:disabled) { transform: scale(0.985); }
-.sub-submit:disabled { opacity: 0.55; cursor: not-allowed; }
+.sub-submit:disabled { opacity: 0.45; cursor: not-allowed; }
 
 @media (max-width: 520px) {
   .sub-sheet { padding: 1.75rem 1.25rem 2.5rem; }

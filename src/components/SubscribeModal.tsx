@@ -88,8 +88,8 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
         </button>
 
         <div className="sub-header">
-          <h2 className="sub-title">Stay in the Loop</h2>
-          <p className="sub-subtitle">Get updates on our latest research and initiatives.</p>
+          <h2 className="sub-title">Subscribe to Mindscope® — C&nbsp;Minds&#39; newsroom</h2>
+          <p className="sub-subtitle">Fill in all fields to complete your subscription.</p>
         </div>
 
         <form className="sub-form" onSubmit={handleSubmit} noValidate>
@@ -140,12 +140,12 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
             <label className="sub-check-label">
               <input type="checkbox" className="sub-checkbox" checked={form.data_agreement}
                 onChange={(e) => setForm((f) => ({ ...f, data_agreement: e.target.checked }))} />
-              <span>I accept the <a href="/privacy" target="_blank" rel="noopener noreferrer">Privacy Notice</a></span>
+              <span>I confirm that I have read the <a href="/privacy" target="_blank" rel="noopener noreferrer">Privacy Notice</a> and agree to the data use policies.</span>
             </label>
             <label className="sub-check-label">
               <input type="checkbox" className="sub-checkbox" checked={form.policy_agreement}
                 onChange={(e) => setForm((f) => ({ ...f, policy_agreement: e.target.checked }))} />
-              <span>I accept the <a href="/ethics" target="_blank" rel="noopener noreferrer">Code of Ethics</a></span>
+              <span>I agree to the <a href="/ethics" target="_blank" rel="noopener noreferrer">Code of Ethics</a>.</span>
             </label>
           </div>
 
