@@ -113,7 +113,12 @@ export default function CoreScrollSection({ onScrollProgress }: Props) {
     const H = canvasWrap.clientHeight || (isMobile ? mobileSize : Math.round(window.innerHeight * 0.55));
 
     // ── Three.js ──────────────────────────────────────────────────
-    const renderer = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: true });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: true });
+    } catch {
+      return;
+    }
     renderer.setSize(W, H);
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 
@@ -246,7 +251,10 @@ export default function CoreScrollSection({ onScrollProgress }: Props) {
     return () => {
       st.kill();
       cancelAnimationFrame(raf.id);
-      renderer.dispose();
+      const gl = renderer!.getContext();
+      renderer!.dispose();
+      const loseCtx = gl.getExtension('WEBGL_lose_context');
+      if (loseCtx) loseCtx.loseContext();
       geom.dispose();
       mat.dispose();
     };

@@ -4,16 +4,6 @@
   box-sizing: border-box;
 }
 
-.noise-overlay {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 1;
-}
-
 ::selection {
   background: var(--color-primary);
   color: #ffffff;
@@ -3004,11 +2994,14 @@ body {
 }
 
 .ms-bell-btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.7rem;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background:
+    rgba(3, 3, 20, 0.55) padding-box,
+    linear-gradient(90deg, var(--color-primary), transparent) border-box;
+  border: 1px solid transparent;
   border-radius: 100px;
   padding: 0.6rem 1rem 0.6rem 1.4rem;
   backdrop-filter: blur(12px);
@@ -3018,18 +3011,64 @@ body {
   font-family: inherit;
   font-size: 0.9rem;
   font-weight: 500;
-  transition: background 0.25s, border-color 0.25s, color 0.25s;
+  transition: color 0.25s;
+  overflow: visible;
 }
 
-.ms-bell-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.22);
+.ms-bell-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 100px;
+  background: linear-gradient(90deg, rgba(var(--color-primary-rgb), 0.28), rgba(3, 3, 20, 0.55));
+  opacity: 0;
+  transition: opacity 0.55s ease;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .ms-bell-btn.ms-bell-subscribed {
-  border-color: rgba(var(--color-primary-rgb), 0.4);
-  background: rgba(var(--color-primary-rgb), 0.08);
   cursor: default;
+}
+
+.ms-bell-btn.ms-bell-subscribed::before {
+  opacity: 1;
+}
+
+.ms-bell-btn .ms-bell-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(6px);
+  white-space: nowrap;
+  background:
+    rgba(4, 3, 20, 0.95) padding-box,
+    linear-gradient(90deg, var(--color-primary), transparent) border-box;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 0.38rem 0.9rem;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  z-index: 200;
+}
+
+.ms-bell-btn:hover .ms-bell-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.ms-bell-btn .ms-bell-text,
+.ms-bell-btn .ms-bell-icon {
+  position: relative;
+  z-index: 1;
 }
 
 .ms-bell-text {
@@ -5734,8 +5773,7 @@ body.bio-page-active .mm-overlay {
 ════════════════════════════════════════ */
 
 body.brand-page-active .mm-header,
-body.brand-page-active .mm-overlay,
-body.brand-page-active .noise-overlay {
+body.brand-page-active .mm-overlay {
   display: none !important;
 }
 

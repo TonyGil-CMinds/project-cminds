@@ -3,7 +3,6 @@ import localFont from "next/font/local";
 import "./globals.css";
 import ConstructionBanner from "../components/ConstructionBanner";
 import MobileMenu from "../components/MobileMenu";
-import Noise from "../components/Noise";
 
 const satoshi = localFont({
   src: [
@@ -94,7 +93,6 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${satoshi.variable} h-full antialiased`}>
       <body className={`${satoshi.className} min-h-full flex flex-col`}>
-        <Noise patternAlpha={18} patternRefreshInterval={2} />
         <MobileMenu />
         {children}
         <ConstructionBanner />

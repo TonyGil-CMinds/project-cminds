@@ -65,6 +65,8 @@ export default function MindscopePage() {
   const [primaryColor, setPrimaryColor] = useState('#5EC1F3');
   const [subscribed, setSubscribed]     = useState(false);
   const [ringing, setRinging]           = useState(false);
+  const bellTextRef    = useRef<HTMLSpanElement>(null);
+  const bellMountedRef = useRef(false);
   const router = useRouter();
 
   // ── Fetch blog feed ────────────────────────────────────────
@@ -123,6 +125,16 @@ export default function MindscopePage() {
       }
     }
   }, []);
+
+  // ── Bell text char animate-in after subscribe toggle ──────
+  useEffect(() => {
+    if (!bellMountedRef.current) { bellMountedRef.current = true; return; }
+    const chars = Array.from(bellTextRef.current?.querySelectorAll<HTMLSpanElement>('.ms-bell-char') ?? []);
+    gsap.fromTo(chars,
+      { opacity: 0, y: 4, filter: 'blur(4px)' },
+      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.12, stagger: 0.05, ease: 'power2.out' }
+    );
+  }, [subscribed]);
 
   // ── Nav indicator ─────────────────────────────────────────
   useEffect(() => {
@@ -270,19 +282,42 @@ export default function MindscopePage() {
             className={`ms-bell-btn${subscribed ? " ms-bell-subscribed" : ""}`}
             onClick={() => {
               if (subscribed) return;
-              setRinging(true);
-              setSubscribed(true);
-              setTimeout(() => setRinging(false), 750);
+              const chars = Array.from(
+                bellTextRef.current?.querySelectorAll<HTMLSpanElement>('.ms-bell-char') ?? []
+              ).reverse();
+              gsap.to(chars, {
+                opacity: 0, y: -4, filter: 'blur(4px)',
+                duration: 0.1, stagger: 0.04, ease: 'power2.in',
+                onComplete: () => {
+                  setRinging(true);
+                  setSubscribed(true);
+                  setTimeout(() => setRinging(false), 750);
+                },
+              });
             }}
           >
-            <span className="ms-bell-text">
-              {subscribed ? "Subscribed" : "Subscribe to receive updates"}
+            <span className="ms-bell-tooltip">
+              {subscribed
+                ? <>Cancel subscription <span style={{ fontSize: '1rem', lineHeight: 1 }}>×</span></>
+                : 'You will be notified about new releases.'}
             </span>
-            <span className={`ms-bell-icon${ringing ? " ms-bell-ring" : ""}`}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
+            <span className="ms-bell-text" ref={bellTextRef}>
+              {(subscribed ? 'Subscribed' : 'Subscribe').split('').map((ch, i) => (
+                <span key={`${subscribed ? 's' : 'u'}-${i}`} className="ms-bell-char">{ch}</span>
+              ))}
+            </span>
+            <span className={`ms-bell-icon${ringing ? ' ms-bell-ring' : ''}`}>
+              {subscribed ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+              ) : (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+              )}
             </span>
           </button>
         </div>

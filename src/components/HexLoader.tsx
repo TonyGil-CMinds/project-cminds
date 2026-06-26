@@ -29,7 +29,13 @@ export default function HexLoader({ onComplete }: { onComplete: () => void }) {
     document.documentElement.style.setProperty("--color-primary", userHex);
 
     // ── Renderer ───────────────────────────────────────────────
-    const renderer = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: true });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: true });
+    } catch {
+      onCompleteRef.current();
+      return;
+    }
     renderer.setSize(W, H);
     renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 
@@ -308,7 +314,10 @@ export default function HexLoader({ onComplete }: { onComplete: () => void }) {
     return () => {
       cancelAnimationFrame(raf);
       tl.kill();
-      renderer.dispose();
+      const gl = renderer!.getContext();
+      renderer!.dispose();
+      const loseCtx = gl.getExtension('WEBGL_lose_context');
+      if (loseCtx) loseCtx.loseContext();
       lGeom.dispose();
       gGeom.dispose();
       fillGeom.dispose();

@@ -315,17 +315,22 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
   useEffect(() => {
     const mount = mountRef.current;
     if (!mount) return;
-    const renderer = new THREE.WebGLRenderer({
-      antialias: false,
-      alpha: false,
-      depth: false,
-      stencil: false,
-      powerPreference: 'high-performance',
-      premultipliedAlpha: false,
-      preserveDrawingBuffer: false,
-      failIfMajorPerformanceCaveat: false,
-      logarithmicDepthBuffer: false
-    });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({
+        antialias: false,
+        alpha: false,
+        depth: false,
+        stencil: false,
+        powerPreference: 'high-performance',
+        premultipliedAlpha: false,
+        preserveDrawingBuffer: false,
+        failIfMajorPerformanceCaveat: false,
+        logarithmicDepthBuffer: false
+      });
+    } catch {
+      return;
+    }
     rendererRef.current = renderer;
 
     baseDprRef.current = Math.min(dpr ?? (window.devicePixelRatio || 1), 2);
@@ -583,7 +588,10 @@ export const LaserFlow: React.FC<LaserFlowProps> = ({
       canvas.removeEventListener('webglcontextrestored', onCtxRestored);
       geometry.dispose();
       material.dispose();
-      renderer.dispose();
+      const loseCtx = canvas.getContext('webgl2')?.getExtension('WEBGL_lose_context')
+                   ?? canvas.getContext('webgl')?.getExtension('WEBGL_lose_context');
+      renderer!.dispose();
+      if (loseCtx) loseCtx.loseContext();
       if (mount.contains(canvas)) mount.removeChild(canvas);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
