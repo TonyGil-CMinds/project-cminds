@@ -7097,3 +7097,9 @@ body.brand-page-active {
     right: 1.25rem;
   }
 }
+
+@media (min-width: 1400px) {
+  .archive-panel {
+    padding-right: 12rem;
+  }
+}
