@@ -4,11 +4,26 @@ import { useRef, useState, useEffect } from "react";
 import gsap from "gsap";
 import BorderGlow from "../../components/reactbits/BorderGlow";
 
+const COOKIE_NAME = "cminds_banner_ok";
+const COOKIE_DAYS = 3;
+
+function hasDismissedCookie(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.cookie.split(";").some((c) => c.trim().startsWith(COOKIE_NAME + "="));
+}
+
+function setDismissedCookie() {
+  const expires = new Date(Date.now() + COOKIE_DAYS * 864e5).toUTCString();
+  document.cookie = `${COOKIE_NAME}=1; expires=${expires}; path=/; SameSite=Lax`;
+}
+
 export default function ConstructionBanner() {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const shellRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (hasDismissedCookie()) return;
+    setVisible(true);
     const el = shellRef.current;
     if (!el) return;
     gsap.fromTo(
@@ -19,6 +34,7 @@ export default function ConstructionBanner() {
   }, []);
 
   const dismiss = () => {
+    setDismissedCookie();
     const el = shellRef.current;
     if (!el) return;
     gsap.to(el, {
