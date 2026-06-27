@@ -53,22 +53,56 @@ function str(v: unknown): string { return v ? String(v) : ""; }
 
 function saveAs(url: string, title: string) {
   if (!url || url === "#") return;
+  const ext      = url.split("?")[0].split(".").pop()?.toLowerCase() || "pdf";
   const proxy    = `/api/download?url=${encodeURIComponent(url)}`;
   const filename = title.replace(/[^a-zA-ZÀ-ÿ0-9 _-]/g, "").trim().slice(0, 80) || "report";
   const a        = document.createElement("a");
   a.href         = proxy;
-  a.download     = filename + ".pdf";
+  a.download     = `${filename}.${ext}`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
 }
 
+function findFileUrl(obj: Record<string, unknown>): string {
+  // Nested: files.url or files[0].url
+  const filesField = obj.files;
+  if (filesField && typeof filesField === "object" && !Array.isArray(filesField)) {
+    const f = filesField as Record<string, unknown>;
+    const u = f.url ?? f.download_url ?? f.file_url ?? f.href;
+    if (typeof u === "string" && u.startsWith("http")) return u;
+  }
+  if (Array.isArray(filesField) && filesField.length > 0) {
+    const f = filesField[0] as Record<string, unknown>;
+    const u = f.url ?? f.download_url ?? f.file_url ?? f.href;
+    if (typeof u === "string" && u.startsWith("http")) return u;
+  }
+
+  // Explicit top-level fields
+  const explicit = obj.download_url ?? obj.downloadUrl ?? obj.file_url ?? obj.fileUrl
+    ?? obj.download ?? obj.file ?? obj.link ?? obj.href ?? obj.pdf_url ?? obj.pdf
+    ?? obj.document_url ?? obj.document ?? obj.media_url ?? obj.attachment ?? obj.report_url
+    ?? obj.resource_url ?? obj.asset_url ?? obj.source_url;
+  if (typeof explicit === "string" && explicit.startsWith("http")) return explicit;
+
+  // Last resort: scan every string value for a downloadable URL
+  for (const v of Object.values(obj)) {
+    if (typeof v === "string" && v.startsWith("http") &&
+        (v.includes("media.base44") || v.endsWith(".pdf") || v.endsWith(".docx") ||
+         v.includes("/files/") || v.includes("/documents/") || v.includes("/download"))) {
+      return v;
+    }
+  }
+  return "#";
+}
+
 function extractLangEntry(data: Record<string, unknown>, fallback: Record<string, unknown>): LangData {
+  const downloadUrl = findFileUrl(data) !== "#" ? findFileUrl(data) : findFileUrl(fallback);
   return {
     title:       str(data.title ?? fallback.title ?? fallback.name),
     description: str(data.description ?? data.summary ?? data.abstract ?? fallback.description ?? fallback.summary),
     coverImage:  str(data.cover_image ?? data.coverImage ?? data.image ?? data.thumbnail ?? fallback.cover_image ?? fallback.image),
-    downloadUrl: str(data.download_url ?? data.downloadUrl ?? data.file_url ?? data.fileUrl ?? data.url ?? fallback.download_url ?? fallback.file_url) || "#",
+    downloadUrl,
     date:        fmtApiDate(str(data.published_date ?? data.publishedDate ?? data.date ?? fallback.published_date ?? fallback.date ?? fallback.created_at)),
   };
 }

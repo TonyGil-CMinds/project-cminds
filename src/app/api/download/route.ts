@@ -12,10 +12,21 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: `Upstream ${upstream.status}` }, { status: upstream.status });
     }
 
-    const buffer      = await upstream.arrayBuffer();
-    const contentType = upstream.headers.get("content-type") || "application/octet-stream";
-    const rawName     = url.split("/").pop()?.split("?")[0] || "download";
-    const filename    = decodeURIComponent(rawName);
+    const buffer   = await upstream.arrayBuffer();
+    const rawName  = url.split("/").pop()?.split("?")[0] || "download";
+    const filename = decodeURIComponent(rawName);
+    const ext      = filename.split(".").pop()?.toLowerCase() || "";
+    const EXT_TYPES: Record<string, string> = {
+      pdf:  "application/pdf",
+      docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      doc:  "application/msword",
+      pptx: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+      xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      png:  "image/png",
+      jpg:  "image/jpeg",
+      jpeg: "image/jpeg",
+    };
+    const contentType = EXT_TYPES[ext] ?? upstream.headers.get("content-type") ?? "application/octet-stream";
 
     return new NextResponse(buffer, {
       headers: {
