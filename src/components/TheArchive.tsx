@@ -112,9 +112,9 @@ function mapReport(raw: Record<string, unknown>, idx: number): ArchiveItem {
   for (const file of files) {
     const lang = str(file.language ?? file.lang).toUpperCase() || "ES";
     langData[lang] = {
-      title:       sharedTitle,
-      description: sharedDesc,
-      coverImage:  sharedCover,
+      title:       str(file.title)       || sharedTitle,
+      description: str(file.description) || sharedDesc,
+      coverImage:  str(file.cover_image) || sharedCover,
       downloadUrl: str(file.url ?? file.download_url) || "#",
       date:        sharedDate,
     };
@@ -247,7 +247,7 @@ function OdometerTitle({ text, className }: { text: string; className?: string }
     <span className={className}>
       {current.split("").map((char, i) => (
         <span key={i} ref={(el) => { charsRef.current[i] = el; }} style={{ display: "inline-block" }}>
-          {char === " " ? " " : char}
+          {char === " " ? " " : char}
         </span>
       ))}
     </span>
@@ -273,22 +273,23 @@ function BlurDate({ text, className }: { text: string; className?: string }) {
 
 /* ─── Card mesh ───────────────────────────────────────────── */
 interface CardProps {
-  item:        ArchiveItem;
-  index:       number;
-  total:       number;
-  progress:    number;
-  carouselOff: number;
-  activeIdx:   number | null;
-  hoverIdx:    number | null;
-  onHover:     (i: number | null) => void;
-  onClick:     (i: number) => void;
+  item:          ArchiveItem;
+  index:         number;
+  total:         number;
+  progress:      number;
+  carouselOff:   number;
+  activeIdx:     number | null;
+  hoverIdx:      number | null;
+  activeLangStr: string;
+  onHover:       (i: number | null) => void;
+  onClick:       (i: number) => void;
 }
 
-function ArchCard({ item, index, total, progress, carouselOff, activeIdx, hoverIdx, onHover, onClick }: CardProps) {
+function ArchCard({ item, index, total, progress, carouselOff, activeIdx, hoverIdx, activeLangStr, onHover, onClick }: CardProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const matRef  = useRef<THREE.ShaderMaterial>(null);
 
-  // Start with gradient, swap to cover image when loaded
+  // Initial texture: gradient fallback → primary cover image
   const texture = useMemo(() => {
     const fallback = makeGradientTexture(item);
     if (item.coverImage) {
@@ -299,6 +300,17 @@ function ArchCard({ item, index, total, progress, carouselOff, activeIdx, hoverI
     return fallback;
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [item.id, item.coverImage]);
+
+  // Swap texture when language changes on the active card
+  useEffect(() => {
+    if (activeIdx !== index || !activeLangStr) return;
+    const langCover = item.langData[activeLangStr]?.coverImage || item.coverImage;
+    if (!langCover) return;
+    new THREE.TextureLoader().load(langCover, (loaded) => {
+      if (matRef.current) matRef.current.uniforms.uMap.value = loaded;
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeLangStr, activeIdx, index]);
 
   const uniforms = useMemo(() => ({
     uMap:  { value: texture },
@@ -385,17 +397,18 @@ function ArchCard({ item, index, total, progress, carouselOff, activeIdx, hoverI
 
 /* ─── Scene wrapper ───────────────────────────────────────── */
 interface SceneProps {
-  items:       ArchiveItem[];
-  progress:    number;
-  carouselOff: number;
-  hoverIdx:    number | null;
-  activeIdx:   number | null;
-  mouseNY:     number;
-  setHoverIdx: (i: number | null) => void;
-  onCardClick: (i: number) => void;
+  items:         ArchiveItem[];
+  progress:      number;
+  carouselOff:   number;
+  hoverIdx:      number | null;
+  activeIdx:     number | null;
+  activeLangStr: string;
+  mouseNY:       number;
+  setHoverIdx:   (i: number | null) => void;
+  onCardClick:   (i: number) => void;
 }
 
-function Scene({ items, progress, carouselOff, hoverIdx, activeIdx, mouseNY, setHoverIdx, onCardClick }: SceneProps) {
+function Scene({ items, progress, carouselOff, hoverIdx, activeIdx, activeLangStr, mouseNY, setHoverIdx, onCardClick }: SceneProps) {
   const { camera } = useThree();
   useFrame(() => {
     const cam = camera as THREE.PerspectiveCamera;
@@ -413,6 +426,7 @@ function Scene({ items, progress, carouselOff, hoverIdx, activeIdx, mouseNY, set
           carouselOff={carouselOff}
           activeIdx={activeIdx}
           hoverIdx={hoverIdx}
+          activeLangStr={activeLangStr}
           onHover={setHoverIdx}
           onClick={onCardClick}
         />
@@ -643,6 +657,7 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
           carouselOff={carouselOff}
           hoverIdx={hoverIdx}
           activeIdx={activeIdx}
+          activeLangStr={activeLangStr}
           mouseNY={mouseNY}
           setHoverIdx={setHoverIdx}
           onCardClick={handleCardClick}
@@ -678,7 +693,7 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
       <div className={`archive-info-bar${infoItem && activeIdx === null ? " archive-info-bar--visible" : ""}`}>
         {infoItem && activeIdx === null && <>
           <BlurDate text={infoItem.date} className="archive-info-date" />
-          <OdometerTitle text={infoItem.title} className="archive-info-title" />
+          <OdometerTitle text={infoItem.title.length > 45 ? infoItem.title.slice(0, 42) + "…" : infoItem.title} className="archive-info-title" />
         </>}
       </div>
 
