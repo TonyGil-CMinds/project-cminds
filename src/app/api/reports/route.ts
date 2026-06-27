@@ -9,7 +9,7 @@ export async function GET() {
 
   try {
     const res = await fetch(
-      "https://cminds.base44.app/functions/publicReportsFeed",
+      "https://cminds.base44.app/functions/publicReportsFeed?status=published",
       {
         headers: {
           "x-api-key": apiKey,
