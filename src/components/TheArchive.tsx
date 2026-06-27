@@ -264,7 +264,6 @@ function ArchCard({ item, index, total, progress, carouselOff, activeIdx, hoverI
     const fallback = makeGradientTexture(item);
     if (item.coverImage) {
       new THREE.TextureLoader().load(item.coverImage, (loaded) => {
-        loaded.flipY = false;
         if (matRef.current) matRef.current.uniforms.uMap.value = loaded;
       });
     }
@@ -308,7 +307,7 @@ function ArchCard({ item, index, total, progress, carouselOff, activeIdx, hoverI
       tDim   = 1.0;
     } else if (isActive) {
       const mob = window.innerWidth < 768;
-      tx = mob ? 0 : -1.8; ty = mob ? 1.0 : 0; tz = 1.2;
+      tx = mob ? 0 : -0.8; ty = mob ? 1.0 : 0; tz = 1.2;
       tRX = 0; tRY = 0; tRZ = 0;
       tScale = mob ? 1.1 : 1.68;
       tGray  = 0.0;
@@ -438,7 +437,7 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
               ? data.data
               : [];
         if (rawArr.length > 0) {
-          console.log("[archive] first report keys:", Object.keys(rawArr[0]));
+          console.log("[archive] first report full:", JSON.stringify(rawArr[0], null, 2));
           const mapped = rawArr.slice(0, SCAT_POS.length).map(mapReport);
           setItems(mapped);
           setCarouselOff(((mapped.length - 1) / 2) * CAROUSEL_SPACING);
@@ -661,13 +660,6 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
-
-          {/* Cover image (language-aware) */}
-          {panelCover && (
-            <div className="archive-panel-cover">
-              <img src={panelCover} alt={panelTitle} />
-            </div>
-          )}
 
           {/* Language tabs */}
           <div className="archive-lang-tabs">
