@@ -51,63 +51,94 @@ function fmtApiDate(raw: string): string {
 
 function str(v: unknown): string { return v ? String(v) : ""; }
 
+function saveAs(url: string, title: string) {
+  if (!url || url === "#") return;
+  const proxy    = `/api/download?url=${encodeURIComponent(url)}`;
+  const filename = title.replace(/[^a-zA-ZÀ-ÿ0-9 _-]/g, "").trim().slice(0, 80) || "report";
+  const a        = document.createElement("a");
+  a.href         = proxy;
+  a.download     = filename + ".pdf";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function extractLangEntry(data: Record<string, unknown>, fallback: Record<string, unknown>): LangData {
+  return {
+    title:       str(data.title ?? fallback.title ?? fallback.name),
+    description: str(data.description ?? data.summary ?? data.abstract ?? fallback.description ?? fallback.summary),
+    coverImage:  str(data.cover_image ?? data.coverImage ?? data.image ?? data.thumbnail ?? fallback.cover_image ?? fallback.image),
+    downloadUrl: str(data.download_url ?? data.downloadUrl ?? data.file_url ?? data.fileUrl ?? data.url ?? fallback.download_url ?? fallback.file_url) || "#",
+    date:        fmtApiDate(str(data.published_date ?? data.publishedDate ?? data.date ?? fallback.published_date ?? fallback.date ?? fallback.created_at)),
+  };
+}
+
 function mapReport(raw: Record<string, unknown>, idx: number): ArchiveItem {
-  /* ── Per-language data extraction ──────────────────────── */
   const langData: Record<string, LangData> = {};
 
-  // Handle translations as object: { EN: {...}, ES: {...} }
-  const translationsObj = raw.translations ?? raw.localizations ?? raw.language_versions ?? null;
-  if (translationsObj && typeof translationsObj === "object" && !Array.isArray(translationsObj)) {
-    for (const [lang, data] of Object.entries(translationsObj as Record<string, Record<string, unknown>>)) {
-      langData[lang.toUpperCase()] = {
-        title:       str(data.title ?? raw.title),
-        description: str(data.description ?? data.summary ?? raw.description),
-        coverImage:  str(data.cover_image ?? data.image ?? raw.cover_image),
-        downloadUrl: str(data.download_url ?? data.file_url ?? raw.download_url) || "#",
-        date:        fmtApiDate(str(data.published_date ?? data.date ?? raw.published_date)),
-      };
+  // 1. languages[] as array of objects — most likely pattern for base44
+  //    e.g. [{ language: "ES", title: "...", file_url: "..." }, { language: "EN", ... }]
+  const langsField = raw.languages ?? raw.language_versions ?? raw.locales ?? raw.versions;
+  if (Array.isArray(langsField) && langsField.length > 0 && typeof langsField[0] === "object" && langsField[0] !== null) {
+    for (const item of langsField as Record<string, unknown>[]) {
+      const code = str(item.language ?? item.lang ?? item.locale ?? item.language_code ?? item.lang_code ?? item.code).toUpperCase();
+      if (!code) continue;
+      langData[code] = extractLangEntry(item, raw);
     }
   }
 
-  // Handle translations as array: [{ language: "EN", title: "...", ... }]
-  if (Array.isArray(raw.translations ?? raw.localizations ?? raw.other_languages)) {
-    const arr = (raw.translations ?? raw.localizations ?? raw.other_languages) as Record<string, unknown>[];
-    for (const data of arr) {
-      const lang = str(data.language ?? data.lang ?? data.locale).toUpperCase();
-      if (!lang) continue;
-      langData[lang] = {
-        title:       str(data.title ?? raw.title),
-        description: str(data.description ?? data.summary ?? raw.description),
-        coverImage:  str(data.cover_image ?? data.image ?? raw.cover_image),
-        downloadUrl: str(data.download_url ?? data.file_url ?? raw.download_url) || "#",
-        date:        fmtApiDate(str(data.published_date ?? data.date ?? raw.published_date)),
-      };
+  // 2. Translations as a keyed object — { EN: {...}, ES: {...} }
+  const transObj = raw.translations ?? raw.localizations ?? raw.language_versions ?? raw.multilingual ?? raw.localized_content;
+  if (transObj && typeof transObj === "object" && !Array.isArray(transObj)) {
+    for (const [lang, data] of Object.entries(transObj as Record<string, Record<string, unknown>>)) {
+      if (typeof data !== "object" || data === null) continue;
+      const code = lang.toUpperCase();
+      if (!langData[code]) langData[code] = extractLangEntry(data, raw);
     }
   }
 
-  /* ── Determine available languages ─────────────────────── */
-  let langs: string[] = Array.isArray(raw.languages)
-    ? (raw.languages as string[]).map((l) => String(l).toUpperCase())
-    : Object.keys(langData).length > 0
-      ? Object.keys(langData)
-      : [str(raw.language).toUpperCase() || "ES"];
+  // 3. Translations as array — [{ language: "EN", ... }]
+  const transArr = raw.translations ?? raw.localizations ?? raw.other_languages ?? raw.language_data;
+  if (Array.isArray(transArr)) {
+    for (const item of transArr as Record<string, unknown>[]) {
+      const code = str(item.language ?? item.lang ?? item.locale ?? item.language_code ?? item.code).toUpperCase();
+      if (!code) continue;
+      if (!langData[code]) langData[code] = extractLangEntry(item, raw);
+    }
+  }
 
-  // Ensure primary language is in langData
+  // 4. Auto-detect: top-level keys that look like language codes (2–3 uppercase letters)
+  //    and whose value is an object with a title or description
+  for (const [key, val] of Object.entries(raw)) {
+    if (/^[A-Z]{2,3}$/.test(key) && typeof val === "object" && val !== null && !Array.isArray(val)) {
+      const v = val as Record<string, unknown>;
+      if ((v.title || v.description || v.download_url || v.file_url) && !langData[key]) {
+        langData[key] = extractLangEntry(v, raw);
+      }
+    }
+  }
+
+  /* ── Determine language list ─────────────────────────────── */
+  let langs: string[];
+
+  if (Object.keys(langData).length > 0) {
+    langs = Object.keys(langData);
+  } else if (Array.isArray(raw.languages) && typeof raw.languages[0] === "string") {
+    langs = (raw.languages as string[]).map((l) => String(l).toUpperCase());
+  } else {
+    langs = [str(raw.language ?? raw.lang ?? raw.locale ?? raw.language_code).toUpperCase() || "ES"];
+  }
+
+  // Ensure primary language always has an entry in langData
   const primaryLang = langs[0] ?? "ES";
   if (!langData[primaryLang]) {
-    langData[primaryLang] = {
-      title:       str(raw.title ?? raw.name),
-      description: str(raw.description ?? raw.summary ?? raw.abstract),
-      coverImage:  str(raw.cover_image ?? raw.image ?? raw.thumbnail),
-      downloadUrl: str(raw.download_url ?? raw.file_url ?? raw.url) || "#",
-      date:        fmtApiDate(str(raw.published_date ?? raw.date ?? raw.created_at)),
-    };
+    langData[primaryLang] = extractLangEntry(raw, raw);
   }
 
-  const primary    = langData[primaryLang];
-  const title      = primary.title || "Untitled";
-  const words      = title.split(/\s+/).filter(Boolean);
-  const label      = [words.slice(0, 2).join(" "), words.slice(2, 4).join(" ")].filter(Boolean).join("\n") || title.slice(0, 12);
+  const primary = langData[primaryLang];
+  const title   = primary.title || "Untitled";
+  const words   = title.split(/\s+/).filter(Boolean);
+  const label   = [words.slice(0, 2).join(" "), words.slice(2, 4).join(" ")].filter(Boolean).join("\n") || title.slice(0, 12);
 
   return {
     id:          idx,
@@ -678,13 +709,17 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
           <h3 className="archive-detail-title">{panelTitle}</h3>
           <p className="archive-detail-desc">{panelDescription}</p>
 
-          <a className="archive-download-btn" href={panelDownload} target="_blank" rel="noopener noreferrer">
-            Download
+          <button
+            className="archive-download-btn"
+            onClick={() => saveAs(panelDownload, panelTitle)}
+            disabled={!panelDownload || panelDownload === "#"}
+          >
+            Save as PDF
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
             </svg>
-          </a>
+          </button>
         </div>
       )}
     </div>

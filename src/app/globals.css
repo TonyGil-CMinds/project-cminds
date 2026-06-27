@@ -6957,10 +6957,13 @@ body.brand-page-active {
   padding: 0.8rem 1.6rem;
   background: rgba(4, 3, 20, 0.82);
   border-radius: 100px;
+  border: none;
   color: rgba(255, 255, 255, 0.88);
   font-weight: 600;
   font-size: 0.92rem;
+  font-family: inherit;
   text-decoration: none;
+  cursor: pointer;
   position: relative;
   transition: color 0.2s;
   backdrop-filter: blur(12px);
@@ -6989,7 +6992,8 @@ body.brand-page-active {
   pointer-events: none;
 }
 
-.archive-download-btn:hover { color: #fff; }
+.archive-download-btn:hover:not(:disabled) { color: #fff; }
+.archive-download-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 
 /* Panel cover image */
 .archive-panel-cover {
