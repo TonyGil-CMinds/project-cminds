@@ -430,12 +430,13 @@ interface TheArchiveProps {
 }
 
 export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
-  const wrapRef       = useRef<HTMLDivElement>(null);
-  const panelRef      = useRef<HTMLDivElement>(null);
-  const progressRef   = useRef(0);
-  const panelVisRef   = useRef(false);
-  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
-  const touchRawRef   = useRef(0);
+  const wrapRef        = useRef<HTMLDivElement>(null);
+  const panelRef       = useRef<HTMLDivElement>(null);
+  const progressRef    = useRef(0);
+  const panelVisRef    = useRef(false);
+  const touchStartRef  = useRef<{ x: number; y: number } | null>(null);
+  const touchRawRef    = useRef(0);
+  const activeIdxRef   = useRef<number | null>(null);  // always-current, no stale closure
 
   const [items,       setItems]       = useState<ArchiveItem[]>(DUMMY);
   const [loading,     setLoading]     = useState(false);
@@ -446,6 +447,9 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
   const [mouseNY,     setMouseNY]     = useState(0);
   const [activeLang,  setActiveLang]  = useState(0);
   const [panelItem,   setPanelItem]   = useState<ArchiveItem | null>(null);
+
+  // Keep ref always current so event handlers see fresh value without re-registering
+  activeIdxRef.current = activeIdx;
 
   const carouselHalf = useMemo(
     () => ((items.length - 1) / 2) * CAROUSEL_SPACING,
@@ -490,7 +494,7 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
   useEffect(() => {
     if (!visible) return;
     const h = (e: WheelEvent) => {
-      if (activeIdx !== null) return;
+      if (activeIdxRef.current !== null) return;
       e.preventDefault();
       progressRef.current = Math.max(0, Math.min(2, progressRef.current + e.deltaY * 0.0014));
       const raw = progressRef.current;
@@ -500,21 +504,23 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
     };
     window.addEventListener("wheel", h, { passive: false });
     return () => window.removeEventListener("wheel", h);
-  }, [visible, activeIdx, carouselHalf]);
+  }, [visible, carouselHalf]);
 
   /* touch drag (mobile) */
   useEffect(() => {
     if (!visible) return;
     const onStart = (e: TouchEvent) => {
-      if (activeIdx !== null) return;
+      if (activeIdxRef.current !== null) return;
       touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       touchRawRef.current   = progressRef.current;
     };
     const onMove = (e: TouchEvent) => {
-      if (!touchStartRef.current || activeIdx !== null) return;
+      if (!touchStartRef.current || activeIdxRef.current !== null) return;
+      const dx = e.touches[0].clientX - touchStartRef.current.x;
+      const dy = e.touches[0].clientY - touchStartRef.current.y;
+      // Only hijack the event once movement is intentional (avoids blocking tap click synthesis)
+      if (Math.abs(dx) < 10 && Math.abs(dy) < 10) return;
       e.preventDefault();
-      const dx  = e.touches[0].clientX - touchStartRef.current.x;
-      const dy  = e.touches[0].clientY - touchStartRef.current.y;
       const raw = touchRawRef.current;
       const newRaw = raw < 1.0
         ? Math.max(0, Math.min(2, raw - dy / (window.innerHeight * 0.45)))
@@ -533,7 +539,7 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
       window.removeEventListener("touchmove",  onMove);
       window.removeEventListener("touchend",   onEnd);
     };
-  }, [visible, activeIdx, carouselHalf]);
+  }, [visible, carouselHalf]);
 
   /* entry / exit */
   useEffect(() => {

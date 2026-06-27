@@ -4623,6 +4623,16 @@ body {
   height: 10px;
 }
 
+@media (max-width: 768px) {
+  .cb-shell {
+    bottom: auto;
+    top: 1.25rem;
+    right: 1rem;
+    left: 1rem;
+    width: auto;
+  }
+}
+
 /* ── Privacy Page ──────────────────────────────────────────────── */
 
 .prv-page {
