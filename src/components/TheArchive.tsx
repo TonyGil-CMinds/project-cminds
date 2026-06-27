@@ -96,83 +96,47 @@ function findFileUrl(obj: Record<string, unknown>): string {
   return "#";
 }
 
-function extractLangEntry(data: Record<string, unknown>, fallback: Record<string, unknown>): LangData {
-  const downloadUrl = findFileUrl(data) !== "#" ? findFileUrl(data) : findFileUrl(fallback);
-  return {
-    title:       str(data.title ?? fallback.title ?? fallback.name),
-    description: str(data.description ?? data.summary ?? data.abstract ?? fallback.description ?? fallback.summary),
-    coverImage:  str(data.cover_image ?? data.coverImage ?? data.image ?? data.thumbnail ?? fallback.cover_image ?? fallback.image),
-    downloadUrl,
-    date:        fmtApiDate(str(data.published_date ?? data.publishedDate ?? data.date ?? fallback.published_date ?? fallback.date ?? fallback.created_at)),
-  };
-}
-
 function mapReport(raw: Record<string, unknown>, idx: number): ArchiveItem {
+  // Shared fields (same for all languages)
+  const sharedTitle = str(raw.title ?? raw.name);
+  const sharedDesc  = str(raw.description ?? raw.summary);
+  const sharedCover = str(raw.cover_image ?? raw.image ?? raw.thumbnail);
+  const sharedDate  = fmtApiDate(str(raw.published_date ?? raw.date ?? raw.created_at));
+
+  // Build langData from files[] → { language, url, file_name }
   const langData: Record<string, LangData> = {};
+  const files = Array.isArray(raw.files)
+    ? (raw.files as Array<Record<string, unknown>>)
+    : [];
 
-  // 1. languages[] as array of objects — most likely pattern for base44
-  //    e.g. [{ language: "ES", title: "...", file_url: "..." }, { language: "EN", ... }]
-  const langsField = raw.languages ?? raw.language_versions ?? raw.locales ?? raw.versions;
-  if (Array.isArray(langsField) && langsField.length > 0 && typeof langsField[0] === "object" && langsField[0] !== null) {
-    for (const item of langsField as Record<string, unknown>[]) {
-      const code = str(item.language ?? item.lang ?? item.locale ?? item.language_code ?? item.lang_code ?? item.code).toUpperCase();
-      if (!code) continue;
-      langData[code] = extractLangEntry(item, raw);
-    }
+  for (const file of files) {
+    const lang = str(file.language ?? file.lang).toUpperCase() || "ES";
+    langData[lang] = {
+      title:       sharedTitle,
+      description: sharedDesc,
+      coverImage:  sharedCover,
+      downloadUrl: str(file.url ?? file.download_url) || "#",
+      date:        sharedDate,
+    };
   }
 
-  // 2. Translations as a keyed object — { EN: {...}, ES: {...} }
-  const transObj = raw.translations ?? raw.localizations ?? raw.language_versions ?? raw.multilingual ?? raw.localized_content;
-  if (transObj && typeof transObj === "object" && !Array.isArray(transObj)) {
-    for (const [lang, data] of Object.entries(transObj as Record<string, Record<string, unknown>>)) {
-      if (typeof data !== "object" || data === null) continue;
-      const code = lang.toUpperCase();
-      if (!langData[code]) langData[code] = extractLangEntry(data, raw);
-    }
+  // Fallback when no files array
+  if (Object.keys(langData).length === 0) {
+    const fallbackLang = str(raw.language ?? raw.lang).toUpperCase() || "ES";
+    langData[fallbackLang] = {
+      title:       sharedTitle,
+      description: sharedDesc,
+      coverImage:  sharedCover,
+      downloadUrl: findFileUrl(raw),
+      date:        sharedDate,
+    };
   }
 
-  // 3. Translations as array — [{ language: "EN", ... }]
-  const transArr = raw.translations ?? raw.localizations ?? raw.other_languages ?? raw.language_data;
-  if (Array.isArray(transArr)) {
-    for (const item of transArr as Record<string, unknown>[]) {
-      const code = str(item.language ?? item.lang ?? item.locale ?? item.language_code ?? item.code).toUpperCase();
-      if (!code) continue;
-      if (!langData[code]) langData[code] = extractLangEntry(item, raw);
-    }
-  }
-
-  // 4. Auto-detect: top-level keys that look like language codes (2–3 uppercase letters)
-  //    and whose value is an object with a title or description
-  for (const [key, val] of Object.entries(raw)) {
-    if (/^[A-Z]{2,3}$/.test(key) && typeof val === "object" && val !== null && !Array.isArray(val)) {
-      const v = val as Record<string, unknown>;
-      if ((v.title || v.description || v.download_url || v.file_url) && !langData[key]) {
-        langData[key] = extractLangEntry(v, raw);
-      }
-    }
-  }
-
-  /* ── Determine language list ─────────────────────────────── */
-  let langs: string[];
-
-  if (Object.keys(langData).length > 0) {
-    langs = Object.keys(langData);
-  } else if (Array.isArray(raw.languages) && typeof raw.languages[0] === "string") {
-    langs = (raw.languages as string[]).map((l) => String(l).toUpperCase());
-  } else {
-    langs = [str(raw.language ?? raw.lang ?? raw.locale ?? raw.language_code).toUpperCase() || "ES"];
-  }
-
-  // Ensure primary language always has an entry in langData
-  const primaryLang = langs[0] ?? "ES";
-  if (!langData[primaryLang]) {
-    langData[primaryLang] = extractLangEntry(raw, raw);
-  }
-
-  const primary = langData[primaryLang];
-  const title   = primary.title || "Untitled";
-  const words   = title.split(/\s+/).filter(Boolean);
-  const label   = [words.slice(0, 2).join(" "), words.slice(2, 4).join(" ")].filter(Boolean).join("\n") || title.slice(0, 12);
+  const langs       = Object.keys(langData);
+  const primary     = langData[langs[0]];
+  const title       = primary.title || "Untitled";
+  const words       = title.split(/\s+/).filter(Boolean);
+  const label       = [words.slice(0, 2).join(" "), words.slice(2, 4).join(" ")].filter(Boolean).join("\n") || title.slice(0, 12);
 
   return {
     id:          idx,
@@ -506,7 +470,6 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
               ? data.data
               : [];
         if (rawArr.length > 0) {
-          console.log("[archive] first report full:", JSON.stringify(rawArr[0], null, 2));
           const mapped = rawArr.slice(0, SCAT_POS.length).map(mapReport);
           setItems(mapped);
           setCarouselOff(((mapped.length - 1) / 2) * CAROUSEL_SPACING);
