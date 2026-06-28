@@ -2,13 +2,13 @@
 
 import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "react";
 import { useGSAP } from "@gsap/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SideRays from "../../../components/reactbits/SideRays";
 import Dock from "../../../components/reactbits/Dock";
-import ContactButton from "../../components/ContactButton";
+import NavSearch from "../../components/NavSearch";
 import { useSubscribeModal } from "../../components/SubscribeModalProvider";
 const TheArchive = dynamic(() => import("../../components/TheArchive"), { ssr: false });
 gsap.registerPlugin(ScrollTrigger);
@@ -75,7 +75,9 @@ export default function MindscopePage() {
   const bellTextRef    = useRef<HTMLSpanElement>(null);
   const bellBtnRef     = useRef<HTMLButtonElement>(null);
   const bellMountedRef = useRef(false);
-  const router = useRouter();
+  const router       = useRouter();
+  const searchParams = useSearchParams();
+  const openReportId = searchParams.get("report") ?? undefined;
   const { open: openSubscribeModal } = useSubscribeModal();
 
   // ── Fetch blog feed ────────────────────────────────────────
@@ -301,7 +303,7 @@ export default function MindscopePage() {
             </div>
           ))}
         </div>
-        <ContactButton variant="nav" />
+        <NavSearch />
       </nav>
 
       {/* Hero */}
@@ -483,7 +485,11 @@ export default function MindscopePage() {
         </div>
       )}
 
-      <TheArchive visible={dockActive === 1} onExpand={setCardExpanded} />
+      <TheArchive
+        visible={dockActive === 1 || !!openReportId}
+        onExpand={setCardExpanded}
+        openReportId={openReportId}
+      />
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "r
 import { useParams, useRouter } from "next/navigation";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import ContactButton from "../../../components/ContactButton";
+import NavSearch from "../../../components/NavSearch";
 
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
@@ -370,7 +370,7 @@ export default function PostPage() {
             </div>
           ))}
         </div>
-        <ContactButton variant="nav" />
+        <NavSearch />
       </nav>
 
       {/* Post content */}

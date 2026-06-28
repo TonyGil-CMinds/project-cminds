@@ -13,7 +13,7 @@ import CoreTeamSection   from "../../components/CoreTeamSection";
 import ConstanzaSection  from "../../components/ConstanzaSection";
 import SideRays          from "../../../components/reactbits/SideRays";
 import SiteFooter        from "../../components/SiteFooter";
-import ContactButton from "../../components/ContactButton";
+import NavSearch from "../../components/NavSearch";
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 
@@ -180,7 +180,7 @@ export default function CorePage() {
             </div>
           ))}
         </div>
-        <ContactButton variant="nav" />
+        <NavSearch />
       </nav>
 
       {/* Hero content */}

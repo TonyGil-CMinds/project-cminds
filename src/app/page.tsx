@@ -8,7 +8,7 @@ import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HexLoader from "../components/HexLoader";
 import SiteFooter from "../components/SiteFooter";
-import ContactButton from "../components/ContactButton";
+import NavSearch from "../components/NavSearch";
 import { Analytics } from '@vercel/analytics/next';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -708,7 +708,7 @@ export default function Hero() {
                 ))}
               </div>
 
-              <ContactButton variant="nav" />
+              <NavSearch />
             </nav>
 
             {/* Orbit background */}

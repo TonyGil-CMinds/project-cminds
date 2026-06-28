@@ -8,7 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SideRays from "../../../components/reactbits/SideRays";
 import BorderGlow from "../../../components/reactbits/BorderGlow";
 import SiteFooter from "../../components/SiteFooter";
-import ContactButton from "../../components/ContactButton";
+import NavSearch from "../../components/NavSearch";
 gsap.registerPlugin(ScrollTrigger);
 const NAV_ITEMS    = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
@@ -354,7 +354,7 @@ export default function CareersPage() {
             </div>
           ))}
         </div>
-        <ContactButton variant="nav" />
+        <NavSearch />
       </nav>
 
       {/* Hero */}

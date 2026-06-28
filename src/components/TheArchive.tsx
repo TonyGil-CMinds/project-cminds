@@ -23,6 +23,7 @@ interface LangData {
 
 interface ArchiveItem {
   id:          number;
+  apiId:       string;
   title:       string;
   date:        string;
   description: string;
@@ -140,6 +141,7 @@ function mapReport(raw: Record<string, unknown>, idx: number): ArchiveItem {
 
   return {
     id:          idx,
+    apiId:       str(raw.id),
     title,
     date:        primary.date,
     description: primary.description,
@@ -445,11 +447,12 @@ function Scene({ items, progress, carouselOff, hoverIdx, activeIdx, activeLangSt
 
 /* ─── Main component ──────────────────────────────────────── */
 interface TheArchiveProps {
-  visible:   boolean;
-  onExpand?: (active: boolean) => void;
+  visible:        boolean;
+  onExpand?:      (active: boolean) => void;
+  openReportId?:  string;
 }
 
-export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
+export default function TheArchive({ visible, onExpand, openReportId }: TheArchiveProps) {
   const wrapRef        = useRef<HTMLDivElement>(null);
   const panelRef       = useRef<HTMLDivElement>(null);
   const progressRef    = useRef(0);
@@ -501,6 +504,20 @@ export default function TheArchive({ visible, onExpand }: TheArchiveProps) {
       .finally(() => setLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible]);
+
+  /* auto-open card when arriving from /reportes/[id] */
+  useEffect(() => {
+    if (!openReportId || items === DUMMY) return;
+    const idx = items.findIndex((it) => it.apiId === openReportId);
+    if (idx === -1) return;
+    // Snap carousel into position then open the card
+    const targetOff = (idx - (items.length - 1) / 2) * CAROUSEL_SPACING * -1;
+    progressRef.current = 1;
+    setProgress(1);
+    setCarouselOff(targetOff);
+    setTimeout(() => { setActiveIdx(idx); setActiveLang(0); onExpand?.(true); }, 380);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openReportId, items]);
 
   /* mouse → camera tilt */
   useEffect(() => {
