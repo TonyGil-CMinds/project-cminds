@@ -33,6 +33,12 @@ const PEOPLE = [
     quote: "Every great project starts with understanding people. Design isn't decoration — it's how we communicate what matters most and why it's worth building.",
   },
   {
+    name: "Bryan Ruiz",
+    role: "Head, Exploration Studio",
+    img:  "/team/Bryan Ruiz.png",
+    quote: "Exploration means being comfortable with not knowing the answer yet. The Exploration Studio exists to ask questions the rest of the world hasn't thought to ask — and to build what comes after.",
+  },
+  {
     name: "Camila Valdez",
     role: "Editorial Design",
     img:  "/team/Camila Valdes.png",
