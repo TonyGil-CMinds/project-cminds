@@ -798,7 +798,11 @@ export default function Hero() {
                   </span>
                 </div>
               </h1>
-              <button className="hero-button hero-scroll-btn" style={{ padding: "0.9rem 2rem", marginTop: "1rem" }}>
+              <button
+                className="hero-button hero-scroll-btn"
+                style={{ padding: "0.9rem 2rem", marginTop: "1rem" }}
+                onClick={() => document.querySelector(".core-section")?.scrollIntoView({ behavior: "smooth" })}
+              >
                 Scroll down ↓
               </button>
             </div>

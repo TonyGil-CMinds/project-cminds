@@ -381,7 +381,11 @@ export default function CareersPage() {
             <span className="careers-word careers-word-accent">shaping what&apos;s next.</span>
           </h1>
 
-          <button className="hero-button careers-scroll-btn" style={{ padding: "0.9rem 2rem", opacity: 0 }}>
+          <button
+            className="hero-button careers-scroll-btn"
+            style={{ padding: "0.9rem 2rem", opacity: 0 }}
+            onClick={() => document.querySelector("#open-positions")?.scrollIntoView({ behavior: "smooth" })}
+          >
             Scroll down ↓
           </button>
 

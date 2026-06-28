@@ -202,6 +202,7 @@ export default function CorePage() {
         <button
           className="hero-button core-scroll-btn"
           style={{ padding: "0.9rem 2rem", opacity: 0 }}
+          onClick={() => scrollWrapRef.current?.scrollIntoView({ behavior: "smooth" })}
         >
           Scroll down ↓
         </button>
