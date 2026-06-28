@@ -10,6 +10,7 @@ const TEAM = [
   { name: "Alex Muñoz",            role: "Director, Vital Oceans",            img: "/team/AlexMunos.png",          linkedin: "#" },
   { name: "Ángel Escalante",       role: "Lead, Digital Product",             img: "/team/Angel Escalante.png",    linkedin: "#" },
   { name: "Antonio Gil",           role: "Lead, Interactive Design",          img: "/team/Tony Gil.png",           linkedin: "#" },
+  { name: "Bryan Ruiz",            role: "Head, Exploration Studio",          img: "/team/Bryan Ruiz.png",         linkedin: "#" },
   { name: "Camila Valdez",         role: "Editorial Design",                  img: "/team/Camila Valdes.png",      linkedin: "#" },
   { name: "Carlo Angeles",         role: "Head of Impact",                    img: "/team/Carlo Angeles.png",      linkedin: "#" },
   { name: "Eduardo Gómez Restrepo",role: "Head, ScaleUp Studio",              img: "/team/Eduardo Gómez.png",      linkedin: "#" },
