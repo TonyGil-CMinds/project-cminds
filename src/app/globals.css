@@ -5416,6 +5416,11 @@ body {
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
+.mm-logo-wrap img {
+  width: 120px;
+  height: 60px;
+  object-fit: contain;
+}
 
 /* ── Hamburger button — sits inside mm-header ── */
 .mm-burger {
