@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "react";
+import { useRef, useLayoutEffect, useEffect, useState, startTransition, Suspense } from "react";
 import { useGSAP } from "@gsap/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -52,6 +52,18 @@ type ReelPost = {
   author: { name: string; photo_url: string };
 };
 
+function ArchiveBridge({ dockActive, onExpand }: { dockActive: number; onExpand: (v: boolean) => void }) {
+  const searchParams = useSearchParams();
+  const openReportId = searchParams.get("report") ?? undefined;
+  return (
+    <TheArchive
+      visible={dockActive === 1 || !!openReportId}
+      onExpand={onExpand}
+      openReportId={openReportId}
+    />
+  );
+}
+
 export default function MindscopePage() {
   const containerRef  = useRef<HTMLDivElement>(null);
   const navItemRefs   = useRef<(HTMLDivElement | null)[]>([]);
@@ -75,9 +87,7 @@ export default function MindscopePage() {
   const bellTextRef    = useRef<HTMLSpanElement>(null);
   const bellBtnRef     = useRef<HTMLButtonElement>(null);
   const bellMountedRef = useRef(false);
-  const router       = useRouter();
-  const searchParams = useSearchParams();
-  const openReportId = searchParams.get("report") ?? undefined;
+  const router = useRouter();
   const { open: openSubscribeModal } = useSubscribeModal();
 
   // ── Fetch blog feed ────────────────────────────────────────
@@ -485,11 +495,9 @@ export default function MindscopePage() {
         </div>
       )}
 
-      <TheArchive
-        visible={dockActive === 1 || !!openReportId}
-        onExpand={setCardExpanded}
-        openReportId={openReportId}
-      />
+      <Suspense fallback={null}>
+        <ArchiveBridge dockActive={dockActive} onExpand={setCardExpanded} />
+      </Suspense>
     </div>
   );
 }
