@@ -8127,3 +8127,285 @@ body.brand-page-active {
     display: inline-flex;
   }
 }
+
+/* ─────────────────────────────────────────────────────────
+   AFB — SECTION 03: OUR COMPONENTS
+   ───────────────────────────────────────────────────────── */
+
+/* Section overrides */
+.afb-section-components {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ── Two-column layout ── */
+.afb-comp-layout {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+/* ── Left column ── */
+.afb-comp-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5.5rem 3.5rem 5.5rem 5rem;
+  /* Bleed the dark bg into the image column for text legibility */
+  background: linear-gradient(
+    90deg,
+    #040314 55%,
+    rgba(4, 3, 20, 0.0) 100%
+  );
+  position: relative;
+  z-index: 3;
+}
+
+/* Eyebrow label */
+.afb-comp-eyebrow {
+  display: block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.38);
+  text-transform: uppercase;
+  margin-bottom: 1.8rem;
+}
+
+/* ── Tab selector bars ── */
+.afb-comp-tabs {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  margin-bottom: 2.6rem;
+}
+
+.afb-comp-tab {
+  height: 3px;
+  width: 32px;
+  border: none;
+  border-radius: 2px;
+  background: rgba(135, 159, 6, 0.2);
+  cursor: pointer;
+  transform-origin: left center;
+  transition: background 0.22s ease, transform 0.22s ease;
+  padding: 0;
+}
+
+.afb-comp-tab.active {
+  background: #879F06;
+  transform: scaleY(1.6);
+}
+
+.afb-comp-tab:hover:not(.active) {
+  background: rgba(135, 159, 6, 0.45);
+}
+
+/* ── Giant title ── */
+.afb-comp-title {
+  margin: 0 0 2.8rem;
+  font-size: clamp(2.8rem, 6vw, 7rem);
+  font-weight: 900;
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.afb-comp-title-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+
+.afb-comp-title-inner {
+  display: block;
+}
+
+/* ── Description ── */
+.afb-comp-description {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  max-width: 380px;
+}
+
+.afb-comp-desc-p {
+  font-size: clamp(0.8rem, 1.15vw, 0.96rem);
+  line-height: 1.68;
+  color: rgba(255, 255, 255, 0.58);
+  margin: 0;
+}
+
+/* ── Right image column ── */
+.afb-comp-right {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+/* Left-to-right fade so left column text stays readable */
+.afb-comp-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(4, 3, 20, 0.75) 0%,
+    rgba(4, 3, 20, 0.25) 30%,
+    rgba(4, 3, 20, 0.0) 60%
+  );
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Image wrapper — GSAP animates clipPath on wrapper for clean tab switch */
+.afb-comp-image-wrap {
+  position: absolute;
+  inset: 0;
+}
+
+.afb-comp-image {
+  width: 100%;
+  height: 110%; /* extra height for parallax headroom */
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+/* ── AI Detection bounding box ── */
+.afb-comp-detect {
+  position: absolute;
+  top: 20%;
+  right: 10%;
+  width: 36%;
+  aspect-ratio: 0.78 / 1;
+  z-index: 2;
+}
+
+/* Corner bracket shared styles */
+.afb-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+}
+
+.afb-corner::before,
+.afb-corner::after {
+  content: '';
+  position: absolute;
+  background: rgba(197, 224, 38, 0.88);
+}
+
+/* Top-left */
+.afb-corner-tl { top: 0; left: 0; transform-origin: top left; }
+.afb-corner-tl::before { top: 0; left: 0; width: 100%; height: 1.5px; }
+.afb-corner-tl::after  { top: 0; left: 0; width: 1.5px; height: 100%; }
+
+/* Top-right */
+.afb-corner-tr { top: 0; right: 0; transform-origin: top right; }
+.afb-corner-tr::before { top: 0; right: 0; width: 100%; height: 1.5px; }
+.afb-corner-tr::after  { top: 0; right: 0; width: 1.5px; height: 100%; }
+
+/* Bottom-left */
+.afb-corner-bl { bottom: 0; left: 0; transform-origin: bottom left; }
+.afb-corner-bl::before { bottom: 0; left: 0; width: 1.5px; height: 100%; }
+.afb-corner-bl::after  { bottom: 0; left: 0; width: 100%; height: 1.5px; }
+
+/* Bottom-right */
+.afb-corner-br { bottom: 0; right: 0; transform-origin: bottom right; }
+.afb-corner-br::before { bottom: 0; right: 0; width: 1.5px; height: 100%; }
+.afb-corner-br::after  { bottom: 0; right: 0; width: 100%; height: 1.5px; }
+
+/* Detection label above box — top-right, typewriter reveal */
+.afb-detect-label-text {
+  position: absolute;
+  top: -1.6rem;
+  right: 0;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: rgba(197, 224, 38, 0.82);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.afb-detect-char {
+  display: inline-block;
+  opacity: 0; /* GSAP typewriter reveal */
+}
+
+/* Confidence score — bottom-right of box */
+.afb-detect-conf-wrap {
+  position: absolute;
+  bottom: -1.5rem;
+  right: 0;
+}
+
+.afb-detect-confidence {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: rgba(197, 224, 38, 0.82);
+}
+
+/* Scan line — loops up → down inside the box */
+.afb-detect-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 1.5px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(197, 224, 38, 0.55) 40%,
+    rgba(197, 224, 38, 0.9) 50%,
+    rgba(197, 224, 38, 0.55) 60%,
+    transparent 100%
+  );
+  animation: afb-scan-move 2.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes afb-scan-move {
+  0%   { top: 0%;   opacity: 0; }
+  8%   { opacity: 1; }
+  85%  { opacity: 0.7; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* ── Far-right vertical accent bar ── */
+.afb-comp-right-bar {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 70px;
+  border-radius: 3px;
+  background: linear-gradient(to bottom, #879F06, rgba(135, 159, 6, 0.3));
+  z-index: 10;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .afb-comp-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .afb-comp-right {
+    min-height: 55vw;
+  }
+
+  .afb-comp-left {
+    padding: 4rem 1.8rem 3rem;
+    background: linear-gradient(180deg, #040314 70%, rgba(4,3,20,0) 100%);
+  }
+
+  .afb-comp-detect {
+    width: 45%;
+  }
+}

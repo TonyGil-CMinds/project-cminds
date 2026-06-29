@@ -5,6 +5,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HexPattern from "./HexPattern";
+import AfbComponentsSection from "./AfbComponentsSection";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -13,6 +14,7 @@ gsap.registerPlugin(ScrollTrigger);
 const SECTIONS_DATA = [
   { id: "who-are-we",        label: "WHO ARE WE",        number: "01" },
   { id: "where-we-come-from", label: "WHERE WE COME FROM", number: "02" },
+  { id: "our-components",    label: "OUR COMPONENTS",    number: "03" },
 ];
 
 const WHO_TEXT =
@@ -298,6 +300,11 @@ export default function AfbSections() {
           </div>
         </div>
       </section>
+
+      {/* ═══════════════════════════════════
+          SECTION 03 — OUR COMPONENTS
+      ═══════════════════════════════════ */}
+      <AfbComponentsSection />
 
     </div>
   );
