@@ -7444,3 +7444,309 @@ body.brand-page-active {
     padding-right: 12rem;
   }
 }
+
+/* ═══════════════════════════════════════════════════════
+   AI FOR BIODIVERSITY PAGE
+   ═══════════════════════════════════════════════════════ */
+
+/* -- Reset body scroll lock when active -- */
+body.afb-page-active {
+  overflow: hidden;
+}
+
+/* -- Page root -- */
+.afb-page {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: #040314;
+  font-family: var(--font-satoshi, sans-serif);
+}
+
+/* ── Navbar ─────────────────────────────────────────── */
+.afb-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.4rem 2.4rem;
+}
+
+.afb-cminds-logo {
+  width: 100px;
+  height: auto;
+  flex-shrink: 0;
+  opacity: 0; /* GSAP animates in */
+}
+
+.afb-nav-center {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.afb-nav-item {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  color: rgba(255, 255, 255, 0.72);
+  cursor: pointer;
+  white-space: nowrap;
+  opacity: 0; /* GSAP animates in */
+  transition: color 0.2s ease;
+}
+
+.afb-nav-item:hover {
+  color: #fff;
+}
+
+/* Center logo pill with green gradient border + bg */
+.afb-nav-logo-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 25.065px;
+  border: 0.836px solid #879F06;
+  background: radial-gradient(144.36% 144.18% at 95.16% 4.55%, rgba(144, 200, 14, 0.41) 0%, rgba(4, 3, 20, 0.21) 100%);
+  opacity: 0; /* GSAP animates in */
+  flex-shrink: 0;
+}
+
+.afb-nav-logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+}
+
+/* Spacer mirrors C Minds logo width so center cluster stays truly centered */
+.afb-nav-spacer {
+  width: 100px;
+  flex-shrink: 0;
+}
+
+/* ── Hero ────────────────────────────────────────────── */
+.afb-hero {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 800px;
+}
+
+/* WebGL hex canvas — full hero overlay */
+.afb-hex-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Background photo */
+.afb-hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  transform-origin: center center;
+}
+
+/* Dark bottom vignette for text legibility */
+.afb-hero-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    to bottom,
+    rgba(4, 3, 20, 0.08) 0%,
+    rgba(4, 3, 20, 0.0) 35%,
+    rgba(4, 3, 20, 0.55) 80%,
+    rgba(4, 3, 20, 0.82) 100%
+  );
+  pointer-events: none;
+}
+
+/* Bird wrapper — centers bird in the viewport */
+.afb-bird-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.afb-hero-bird {
+  width: clamp(320px, 46vw, 700px);
+  max-height: 68vh;
+  object-fit: contain;
+  transform-style: preserve-3d;
+}
+
+/* Title block */
+.afb-hero-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -52%);
+  z-index: 4;
+  text-align: center;
+  pointer-events: none;
+  width: 90vw;
+}
+
+.afb-heading {
+  font-size: clamp(3.8rem, 9.5vw, 9.5rem);
+  font-weight: 900;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin: 0;
+}
+
+.afb-line {
+  display: block;
+}
+
+.afb-word {
+  display: inline-block;
+  opacity: 0; /* GSAP animates in */
+}
+
+/* Gradient text for Climate / Biodiversity */
+.afb-word.afb-green {
+  background: linear-gradient(108deg, #FFF 60.49%, #9EBD4D 81.34%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Foreground plants wrapper — handles horizontal centering */
+.afb-plants-wrap {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  pointer-events: none;
+}
+
+/* The actual image — GSAP animates opacity + y on this */
+.afb-hero-plants {
+  display: block;
+  width: clamp(400px, 80vw, 1100px);
+  max-height: 55vh;
+  object-fit: contain;
+  object-position: bottom;
+  transform-origin: bottom center;
+  opacity: 0; /* GSAP animates in */
+}
+
+/* Bottom row: scroll button + description */
+.afb-hero-bottom {
+  position: absolute;
+  bottom: 2.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2rem;
+  width: 90vw;
+  max-width: 680px;
+  text-align: center;
+}
+
+/* Scroll down button */
+.afb-scroll-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.6rem;
+  border-radius: 82.874px;
+  border: 1.535px solid rgba(222, 238, 90, 0.36);
+  background: rgba(4, 3, 20, 0.28);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: rgba(255, 255, 255, 0.80);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  opacity: 0; /* GSAP animates in */
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.afb-scroll-btn:hover {
+  background: rgba(144, 200, 14, 0.12);
+  border-color: rgba(222, 238, 90, 0.6);
+  color: #fff;
+}
+
+/* Description text */
+.afb-description {
+  font-size: clamp(0.78rem, 1.3vw, 0.95rem);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.58);
+  opacity: 0; /* GSAP animates in */
+  max-width: 560px;
+}
+
+/* ── Responsive ─────────────────────────────────────── */
+@media (max-width: 768px) {
+  .afb-nav {
+    padding: 1rem 1.2rem;
+  }
+
+  .afb-nav-center {
+    gap: 1rem;
+  }
+
+  .afb-nav-item {
+    font-size: 0.6rem;
+  }
+
+  .afb-nav-logo-pill {
+    width: 46px;
+    height: 46px;
+  }
+
+  .afb-nav-logo {
+    width: 28px;
+    height: 28px;
+  }
+
+  .afb-nav-spacer {
+    width: 80px;
+  }
+
+  .afb-cminds-logo {
+    width: 80px;
+  }
+
+  .afb-hero-bottom {
+    bottom: 1.4rem;
+  }
+
+  .afb-description {
+    font-size: 0.75rem;
+  }
+}

@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import HexPattern from "../../components/HexPattern";
 
 const NAV_LEFT  = ["Home", "Who are we"];
 const NAV_RIGHT = ["Where we come from", "Initiatives"];
@@ -29,7 +30,6 @@ export default function AIForBiodiversityPage() {
       const dx = ((e.clientX - left) / width  - 0.5) * 2; // -1 → +1
       const dy = ((e.clientY - top)  / height - 0.5) * 2;
 
-      // Bird: follows cursor + perspective tilt on X axis (rotateY needs perspective on hero)
       gsap.to(birdRef.current, {
         x: dx * 32,
         y: dy * 10,
@@ -39,7 +39,6 @@ export default function AIForBiodiversityPage() {
         overwrite: "auto",
       });
 
-      // Plants: moves in the opposite direction (counter-parallax)
       gsap.to(plantsRef.current, {
         x: -dx * 22,
         y: -dy * 5,
@@ -48,7 +47,6 @@ export default function AIForBiodiversityPage() {
         overwrite: "auto",
       });
 
-      // Background: very subtle opposite drift
       gsap.to(bgRef.current, {
         x: -dx * 12,
         y: -dy * 4,
@@ -85,45 +83,52 @@ export default function AIForBiodiversityPage() {
       0
     );
 
-    tl.fromTo(".afb-nav-logo-wrap",
-      { opacity: 0, scale: 0.78 },
-      { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.7)" },
-      0.15
+    tl.fromTo(".afb-cminds-logo",
+      { opacity: 0, x: -18, filter: "blur(6px)" },
+      { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6 },
+      0.1
+    );
+
+    tl.fromTo(".afb-nav-logo-pill",
+      { opacity: 0, scale: 0.78, filter: "blur(8px)" },
+      { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.7, ease: "back.out(1.7)" },
+      0.18
     );
 
     tl.fromTo(".afb-nav-item",
       { opacity: 0, y: -10, filter: "blur(6px)" },
       { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, stagger: 0.07 },
-      0.25
+      0.3
     );
 
     tl.fromTo(".afb-hero-bird",
       { opacity: 0, y: 40, scale: 1.03 },
       { opacity: 1, y: 0, scale: 1, duration: 1.4, ease: "power2.out" },
-      0.3
+      0.35
     );
 
     tl.fromTo(".afb-word",
       { opacity: 0, y: 52, filter: "blur(14px)" },
       { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.85, stagger: 0.11 },
-      0.55
+      0.6
     );
 
     tl.fromTo(".afb-hero-plants",
       { opacity: 0, y: 60 },
       { opacity: 1, y: 0, duration: 1.1, ease: "power2.out" },
-      0.65
+      0.7
     );
 
     tl.fromTo(".afb-description",
       { opacity: 0, x: 16, filter: "blur(8px)" },
       { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.7 },
-      1.1
+      1.15
     );
+
     tl.fromTo(".afb-scroll-btn",
       { opacity: 0, y: 14 },
       { opacity: 1, y: 0, duration: 0.55 },
-      1.1
+      1.15
     );
   }, { scope: containerRef });
 
@@ -132,14 +137,17 @@ export default function AIForBiodiversityPage() {
 
       {/* ── Navbar ── */}
       <nav className="afb-nav">
-        <img src="/logo.svg" alt="C Minds" className="afb-nav-cminds afb-nav-item" />
+        {/* C Minds logo — top left */}
+        <img src="/logo.svg" alt="C Minds" className="afb-cminds-logo" />
 
+        {/* Center cluster: left items + pill + right items */}
         <div className="afb-nav-center">
           {NAV_LEFT.map((item) => (
             <span key={item} className="afb-nav-item">{item.toUpperCase()}</span>
           ))}
 
-          <div className="afb-nav-logo-wrap">
+          {/* Green-gradient logo pill */}
+          <div className="afb-nav-logo-pill">
             <img
               src="/platforms/aiforbiodiversity/logo.svg"
               alt="AI for Biodiversity"
@@ -151,12 +159,18 @@ export default function AIForBiodiversityPage() {
             <span key={item} className="afb-nav-item">{item.toUpperCase()}</span>
           ))}
         </div>
+
+        {/* Spacer so C Minds logo stays left via flex justify-between */}
+        <div className="afb-nav-spacer" aria-hidden="true" />
       </nav>
 
       {/* ── Hero ── */}
       <section ref={heroRef} className="afb-hero">
 
-        {/* Layer 0 — background */}
+        {/* WebGL hex pattern — sits above bg, below content */}
+        <HexPattern className="afb-hex-canvas" />
+
+        {/* Layer 0 — background photo */}
         <img
           ref={bgRef}
           src="/platforms/aiforbiodiversity/hero-bg-image.png"
@@ -168,7 +182,7 @@ export default function AIForBiodiversityPage() {
         {/* Layer 1 — bottom gradient for readability */}
         <div className="afb-hero-vignette" aria-hidden="true" />
 
-        {/* Layer 2 — bird (wrapper handles centering; image is animated by GSAP) */}
+        {/* Layer 2 — bird */}
         <div className="afb-bird-wrap" aria-hidden="true">
           <img
             ref={birdRef}
@@ -178,7 +192,7 @@ export default function AIForBiodiversityPage() {
           />
         </div>
 
-        {/* Layer 3 — heading (behind plants for depth) */}
+        {/* Layer 3 — heading */}
         <div className="afb-hero-content">
           <h1 className="afb-heading">
             <span className="afb-line">
@@ -193,15 +207,16 @@ export default function AIForBiodiversityPage() {
         </div>
 
         {/* Layer 4 — foreground plants */}
-        <img
-          ref={plantsRef}
-          src="/platforms/aiforbiodiversity/hero-plants.png"
-          alt=""
-          className="afb-hero-plants"
-          aria-hidden="true"
-        />
+        <div className="afb-plants-wrap" aria-hidden="true">
+          <img
+            ref={plantsRef}
+            src="/platforms/aiforbiodiversity/hero-plants.png"
+            alt=""
+            className="afb-hero-plants"
+          />
+        </div>
 
-        {/* Layer 5 — scroll + description */}
+        {/* Layer 5 — scroll button + description */}
         <div className="afb-hero-bottom">
           <button
             className="afb-scroll-btn"
@@ -215,7 +230,7 @@ export default function AIForBiodiversityPage() {
           </button>
 
           <p className="afb-description">
-            AI for Climate is a global initiative that explores the use of today's most
+            AI for Climate is a global initiative that explores the use of today&apos;s most
             advanced technologies to mitigate the risk of environmental crises in the world
             and to activate the economy in the poverty-stricken communities around nature
             reserves.
