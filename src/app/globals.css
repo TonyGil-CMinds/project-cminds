@@ -8431,3 +8431,340 @@ body.brand-page-active {
       rgba(135, 159, 6, 0.55) 100%
     );
 }
+
+/* ─────────────────────────────────────────────────────────
+   AFB — SECTION 04: INITIATIVES  (3-D cylinder carousel)
+   ───────────────────────────────────────────────────────── */
+
+/* Section shell: pinned to viewport height */
+.afb-section-init {
+  position: relative;
+  width: 100%;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  overflow: hidden;
+  background: #040314;
+}
+
+/* Ambient green-olive glow */
+.afb-init-glow {
+  position: absolute;
+  top: 48%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80vw;
+  height: 72vh;
+  background: radial-gradient(
+    ellipse,
+    rgba(126, 185, 6, 0.10) 0%,
+    rgba(50, 100, 10, 0.06) 45%,
+    transparent 72%
+  );
+  filter: blur(60px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Header ───────────────────────────────────────────── */
+.afb-init-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 48px 60px 0;
+  z-index: 10;
+}
+
+.afb-init-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.afb-init-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  color: rgba(197, 224, 38, 0.55);
+  text-transform: uppercase;
+}
+
+.afb-init-title {
+  font-size: clamp(1.6rem, 2.8vw, 3rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: -0.02em;
+}
+
+.afb-init-title-green {
+  background: linear-gradient(108deg, #FFF 55%, #9EBD4D 85%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* View toggle pill */
+.afb-init-toggle {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 4px;
+  border-radius: 100px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(12px);
+  margin-top: 6px;
+}
+
+.afb-init-nav-btn {
+  padding: 8px 22px;
+  border-radius: 100px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.4);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.28s ease, color 0.28s ease, border-color 0.28s ease;
+}
+
+.afb-init-nav-btn.active {
+  background: rgba(135, 185, 6, 0.18);
+  color: rgba(212, 238, 80, 0.95);
+  border-color: rgba(135, 185, 6, 0.38);
+}
+
+.afb-init-nav-btn:not(.active):hover {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── 3-D viewport & stage ──────────────────────────────── */
+.afb-init-viewport {
+  position: absolute;
+  inset: 0;
+  /* Perspective applied here — children rendered in 3-D */
+  perspective: 1100px;
+  perspective-origin: 50% 42%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;  /* cards re-enable their own pointer-events */
+}
+
+.afb-init-stage {
+  position: relative;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+  /* GSAP drives rotateY on this element */
+}
+
+/* ── Individual card ───────────────────────────────────── */
+.afb-init-card {
+  position: absolute;
+  width: 310px;
+  height: 220px;
+  /* Centre the card at the stage origin */
+  margin-left: -155px;
+  margin-top: -110px;
+  border-radius: 18px;
+  overflow: hidden;
+  cursor: pointer;
+  pointer-events: auto;
+  backface-visibility: hidden;
+  /* Subtle border */
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  /* Smooth box-shadow on hover */
+  transition: box-shadow 0.35s ease, border-color 0.35s ease;
+}
+
+.afb-init-card:hover {
+  box-shadow:
+    0 0 0 1px rgba(135, 185, 6, 0.45),
+    0 0 40px rgba(135, 185, 6, 0.28),
+    0 0 80px rgba(135, 185, 6, 0.10);
+  border-color: rgba(135, 185, 6, 0.45);
+}
+
+/* Colour tint layer behind the photo */
+.afb-init-card-tint {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* Photo — blended luminosity for moodier look */
+.afb-init-card-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  mix-blend-mode: luminosity;
+  opacity: 0.72;
+  z-index: 1;
+  transition: opacity 0.3s ease, transform 0.6s ease;
+}
+
+.afb-init-card:hover .afb-init-card-img {
+  opacity: 0.88;
+  transform: scale(1.04);
+}
+
+/* Glass sheen */
+.afb-init-card-glass {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0.00) 55%,
+    rgba(0, 0, 0, 0.30) 100%
+  );
+  backdrop-filter: blur(1px);
+  pointer-events: none;
+}
+
+/* Bottom name strip — slides up on hover */
+.afb-init-card-foot {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
+  padding: 28px 16px 14px;
+  background: linear-gradient(to top, rgba(4, 3, 20, 0.88) 0%, transparent 100%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transform: translateY(6px);
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.afb-init-card:hover .afb-init-card-foot {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.afb-init-card-foot-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: rgba(212, 238, 80, 0.9);
+  text-transform: uppercase;
+}
+
+.afb-init-card-foot svg {
+  flex-shrink: 0;
+  color: rgba(197, 224, 38, 0.65);
+}
+
+/* ── Hover chip ────────────────────────────────────────── */
+.afb-init-chip {
+  position: absolute;
+  bottom: 52px;
+  left: 50%;
+  transform: translateX(-50%) translateY(12px);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 22px 10px 10px;
+  border-radius: 100px;
+  background: rgba(4, 3, 20, 0.80);
+  backdrop-filter: blur(22px);
+  border: 1px solid rgba(135, 185, 6, 0.25);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.22s ease, transform 0.22s ease;
+  z-index: 20;
+  white-space: nowrap;
+}
+
+.afb-init-chip.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.afb-init-chip-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    135deg at 30% 30%,
+    rgba(135, 185, 6, 0.35) 0%,
+    rgba(4, 3, 20, 0.65) 100%
+  );
+  border: 1px solid rgba(135, 185, 6, 0.42);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px;
+  overflow: hidden;
+}
+
+.afb-init-chip-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.afb-init-chip-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.afb-init-chip-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(230, 245, 180, 0.95);
+  letter-spacing: 0.03em;
+}
+
+.afb-init-chip-tag {
+  font-size: 0.7rem;
+  color: rgba(197, 224, 38, 0.60);
+  letter-spacing: 0.04em;
+}
+
+/* ── Responsive ────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .afb-init-header {
+    padding: 36px 24px 0;
+    flex-direction: column;
+    gap: 18px;
+    align-items: flex-start;
+  }
+
+  .afb-init-viewport {
+    perspective: 700px;
+  }
+
+  .afb-init-card {
+    width: 220px;
+    height: 158px;
+    margin-left: -110px;
+    margin-top: -79px;
+    border-radius: 12px;
+  }
+
+  .afb-init-chip {
+    bottom: 28px;
+    padding: 8px 16px 8px 8px;
+  }
+
+  .afb-init-chip-icon {
+    width: 34px;
+    height: 34px;
+    padding: 7px;
+  }
+}
