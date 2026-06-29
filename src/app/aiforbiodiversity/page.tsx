@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import HexPattern from "../../components/HexPattern";
+import AfbSections from "../../components/AfbSections";
 
 const NAV_LEFT  = ["Home", "Who are we"];
 const NAV_RIGHT = ["Where we come from", "Initiatives"];
@@ -16,8 +17,7 @@ export default function AIForBiodiversityPage() {
   const plantsRef    = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    document.body.classList.add("afb-page-active");
-    return () => document.body.classList.remove("afb-page-active");
+    /* no body overflow lock — page needs to scroll past the hero */
   }, []);
 
   /* ── Parallax on mouse-move ── */
@@ -133,7 +133,9 @@ export default function AIForBiodiversityPage() {
   }, { scope: containerRef });
 
   return (
+    <>
     <div ref={containerRef} className="afb-page">
+
 
       {/* ── Navbar ── */}
       <nav className="afb-nav">
@@ -220,7 +222,7 @@ export default function AIForBiodiversityPage() {
         <div className="afb-hero-bottom">
           <button
             className="afb-scroll-btn"
-            onClick={() => document.querySelector(".afb-description")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() => document.querySelector("#who-are-we")?.scrollIntoView({ behavior: "smooth" })}
           >
             Scroll down
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -239,5 +241,9 @@ export default function AIForBiodiversityPage() {
 
       </section>
     </div>
+
+    {/* ── Scrollable sections after the hero ── */}
+    <AfbSections />
+    </>
   );
 }
