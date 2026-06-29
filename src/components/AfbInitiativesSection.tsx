@@ -103,21 +103,23 @@ const ITEMS = [
 
 /* ── R3F scene ─────────────────────────────────────────────── */
 interface SceneProps {
-  scrollVel:  React.MutableRefObject<number>;
-  viewRef:    React.MutableRefObject<"spiral" | "list">;
-  onHover:    (idx: number | null) => void;
-  onGroupRef: (el: THREE.Group | null, i: number) => void;
+  scrollVel:    React.MutableRefObject<number>;
+  viewRef:      React.MutableRefObject<"spiral" | "list">;
+  onHover:      (idx: number | null) => void;
+  onFrontCard:  (idx: number) => void;
+  onGroupRef:   (el: THREE.Group | null, i: number) => void;
 }
 
-function SpiralScene({ scrollVel, viewRef, onHover, onGroupRef }: SceneProps) {
+function SpiralScene({ scrollVel, viewRef, onHover, onFrontCard, onGroupRef }: SceneProps) {
   const { gl, scene } = useThree();
-  const mouseNDC  = useRef(new THREE.Vector2(-9999, -9999));
-  const groupRefs = useRef<(THREE.Group | null)[]>([]);
-  const meshRefs  = useRef<(THREE.Mesh  | null)[]>([]);
-  const matRefs   = useRef<(THREE.MeshBasicMaterial | null)[]>([]);
-  const phaseRef  = useRef(0);
-  const hovIdx    = useRef<number | null>(null);
-  const textures  = useTexture(ITEMS.map(it => it.image)) as THREE.Texture[];
+  const mouseNDC    = useRef(new THREE.Vector2(-9999, -9999));
+  const groupRefs   = useRef<(THREE.Group | null)[]>([]);
+  const meshRefs    = useRef<(THREE.Mesh  | null)[]>([]);
+  const matRefs     = useRef<(THREE.MeshBasicMaterial | null)[]>([]);
+  const phaseRef    = useRef(0);
+  const hovIdx      = useRef<number | null>(null);
+  const frontIdxRef = useRef(-1);
+  const textures    = useTexture(ITEMS.map(it => it.image)) as THREE.Texture[];
 
   /* Shared rounded geometry — dep on dimensions so it rebuilds if constants change */
   const roundedGeo = useMemo(
@@ -174,6 +176,21 @@ function SpiralScene({ scrollVel, viewRef, onHover, onGroupRef }: SceneProps) {
         group.position.set(RADIUS * Math.cos(angle), y, RADIUS * Math.sin(angle));
         group.rotation.y = Math.PI / 2 - angle;
       });
+
+      /* Find card with angle nearest to π/2 (front-facing toward camera) */
+      let closestIdx  = 0;
+      let closestDist = Infinity;
+      for (let i = 0; i < N; i++) {
+        const angle = i * ANGLE_STEP + phaseRef.current;
+        const norm  = ((angle % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+        let   dist  = Math.abs(norm - Math.PI / 2);
+        if (dist > Math.PI) dist = Math.PI * 2 - dist;
+        if (dist < closestDist) { closestDist = dist; closestIdx = i; }
+      }
+      if (closestIdx !== frontIdxRef.current) {
+        frontIdxRef.current = closestIdx;
+        onFrontCard(closestIdx);
+      }
     }
 
     /* ── Hover: scale down + darken the hovered card ── */
@@ -237,6 +254,7 @@ function SpiralScene({ scrollVel, viewRef, onHover, onGroupRef }: SceneProps) {
 
 /* ── Section shell ─────────────────────────────────────────── */
 type View = "spiral" | "list";
+type BgLayer = "a" | "b";
 
 export default function AfbInitiativesSection() {
   const wrapRef   = useRef<HTMLDivElement>(null);
@@ -245,8 +263,28 @@ export default function AfbInitiativesSection() {
   const viewRef   = useRef<View>("spiral");
   const groupRefs = useRef<(THREE.Group | null)[]>([]);
 
-  const [hovered, setHovered] = useState<number | null>(null);
-  const [view,    setView]    = useState<View>("spiral");
+  const [hovered,   setHovered]   = useState<number | null>(null);
+  const [view,      setView]      = useState<View>("spiral");
+  const [frontCard, setFrontCard] = useState(0);
+
+  /* A/B crossfade: two layers swap opacity so background transitions smoothly */
+  const [bgState, setBgState] = useState<{ a: string; b: string; active: BgLayer }>({
+    a: ITEMS[0].image,
+    b: ITEMS[0].image,
+    active: "a",
+  });
+
+  /* Crossfade bg to the active card's image (hovered takes priority over front) */
+  useEffect(() => {
+    const displayIdx = hovered !== null ? hovered : frontCard;
+    const newImg = ITEMS[displayIdx].image;
+    setBgState(prev => {
+      const curImg = prev.active === "a" ? prev.a : prev.b;
+      if (newImg === curImg) return prev;
+      if (prev.active === "a") return { ...prev, b: newImg, active: "b" };
+      return { ...prev, a: newImg, active: "a" };
+    });
+  }, [hovered, frontCard]);
 
   /* Wheel → velocity while section is pinned */
   useEffect(() => {
@@ -322,6 +360,18 @@ export default function AfbInitiativesSection() {
       id="initiatives"
       className="afb-section afb-section-init"
     >
+      {/* Blurred background — A/B crossfade layers */}
+      <div
+        className={`afb-init-bg-blur${bgState.active === "a" ? " active" : ""}`}
+        style={{ backgroundImage: `url(${bgState.a})` }}
+        aria-hidden="true"
+      />
+      <div
+        className={`afb-init-bg-blur${bgState.active === "b" ? " active" : ""}`}
+        style={{ backgroundImage: `url(${bgState.b})` }}
+        aria-hidden="true"
+      />
+
       <div className="afb-init-glow" aria-hidden="true" />
 
       {/* Header */}
@@ -364,6 +414,7 @@ export default function AfbInitiativesSection() {
               scrollVel={scrollVel}
               viewRef={viewRef}
               onHover={setHovered}
+              onFrontCard={setFrontCard}
               onGroupRef={onGroupRef}
             />
           </Suspense>
