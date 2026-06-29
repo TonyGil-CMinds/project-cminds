@@ -7934,3 +7934,196 @@ body.brand-page-active {
     padding: 5rem 1.5rem;
   }
 }
+
+/* ─────────────────────────────────────────────────────────
+   AFB — SECTION 02: WHERE WE COME FROM
+   ───────────────────────────────────────────────────────── */
+
+.afb-section-origin {
+  align-items: flex-start;
+  min-height: 150vh;
+}
+
+/* Content wrapper */
+.afb-origin-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1160px;
+  padding: 5.5rem 5rem 7rem;
+  margin: 0 auto;
+}
+
+/* ── Section eyebrow label ── */
+.afb-origin-header {
+  margin-bottom: 2.8rem;
+  opacity: 0; /* GSAP */
+}
+
+.afb-origin-header-eyebrow {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+}
+
+/* ── Large title ── */
+.afb-origin-title {
+  margin: 0 0 4.5rem;
+  font-size: clamp(2.6rem, 5.2vw, 5.8rem);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: #fff;
+}
+
+/* Each line's overflow wrapper — clips the sliding inner */
+.afb-origin-title-line {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+
+/* The inner element GSAP animates via yPercent */
+.afb-otl-inner {
+  display: block;
+  /* initial state set inline by GSAP */
+}
+
+.afb-otl-dim {
+  color: rgba(255, 255, 255, 0.32);
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+
+.afb-otl-green {
+  background: linear-gradient(108deg, #FFF 60.49%, #9EBD4D 81.34%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* ── Gallery grid ── */
+.afb-origin-gallery {
+  display: grid;
+  grid-template-columns: 1.35fr 0.85fr;
+  gap: 2.4rem;
+  align-items: start;
+}
+
+/* ── Shared card styles ── */
+.afb-origin-card {
+  position: relative;
+}
+
+.afb-origin-card-frame {
+  border-radius: 10px;
+  overflow: hidden;
+  /* clip-path set inline; GSAP animates in */
+}
+
+.afb-origin-card--main .afb-origin-card-frame {
+  aspect-ratio: 4 / 3;
+}
+
+.afb-origin-card--secondary .afb-origin-card-frame {
+  aspect-ratio: 3 / 4;
+  margin-top: 4.5rem; /* offset secondary card down */
+}
+
+.afb-origin-card-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform-origin: center center;
+  /* GSAP applies yPercent parallax */
+}
+
+/* ── Accent lines ── */
+.afb-origin-accents {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.afb-origin-secondary-top {
+  margin-bottom: 0.75rem;
+}
+
+.afb-origin-accent-line {
+  display: block;
+  height: 2.5px;
+  width: 52px;
+  background: linear-gradient(90deg, #879F06, rgba(135, 159, 6, 0.3));
+  border-radius: 2px;
+  transform-origin: left center;
+  /* scaleX: 0 → 1 via GSAP */
+}
+
+.afb-origin-accent-line--short {
+  width: 28px;
+  opacity: 0.5;
+}
+
+/* ── Floating stat chip ── */
+.afb-origin-stat {
+  position: absolute;
+  bottom: -1.2rem;
+  left: -1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.75rem 1.1rem;
+  border-radius: 12px;
+  border: 0.8px solid rgba(135, 159, 6, 0.45);
+  background: rgba(4, 3, 20, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.afb-origin-stat-number {
+  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  background: linear-gradient(108deg, #FFF 50%, #9EBD4D 90%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+
+.afb-origin-stat-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .afb-origin-content {
+    padding: 4rem 1.8rem 5rem;
+  }
+
+  .afb-origin-gallery {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .afb-origin-card--secondary .afb-origin-card-frame {
+    margin-top: 0;
+    aspect-ratio: 4 / 3;
+  }
+
+  .afb-origin-stat {
+    position: static;
+    margin-top: 1rem;
+    display: inline-flex;
+  }
+}
