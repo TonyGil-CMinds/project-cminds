@@ -8545,24 +8545,36 @@ body.brand-page-active {
 }
 
 /* ── 3-D viewport & stage ──────────────────────────────── */
-.afb-init-viewport {
+/* Three.js canvas fills the section behind the HTML header/chip */
+.afb-init-canvas-wrap {
   position: absolute;
   inset: 0;
-  /* Perspective applied here — children rendered in 3-D */
-  perspective: 1100px;
-  perspective-origin: 50% 42%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;  /* cards re-enable their own pointer-events */
+  z-index: 1;
+  background: transparent;
 }
 
-.afb-init-stage {
-  position: relative;
-  width: 0;
-  height: 0;
-  transform-style: preserve-3d;
-  /* GSAP drives rotateY on this element */
+/* Hex WebGL pattern — pinned behind the Three.js canvas */
+.afb-init-hex {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.55;
+  z-index: 0;
+}
+
+/* R3F wraps its canvas in a div; make that div (and its canvas) fill the wrap */
+.afb-init-canvas-wrap > div {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1;
+}
+
+.afb-init-canvas-wrap > div > canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
 }
 
 /* ── Individual card ───────────────────────────────────── */
