@@ -5,6 +5,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import HexPattern from "../../components/HexPattern";
 import AfbSections from "../../components/AfbSections";
+import SiteFooter from "../../components/SiteFooter";
 
 const NAV_LEFT  = ["Home", "Who are we"];
 const NAV_RIGHT = ["Where we come from", "Initiatives"];
@@ -244,6 +245,11 @@ export default function AIForBiodiversityPage() {
 
     {/* ── Scrollable sections after the hero ── */}
     <AfbSections />
+
+    {/* ── Footer with green CTA override ── */}
+    <div className="afb-footer-wrap">
+      <SiteFooter />
+    </div>
     </>
   );
 }

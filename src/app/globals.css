@@ -8409,3 +8409,25 @@ body.brand-page-active {
     width: 45%;
   }
 }
+
+/* ─────────────────────────────────────────────────────────
+   AFB — Footer green override (only on /aiforbiodiversity)
+   ───────────────────────────────────────────────────────── */
+
+/* Green gradient replaces the cyan primary on .footer-cta */
+.afb-footer-wrap .footer-cta {
+  background:
+    radial-gradient(
+      ellipse at center bottom,
+      rgba(135, 159, 6, 0.60) 0%,
+      rgba(135, 159, 6, 0.26) 38%,
+      rgba(13, 23, 44, 0.20) 72%,
+      rgba(7, 9, 25, 0.98) 100%
+    ),
+    linear-gradient(
+      180deg,
+      #050518 0%,
+      #0a1224 58%,
+      rgba(135, 159, 6, 0.55) 100%
+    );
+}
