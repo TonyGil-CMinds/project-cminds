@@ -7802,27 +7802,28 @@ body.brand-page-active {
 .afb-section-inner {
   position: relative;
   z-index: 2;
-  max-width: 880px;
-  width: 90vw;
-  padding: 8rem 2rem;
-  text-align: center;
+  max-width: 940px;
+  width: 88vw;
+  padding: 0 2rem;
+  text-align: left;
 }
 
 /* Large scrub paragraph */
 .afb-reveal-text {
-  font-size: clamp(1.9rem, 3.8vw, 3.6rem);
+  font-size: clamp(1.55rem, 2.4vw, 2.75rem);
   font-weight: 700;
-  line-height: 1.28;
+  line-height: 1.35;
   letter-spacing: -0.015em;
   color: #fff;
   margin: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /* Each word — GSAP scrubs opacity + blur */
 .afb-reveal-word {
   display: inline;
   opacity: 0.1;
-  will-change: opacity, filter;
 }
 
 /* ─────────────────────────────────────────────────────────

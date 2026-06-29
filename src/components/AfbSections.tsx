@@ -64,20 +64,24 @@ export default function AfbSections() {
       const words = section.querySelectorAll<HTMLElement>(".afb-reveal-word");
       if (!words.length) return;
 
-      gsap.fromTo(
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top 75%",
+          end: "bottom 30%",
+          scrub: 1,
+        },
+      });
+
+      tl.fromTo(
         words,
-        { opacity: 0.1, filter: "blur(2.5px)" },
+        { opacity: 0.1, filter: "blur(2px)" },
         {
           opacity: 1,
           filter: "blur(0px)",
-          stagger: { each: 0.05, from: "start" },
+          stagger: { each: 0.08, from: "start" },
           ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 60%",
-            end: "center 20%",
-            scrub: 0.7,
-          },
+          duration: words.length * 0.08,
         }
       );
     });
