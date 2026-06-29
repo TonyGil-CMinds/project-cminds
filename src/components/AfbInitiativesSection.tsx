@@ -16,15 +16,15 @@ gsap.registerPlugin(ScrollTrigger);
    Front card (angle = π/2) always lands at y = 0 (viewport center).
    ─────────────────────────────────────────────────────────── */
 const N           = 11;
-const RADIUS      = 5.5;
+const RADIUS      = 6.5;                   // must be > CARD_W/(2·sin(ANGLE_STEP/2)) ≈ 5.66
 const ANGLE_STEP  = (Math.PI * 2) / N;     // ≈ 32.7° — 11 unique slots
-const Y_STEP      = 3.8;                   // gap = Y_STEP - CARD_H = 1.1 world units
+const Y_STEP      = 2.0;                   // slight Y overlap (0.2) — Z-depth gives visual gap
 const PITCH       = Y_STEP / ANGLE_STEP;   // y-descent per radian
 const LOOP_H      = N * Y_STEP;            // one revolution in Y
 const ROT_SPEED   = 0.20;
-const CARD_W      = 4.0;
-const CARD_H      = 2.7;
-const CARD_R      = 0.30;                  // ≈ 40 px border radius
+const CARD_W      = 3.2;
+const CARD_H      = 2.2;
+const CARD_R      = 0.26;                  // ≈ 40 px border radius
 
 // Hover effect — card shrinks slightly, image darkens
 const SCALE_NORMAL = 1.0;
@@ -171,10 +171,8 @@ function SpiralScene({ scrollVel, viewRef, onHover, onGroupRef }: SceneProps) {
         const angle    = i * ANGLE_STEP + phaseRef.current;
         const rawY     = -(angle * PITCH);
         const y        = ((rawY % LOOP_H) + LOOP_H) % LOOP_H - LOOP_OFFSET;
-        const { rx, rz } = tilt(i);
-
         group.position.set(RADIUS * Math.cos(angle), y, RADIUS * Math.sin(angle));
-        group.rotation.set(rx, Math.PI / 2 - angle, rz);
+        group.rotation.y = Math.PI / 2 - angle;
       });
     }
 
@@ -192,6 +190,16 @@ function SpiralScene({ scrollVel, viewRef, onHover, onGroupRef }: SceneProps) {
         i === hovIdx.current ? COLOR_HOVER : COLOR_NORMAL,
         LERP_SPEED
       );
+      /* Fade cards that are nearly edge-on (side-facing) so they dissolve
+         instead of appearing as slivers at the spiral extremes.
+         facing = cos(angle - π/2): 1 = front, 0 = side, -1 = back */
+      if (viewRef.current !== "list") {
+        const angle   = i * ANGLE_STEP + phaseRef.current;
+        const facing  = Math.cos(angle - Math.PI / 2);
+        const opacity = Math.max(0, Math.min(1, facing * 2.5));
+        mat.opacity     = opacity;
+        mat.transparent = true;
+      }
     });
 
     /* ── Continuous raycasting: chip updates even with stationary cursor ── */
@@ -349,7 +357,7 @@ export default function AfbInitiativesSection() {
         <Canvas
           dpr={[1, 2]}
           gl={{ antialias: true, alpha: true }}
-          camera={{ fov: 75, near: 0.1, far: 100, position: [0, 0, 16] }}
+          camera={{ fov: 70, near: 0.1, far: 100, position: [0, 0, 13] }}
         >
           <Suspense fallback={null}>
             <SpiralScene
