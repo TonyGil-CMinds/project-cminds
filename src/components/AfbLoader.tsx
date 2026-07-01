@@ -19,6 +19,18 @@ export default function AfbLoader({ onComplete }: AfbLoaderProps) {
   const frameContainerRef = useRef<HTMLDivElement>(null);
 
   const [showFrames, setShowFrames] = useState(false);
+  const preloaded = useRef<HTMLImageElement[]>([]);
+
+  /* ── Preload all 64 frames immediately — runs in parallel with GSAP ── */
+  useEffect(() => {
+    const imgs: HTMLImageElement[] = [];
+    for (let i = 0; i < 64; i++) {
+      const img = new Image();
+      img.src = FRAME_PATH(i);
+      imgs.push(img);
+    }
+    preloaded.current = imgs;
+  }, []);
 
   /* ── Particle morph timeline ── */
   useEffect(() => {
@@ -89,10 +101,21 @@ export default function AfbLoader({ onComplete }: AfbLoaderProps) {
     let frame    = 0;
     let lastTime = 0;
     let rafId: number;
+    let waiting  = false;
 
-    img.src = FRAME_PATH(0);
+    const showFrame = (n: number) => {
+      const cached = preloaded.current[n];
+      if (cached?.complete && cached.naturalWidth > 0) {
+        img.src = cached.src;
+      } else {
+        img.src = FRAME_PATH(n);
+      }
+    };
+
+    showFrame(0);
 
     const tick = (timestamp: number) => {
+      if (waiting) { rafId = requestAnimationFrame(tick); return; }
       if (!lastTime) lastTime = timestamp;
       const elapsed = timestamp - lastTime;
 
@@ -100,7 +123,18 @@ export default function AfbLoader({ onComplete }: AfbLoaderProps) {
         lastTime = timestamp - (elapsed % FRAME_MS);
         frame++;
         if (frame < TOTAL_FRAMES) {
-          img.src = FRAME_PATH(frame);
+          const cached = preloaded.current[frame];
+          if (cached && !cached.complete) {
+            /* Frame not ready yet — pause tick until it loads */
+            waiting = true;
+            cached.onload = () => {
+              img.src = cached.src;
+              waiting = false;
+              lastTime = 0;
+            };
+          } else {
+            showFrame(frame);
+          }
         } else {
           setTimeout(() => {
             gsap.to(overlay, {
