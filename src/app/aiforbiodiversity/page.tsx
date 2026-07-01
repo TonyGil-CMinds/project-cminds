@@ -4,8 +4,6 @@ import { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import NavSearch from "../../components/NavSearch";
-import AfbSections from "../../components/AfbSections";
-import SiteFooter from "../../components/SiteFooter";
 import AfbLoader from "../../components/AfbLoader";
 
 const NAV_ITEMS = ["HOME", "WHO WE ARE", "WHERE WE COME FROM", "INITIATIVES"];
@@ -248,10 +246,10 @@ export default function AIForBiodiversityPage() {
           </div>
 
           {/* Subtitle */}
-          <p className="afb-hero-subtitle">
+          <h5 className="afb-hero-subtitle">
             We explore the use of AI to strengthen the protection, restoration, and management
             of public and private nature reserves around the globe.
-          </p>
+          </h5>
 
           {/* Featured report card */}
           <div className="afb-featured-card">
@@ -277,11 +275,6 @@ export default function AIForBiodiversityPage() {
         </section>
       </div>
 
-      <AfbSections />
-
-      <div className="afb-footer-wrap">
-        <SiteFooter />
-      </div>
     </>
   );
 }

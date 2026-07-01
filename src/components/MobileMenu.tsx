@@ -123,10 +123,12 @@ export default function MobileMenu() {
   return (
     <>
       {/* ── Mobile header: logo + burger together ─────────────── */}
-      <header ref={headerRef} className="mm-header">
-        <div className="mm-logo-wrap" onClick={() => navigate("/")}>
-          <img src="/logo.svg" alt="C Minds" width={80} height={80} />
-        </div>
+      <header ref={headerRef} className={`mm-header${pathname.startsWith("/aiforbiodiversity") ? " mm-header--transparent" : ""}`}>
+        {!pathname.startsWith("/aiforbiodiversity") && (
+          <div className="mm-logo-wrap" onClick={() => navigate("/")}>
+            <img src="/logo.svg" alt="C Minds" width={80} height={80} />
+          </div>
+        )}
 
         <button
           ref={btnRef}

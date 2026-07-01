@@ -343,7 +343,7 @@ export default function AfbLoader({ onComplete }: AfbLoaderProps) {
           left: "50%",
           top: "50%",
           transform: "translate(-50%, -42%)",
-          width: "clamp(400px, 64vw, 920px)",
+          width: "clamp(520px, 82vw, 1160px)",
           opacity: 0,
         }}
       >

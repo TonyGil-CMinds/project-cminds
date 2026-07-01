@@ -1,8 +1,11 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import BorderGlow from "../../components/reactbits/BorderGlow";
+
+const HIDDEN_PATHS = ["/aiforbiodiversity"];
 
 const COOKIE_NAME = "cminds_banner_ok";
 const COOKIE_DAYS = 3;
@@ -18,10 +21,12 @@ function setDismissedCookie() {
 }
 
 export default function ConstructionBanner() {
+  const pathname = usePathname();
   const [visible, setVisible] = useState(false);
   const shellRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (HIDDEN_PATHS.some((p) => pathname.startsWith(p))) return;
     if (hasDismissedCookie()) return;
     setVisible(true);
     const el = shellRef.current;
