@@ -3,8 +3,11 @@
 import { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import NavSearch from "../../components/NavSearch";
 import AfbLoader from "../../components/AfbLoader";
+
+gsap.registerPlugin(ScrollTrigger);
 
 const NAV_ITEMS = ["HOME", "WHO WE ARE", "WHERE WE COME FROM", "INITIATIVES"];
 
@@ -21,6 +24,14 @@ const HERO_SELECTORS = [
   ".afb-hero-subtitle",
   ".afb-featured-card",
   ".afb-hero-plants",
+];
+
+const WHO_WORDS = [
+  "A","global","initiative","that","explores","the","use","of",
+  "today's","most","advanced","technologies","to","mitigate","the",
+  "risk","of","environmental","crises","in","the","world","and","to",
+  "activate","the","economy","in","the","poverty-stricken","communities",
+  "around","nature","reserves.",
 ];
 
 export default function AIForBiodiversityPage() {
@@ -78,7 +89,7 @@ export default function AIForBiodiversityPage() {
     };
   }, [loaderDone]);
 
-  /* Entrance + continuous float animations */
+  /* Entrance + continuous float + who-we-are scroll reveal */
   useGSAP(() => {
     if (!loaderDone) return;
 
@@ -162,6 +173,21 @@ export default function AIForBiodiversityPage() {
       });
     }, [], 2.1);
 
+    /* ── Who We Are — word-by-word scroll reveal ── */
+    const words = gsap.utils.toArray<HTMLElement>(".afb-who-word");
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: ".afb-who",
+        start: "top top",
+        end: "bottom bottom",
+        scrub: 1.8,
+      },
+    }).to(words, {
+      opacity: 1,
+      stagger: { each: 0.06 },
+      ease: "none",
+    });
+
   }, { scope: containerRef, dependencies: [loaderDone] });
 
   return (
@@ -170,27 +196,25 @@ export default function AIForBiodiversityPage() {
 
       <div ref={containerRef} className="afb-page">
 
-        {/* ── Navbar ── */}
-        <nav className="afb-nav">
-          <img
-            src="/platforms/aiforbiodiversity/logo-aiforclimate.svg"
-            alt="AI for Climate"
-            className="afb-nav-logo"
-          />
-
-          <div className="afb-nav-center">
-            {NAV_ITEMS.map((item) => (
-              <span key={item} className="afb-nav-item">{item}</span>
-            ))}
-          </div>
-
-          <div className="afb-nav-search-wrap">
-            <NavSearch />
-          </div>
-        </nav>
-
         {/* ── Hero ── */}
         <section className="afb-hero">
+
+          {/* Navbar lives inside hero so it stays in the first viewport */}
+          <nav className="afb-nav">
+            <img
+              src="/platforms/aiforbiodiversity/logo-aiforclimate.svg"
+              alt="AI for Climate"
+              className="afb-nav-logo"
+            />
+            <div className="afb-nav-center">
+              {NAV_ITEMS.map((item) => (
+                <span key={item} className="afb-nav-item">{item}</span>
+              ))}
+            </div>
+            <div className="afb-nav-search-wrap">
+              <NavSearch />
+            </div>
+          </nav>
 
           <div className="afb-hero-vignette" aria-hidden="true" />
 
@@ -273,8 +297,21 @@ export default function AIForBiodiversityPage() {
           />
 
         </section>
-      </div>
 
+        {/* ── Who We Are — pinned scroll-reveal ── */}
+        <section className="afb-who">
+          <div className="afb-who-sticky">
+            <div className="afb-who-glow" aria-hidden="true" />
+            <p className="afb-who-label">WHO ARE WE</p>
+            <p className="afb-who-text" aria-label="Who we are">
+              {WHO_WORDS.map((word, i) => (
+                <span key={i} className="afb-who-word">{word}{" "}</span>
+              ))}
+            </p>
+          </div>
+        </section>
+
+      </div>
     </>
   );
 }
