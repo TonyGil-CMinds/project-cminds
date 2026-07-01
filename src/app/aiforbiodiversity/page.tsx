@@ -1,68 +1,74 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import HexPattern from "../../components/HexPattern";
+import NavSearch from "../../components/NavSearch";
 import AfbSections from "../../components/AfbSections";
 import SiteFooter from "../../components/SiteFooter";
+import AfbLoader from "../../components/AfbLoader";
 
-const NAV_LEFT  = ["Home", "Who are we"];
-const NAV_RIGHT = ["Where we come from", "Initiatives"];
+const NAV_ITEMS = ["HOME", "WHO WE ARE", "WHERE WE COME FROM", "INITIATIVES"];
+
+/* Rock center is intentionally excluded — it stays visible when the loader fades,
+   creating a seamless handoff from the frame sequence to the hero. */
+const HERO_SELECTORS = [
+  ".afb-nav-logo",
+  ".afb-nav-item",
+  ".afb-nav-search-wrap",
+  ".afb-scan-video",
+  ".afb-rock-left",
+  ".afb-rock-right",
+  ".afb-hero-title .afb-word",
+  ".afb-hero-subtitle",
+  ".afb-featured-card",
+  ".afb-hero-plants",
+];
 
 export default function AIForBiodiversityPage() {
   const containerRef = useRef<HTMLDivElement>(null);
-  const heroRef      = useRef<HTMLElement>(null);
-  const bgRef        = useRef<HTMLImageElement>(null);
-  const birdRef      = useRef<HTMLImageElement>(null);
+  const rockLeftRef  = useRef<HTMLImageElement>(null);
+  const rockRightRef = useRef<HTMLImageElement>(null);
   const plantsRef    = useRef<HTMLImageElement>(null);
 
-  useEffect(() => {
-    /* no body overflow lock — page needs to scroll past the hero */
+  const [showLoader, setShowLoader] = useState(false);
+  const [loaderDone, setLoaderDone] = useState(false);
+
+  useLayoutEffect(() => {
+    const seen = sessionStorage.getItem("afb-intro-done");
+    if (seen) {
+      setLoaderDone(true);
+    } else {
+      gsap.set(HERO_SELECTORS, { opacity: 0 });
+      setShowLoader(true);
+    }
   }, []);
 
-  /* ── Parallax on mouse-move ── */
+  const handleLoaderComplete = useCallback(() => {
+    sessionStorage.setItem("afb-intro-done", "1");
+    setShowLoader(false);
+    setLoaderDone(true);
+  }, []);
+
+  /* Subtle parallax on rocks + plants */
   useEffect(() => {
-    const hero = heroRef.current;
+    if (!loaderDone) return;
+    const hero = document.querySelector(".afb-hero") as HTMLElement | null;
     if (!hero) return;
 
     const onMove = (e: MouseEvent) => {
       const { left, top, width, height } = hero.getBoundingClientRect();
-      const dx = ((e.clientX - left) / width  - 0.5) * 2; // -1 → +1
+      const dx = ((e.clientX - left) / width  - 0.5) * 2;
       const dy = ((e.clientY - top)  / height - 0.5) * 2;
 
-      gsap.to(birdRef.current, {
-        x: dx * 32,
-        y: dy * 10,
-        rotateY: dx * 10,
-        duration: 0.9,
-        ease: "power2.out",
-        overwrite: "auto",
-      });
-
-      gsap.to(plantsRef.current, {
-        x: -dx * 22,
-        y: -dy * 5,
-        duration: 0.75,
-        ease: "power2.out",
-        overwrite: "auto",
-      });
-
-      gsap.to(bgRef.current, {
-        x: -dx * 12,
-        y: -dy * 4,
-        duration: 1.4,
-        ease: "power2.out",
-        overwrite: "auto",
-      });
+      gsap.to(rockLeftRef.current,  { x: dx * -18, y: dy * -9,  duration: 1.1, ease: "power2.out", overwrite: "auto" });
+      gsap.to(rockRightRef.current, { x: dx *  18, y: dy * -8,  duration: 1.1, ease: "power2.out", overwrite: "auto" });
+      gsap.to(plantsRef.current,    { x: dx * -12, y: dy * -5,  duration: 0.9, ease: "power2.out", overwrite: "auto" });
     };
 
     const onLeave = () => {
-      gsap.to([birdRef.current, plantsRef.current, bgRef.current], {
-        x: 0, y: 0, rotateY: 0,
-        duration: 1.6,
-        ease: "power3.out",
-        overwrite: "auto",
+      gsap.to([rockLeftRef.current, rockRightRef.current, plantsRef.current], {
+        x: 0, y: 0, duration: 1.6, ease: "power3.out", overwrite: "auto",
       });
     };
 
@@ -72,184 +78,210 @@ export default function AIForBiodiversityPage() {
       hero.removeEventListener("mousemove", onMove);
       hero.removeEventListener("mouseleave", onLeave);
     };
-  }, []);
+  }, [loaderDone]);
 
-  /* ── Entrance animation ── */
+  /* Entrance + continuous float animations */
   useGSAP(() => {
+    if (!loaderDone) return;
+
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
-    tl.fromTo(".afb-hero-bg",
-      { scale: 1.06 },
-      { scale: 1, duration: 2.2, ease: "power2.out" },
+    /* ── Navbar ── */
+    tl.fromTo(".afb-nav-logo",
+      { opacity: 0, x: -18, filter: "blur(6px)" },
+      { opacity: 1, x: 0,   filter: "blur(0px)", duration: 0.6 },
       0
     );
-
-    tl.fromTo(".afb-cminds-logo",
-      { opacity: 0, x: -18, filter: "blur(6px)" },
-      { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.6 },
-      0.1
-    );
-
-    tl.fromTo(".afb-nav-logo-pill",
-      { opacity: 0, scale: 0.78, filter: "blur(8px)" },
-      { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.7, ease: "back.out(1.7)" },
-      0.18
-    );
-
     tl.fromTo(".afb-nav-item",
       { opacity: 0, y: -10, filter: "blur(6px)" },
-      { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.5, stagger: 0.07 },
+      { opacity: 1, y: 0,   filter: "blur(0px)", duration: 0.5, stagger: 0.07 },
+      0.1
+    );
+    tl.fromTo(".afb-nav-search-wrap",
+      { opacity: 0, x: 18 },
+      { opacity: 1, x: 0,  duration: 0.5 },
       0.3
     );
 
-    tl.fromTo(".afb-hero-bird",
-      { opacity: 0, y: 40, scale: 1.03 },
-      { opacity: 1, y: 0, scale: 1, duration: 1.4, ease: "power2.out" },
-      0.35
-    );
-
-    tl.fromTo(".afb-word",
-      { opacity: 0, y: 52, filter: "blur(14px)" },
-      { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.85, stagger: 0.11 },
-      0.6
-    );
-
-    tl.fromTo(".afb-hero-plants",
-      { opacity: 0, y: 60 },
-      { opacity: 1, y: 0, duration: 1.1, ease: "power2.out" },
+    /* ── Scan video (rock center is already visible — no entrance animation) ── */
+    tl.fromTo(".afb-scan-video",
+      { opacity: 0 },
+      { opacity: 1, duration: 0.9 },
       0.7
     );
 
-    tl.fromTo(".afb-description",
-      { opacity: 0, x: 16, filter: "blur(8px)" },
-      { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.7 },
-      1.15
+    /* ── Side rocks emerge from behind center ── */
+    tl.fromTo(".afb-rock-left",
+      { opacity: 0, x: "22vw",  y: "10vh", scale: 0.45 },
+      { opacity: 1, x: 0,       y: 0,      scale: 1, duration: 1.3, ease: "power2.out" },
+      0.65
+    );
+    tl.fromTo(".afb-rock-right",
+      { opacity: 0, x: "-22vw", y: "10vh", scale: 0.45 },
+      { opacity: 1, x: 0,       y: 0,      scale: 1, duration: 1.3, ease: "power2.out" },
+      0.8
     );
 
-    tl.fromTo(".afb-scroll-btn",
-      { opacity: 0, y: 14 },
-      { opacity: 1, y: 0, duration: 0.55 },
-      1.15
+    /* ── Hero title ── */
+    tl.fromTo(".afb-hero-title .afb-word",
+      { opacity: 0, y: 44, filter: "blur(12px)" },
+      { opacity: 1, y: 0,  filter: "blur(0px)", duration: 0.8, stagger: 0.08 },
+      0.5
     );
-  }, { scope: containerRef });
+
+    /* ── Subtitle ── */
+    tl.fromTo(".afb-hero-subtitle",
+      { opacity: 0, y: 20, filter: "blur(8px)" },
+      { opacity: 1, y: 0,  filter: "blur(0px)", duration: 0.7 },
+      1.2
+    );
+
+    /* ── Featured card ── */
+    tl.fromTo(".afb-featured-card",
+      { opacity: 0, y: 56 },
+      { opacity: 1, y: 0,  duration: 0.85, ease: "back.out(1.2)" },
+      1.3
+    );
+
+    /* ── Plants ── */
+    tl.fromTo(".afb-hero-plants",
+      { opacity: 0, y: 70 },
+      { opacity: 1, y: 0,  duration: 1.0 },
+      1.5
+    );
+
+    /* ── Float loops start once rocks have landed ── */
+    tl.call(() => {
+      gsap.to(rockLeftRef.current, {
+        y: "+=14", rotation: -1.5, scale: 1.018,
+        duration: 3.2, ease: "sine.inOut",
+        yoyo: true, repeat: -1,
+      });
+      gsap.to(rockRightRef.current, {
+        y: "+=11", rotation: 1.5, scale: 1.014,
+        duration: 3.8, ease: "sine.inOut",
+        yoyo: true, repeat: -1,
+      });
+    }, [], 2.1);
+
+  }, { scope: containerRef, dependencies: [loaderDone] });
 
   return (
     <>
-    <div ref={containerRef} className="afb-page">
+      {showLoader && <AfbLoader onComplete={handleLoaderComplete} />}
 
+      <div ref={containerRef} className="afb-page">
 
-      {/* ── Navbar ── */}
-      <nav className="afb-nav">
-        {/* C Minds logo — top left */}
-        <img src="/logo.svg" alt="C Minds" className="afb-cminds-logo" />
+        {/* ── Navbar ── */}
+        <nav className="afb-nav">
+          <img
+            src="/platforms/aiforbiodiversity/logo-aiforclimate.svg"
+            alt="AI for Climate"
+            className="afb-nav-logo"
+          />
 
-        {/* Center cluster: left items + pill + right items */}
-        <div className="afb-nav-center">
-          {NAV_LEFT.map((item) => (
-            <span key={item} className="afb-nav-item">{item.toUpperCase()}</span>
-          ))}
+          <div className="afb-nav-center">
+            {NAV_ITEMS.map((item) => (
+              <span key={item} className="afb-nav-item">{item}</span>
+            ))}
+          </div>
 
-          {/* Green-gradient logo pill */}
-          <div className="afb-nav-logo-pill">
+          <div className="afb-nav-search-wrap">
+            <NavSearch />
+          </div>
+        </nav>
+
+        {/* ── Hero ── */}
+        <section className="afb-hero">
+
+          <div className="afb-hero-vignette" aria-hidden="true" />
+
+          {/* Left rock */}
+          <img
+            ref={rockLeftRef}
+            src="/platforms/aiforbiodiversity/hero-rock-left.avif"
+            alt=""
+            className="afb-rock-left"
+          />
+
+          {/* Right rock */}
+          <img
+            ref={rockRightRef}
+            src="/platforms/aiforbiodiversity/hero-rock-right.avif"
+            alt=""
+            className="afb-rock-right"
+          />
+
+          {/* Center island — stays at opacity 1 so it persists from loader */}
+          <div className="afb-rock-center-wrap">
             <img
-              src="/platforms/aiforbiodiversity/logo.svg"
-              alt="AI for Biodiversity"
-              className="afb-nav-logo"
+              src="/platforms/aiforbiodiversity/frames-loading-rock/floating-island_00063.webp"
+              alt=""
+              className="afb-rock-center"
             />
           </div>
 
-          {NAV_RIGHT.map((item) => (
-            <span key={item} className="afb-nav-item">{item.toUpperCase()}</span>
-          ))}
-        </div>
-
-        {/* Spacer so C Minds logo stays left via flex justify-between */}
-        <div className="afb-nav-spacer" aria-hidden="true" />
-      </nav>
-
-      {/* ── Hero ── */}
-      <section ref={heroRef} className="afb-hero">
-
-        {/* WebGL hex pattern — sits above bg, below content */}
-        <HexPattern className="afb-hex-canvas" />
-
-        {/* Layer 0 — background photo */}
-        <img
-          ref={bgRef}
-          src="/platforms/aiforbiodiversity/hero-bg-image.png"
-          alt=""
-          className="afb-hero-bg"
-          aria-hidden="true"
-        />
-
-        {/* Layer 1 — bottom gradient for readability */}
-        <div className="afb-hero-vignette" aria-hidden="true" />
-
-        {/* Layer 2 — bird */}
-        <div className="afb-bird-wrap" aria-hidden="true">
-          <img
-            ref={birdRef}
-            src="/platforms/aiforbiodiversity/hero-bird.png"
-            alt=""
-            className="afb-hero-bird"
+          {/* Scan overlay — sibling of wrap so blend mode hits the full hero backdrop */}
+          <video
+            className="afb-scan-video"
+            src="/platforms/aiforbiodiversity/scan.webm"
+            autoPlay
+            loop
+            muted
+            playsInline
           />
-        </div>
 
-        {/* Layer 3 — heading */}
-        <div className="afb-hero-content">
-          <h1 className="afb-heading">
-            <span className="afb-line">
-              <span className="afb-word">AI For</span>{" "}
-              <span className="afb-word afb-green">Climate</span>{" "}
-              <span className="afb-word">&amp;</span>
-            </span>
-            <span className="afb-line">
-              <span className="afb-word afb-green">Biodiversity</span>
-            </span>
-          </h1>
-        </div>
+          {/* Hero title */}
+          <div className="afb-hero-content">
+            <h1 className="afb-hero-title">
+              <span className="afb-word">Harnessing</span>{" "}
+              <span className="afb-word">the</span>
+              <br />
+              <span className="afb-word">power</span>{" "}
+              <span className="afb-word">of</span>{" "}
+              <span className="afb-word">AI</span>{" "}
+              <span className="afb-word">against</span>
+              <br />
+              <span className="afb-word afb-climate-gradient">Climate</span>{" "}
+              <span className="afb-word afb-climate-gradient">Change</span>
+            </h1>
+          </div>
 
-        {/* Layer 4 — foreground plants */}
-        <div className="afb-plants-wrap" aria-hidden="true">
+          {/* Subtitle */}
+          <p className="afb-hero-subtitle">
+            We explore the use of AI to strengthen the protection, restoration, and management
+            of public and private nature reserves around the globe.
+          </p>
+
+          {/* Featured report card */}
+          <div className="afb-featured-card">
+            <img
+              src="/platforms/aiforbiodiversity/hero-featured-report-image.avif"
+              alt="Tech4Nature México anual report 2024"
+              className="afb-featured-card__image"
+            />
+            <div className="afb-featured-card__body">
+              <p className="afb-featured-card__title">Tech4Nature México anual report 2024</p>
+              <button className="afb-featured-card__cta">See last report →</button>
+            </div>
+          </div>
+
+          {/* Foreground plants */}
           <img
             ref={plantsRef}
             src="/platforms/aiforbiodiversity/hero-plants.png"
             alt=""
             className="afb-hero-plants"
           />
-        </div>
 
-        {/* Layer 5 — scroll button + description */}
-        <div className="afb-hero-bottom">
-          <button
-            className="afb-scroll-btn"
-            onClick={() => document.querySelector("#who-are-we")?.scrollIntoView({ behavior: "smooth" })}
-          >
-            Scroll down
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"/>
-              <polyline points="19 12 12 19 5 12"/>
-            </svg>
-          </button>
+        </section>
+      </div>
 
-          <p className="afb-description">
-            AI for Climate is a global initiative that explores the use of today&apos;s most
-            advanced technologies to mitigate the risk of environmental crises in the world
-            and to activate the economy in the poverty-stricken communities around nature
-            reserves.
-          </p>
-        </div>
+      <AfbSections />
 
-      </section>
-    </div>
-
-    {/* ── Scrollable sections after the hero ── */}
-    <AfbSections />
-
-    {/* ── Footer with green CTA override ── */}
-    <div className="afb-footer-wrap">
-      <SiteFooter />
-    </div>
+      <div className="afb-footer-wrap">
+        <SiteFooter />
+      </div>
     </>
   );
 }
