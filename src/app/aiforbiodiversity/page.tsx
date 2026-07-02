@@ -6,6 +6,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import NavSearch from "../../components/NavSearch";
 import AfbLoader from "../../components/AfbLoader";
+import AfbInitiatives from "../../components/AfbInitiatives";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -310,6 +311,9 @@ export default function AIForBiodiversityPage() {
             </p>
           </div>
         </section>
+
+        {/* ── Initiatives — spiral / list ── */}
+        <AfbInitiatives />
 
       </div>
     </>

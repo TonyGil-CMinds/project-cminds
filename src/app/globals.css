@@ -7923,6 +7923,129 @@ body.brand-page-active {
 }
 
 /* ─────────────────────────────────────────────────────────
+   AFB — INITIATIVES (spiral / list)
+   ───────────────────────────────────────────────────────── */
+
+.afb-initiatives {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Toggle ── */
+.afb-init-toggle {
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  z-index: 10;
+  background: none;
+  border: none;
+  outline: none;
+}
+
+.afb-init-tab {
+  font-size: 1.05rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.3);
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 0;
+  font-family: var(--font-satoshi, sans-serif);
+  transition: color 0.22s ease;
+}
+
+.afb-init-tab--active {
+  color: #fff;
+}
+
+.afb-init-dot {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.5rem;
+  line-height: 1;
+  user-select: none;
+}
+
+/* ── Three.js canvas wrapper ── */
+.afb-init-canvas-wrap {
+  position: absolute;
+  inset: 0;
+  transition: opacity 0.35s ease;
+}
+
+.afb-init-canvas-wrap--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Force the r3f canvas to fill its parent */
+.afb-init-canvas-wrap canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Vignette sits in front of the canvas */
+.afb-init-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 80% 75% at 50% 50%,
+    transparent 30%,
+    rgba(4, 3, 20, 0.70) 100%
+  );
+}
+
+/* ── List view (text mode) ── */
+.afb-init-list {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  /* No opacity/transition here — GSAP animates individual items */
+  pointer-events: none;
+}
+
+.afb-init-list--visible {
+  pointer-events: auto;
+}
+
+.afb-init-list-item {
+  margin: 0;
+  padding: 0.2em 0;
+  font-size: clamp(2.2rem, 4.5vw, 4.2rem);
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  line-height: 1.3;
+  color: #fff;
+  cursor: default;
+  user-select: none;
+  /* Only opacity transition here — for hover dim after GSAP clears its inline styles */
+  transition: opacity 0.22s ease;
+}
+
+.afb-init-list-item--dim {
+  opacity: 0.2;
+}
+
+@media (max-width: 640px) {
+  .afb-init-list-item {
+    font-size: clamp(1.6rem, 7vw, 2.4rem);
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
    AFB — SCROLL SECTIONS
    ───────────────────────────────────────────────────────── */
 
@@ -8701,17 +8824,7 @@ body.brand-page-active {
 }
 
 /* View toggle pill */
-.afb-init-toggle {
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  padding: 4px;
-  border-radius: 100px;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  background: rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(12px);
-  margin-top: 6px;
-}
+/* (duplicate .afb-init-toggle removed — see line 7936 for the live rule) */
 
 .afb-init-nav-btn {
   padding: 8px 22px;
