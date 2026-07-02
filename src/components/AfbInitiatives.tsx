@@ -173,6 +173,8 @@ export default function AfbInitiatives() {
   const groupsRef     = useRef<(THREE.Group | null)[]>([]);
   const listItemRefs  = useRef<(HTMLParagraphElement | null)[]>([]);
   const transitRef    = useRef(false);
+  const sectionRef    = useRef<HTMLElement>(null);
+  const touchYRef     = useRef<number | null>(null);
 
   const [activeTab,  setActiveTab]  = useState<"spiral" | "list">("spiral");
   const [hovListIdx, setHovListIdx] = useState<number | null>(null);
@@ -213,6 +215,37 @@ export default function AfbInitiatives() {
     };
     window.addEventListener("wheel", onWheel, { passive: true });
     return () => window.removeEventListener("wheel", onWheel);
+  }, []);
+
+  // Touch swipe — same velocity unit as the wheel handler
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return;
+
+    const onTouchStart = (e: TouchEvent) => {
+      touchYRef.current = e.touches[0].clientY;
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (touchYRef.current === null) return;
+      const deltaY = touchYRef.current - e.touches[0].clientY; // swipe up = positive = rotate forward
+      scrollVelRef.current += deltaY * 0.003;
+      touchYRef.current = e.touches[0].clientY;
+    };
+
+    const onTouchEnd = () => {
+      touchYRef.current = null;
+    };
+
+    section.addEventListener("touchstart", onTouchStart, { passive: true });
+    section.addEventListener("touchmove",  onTouchMove,  { passive: true });
+    section.addEventListener("touchend",   onTouchEnd,   { passive: true });
+
+    return () => {
+      section.removeEventListener("touchstart", onTouchStart);
+      section.removeEventListener("touchmove",  onTouchMove);
+      section.removeEventListener("touchend",   onTouchEnd);
+    };
   }, []);
 
   const switchView = useCallback((next: "spiral" | "list") => {
@@ -262,7 +295,7 @@ export default function AfbInitiatives() {
   }, [activeTab]);
 
   return (
-    <section className="afb-initiatives">
+    <section ref={sectionRef} className="afb-initiatives">
 
       <div className="afb-init-toggle">
         <button
