@@ -9086,3 +9086,158 @@ body.brand-page-active {
     padding: 7px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   WHERE WE COME FROM  —  afb-wcf
+   ═══════════════════════════════════════════════════════════════ */
+
+.afb-wcf {
+  position: relative;
+  width: 100%;
+  /* No background — inherits the page's #040314 */
+  overflow: hidden;
+}
+
+/* Same 8vw side padding as .afb-who-sticky, vertically centered at 100vh */
+.afb-wcf-inner {
+  position: relative;   /* anchor for absolute label + progress on mobile */
+  width: 100%;
+  height: 100vh;
+  padding: 0 8vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+}
+
+/* ── Header ── */
+.afb-wcf-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.afb-wcf-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  margin: 0 0 16px;
+  background: linear-gradient(90deg, #D2D4D5 0%, #6D6E6F 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.afb-wcf-title-line {
+  display: inline-block;
+  font-size: clamp(1.9rem, 3.8vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.13;
+  color: #fff;
+  margin: 0;
+}
+
+/* ── Gallery — 3 cards (left side · center · right side), all 16:9 different sizes ── */
+.afb-wcf-gallery {
+  display: flex;
+  align-items: center;   /* vertically centered so height-morph reads cleanly */
+  gap: 10px;
+  /* JS-computed dims fill ~84vw; height is the reference for all size math */
+  height: clamp(160px, 22vw, 320px);
+  overflow: visible;
+}
+
+/* All three card wraps share the same base styles; JS drives width + height */
+.afb-wcf-card-wrap {
+  flex-shrink: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+  will-change: width, height;
+}
+
+.afb-wcf-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Overlay on every card — JS writes --ov per card (0 = bright center, 0.42 = dark sides) */
+.afb-wcf-card-ov {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 3, 20, var(--ov, 0.42));
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* ── Progress indicator — JS sets width = center_width × 0.5 ── */
+.afb-wcf-progress-track {
+  height: 2px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.afb-wcf-progress-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, var(--color-primary, #5EC1F3) 0%, rgba(94, 193, 243, 0.28) 100%);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left;
+  will-change: transform;
+}
+
+/* ── Mobile — only show center at full width ── */
+@media (max-width: 768px) {
+  .afb-wcf-inner {
+    padding: 0 5vw;
+    gap: 16px;
+    /* content block (title + gallery) stays centered; label + progress float */
+    justify-content: center;
+  }
+
+  /* Label floats to top — mirrors .afb-who-label mobile positioning */
+  .afb-wcf-label {
+    position: absolute;
+    top: 1.8rem;
+    left: 5vw;
+    margin: 0;
+  }
+
+  /* Remove the <br> gap: hide the break and let each span be its own block */
+  .afb-wcf-header br {
+    display: none;
+  }
+  .afb-wcf-title-line {
+    display: block;
+  }
+
+  /* Progress indicator anchored near the bottom of the viewport */
+  .afb-wcf-progress-track {
+    position: absolute;
+    bottom: 2.8rem;
+    left: 5vw;
+    width: 55% !important;
+  }
+
+  /* Left and right side cards hidden */
+  .afb-wcf-gallery > .afb-wcf-card-wrap:first-child,
+  .afb-wcf-gallery > .afb-wcf-card-wrap:last-child {
+    display: none;
+  }
+
+  /* Center card fills full available width as 16:9 */
+  .afb-wcf-gallery > .afb-wcf-card-wrap:nth-child(2) {
+    width: 100% !important;
+    height: auto !important;
+    aspect-ratio: 16 / 9;
+  }
+
+  .afb-wcf-gallery {
+    height: auto;
+  }
+}
