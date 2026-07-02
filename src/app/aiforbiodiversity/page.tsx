@@ -8,6 +8,7 @@ import NavSearch from "../../components/NavSearch";
 import AfbLoader from "../../components/AfbLoader";
 import AfbInitiatives from "../../components/AfbInitiatives";
 import AfbWhereWeFrom from "../../components/AfbWhereWeFrom";
+import SiteFooter from "../../components/SiteFooter";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -318,6 +319,9 @@ export default function AIForBiodiversityPage() {
 
         {/* ── Initiatives — spiral / list ── */}
         <AfbInitiatives />
+
+        {/* ── Footer ── */}
+        <SiteFooter />
 
       </div>
     </>

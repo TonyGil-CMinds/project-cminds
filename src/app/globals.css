@@ -7460,6 +7460,10 @@ body.brand-page-active {
 
 /* -- Page root -- */
 .afb-page {
+  /* Biodiversity page green theme — overrides the global cyan primary */
+  --color-primary:     #E5FF0D;
+  --color-primary-rgb: 229, 255, 13;
+
   position: relative;
   width: 100%;
   background-color: #040314;
@@ -9098,16 +9102,16 @@ body.brand-page-active {
   overflow: hidden;
 }
 
-/* Same 8vw side padding as .afb-who-sticky, vertically centered at 100vh */
+/* Header near top, progress near bottom — gallery fills the middle */
 .afb-wcf-inner {
   position: relative;   /* anchor for absolute label + progress on mobile */
   width: 100%;
   height: 100vh;
-  padding: 0 8vw;
+  padding: 3.5rem 8vw 3rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 28px;
+  justify-content: space-between;
+  gap: 0;
 }
 
 /* ── Header ── */
@@ -9115,6 +9119,7 @@ body.brand-page-active {
   display: flex;
   flex-direction: column;
   gap: 0;
+  padding-bottom: 1.5rem;
 }
 
 .afb-wcf-label {
@@ -9143,8 +9148,9 @@ body.brand-page-active {
   display: flex;
   align-items: center;   /* vertically centered so height-morph reads cleanly */
   gap: 10px;
-  /* JS-computed dims fill ~84vw; height is the reference for all size math */
-  height: clamp(160px, 22vw, 320px);
+  /* Takes all vertical space between header and progress bar */
+  flex: 1;
+  min-height: 0;
   overflow: visible;
 }
 
@@ -9179,6 +9185,7 @@ body.brand-page-active {
   background: rgba(255, 255, 255, 0.12);
   border-radius: 2px;
   overflow: hidden;
+  margin-top: 1.5rem;
 }
 
 .afb-wcf-progress-fill {
@@ -9196,7 +9203,6 @@ body.brand-page-active {
   .afb-wcf-inner {
     padding: 0 5vw;
     gap: 16px;
-    /* content block (title + gallery) stays centered; label + progress float */
     justify-content: center;
   }
 
@@ -9238,6 +9244,7 @@ body.brand-page-active {
   }
 
   .afb-wcf-gallery {
+    flex: none;
     height: auto;
   }
 }
