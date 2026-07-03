@@ -75,12 +75,22 @@ export default function Tech4NaturePage() {
     );
   }, { scope: pageRef });
 
-  // Exit animation mirrors AfbInitiatives spiral→list: scale to 0 staggered
-  const exitTo = (href: string) => {
-    gsap.to(cardRef.current, { y: "110%", duration: 0.25, ease: "power2.in" });
+  // Exit: reverse of entrance — hero slides down, bg scales back up
+  const goBack = () => {
+    gsap.to(cardRef.current, { y: "110%", duration: 0.28, ease: "power2.in" });
+    gsap.to(heroBgRef.current, { scale: 1.28, duration: 1.0, ease: "power3.in" });
     gsap.to(heroRef.current, {
-      scale: 0, opacity: 0,
-      duration: 0.32, delay: 0.06, ease: "power3.in",
+      y: "100%", duration: 1.0, ease: "power3.in",
+      onComplete: () => router.back(),
+    });
+  };
+
+  // For non-back CTAs (video, results) that navigate elsewhere
+  const exitTo = (href: string) => {
+    gsap.to(cardRef.current, { y: "110%", duration: 0.28, ease: "power2.in" });
+    gsap.to(heroBgRef.current, { scale: 1.28, duration: 1.0, ease: "power3.in" });
+    gsap.to(heroRef.current, {
+      y: "100%", duration: 1.0, ease: "power3.in",
       onComplete: () => router.push(href),
     });
   };
@@ -110,7 +120,7 @@ export default function Tech4NaturePage() {
         <div className="t4n-hero-overlay" aria-hidden="true" />
 
         {/* Close — top right */}
-        <button className="t4n-close" onClick={() => exitTo("/aiforbiodiversity")} aria-label="Back to Initiatives">
+        <button className="t4n-close" onClick={goBack} aria-label="Back to Initiatives">
           ×
         </button>
 

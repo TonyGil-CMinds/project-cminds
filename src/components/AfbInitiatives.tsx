@@ -334,7 +334,7 @@ export default function AfbInitiatives() {
   }, [activeTab]);
 
   return (
-    <section ref={sectionRef} className="afb-initiatives">
+    <section ref={sectionRef} id="initiatives" className="afb-initiatives">
 
       <div className="afb-init-toggle">
         <button
