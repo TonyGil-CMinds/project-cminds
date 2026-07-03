@@ -9753,12 +9753,82 @@ body.brand-page-active {
 
 @media (max-width: 767px) {
   .t4n-page        { padding: 1rem 1rem 0; }
-  .t4n-hero        { height: calc(100dvh - 1rem); border-radius: 14px 14px 0 0; }
-  .t4n-hero-ctas   { flex-direction: column; align-items: flex-start; bottom: 2rem; left: 1.4rem; gap: 0.6rem; }
+  .t4n-hero        { height: 54dvh; border-radius: 14px 14px 0 0; }
+  .t4n-hero-ctas   { display: none; }
+  .t4n-close       { top: 0.7rem; right: 0.7rem; }
   .t4n-report-card { right: 1rem; bottom: 1rem; width: calc(100% - 2rem); }
 
   /* Hide global mobile menu on the Tech4Nature page */
   body.t4n-active .mm-header { display: none !important; }
+}
+
+@media (min-width: 769px) and (max-width: 1040px) {
+  body.t4n-active .mm-header { display: none !important; }
+}
+
+/* ==========================================================
+   Tech4Nature — Mission section
+   ========================================================== */
+
+.t4n-mission {
+  background: #E4F0B5;
+  padding: 4rem 8vw 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.8rem;
+}
+
+/* Image container — overflow hidden so the scale reveal stays clipped */
+.t4n-mission-img-wrap {
+  width: 100%;
+  border-radius: 20px;
+  overflow: hidden;
+  will-change: transform, opacity;
+}
+
+.t4n-mission-img {
+  display: block;
+  width: 100%;
+  height: clamp(280px, 42vw, 520px);
+  object-fit: cover;
+  object-position: center 30%;
+  will-change: transform;
+}
+
+.t4n-mission-title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: #96AB3C;
+  margin: 0;
+}
+
+.t4n-mission-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3.5rem;
+}
+
+.t4n-mission-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.t4n-mission-col p {
+  font-size: 18px;
+  line-height: 1.7;
+  color: #232A20;
+  margin: 0;
+}
+
+.t4n-mission-col strong {
+  font-weight: 700;
+}
+
+@media (max-width: 767px) {
+  .t4n-mission { padding: 2.5rem 6vw 3.5rem; gap: 1.8rem; }
+  .t4n-mission-img { height: 52vw; min-height: 200px; }
+  .t4n-mission-body { grid-template-columns: 1fr; gap: 1.2rem; }
 }
 
 /* ==========================================================
@@ -9768,7 +9838,7 @@ body.brand-page-active {
 .t4n-info {
   width: 100%;
   background: #E4F0B5;
-  padding: 3.5rem 5vw 4rem;
+  padding: 3.5rem 8vw 4rem;
   box-sizing: border-box;
 }
 
@@ -9833,13 +9903,13 @@ body.brand-page-active {
   width: 14px;
   height: 14px;
   flex-shrink: 0;
+  filter: brightness(0) saturate(100%) invert(32%) sepia(38%) saturate(500%) hue-rotate(80deg) brightness(80%);
 }
 
 .t4n-info-location span {
   font-size: 0.78rem;
   font-weight: 600;
-  color: #232A20;
-  opacity: 0.72;
+  color: #3D6B3A;
 }
 
 /* ── Right column ── */
@@ -9900,7 +9970,9 @@ body.brand-page-active {
 }
 
 @media (max-width: 767px) {
-  .t4n-info { padding: 2.5rem 6vw 3rem; }
-  .t4n-info-top { flex-direction: column; gap: 2rem; margin-bottom: 2rem; }
+  .t4n-info { padding: 2rem 6vw 3rem; }
+  .t4n-info-top { flex-direction: column; gap: 1.2rem; margin-bottom: 1.6rem; }
   .t4n-info-right { flex: none; padding-top: 0; width: 100%; }
+  .t4n-info-logo { max-width: 160px; }
+  .t4n-info-body { font-size: clamp(1.4rem, 6vw, 2rem); }
 }

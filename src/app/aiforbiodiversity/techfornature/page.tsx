@@ -16,8 +16,11 @@ export default function Tech4NaturePage() {
   const heroBgRef     = useRef<HTMLImageElement>(null);
   const playCenterRef = useRef<HTMLDivElement>(null);
   const cardRef       = useRef<HTMLDivElement>(null);
-  const infoRef       = useRef<HTMLElement>(null);
-  const bodyRef       = useRef<HTMLHeadingElement>(null);
+  const infoRef           = useRef<HTMLElement>(null);
+  const bodyRef           = useRef<HTMLHeadingElement>(null);
+  const missionRef        = useRef<HTMLElement>(null);
+  const missionImgWrapRef = useRef<HTMLDivElement>(null);
+  const missionImgRef     = useRef<HTMLImageElement>(null);
   const router        = useRouter();
   const [cardVisible, setCardVisible] = useState(true);
 
@@ -122,7 +125,7 @@ export default function Tech4NaturePage() {
 
     gsap.fromTo(cardRef.current,
       { y: "110%", opacity: 0 },
-      { y: 0, opacity: 1, duration: 0.68, ease: "power3.out", delay: 0.1 },
+      { y: 0, opacity: 1, duration: 0.68, ease: "power3.out", delay: 1.4 },
     );
 
     // ── Info section: scroll-triggered slide-up + fade ──
@@ -150,6 +153,29 @@ export default function Tech4NaturePage() {
         { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", stagger: 0.1, delay: 0.1, scrollTrigger: st },
       );
     }
+
+    // ── Mission section: zoom-reveal image + content fade ──
+    const mst = { trigger: missionRef.current, start: "top 80%" };
+
+    // Container grows from small scale while image shrinks to its final size
+    gsap.fromTo(missionImgWrapRef.current,
+      { scale: 0.82, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 1.15, ease: "power3.out", scrollTrigger: mst },
+    );
+    gsap.fromTo(missionImgRef.current,
+      { scale: 1.32 },
+      { scale: 1, duration: 1.15, ease: "power3.out", scrollTrigger: mst },
+    );
+
+    // Title + columns slide up
+    gsap.fromTo(missionRef.current?.querySelector(".t4n-mission-title"),
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.65, ease: "power3.out", delay: 0.18, scrollTrigger: mst },
+    );
+    gsap.fromTo(missionRef.current?.querySelectorAll(".t4n-mission-col"),
+      { y: 28, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.65, ease: "power3.out", stagger: 0.12, delay: 0.28, scrollTrigger: mst },
+    );
   }, { scope: pageRef });
 
   // Exit: reverse of entrance
@@ -254,6 +280,32 @@ export default function Tech4NaturePage() {
           and understanding of the impacts of climate change on ecosystems and priority species
           in the mangrove area of the Yucatán Peninsula.
         </h3>
+      </section>
+
+      {/* ── Mission section ── */}
+      <section ref={missionRef} className="t4n-mission">
+
+        <div ref={missionImgWrapRef} className="t4n-mission-img-wrap">
+          <img
+            ref={missionImgRef}
+            src={`${BASE}/themision.png`}
+            alt="The Mission"
+            className="t4n-mission-img"
+          />
+        </div>
+
+        <h3 className="t4n-mission-title">The Mision</h3>
+
+        <div className="t4n-mission-body">
+          <div className="t4n-mission-col">
+            <p>Our mission at Tech4Nature México centers on understanding, preserving and restoring the Dzilam State Reserve to provide a secure sanctuary for a rich variety of plant and animal species.</p>
+            <p>Nestled in the northeastern region of Yucatan, the Dzilam State Reserve is a natural protected area with over <strong>69,000 hectares</strong> that belongs to the municipalities of Dzilam de Bravo and San Felipe.</p>
+          </div>
+          <div className="t4n-mission-col">
+            <p>This reserve holds a special status as a critical wetland conservation site, boasting nearly <strong>290 species of fauna</strong> intricately linked with over <strong>300 flora species</strong>. It spans five distinct vegetation types, including coastal dunes, mangroves, petenes, along with vibrant aquatic flora in coastal lagoons.</p>
+          </div>
+        </div>
+
       </section>
 
       {/* Report card — fixed bottom-right */}
