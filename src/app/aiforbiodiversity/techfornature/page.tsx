@@ -8,17 +8,42 @@ import { useRouter } from "next/navigation";
 const BASE = "/platforms/aiforbiodiversity/initiative-tech4nature";
 
 export default function Tech4NaturePage() {
-  const pageRef  = useRef<HTMLDivElement>(null);
-  const heroRef  = useRef<HTMLDivElement>(null);
-  const heroBgRef = useRef<HTMLImageElement>(null);
-  const cardRef  = useRef<HTMLDivElement>(null);
-  const router   = useRouter();
+  const pageRef      = useRef<HTMLDivElement>(null);
+  const heroRef      = useRef<HTMLDivElement>(null);
+  const heroBgRef    = useRef<HTMLImageElement>(null);
+  const playCenterRef = useRef<HTMLDivElement>(null);
+  const cardRef      = useRef<HTMLDivElement>(null);
+  const router       = useRouter();
   const [cardVisible, setCardVisible] = useState(true);
 
-  // Add body class so CSS can hide the global MobileMenu on mobile
+  // Hide global MobileMenu on mobile
   useEffect(() => {
     document.body.classList.add("t4n-active");
     return () => document.body.classList.remove("t4n-active");
+  }, []);
+
+  // Play center follows cursor inside the hero
+  useEffect(() => {
+    const hero = heroRef.current;
+    const el   = playCenterRef.current;
+    if (!hero || !el) return;
+
+    const xTo = gsap.quickTo(el, "x", { duration: 0.55, ease: "power2.out" });
+    const yTo = gsap.quickTo(el, "y", { duration: 0.55, ease: "power2.out" });
+
+    const onMove = (e: MouseEvent) => {
+      const r = hero.getBoundingClientRect();
+      xTo(e.clientX - r.left - r.width  / 2);
+      yTo(e.clientY - r.top  - r.height / 2);
+    };
+    const onLeave = () => { xTo(0); yTo(0); };
+
+    hero.addEventListener("mousemove",  onMove);
+    hero.addEventListener("mouseleave", onLeave);
+    return () => {
+      hero.removeEventListener("mousemove",  onMove);
+      hero.removeEventListener("mouseleave", onLeave);
+    };
   }, []);
 
   useGSAP(() => {
@@ -84,8 +109,13 @@ export default function Tech4NaturePage() {
         {/* Gradient overlays */}
         <div className="t4n-hero-overlay" aria-hidden="true" />
 
-        {/* Center play indicator */}
-        <div className="t4n-play-center" aria-hidden="true">
+        {/* Close — top right */}
+        <button className="t4n-close" onClick={() => exitTo("/aiforbiodiversity")} aria-label="Back to Initiatives">
+          ×
+        </button>
+
+        {/* Center play indicator — follows cursor */}
+        <div ref={playCenterRef} className="t4n-play-center">
           <img src={`${BASE}/playvideo.svg`} alt="" className="t4n-play-center-icon" />
         </div>
 
