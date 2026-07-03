@@ -8043,6 +8043,10 @@ body.brand-page-active {
   opacity: 0.2;
 }
 
+.afb-init-list-item--link {
+  cursor: pointer;
+}
+
 @media (max-width: 640px) {
   .afb-init-list-item {
     font-size: clamp(1.6rem, 7vw, 2.4rem);
@@ -9455,4 +9459,255 @@ body.brand-page-active {
     flex: none;
     height: auto;
   }
+}
+
+/* ==========================================================
+   Tech4Nature page  (/aiforbiodiversity/techfornature)
+   ========================================================== */
+
+.t4n-page {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.8rem 1.8rem 0;   /* no bottom padding — hero extends to screen edge */
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Back link — floats above hero */
+.t4n-back {
+  position: fixed;
+  top: 1.8rem;
+  left: 2rem;
+  z-index: 200;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.5);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.t4n-back:hover { color: #fff; }
+
+/* ── Hero container ── */
+.t4n-hero {
+  position: relative;
+  width: 100%;
+  height: calc(100dvh - 1.8rem);   /* full viewport minus top padding only */
+  border-radius: 20px 20px 0 0;    /* flat bottom — extends to screen edge */
+  overflow: hidden;
+  will-change: transform, opacity;
+  transform-origin: center center;
+}
+
+/* Full-bleed background photo */
+.t4n-hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  display: block;
+}
+
+/* Bottom vignette — makes CTA buttons readable */
+.t4n-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top,    rgba(4,3,20,0.82) 0%,  rgba(4,3,20,0.1) 38%, transparent 55%),
+    linear-gradient(to bottom, rgba(4,3,20,0.35) 0%,  transparent 22%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Brand logo — top left inside hero */
+.t4n-hero-brand {
+  position: absolute;
+  top: 2rem;
+  left: 2.2rem;
+  z-index: 3;
+}
+.t4n-brand-logo {
+  height: 28px;
+  width: auto;
+  display: block;
+}
+
+/* Center play ring — decorative indicator */
+.t4n-play-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  pointer-events: none;
+}
+.t4n-play-center-icon {
+  width: 22px;
+  height: 22px;
+  opacity: 0.85;
+}
+
+/* CTA buttons — bottom left */
+.t4n-hero-ctas {
+  position: absolute;
+  bottom: 2.4rem;
+  left: 2.2rem;
+  display: flex;
+  gap: 0.8rem;
+  z-index: 3;
+  align-items: center;
+}
+
+.t4n-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.52rem;
+  padding: 0.7rem 1.5rem;
+  border-radius: 100px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, opacity 0.2s;
+}
+
+.t4n-cta-btn--filled {
+  background: rgba(10, 10, 20, 0.72);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  color: #fff;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+.t4n-cta-btn--filled:hover {
+  background: rgba(10, 10, 20, 0.9);
+  border-color: rgba(255,255,255,0.28);
+}
+
+.t4n-cta-btn--outline {
+  background: transparent;
+  border: 1.5px solid var(--color-primary);
+  color: var(--color-primary);
+}
+.t4n-cta-btn--outline:hover {
+  background: rgba(var(--color-primary-rgb), 0.1);
+}
+
+.t4n-cta-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ── Report card — fixed bottom-right, slides up ── */
+.t4n-report-card {
+  position: fixed;
+  bottom: 2.4rem;
+  right: 2.4rem;
+  display: flex;
+  flex-direction: column;
+  background: rgba(10, 9, 26, 0.82);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 18px;
+  z-index: 200;
+  will-change: transform, opacity;
+  width: 240px;
+  overflow: hidden;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.55);
+}
+
+/* Close button */
+.t4n-report-close {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.65rem;
+  background: transparent;
+  border: none;
+  color: rgba(255,255,255,0.45);
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.2rem 0.3rem;
+  z-index: 1;
+  transition: color 0.18s;
+}
+.t4n-report-close:hover { color: #fff; }
+
+/* Report cover image — full width */
+.t4n-report-image {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+  flex-shrink: 0;
+}
+
+.t4n-report-body {
+  padding: 0.9rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.42rem;
+}
+
+.t4n-report-chip {
+  display: inline-block;
+  font-size: 0.54rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  border-radius: 100px;
+  padding: 0.2rem 0.6rem;
+  width: fit-content;
+}
+
+.t4n-report-title {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #fff;
+  margin: 0;
+  font-weight: 600;
+}
+
+.t4n-report-cta {
+  margin-top: 0.2rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.45);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+  text-transform: uppercase;
+  transition: color 0.18s;
+}
+.t4n-report-cta:hover { color: #fff; }
+
+@media (max-width: 767px) {
+  .t4n-page        { padding: 1rem 1rem 0; }
+  .t4n-hero        { height: calc(100dvh - 1rem); border-radius: 14px 14px 0 0; }
+  .t4n-hero-ctas   { flex-direction: column; align-items: flex-start; bottom: 2rem; left: 1.4rem; gap: 0.6rem; }
+  .t4n-report-card { right: 1rem; bottom: 1rem; width: calc(100% - 2rem); }
+
+  /* Hide global mobile menu on the Tech4Nature page */
+  body.t4n-active .mm-header { display: none !important; }
 }

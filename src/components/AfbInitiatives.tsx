@@ -5,12 +5,13 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
+import { useRouter } from "next/navigation";
 
 const IMAGES = [
-  { src: "/platforms/aiforbiodiversity/initiative-image-ai4manatees.png",  label: "AI For Manatees" },
-  { src: "/platforms/aiforbiodiversity/initiative-image-ntl.png",          label: "NaturaTech LAC" },
-  { src: "/platforms/aiforbiodiversity/initiative-image-vitalocenas.png",  label: "Vital Oceans" },
-  { src: "/platforms/aiforbiodiversity/initiative-image-tech4nature.png",  label: "Tech4Nature México" },
+  { src: "/platforms/aiforbiodiversity/initiative-image-ai4manatees.png",  label: "AI For Manatees",    href: null },
+  { src: "/platforms/aiforbiodiversity/initiative-image-ntl.png",          label: "NaturaTech LAC",      href: null },
+  { src: "/platforms/aiforbiodiversity/initiative-image-vitalocenas.png",  label: "Vital Oceans",        href: null },
+  { src: "/platforms/aiforbiodiversity/initiative-image-tech4nature.png",  label: "Tech4Nature México",  href: "/aiforbiodiversity/techfornature" },
 ];
 const SRCS = IMAGES.map(i => i.src);
 
@@ -56,11 +57,12 @@ function createRoundedPlane(w: number, h: number, r: number): THREE.BufferGeomet
 
 /* ── Three.js scene ─────────────────────────────────────────────────────────── */
 interface SceneProps {
-  scrollVel:  React.MutableRefObject<number>;
-  onGroupRef: (el: THREE.Group | null, i: number) => void;
+  scrollVel:   React.MutableRefObject<number>;
+  onGroupRef:  (el: THREE.Group | null, i: number) => void;
+  onCardClick: (imgIdx: number) => void;
 }
 
-function SpiralCards({ scrollVel, onGroupRef }: SceneProps) {
+function SpiralCards({ scrollVel, onGroupRef, onCardClick }: SceneProps) {
   const textures  = useTexture(SRCS) as THREE.Texture[];
   const groupRefs = useRef<(THREE.Group | null)[]>([]);
   const meshRefs  = useRef<(THREE.Mesh  | null)[]>([]);
@@ -68,7 +70,8 @@ function SpiralCards({ scrollVel, onGroupRef }: SceneProps) {
   const phaseRef  = useRef(0);
   const hovIdx    = useRef<number | null>(null);
   const mouseNDC  = useRef(new THREE.Vector2(-9999, -9999));
-  const { gl, scene } = useThree();
+  const { gl, scene, camera } = useThree();
+  const cameraRef = useRef<THREE.Camera>(camera);
 
   useEffect(() => {
     gl.setClearColor(0x000000, 0);
@@ -85,11 +88,29 @@ function SpiralCards({ scrollVel, onGroupRef }: SceneProps) {
       );
     };
     const onOut = () => mouseNDC.current.set(-9999, -9999);
-    canvas.addEventListener("mousemove", onMove);
+    // Fresh raycast on click — doesn't depend on hover state
+    const onClick = (e: MouseEvent) => {
+      const r = canvas.getBoundingClientRect();
+      const ndc = new THREE.Vector2(
+        ((e.clientX - r.left) / r.width)  *  2 - 1,
+        -((e.clientY - r.top) / r.height) *  2 + 1,
+      );
+      const ray = new THREE.Raycaster();
+      ray.setFromCamera(ndc, cameraRef.current);
+      const meshes = meshRefs.current.filter(Boolean) as THREE.Mesh[];
+      const hits   = ray.intersectObjects(meshes);
+      if (hits.length) {
+        const hitIdx = meshes.indexOf(hits[0].object as THREE.Mesh);
+        onCardClick(hitIdx % 4);
+      }
+    };
+    canvas.addEventListener("mousemove",  onMove);
     canvas.addEventListener("mouseleave", onOut);
+    canvas.addEventListener("click",      onClick);
     return () => {
-      canvas.removeEventListener("mousemove", onMove);
+      canvas.removeEventListener("mousemove",  onMove);
       canvas.removeEventListener("mouseleave", onOut);
+      canvas.removeEventListener("click",      onClick);
     };
   }, [gl]);
 
@@ -101,6 +122,8 @@ function SpiralCards({ scrollVel, onGroupRef }: SceneProps) {
   const cardGeo = useMemo(() => createRoundedPlane(CARD_W, CARD_H, CARD_R), []);
 
   useFrame((state, delta) => {
+    cameraRef.current = state.camera;
+
     const vel = scrollVel.current;
     scrollVel.current *= 0.90;
     if (Math.abs(scrollVel.current) < 0.0001) scrollVel.current = 0;
@@ -175,6 +198,7 @@ export default function AfbInitiatives() {
   const transitRef    = useRef(false);
   const sectionRef    = useRef<HTMLElement>(null);
   const touchYRef     = useRef<number | null>(null);
+  const router        = useRouter();
 
   const [activeTab,  setActiveTab]  = useState<"spiral" | "list">("spiral");
   const [hovListIdx, setHovListIdx] = useState<number | null>(null);
@@ -182,6 +206,21 @@ export default function AfbInitiatives() {
   const onGroupRef = useCallback((el: THREE.Group | null, i: number) => {
     groupsRef.current[i] = el;
   }, []);
+
+  const handleCardClick = useCallback((imgIdx: number) => {
+    const href = IMAGES[imgIdx]?.href;
+    if (!href) return;
+    // Exit: scale all spiral cards to 0 staggered — same as switchView("list")
+    groupsRef.current.forEach((group, i) => {
+      if (!group) return;
+      gsap.to(group.scale, {
+        x: 0, y: 0, z: 0,
+        duration: 0.32, delay: i * 0.032, ease: "power3.in",
+        overwrite: "auto",
+        onComplete: i === N - 1 ? () => router.push(href) : undefined,
+      });
+    });
+  }, [router]);
 
   // Hide list items on mount so they're invisible until animated in
   useEffect(() => {
@@ -316,7 +355,7 @@ export default function AfbInitiatives() {
           gl={{ antialias: true, alpha: true }}
         >
           <Suspense fallback={null}>
-            <SpiralCards scrollVel={scrollVelRef} onGroupRef={onGroupRef} />
+            <SpiralCards scrollVel={scrollVelRef} onGroupRef={onGroupRef} onCardClick={handleCardClick} />
           </Suspense>
         </Canvas>
         <div className="afb-init-vignette" aria-hidden="true" />
@@ -331,8 +370,18 @@ export default function AfbInitiatives() {
           <p
             key={item.label}
             ref={el => { listItemRefs.current[i] = el; }}
-            className={`afb-init-list-item${hovListIdx !== null && hovListIdx !== i ? " afb-init-list-item--dim" : ""}`}
+            className={`afb-init-list-item${hovListIdx !== null && hovListIdx !== i ? " afb-init-list-item--dim" : ""}${item.href ? " afb-init-list-item--link" : ""}`}
             onMouseEnter={() => setHovListIdx(i)}
+            onClick={() => {
+              if (!item.href) return;
+              const dest = item.href;
+              // Exit: slide list items up + fade — mirrors switchView("spiral") list-out
+              const items = [...(listItemRefs.current.filter(Boolean) as HTMLElement[])].reverse();
+              gsap.to(items, {
+                y: -22, opacity: 0, duration: 0.28, stagger: 0.07, ease: "power2.in",
+                onComplete: () => router.push(dest),
+              });
+            }}
           >
             {item.label}
           </p>
