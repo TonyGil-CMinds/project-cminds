@@ -25,11 +25,59 @@ export default function Tech4NaturePage() {
   const kpi1Ref       = useRef<HTMLSpanElement>(null);
   const kpi2Ref       = useRef<HTMLSpanElement>(null);
   const kpi3Ref       = useRef<HTMLSpanElement>(null);
-  const slidesWrapRef = useRef<HTMLDivElement>(null);
-  const prevSlideRef  = useRef(0);
+  const slidesWrapRef      = useRef<HTMLDivElement>(null);
+  const prevSlideRef       = useRef(0);
+  const bioscannerRef        = useRef<HTMLElement>(null);
+  const bioscannerImgWrapRef = useRef<HTMLDivElement>(null);
+  const bioscannerImgRef     = useRef<HTMLImageElement>(null);
+  const arbimonRef           = useRef<HTMLElement>(null);
+  const arbimonImgWrapRef    = useRef<HTMLDivElement>(null);
+  const arbimonImgRef        = useRef<HTMLImageElement>(null);
+  const partnersRef          = useRef<HTMLElement>(null);
+  const logosWrapRef         = useRef<HTMLDivElement>(null);
   const router        = useRouter();
   const [cardVisible, setCardVisible] = useState(true);
   const [activeSlide, setActiveSlide] = useState(0);
+  const [activePartnerTab, setActivePartnerTab] = useState("ledby");
+
+  const PARTNER_TABS = [
+    {
+      id: "ledby", label: "LED BY",
+      logos: [
+        { src: `${BASE}/ledby-cminds-1.svg`,      alt: "C Minds" },
+        { src: `${BASE}/ledby-aiforclimate-2.svg`, alt: "Ai for Climate and Biodiversity" },
+        { src: `${BASE}/ledby-sds-3.svg`,          alt: "SDS" },
+      ],
+    },
+    {
+      id: "innovation", label: "INNOVATION PARTNERS",
+      logos: [
+        { src: `${BASE}/innovationpartner-upy.svg`, alt: "UPY" },
+      ],
+    },
+    {
+      id: "supported", label: "SUPPORTED BY",
+      logos: [
+        { src: `${BASE}/supportedby-iucn-1.svg`,    alt: "IUCN" },
+        { src: `${BASE}/supportedby-greenlist-2.svg`, alt: "Green List" },
+        { src: `${BASE}/supportedby-huawei-3.svg`,  alt: "Huawei" },
+        { src: `${BASE}/supportedby-tech4all-4.svg`, alt: "Tech4All" },
+      ],
+    },
+  ];
+
+  const handleTabChange = (id: string) => {
+    if (id === activePartnerTab) return;
+    const wrap = logosWrapRef.current;
+    if (!wrap) { setActivePartnerTab(id); return; }
+    gsap.to(wrap, {
+      opacity: 0, y: -10, duration: 0.2, ease: "power2.in",
+      onComplete: () => {
+        setActivePartnerTab(id);
+        gsap.fromTo(wrap, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" });
+      },
+    });
+  };
 
   const SLIDES = [
     {
@@ -68,6 +116,36 @@ export default function Tech4NaturePage() {
   useEffect(() => {
     const id = setInterval(() => setActiveSlide(s => (s + 1) % 3), 4500);
     return () => clearInterval(id);
+  }, []);
+
+  // Arbimon image hover
+  useEffect(() => {
+    const wrap = arbimonImgWrapRef.current;
+    const img  = arbimonImgRef.current;
+    if (!wrap || !img) return;
+    const onEnter = () => gsap.to(img, { scale: 1.06, duration: 0.55, ease: "power2.out" });
+    const onLeave = () => gsap.to(img, { scale: 1,    duration: 0.65, ease: "power2.out" });
+    wrap.addEventListener("mouseenter", onEnter);
+    wrap.addEventListener("mouseleave", onLeave);
+    return () => {
+      wrap.removeEventListener("mouseenter", onEnter);
+      wrap.removeEventListener("mouseleave", onLeave);
+    };
+  }, []);
+
+  // Bioscanner image hover
+  useEffect(() => {
+    const wrap = bioscannerImgWrapRef.current;
+    const img  = bioscannerImgRef.current;
+    if (!wrap || !img) return;
+    const onEnter = () => gsap.to(img, { scale: 1.06, duration: 0.55, ease: "power2.out" });
+    const onLeave = () => gsap.to(img, { scale: 1,    duration: 0.65, ease: "power2.out" });
+    wrap.addEventListener("mouseenter", onEnter);
+    wrap.addEventListener("mouseleave", onLeave);
+    return () => {
+      wrap.removeEventListener("mouseenter", onEnter);
+      wrap.removeEventListener("mouseleave", onLeave);
+    };
   }, []);
 
   // Init: set slide 0 visible, rest hidden
@@ -311,6 +389,47 @@ export default function Tech4NaturePage() {
       onUpdate() { if (kpi3Ref.current) kpi3Ref.current.textContent = String(Math.round(n3.val)); },
       scrollTrigger: ist,
     });
+
+    // ── Bioscanner section ──
+    const bst = { trigger: bioscannerRef.current, start: "top 80%" };
+    gsap.fromTo(bioscannerImgWrapRef.current,
+      { scale: 0.82, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 1.15, ease: "power3.out", scrollTrigger: bst },
+    );
+    gsap.fromTo(bioscannerImgRef.current,
+      { scale: 1.32 },
+      { scale: 1, duration: 1.15, ease: "power3.out", scrollTrigger: bst },
+    );
+    gsap.fromTo(bioscannerRef.current?.querySelector(".t4n-bioscanner-chip"),
+      { y: 14, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.5, ease: "power3.out", delay: 0.22, scrollTrigger: bst },
+    );
+
+    // ── Arbimon section ──
+    const art = { trigger: arbimonRef.current, start: "top 80%" };
+    gsap.fromTo(arbimonImgWrapRef.current,
+      { scale: 0.82, opacity: 0 },
+      { scale: 1, opacity: 1, duration: 1.15, ease: "power3.out", scrollTrigger: art },
+    );
+    gsap.fromTo(arbimonImgRef.current,
+      { scale: 1.32 },
+      { scale: 1, duration: 1.15, ease: "power3.out", scrollTrigger: art },
+    );
+    gsap.fromTo(arbimonRef.current?.querySelector(".t4n-bioscanner-chip"),
+      { y: 14, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.5, ease: "power3.out", delay: 0.22, scrollTrigger: art },
+    );
+
+    // ── Partners section ──
+    const pst = { trigger: partnersRef.current, start: "top 85%" };
+    gsap.fromTo(partnersRef.current?.querySelector(".t4n-partners-tabs"),
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.55, ease: "power3.out", scrollTrigger: pst },
+    );
+    gsap.fromTo(logosWrapRef.current,
+      { y: 24, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.65, ease: "power3.out", delay: 0.15, scrollTrigger: pst },
+    );
   }, { scope: pageRef });
 
   // Exit: reverse of entrance
@@ -509,6 +628,69 @@ export default function Tech4NaturePage() {
               />
             ))}
           </div>
+        </div>
+
+      </section>
+
+      {/* ── Bioscanner section — left ── */}
+      <section ref={bioscannerRef} className="t4n-bioscanner">
+        <a
+          href="https://bioscanner.io"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="t4n-bioscanner-link"
+        >
+          <div ref={bioscannerImgWrapRef} className="t4n-bioscanner-img-wrap">
+            <img
+              ref={bioscannerImgRef}
+              src={`${BASE}/bioscanner.png`}
+              alt="Bioscanner"
+              className="t4n-bioscanner-img"
+            />
+          </div>
+          <span className="t4n-bioscanner-chip">Bioscanner <strong>BETA</strong></span>
+        </a>
+      </section>
+
+      {/* ── Arbimon section — right ── */}
+      <section ref={arbimonRef} className="t4n-bioscanner t4n-bioscanner--right">
+        <a
+          href="https://arbimon.org"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="t4n-bioscanner-link t4n-bioscanner-link--right"
+        >
+          <div ref={arbimonImgWrapRef} className="t4n-bioscanner-img-wrap">
+            <img
+              ref={arbimonImgRef}
+              src={`${BASE}/audibon.png`}
+              alt="Arbimon"
+              className="t4n-bioscanner-img"
+            />
+          </div>
+          <span className="t4n-bioscanner-chip t4n-bioscanner-chip--right">ARBIMON</span>
+        </a>
+      </section>
+
+      {/* ── Partners section ── */}
+      <section ref={partnersRef} className="t4n-partners">
+
+        <div className="t4n-partners-tabs">
+          {PARTNER_TABS.map(tab => (
+            <button
+              key={tab.id}
+              className={`t4n-partners-tab${activePartnerTab === tab.id ? " active" : ""}`}
+              onClick={() => handleTabChange(tab.id)}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        <div ref={logosWrapRef} className="t4n-partners-logos">
+          {PARTNER_TABS.find(t => t.id === activePartnerTab)?.logos.map((logo, i) => (
+            <img key={i} src={logo.src} alt={logo.alt} className="t4n-partners-logo" />
+          ))}
         </div>
 
       </section>
