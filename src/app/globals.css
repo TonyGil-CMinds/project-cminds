@@ -9966,10 +9966,138 @@ body.brand-page-active {
 }
 
 /* ==========================================================
+   Tech4Nature — Scroll-gate transition
+   ========================================================== */
+
+/* Shell: transition (sticky, z-index:1) behind — partners (normal flow, z-index:2) slides away on top */
+.t4n-reveal-shell {
+  position: relative;
+  height: 300dvh;
+}
+
+.t4n-transition {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* Card */
+.t4n-transition-card {
+  position: relative;
+  width: clamp(380px, 68vw, 820px);
+  height: clamp(240px, 52vh, 520px);
+  border-radius: 20px;
+  overflow: hidden;
+  background: #0e1a0d;
+  will-change: transform;
+}
+
+.t4n-transition-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, transparent 60%);
+}
+
+.t4n-transition-card-content {
+  position: absolute;
+  bottom: 1.8rem;
+  left: 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.t4n-transition-next-label {
+  font-size: 0.78rem;
+  color: #CBE86B;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+
+.t4n-transition-next-title {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+/* Progress bar — right side */
+.t4n-transition-bar-track {
+  position: absolute;
+  right: 2.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 38vh;
+  background: rgba(255,255,255,0.12);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.t4n-transition-bar-fill {
+  position: absolute;
+  inset: 0;
+  background: #CBE86B;
+  border-radius: 2px;
+  transform: scaleY(0);
+  transform-origin: center;
+  will-change: transform;
+}
+
+/* Bottom hint */
+.t4n-transition-hint {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+}
+
+.t4n-transition-hint > span {
+  background: linear-gradient(to bottom, #fff 0%, transparent 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.t4n-transition-hint em {
+  font-style: italic;
+}
+
+.t4n-transition-hint svg {
+  color: rgba(255,255,255,0.4);
+  animation: t4n-bounce 1.4s ease-in-out infinite;
+}
+
+@keyframes t4n-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(5px); }
+}
+
+@media (max-width: 767px) {
+  .t4n-transition-card { width: 85vw; height: 46vw; }
+  .t4n-transition-bar-track { right: 1rem; height: 30vh; }
+}
+
+/* ==========================================================
    Tech4Nature — Partners section
    ========================================================== */
 
 .t4n-partners {
+  position: relative;
+  z-index: 2;
+  margin-top: -100dvh; /* sits on top of sticky transition; slides away to reveal it */
   background: #E4F0B5;
   padding: 3.5rem 8vw 6rem;
   min-height: 100vh;

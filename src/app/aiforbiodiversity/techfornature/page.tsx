@@ -35,6 +35,8 @@ export default function Tech4NaturePage() {
   const arbimonImgRef        = useRef<HTMLImageElement>(null);
   const partnersRef          = useRef<HTMLElement>(null);
   const logosWrapRef         = useRef<HTMLDivElement>(null);
+  const transitionRef        = useRef<HTMLDivElement>(null);
+  const barFillRef           = useRef<HTMLDivElement>(null);
   const router        = useRouter();
   const [cardVisible, setCardVisible] = useState(true);
   const [activeSlide, setActiveSlide] = useState(0);
@@ -117,6 +119,93 @@ export default function Tech4NaturePage() {
     const id = setInterval(() => setActiveSlide(s => (s + 1) % 3), 4500);
     return () => clearInterval(id);
   }, []);
+
+  // Scroll-gate: activates when partners is fully gone; wheel fills bar
+  useEffect(() => {
+    const el   = transitionRef.current;
+    const fill = barFillRef.current;
+    if (!el || !fill) return;
+
+    let locked      = false;
+    let lockScrollY = 0;
+    let progress    = 0;
+    let drainId:    ReturnType<typeof setTimeout> | null = null;
+    let navigating  = false;
+
+    // NOTE: we intentionally do NOT use overflow:hidden — it breaks position:sticky.
+    // Instead we prevent wheel events and restore scrollY for other input types.
+    const lock = () => {
+      locked = true;
+      lockScrollY = window.scrollY;
+    };
+
+    const unlock = () => {
+      locked = false;
+      progress = 0;
+      if (drainId) clearTimeout(drainId);
+      gsap.to(fill, { scaleY: 0, duration: 0.15, ease: "power2.out" });
+    };
+
+    // Fallback for keyboard / scrollbar — snap back to gate position
+    const onScroll = () => {
+      if (navigating) return;
+      if (locked) {
+        window.scrollTo({ top: lockScrollY, behavior: "instant" });
+        return;
+      }
+      const partnersBottom = partnersRef.current?.getBoundingClientRect().bottom ?? 1;
+      if (partnersBottom <= 0) lock();
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (navigating) { e.preventDefault(); return; }
+
+      if (!locked) {
+        // Intercept downward scroll at gate BEFORE browser commits it
+        if (e.deltaY > 0) {
+          const partnersBottom = partnersRef.current?.getBoundingClientRect().bottom ?? 1;
+          if (partnersBottom <= 0) {
+            e.preventDefault();
+            lock();
+          }
+        }
+        return;
+      }
+
+      // Gate active — eat all wheel events
+      e.preventDefault();
+
+      if (e.deltaY < 0) { unlock(); return; }
+
+      progress = Math.min(1, progress + e.deltaY / 600);
+      gsap.killTweensOf(fill);
+      gsap.to(fill, { scaleY: progress, duration: 0.22, ease: "power2.out" });
+
+      if (drainId) clearTimeout(drainId);
+      drainId = setTimeout(() => {
+        if (navigating) return;
+        progress = 0;
+        gsap.to(fill, { scaleY: 0, duration: 0.18, ease: "power2.out" });
+      }, 700);
+
+      if (progress >= 1) {
+        navigating = true;
+        if (drainId) clearTimeout(drainId);
+        gsap.to(el, {
+          opacity: 0, duration: 0.45,
+          onComplete: () => router.push("/aiforbiodiversity/naturatechlac"),
+        });
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("wheel", onWheel);
+      if (drainId) clearTimeout(drainId);
+    };
+  }, [router]);
 
   // Arbimon image hover
   useEffect(() => {
@@ -430,6 +519,26 @@ export default function Tech4NaturePage() {
       { y: 24, opacity: 0 },
       { y: 0, opacity: 1, duration: 0.65, ease: "power3.out", delay: 0.15, scrollTrigger: pst },
     );
+
+    // ── Transition card: grows with scroll as partners slides away ──
+    const tShell = transitionRef.current?.parentElement;
+    const tCard  = transitionRef.current?.querySelector<HTMLElement>(".t4n-transition-card");
+    if (tShell && tCard) {
+      gsap.fromTo(tCard,
+        { scale: 0.6 },
+        {
+          scale: 1.0,
+          ease: "none",
+          scrollTrigger: {
+            trigger: tShell,
+            start: "top top",
+            // partners is 100dvh tall — card reaches full size exactly when partners is gone
+            end: () => "+=" + window.innerHeight,
+            scrub: 1.2,
+          },
+        }
+      );
+    }
   }, { scope: pageRef });
 
   // Exit: reverse of entrance
@@ -672,28 +781,59 @@ export default function Tech4NaturePage() {
         </a>
       </section>
 
-      {/* ── Partners section ── */}
-      <section ref={partnersRef} className="t4n-partners">
+      {/* ── Reveal shell: transition (sticky, z-index:1) is revealed as partners (z-index:2) scrolls away ── */}
+      <div className="t4n-reveal-shell">
 
-        <div className="t4n-partners-tabs">
-          {PARTNER_TABS.map(tab => (
-            <button
-              key={tab.id}
-              className={`t4n-partners-tab${activePartnerTab === tab.id ? " active" : ""}`}
-              onClick={() => handleTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
+        {/* Transition sticks at top — always behind partners until partners leaves */}
+        <div ref={transitionRef} className="t4n-transition">
+
+          <div className="t4n-transition-card">
+            <div className="t4n-transition-card-overlay" />
+            <div className="t4n-transition-card-content">
+              <span className="t4n-transition-next-label">Next up...</span>
+              <h2 className="t4n-transition-next-title">NaturaTech LAC</h2>
+            </div>
+          </div>
+
+          {/* Right progress bar */}
+          <div className="t4n-transition-bar-track">
+            <div ref={barFillRef} className="t4n-transition-bar-fill" />
+          </div>
+
+          {/* Bottom hint */}
+          <div className="t4n-transition-hint">
+            <span>Keep <em>scrolling!</em></span>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+
         </div>
 
-        <div ref={logosWrapRef} className="t4n-partners-logos">
-          {PARTNER_TABS.find(t => t.id === activePartnerTab)?.logos.map((logo, i) => (
-            <img key={i} src={logo.src} alt={logo.alt} className="t4n-partners-logo" />
-          ))}
-        </div>
+        {/* Partners: normal flow, z-index:2, sits on top of transition via negative margin */}
+        <section ref={partnersRef} className="t4n-partners">
 
-      </section>
+          <div className="t4n-partners-tabs">
+            {PARTNER_TABS.map(tab => (
+              <button
+                key={tab.id}
+                className={`t4n-partners-tab${activePartnerTab === tab.id ? " active" : ""}`}
+                onClick={() => handleTabChange(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          <div ref={logosWrapRef} className="t4n-partners-logos">
+            {PARTNER_TABS.find(t => t.id === activePartnerTab)?.logos.map((logo, i) => (
+              <img key={i} src={logo.src} alt={logo.alt} className="t4n-partners-logo" />
+            ))}
+          </div>
+
+        </section>
+
+      </div>
 
       {/* Report card — fixed bottom-right */}
       {cardVisible && (
