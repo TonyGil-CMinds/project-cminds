@@ -10212,6 +10212,24 @@ body.brand-page-active {
   padding: 1.8rem 1.8rem 0;
 }
 
+/* ==========================================================
+   Vital Oceans page
+   ========================================================== */
+
+.vo-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top,    rgba(4,3,20,0.72) 0%, rgba(4,3,20,0.08) 40%, transparent 58%),
+    linear-gradient(to bottom, rgba(2,18,40,0.38) 0%, transparent 22%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ==========================================================
+   NaturaTech LAC page
+   ========================================================== */
+
 /* Hero overlay — reuses t4n-hero dimensions/structure, only gradient differs */
 .ntl-hero-overlay {
   position: absolute;
@@ -10248,6 +10266,10 @@ body.brand-page-active {
   width: auto;
   object-fit: contain;
   object-position: left;
+}
+
+.vo-info-logo {
+  height: 100px;
 }
 
 .ntl-info-location {
@@ -10380,6 +10402,7 @@ body.brand-page-active {
 @media (max-width: 767px) {
   .ntl-page         { padding: 0.8rem 0.8rem 0; }
   .ntl-info-logo    { height: 30px; }
+  .vo-info-logo     { height: 60px; }
   .ntl-info-top     { flex-direction: column; gap: 1.4rem; }
   .ntl-info-right   { align-items: flex-start; max-width: unset; }
   .ntl-photo-section { padding: 2rem 4vw; }
