@@ -9813,7 +9813,7 @@ body.brand-page-active {
    ========================================================== */
 
 .t4n-impact {
-  background: #E4F0B5;
+  background: #F0F8D6;
   padding: 4rem 8vw 5rem;
   display: flex;
   flex-direction: column;
@@ -10151,7 +10151,7 @@ body.brand-page-active {
   position: relative;
   z-index: 2;
   margin-top: -100dvh; /* sits on top of sticky transition; slides away to reveal it */
-  background: #E4F0B5;
+  background: #F0F8D6;
   padding: 3.5rem 8vw 6rem;
   min-height: 100vh;
   display: flex;
@@ -10243,7 +10243,7 @@ body.brand-page-active {
 
 /* ── Info section ── */
 .ntl-info {
-  background: #E4F0B5;
+  background: #F0F8D6;
   padding: 3.5rem 8vw 4rem;
 }
 
@@ -10306,7 +10306,7 @@ body.brand-page-active {
   padding: 0.6rem 1.3rem;
   border-radius: 100px;
   background: #232A20;
-  color: #E4F0B5;
+  color: #F0F8D6;
   font-size: 0.82rem;
   font-weight: 600;
   text-decoration: none;
@@ -10328,7 +10328,7 @@ body.brand-page-active {
 
 /* ── Photo section (full-width, green bg for continuity) ── */
 .ntl-photo-section {
-  background: #E4F0B5;
+  background: #F0F8D6;
   padding: 3rem 8vw;
 }
 
@@ -10350,7 +10350,7 @@ body.brand-page-active {
 .ntl-feature {
   display: flex;
   height: 50vh;
-  background: #E4F0B5;
+  background: #F0F8D6;
   align-items: center;
   padding: 2.5rem 8vw;
   text-decoration: none;
@@ -10424,7 +10424,7 @@ body.brand-page-active {
    ========================================================== */
 
 .t4n-bioscanner {
-  background: #E4F0B5;
+  background: #F0F8D6;
   padding: 1.5rem 8vw 1.5rem;
   min-height: 50vh;
 }
@@ -10484,7 +10484,7 @@ body.brand-page-active {
    ========================================================== */
 
 .t4n-mission {
-  background: #E4F0B5;
+  background: #F0F8D6;
   padding: 4rem 8vw 5rem;
   display: flex;
   flex-direction: column;
@@ -10550,7 +10550,7 @@ body.brand-page-active {
 
 .t4n-info {
   width: 100%;
-  background: #E4F0B5;
+  background: #F0F8D6;
   padding: 3.5rem 8vw 4rem;
   box-sizing: border-box;
 }
