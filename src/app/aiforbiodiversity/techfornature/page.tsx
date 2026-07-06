@@ -866,6 +866,11 @@ export default function Tech4NaturePage() {
         <div ref={transitionRef} className="t4n-transition">
 
           <div className="t4n-transition-card">
+            <img
+              src={`${BASE}/next-naturatechlac.png`}
+              alt="NaturaTech LAC"
+              className="t4n-transition-card-img"
+            />
             <div className="t4n-transition-card-overlay" />
             <div className="t4n-transition-card-content">
               <span className="t4n-transition-next-label">Next up...</span>
