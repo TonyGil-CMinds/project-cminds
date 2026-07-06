@@ -28,6 +28,8 @@ export default function NaturaTechLACPage() {
   const logosWrapRef   = useRef<HTMLDivElement>(null);
   const transitionRef  = useRef<HTMLDivElement>(null);
   const barFillRef     = useRef<HTMLDivElement>(null);
+  const videoRef       = useRef<HTMLVideoElement>(null);
+  const videoOverlayRef = useRef<HTMLDivElement>(null);
   const router         = useRouter();
 
   const [activePartnerTab, setActivePartnerTab] = useState("ledby");
@@ -237,6 +239,34 @@ export default function NaturaTechLACPage() {
     }
   }, { scope: pageRef });
 
+  const openVideo = () => {
+    const overlay = videoOverlayRef.current;
+    const video   = videoRef.current;
+    if (!overlay || !video) return;
+    video.currentTime = 0;
+    video.volume = 1;
+    gsap.killTweensOf([overlay, video]);
+    gsap.set(overlay, { display: "flex", pointerEvents: "auto" });
+    gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" });
+    gsap.fromTo(video,   { scale: 0.88 }, { scale: 1, duration: 0.45, ease: "power3.out" });
+    const p = video.play();
+    if (p) p.catch(() => {});
+  };
+
+  const closeVideo = () => {
+    const overlay = videoOverlayRef.current;
+    if (!overlay) return;
+    gsap.killTweensOf([overlay, videoRef.current]);
+    gsap.to(videoRef.current, { scale: 0.88, duration: 0.3, ease: "power2.in" });
+    gsap.to(overlay, {
+      opacity: 0, duration: 0.3, ease: "power2.in",
+      onComplete: () => {
+        gsap.set(overlay, { display: "none", pointerEvents: "none" });
+        if (videoRef.current) { videoRef.current.pause(); videoRef.current.currentTime = 0; }
+      },
+    });
+  };
+
   const goBack = () => {
     gsap.to(heroBgRef.current, { scale: 1.28, duration: 1.0, ease: "power3.in" });
     gsap.to(heroRef.current, { y: "100%", duration: 1.0, ease: "power3.in", onComplete: () => router.back() });
@@ -245,11 +275,28 @@ export default function NaturaTechLACPage() {
   return (
     <div ref={pageRef} className="afb-page ntl-page">
 
+      {/* Fullscreen video overlay */}
+      <div
+        ref={videoOverlayRef}
+        className="t4n-video-overlay"
+        style={{ display: "none", pointerEvents: "none" }}
+        onClick={closeVideo}
+      >
+        <button className="t4n-video-close" onClick={closeVideo} aria-label="Close video">×</button>
+        <video
+          ref={videoRef}
+          src={process.env.NEXT_PUBLIC_NTL_HERO_VIDEO_URL || undefined}
+          className="t4n-video-player"
+          playsInline
+          onClick={e => e.stopPropagation()}
+        />
+      </div>
+
       {/* ── Hero (same structure as t4n) ── */}
-      <div ref={heroRef} className="t4n-hero ntl-hero">
+      <div ref={heroRef} className="t4n-hero ntl-hero" onClick={openVideo} style={{ cursor: "pointer" }}>
         <img ref={heroBgRef} src={`${BASE}/hero.png`} alt="NaturaTech LAC" className="t4n-hero-bg" />
         <div className="ntl-hero-overlay" aria-hidden="true" />
-        <button className="t4n-close" onClick={goBack} aria-label="Back">×</button>
+        <button className="t4n-close" onClick={e => { e.stopPropagation(); goBack(); }} aria-label="Back">×</button>
         <div ref={playCenterRef} className="t4n-play-center">
           <img src="/platforms/aiforbiodiversity/initiative-tech4nature/playvideo.svg" alt="" className="t4n-play-center-icon" />
         </div>
