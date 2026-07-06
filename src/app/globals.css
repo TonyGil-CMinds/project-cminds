@@ -10130,6 +10130,9 @@ body.brand-page-active {
 @media (max-width: 767px) {
   .t4n-transition-card { width: 85vw; height: 46vw; }
   .t4n-transition-bar-track { right: 1rem; height: 30vh; }
+  /* On touch devices the whole section is tappable to navigate */
+  .t4n-transition { cursor: pointer; }
+  .t4n-transition-bar-track { display: none; }
 }
 
 /* ==========================================================

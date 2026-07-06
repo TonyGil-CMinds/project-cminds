@@ -122,24 +122,39 @@ export default function Tech4NaturePage() {
     return () => clearInterval(id);
   }, []);
 
-  // Scroll-gate: activates when partners is fully gone; wheel fills bar
+  // Scroll-gate: wheel-based on desktop; tap-to-navigate on touch devices
   useEffect(() => {
     const el   = transitionRef.current;
     const fill = barFillRef.current;
     if (!el || !fill) return;
 
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+
+    // ── MOBILE: tap the card to navigate, no gate needed ──
+    if (isTouch) {
+      let navigating = false;
+      const onTap = () => {
+        if (navigating) return;
+        const partnersBottom = partnersRef.current?.getBoundingClientRect().bottom ?? 1;
+        if (partnersBottom > 0) return; // partners still covering — ignore tap
+        navigating = true;
+        gsap.to(el, {
+          opacity: 0, duration: 0.35,
+          onComplete: () => router.push("/aiforbiodiversity/naturatechlac"),
+        });
+      };
+      el.addEventListener("click", onTap);
+      return () => el.removeEventListener("click", onTap);
+    }
+
+    // ── DESKTOP: wheel fills progress bar ──
     let locked      = false;
     let lockScrollY = 0;
     let progress    = 0;
     let drainId:    ReturnType<typeof setTimeout> | null = null;
     let navigating  = false;
 
-    // NOTE: we intentionally do NOT use overflow:hidden — it breaks position:sticky.
-    // Instead we prevent wheel events and restore scrollY for other input types.
-    const lock = () => {
-      locked = true;
-      lockScrollY = window.scrollY;
-    };
+    const lock = () => { locked = true; lockScrollY = window.scrollY; };
 
     const unlock = () => {
       locked = false;
@@ -151,10 +166,7 @@ export default function Tech4NaturePage() {
     // Fallback for keyboard / scrollbar — snap back to gate position
     const onScroll = () => {
       if (navigating) return;
-      if (locked) {
-        window.scrollTo({ top: lockScrollY, behavior: "instant" });
-        return;
-      }
+      if (locked) { window.scrollTo({ top: lockScrollY, behavior: "instant" }); return; }
       const partnersBottom = partnersRef.current?.getBoundingClientRect().bottom ?? 1;
       if (partnersBottom <= 0) lock();
     };
@@ -163,20 +175,14 @@ export default function Tech4NaturePage() {
       if (navigating) { e.preventDefault(); return; }
 
       if (!locked) {
-        // Intercept downward scroll at gate BEFORE browser commits it
         if (e.deltaY > 0) {
           const partnersBottom = partnersRef.current?.getBoundingClientRect().bottom ?? 1;
-          if (partnersBottom <= 0) {
-            e.preventDefault();
-            lock();
-          }
+          if (partnersBottom <= 0) { e.preventDefault(); lock(); }
         }
         return;
       }
 
-      // Gate active — eat all wheel events
       e.preventDefault();
-
       if (e.deltaY < 0) { unlock(); return; }
 
       progress = Math.min(1, progress + e.deltaY / 600);
