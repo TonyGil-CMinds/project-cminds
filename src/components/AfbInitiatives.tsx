@@ -9,8 +9,8 @@ import { useRouter } from "next/navigation";
 
 const IMAGES = [
   { src: "/platforms/aiforbiodiversity/initiative-image-ai4manatees.png",  label: "AI For Manatees",    href: null },
-  { src: "/platforms/aiforbiodiversity/initiative-image-ntl.png",          label: "NaturaTech LAC",      href: null },
-  { src: "/platforms/aiforbiodiversity/initiative-image-vitalocenas.png",  label: "Vital Oceans",        href: null },
+  { src: "/platforms/aiforbiodiversity/initiative-image-ntl.png",          label: "NaturaTech LAC",      href: "/aiforbiodiversity/naturatechlac" },
+  { src: "/platforms/aiforbiodiversity/initiative-image-vitalocenas.png",  label: "Vital Oceans",        href: "/aiforbiodiversity/vitaloceans" },
   { src: "/platforms/aiforbiodiversity/initiative-image-tech4nature.png",  label: "Tech4Nature México",  href: "/aiforbiodiversity/techfornature" },
 ];
 const SRCS = IMAGES.map(i => i.src);
