@@ -9767,6 +9767,205 @@ body.brand-page-active {
 }
 
 /* ==========================================================
+   Tech4Nature — Impact section
+   ========================================================== */
+
+.t4n-impact {
+  background: #E4F0B5;
+  padding: 4rem 8vw 5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
+.t4n-impact-title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: #96AB3C;
+  margin: 0;
+}
+
+.t4n-impact-desc {
+  font-size: 18px;
+  line-height: 1.65;
+  color: #232A20;
+  margin: 0;
+  max-width: 520px;
+}
+
+/* KPI grid */
+.t4n-impact-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.t4n-impact-kpi {
+  border: 1.5px solid rgba(150, 171, 60, 0.38);
+  border-radius: 16px;
+  padding: 1.5rem 1.2rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
+  text-align: center;
+}
+
+.t4n-impact-kpi-num {
+  font-size: clamp(2rem, 3.8vw, 3rem);
+  font-weight: 700;
+  color: #96AB3C;
+  line-height: 1;
+}
+
+.t4n-impact-kpi-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  font-size: 0.76rem;
+  line-height: 1.4;
+  color: #232A20;
+  opacity: 0.78;
+}
+
+.t4n-impact-kpi-icon {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.t4n-impact-kpi-risk {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.12rem 0.48rem;
+  border-radius: 4px;
+  background: #E53935;
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+/* Slideshow */
+.t4n-impact-slideshow {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.t4n-impact-slides-wrap {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  min-height: 300px;
+}
+
+.t4n-impact-slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: stretch;
+  background: #B5D640;
+  border-radius: 20px;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+.t4n-impact-slide-img {
+  width: 46%;
+  flex-shrink: 0;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 16px;
+  will-change: transform;
+}
+
+.t4n-impact-slide-content {
+  flex: 1;
+  padding: 1.8rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.t4n-impact-slide-entry {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  color: #6A7E2A;
+  text-transform: uppercase;
+}
+
+.t4n-impact-slide-title {
+  font-size: clamp(1.2rem, 2.2vw, 1.7rem);
+  font-weight: 700;
+  color: #1A2210;
+  margin: 0 0 0.6rem;
+}
+
+.t4n-impact-slide-rows {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.t4n-impact-slide-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.65rem 0;
+  border-top: 1px solid rgba(35, 42, 32, 0.18);
+}
+
+.t4n-impact-slide-row-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  color: #6A7E2A;
+  text-transform: uppercase;
+}
+
+.t4n-impact-slide-row-value {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #1A2210;
+}
+
+/* Dots navigation */
+.t4n-impact-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.t4n-impact-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 6px;
+  background: rgba(150, 171, 60, 0.32);
+  border: none;
+  cursor: pointer;
+  transition: width 0.3s ease, background 0.3s ease;
+  padding: 0;
+}
+
+.t4n-impact-dot.active {
+  width: 28px;
+  background: #96AB3C;
+}
+
+@media (max-width: 767px) {
+  .t4n-impact { padding: 2.5rem 6vw 3.5rem; gap: 1.8rem; }
+  .t4n-impact-kpis { grid-template-columns: 1fr; gap: 0.75rem; }
+  .t4n-impact-slide { flex-direction: column; }
+  .t4n-impact-slide-img { width: 100%; height: 200px; border-radius: 16px 16px 0 0; }
+  .t4n-impact-slides-wrap { min-height: 500px; }
+}
+
+/* ==========================================================
    Tech4Nature — Mission section
    ========================================================== */
 

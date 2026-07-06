@@ -21,8 +21,104 @@ export default function Tech4NaturePage() {
   const missionRef        = useRef<HTMLElement>(null);
   const missionImgWrapRef = useRef<HTMLDivElement>(null);
   const missionImgRef     = useRef<HTMLImageElement>(null);
+  const impactRef     = useRef<HTMLElement>(null);
+  const kpi1Ref       = useRef<HTMLSpanElement>(null);
+  const kpi2Ref       = useRef<HTMLSpanElement>(null);
+  const kpi3Ref       = useRef<HTMLSpanElement>(null);
+  const slidesWrapRef = useRef<HTMLDivElement>(null);
+  const prevSlideRef  = useRef(0);
   const router        = useRouter();
   const [cardVisible, setCardVisible] = useState(true);
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  const SLIDES = [
+    {
+      entry: "ENTRY 01",
+      title: "Automated detection",
+      image: `${BASE}/theimpact-jaguar.png`,
+      rows: [
+        { label: "Images / Video", value: "100,000+" },
+        { label: "Audio Files",    value: "600,000+" },
+        { label: "Analysis",       value: "3 yrs → months" },
+      ],
+    },
+    {
+      entry: "ENTRY 02",
+      title: "Two new algorithms",
+      image: `${BASE}/theimpact-algorithm.png`,
+      rows: [
+        { label: "Algorithms",  value: "2" },
+        { label: "Accuracy",    value: "90%+" },
+        { label: "Individuals", value: "9 jaguars" },
+      ],
+    },
+    {
+      entry: "ENTRY 03",
+      title: "Platform & people",
+      image: `${BASE}/theimpact-platform.png`,
+      rows: [
+        { label: "Platform", value: "First-of-kind" },
+        { label: "Reports",  value: "Open · ethical" },
+        { label: "Students", value: "12+" },
+      ],
+    },
+  ];
+
+  // Auto-advance slideshow
+  useEffect(() => {
+    const id = setInterval(() => setActiveSlide(s => (s + 1) % 3), 4500);
+    return () => clearInterval(id);
+  }, []);
+
+  // Init: set slide 0 visible, rest hidden
+  useEffect(() => {
+    const wrap = slidesWrapRef.current;
+    if (!wrap) return;
+    const slides = Array.from(wrap.querySelectorAll<HTMLElement>(".t4n-impact-slide"));
+    slides.forEach((s, i) => gsap.set(s, { opacity: i === 0 ? 1 : 0, pointerEvents: i === 0 ? "auto" : "none" }));
+  }, []);
+
+  // Slide transition with GSAP
+  useEffect(() => {
+    const wrap = slidesWrapRef.current;
+    if (!wrap) return;
+    const slides = Array.from(wrap.querySelectorAll<HTMLElement>(".t4n-impact-slide"));
+    const prev = slides[prevSlideRef.current];
+    const next = slides[activeSlide];
+    if (!prev || !next || prev === next) return;
+
+    // OUT: image scales up slightly, text flies up and fades
+    const prevImg     = prev.querySelector<HTMLElement>(".t4n-impact-slide-img");
+    const prevContent = prev.querySelectorAll<HTMLElement>(".t4n-impact-slide-entry, .t4n-impact-slide-title, .t4n-impact-slide-row");
+    gsap.to(prevImg, { scale: 1.07, duration: 0.36, ease: "power2.in" });
+    gsap.to([...prevContent], { y: -16, opacity: 0, duration: 0.28, stagger: 0.04, ease: "power2.in" });
+    gsap.to(prev, {
+      opacity: 0, duration: 0.36, ease: "power2.in",
+      onComplete: () => {
+        gsap.set(prev, { pointerEvents: "none" });
+        gsap.set(prevImg!, { scale: 1 });
+        gsap.set([...prevContent], { y: 0, opacity: 1 });
+      },
+    });
+
+    // IN: image reveals from scale 1.14 → 1, text staggers up into place
+    const nextImg   = next.querySelector<HTMLElement>(".t4n-impact-slide-img");
+    const nextEntry = next.querySelector<HTMLElement>(".t4n-impact-slide-entry");
+    const nextTitle = next.querySelector<HTMLElement>(".t4n-impact-slide-title");
+    const nextRows  = next.querySelectorAll<HTMLElement>(".t4n-impact-slide-row");
+
+    gsap.set(next, { opacity: 0, pointerEvents: "auto" });
+    gsap.set(nextImg!, { scale: 1.14 });
+    gsap.set([nextEntry, nextTitle, ...nextRows].filter(Boolean), { y: 24, opacity: 0 });
+
+    gsap.to(next,      { opacity: 1, duration: 0.48, delay: 0.22, ease: "power2.out" });
+    gsap.to(nextImg!,  { scale: 1,   duration: 0.9,  delay: 0.22, ease: "power3.out" });
+    gsap.to(nextEntry, { y: 0, opacity: 1, duration: 0.42, delay: 0.34, ease: "power3.out" });
+    gsap.to(nextTitle, { y: 0, opacity: 1, duration: 0.48, delay: 0.42, ease: "power3.out" });
+    gsap.to([...nextRows], { y: 0, opacity: 1, duration: 0.42, stagger: 0.08, delay: 0.5, ease: "power3.out" });
+
+    prevSlideRef.current = activeSlide;
+  }, [activeSlide]);
 
   // Hide global MobileMenu on mobile
   useEffect(() => {
@@ -176,6 +272,45 @@ export default function Tech4NaturePage() {
       { y: 28, opacity: 0 },
       { y: 0, opacity: 1, duration: 0.65, ease: "power3.out", stagger: 0.12, delay: 0.28, scrollTrigger: mst },
     );
+
+    // ── Impact section ──
+    const ist = { trigger: impactRef.current, start: "top 80%" };
+
+    // Title + desc + KPIs slide up
+    gsap.fromTo(impactRef.current?.querySelector(".t4n-impact-title"),
+      { y: 26, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.55, ease: "power3.out", scrollTrigger: ist },
+    );
+    gsap.fromTo(impactRef.current?.querySelector(".t4n-impact-desc"),
+      { y: 22, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.55, ease: "power3.out", delay: 0.08, scrollTrigger: ist },
+    );
+    gsap.fromTo(impactRef.current?.querySelectorAll(".t4n-impact-kpi"),
+      { y: 30, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.55, ease: "power3.out", stagger: 0.1, delay: 0.18, scrollTrigger: ist },
+    );
+    gsap.fromTo(impactRef.current?.querySelector(".t4n-impact-slideshow"),
+      { y: 32, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.65, ease: "power3.out", delay: 0.32, scrollTrigger: ist },
+    );
+
+    // KPI count-up
+    const n1 = { val: 0 }, n2 = { val: 0 }, n3 = { val: 0 };
+    gsap.to(n1, {
+      val: 9, duration: 1.8, ease: "power2.out",
+      onUpdate() { if (kpi1Ref.current) kpi1Ref.current.textContent = String(Math.round(n1.val)); },
+      scrollTrigger: ist,
+    });
+    gsap.to(n2, {
+      val: 90, duration: 1.8, ease: "power2.out",
+      onUpdate() { if (kpi2Ref.current) kpi2Ref.current.textContent = Math.round(n2.val) + "%+"; },
+      scrollTrigger: ist,
+    });
+    gsap.to(n3, {
+      val: 147, duration: 1.8, ease: "power2.out",
+      onUpdate() { if (kpi3Ref.current) kpi3Ref.current.textContent = String(Math.round(n3.val)); },
+      scrollTrigger: ist,
+    });
   }, { scope: pageRef });
 
   // Exit: reverse of entrance
@@ -303,6 +438,76 @@ export default function Tech4NaturePage() {
           </div>
           <div className="t4n-mission-col">
             <p>This reserve holds a special status as a critical wetland conservation site, boasting nearly <strong>290 species of fauna</strong> intricately linked with over <strong>300 flora species</strong>. It spans five distinct vegetation types, including coastal dunes, mangroves, petenes, along with vibrant aquatic flora in coastal lagoons.</p>
+          </div>
+        </div>
+
+      </section>
+
+      {/* ── Impact section ── */}
+      <section ref={impactRef} className="t4n-impact">
+
+        <h3 className="t4n-impact-title">The Impact</h3>
+        <p className="t4n-impact-desc">
+          Camera traps, audio recorders and two custom AI models turned an overwhelming archive
+          into a living catalogue of individuals — observed, logged and identified.
+        </p>
+
+        {/* KPI cards */}
+        <div className="t4n-impact-kpis">
+          <div className="t4n-impact-kpi">
+            <span ref={kpi1Ref} className="t4n-impact-kpi-num">0</span>
+            <div className="t4n-impact-kpi-label">
+              <img src={`${BASE}/icon-individuals.svg`} alt="" className="t4n-impact-kpi-icon" />
+              Individual jaguars identified
+            </div>
+          </div>
+          <div className="t4n-impact-kpi">
+            <span ref={kpi2Ref} className="t4n-impact-kpi-num">0%+</span>
+            <div className="t4n-impact-kpi-label">
+              <img src={`${BASE}/icon-levelaccuracy.svg`} alt="" className="t4n-impact-kpi-icon" />
+              Individual-level accuracy
+            </div>
+          </div>
+          <div className="t4n-impact-kpi">
+            <span ref={kpi3Ref} className="t4n-impact-kpi-num">0</span>
+            <div className="t4n-impact-kpi-label">
+              Species detected
+              <span className="t4n-impact-kpi-risk">40 at risk</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Slideshow */}
+        <div className="t4n-impact-slideshow">
+          <div ref={slidesWrapRef} className="t4n-impact-slides-wrap">
+            {SLIDES.map((slide, i) => (
+              <div key={i} className={`t4n-impact-slide${activeSlide === i ? " active" : ""}`}>
+                <img src={slide.image} alt={slide.title} className="t4n-impact-slide-img" />
+                <div className="t4n-impact-slide-content">
+                  <span className="t4n-impact-slide-entry">{slide.entry}</span>
+                  <h4 className="t4n-impact-slide-title">{slide.title}</h4>
+                  <div className="t4n-impact-slide-rows">
+                    {slide.rows.map((row, j) => (
+                      <div key={j} className="t4n-impact-slide-row">
+                        <span className="t4n-impact-slide-row-label">{row.label}</span>
+                        <span className="t4n-impact-slide-row-value">{row.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="t4n-impact-dots">
+            {[0, 1, 2].map(i => (
+              <button
+                key={i}
+                className={`t4n-impact-dot${activeSlide === i ? " active" : ""}`}
+                onClick={() => setActiveSlide(i)}
+                aria-label={`Slide ${i + 1}`}
+              />
+            ))}
           </div>
         </div>
 
