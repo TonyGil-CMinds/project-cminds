@@ -10204,6 +10204,191 @@ body.brand-page-active {
   object-fit: contain;
 }
 
+/* ==========================================================
+   NaturaTech LAC page
+   ========================================================== */
+
+.ntl-page {
+  padding: 1.8rem 1.8rem 0;
+}
+
+/* Hero overlay — reuses t4n-hero dimensions/structure, only gradient differs */
+.ntl-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to top,    rgba(4,3,20,0.72) 0%, rgba(4,3,20,0.08) 40%, transparent 58%),
+    linear-gradient(to bottom, rgba(4,3,20,0.32) 0%, transparent 22%);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ── Info section ── */
+.ntl-info {
+  background: #E4F0B5;
+  padding: 3.5rem 8vw 4rem;
+}
+
+.ntl-info-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 4rem;
+  margin-bottom: 3rem;
+}
+
+.ntl-info-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.ntl-info-logo {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  object-position: left;
+}
+
+.ntl-info-location {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #3a7a2a;
+}
+
+.ntl-info-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.1rem;
+  max-width: 360px;
+  flex-shrink: 0;
+}
+
+.ntl-info-tagline {
+  font-size: 20px;
+  font-weight: 700;
+  color: #232A20;
+  line-height: 1.55;
+  text-align: left;
+  margin: 0;
+}
+
+.ntl-info-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.3rem;
+  border-radius: 100px;
+  background: #232A20;
+  color: #E4F0B5;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.ntl-info-cta:hover { opacity: 0.8; }
+
+.ntl-info-body {
+  font-size: 22px;
+  font-weight: 700;
+  color: #232A20;
+  line-height: 1.6;
+  margin: 0;
+  max-width: 72ch;
+}
+
+/* ── Photo section (full-width, green bg for continuity) ── */
+.ntl-photo-section {
+  background: #E4F0B5;
+  padding: 3rem 8vw;
+}
+
+.ntl-photo-wrap {
+  overflow: hidden;
+  border-radius: 20px;
+  will-change: transform;
+}
+
+.ntl-photo-img {
+  width: 100%;
+  height: clamp(280px, 38vw, 540px);
+  object-fit: cover;
+  object-position: center 40%;
+  display: block;
+}
+
+/* ── Feature sections: Natura500 + ScaleUp Studio ── */
+.ntl-feature {
+  display: flex;
+  height: 50vh;
+  background: #E4F0B5;
+  align-items: center;
+  padding: 2.5rem 4vw;
+  text-decoration: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ntl-feature--natura500 { justify-content: flex-start; }
+.ntl-feature--studio    { justify-content: flex-end; }
+
+.ntl-feature-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 38%;
+  height: 100%;
+}
+
+.ntl-feature-img-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.ntl-feature-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.55s ease;
+}
+
+.ntl-feature:hover .ntl-feature-img { transform: scale(1.03); }
+
+.ntl-feature-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #232A20;
+  background: #CBE86B;
+  padding: 0.24rem 0.7rem;
+  border-radius: 100px;
+  align-self: flex-start;
+  flex-shrink: 0;
+}
+
+@media (max-width: 767px) {
+  .ntl-page         { padding: 0.8rem 0.8rem 0; }
+  .ntl-info-logo    { height: 30px; }
+  .ntl-info-top     { flex-direction: column; gap: 1.4rem; }
+  .ntl-info-right   { align-items: flex-start; max-width: unset; }
+  .ntl-photo-section { padding: 2rem 4vw; }
+  .ntl-feature      { height: 50vh; flex-direction: column; justify-content: center; align-items: center; padding: 2rem 4vw; }
+  .ntl-feature--studio { flex-direction: column; }
+  .ntl-feature-inner { width: 100%; }
+  .ntl-feature-img-wrap { flex: 1; min-height: 0; }
+}
+
 @media (max-width: 767px) {
   .t4n-partners { padding: 2rem 6vw 3rem; min-height: 50vh; }
   .t4n-partners-tabs { flex-wrap: wrap; gap: 0.4rem; }
