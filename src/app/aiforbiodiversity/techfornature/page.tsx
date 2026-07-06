@@ -289,6 +289,25 @@ export default function Tech4NaturePage() {
     prevSlideRef.current = activeSlide;
   }, [activeSlide]);
 
+  // Auto-hide report card once partners section has been visible and then leaves viewport
+  useEffect(() => {
+    const partners = partnersRef.current;
+    if (!partners) return;
+    let wasVisible = false;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          wasVisible = true;
+        } else if (wasVisible && cardRef.current) {
+          dismissCard();
+        }
+      },
+      { threshold: 0 }
+    );
+    observer.observe(partners);
+    return () => observer.disconnect();
+  }, []);
+
   // Hide global MobileMenu on mobile
   useEffect(() => {
     document.body.classList.add("t4n-active");
@@ -564,18 +583,19 @@ export default function Tech4NaturePage() {
 
   const openVideo = () => {
     const overlay = videoOverlayRef.current;
-    if (!overlay) return;
-    gsap.killTweensOf([overlay, videoRef.current]);
+    const video   = videoRef.current;
+    if (!overlay || !video) return;
+
+    video.currentTime = 0;
+    video.volume = 1;
+
+    gsap.killTweensOf([overlay, video]);
     gsap.set(overlay, { display: "flex", pointerEvents: "auto" });
-    gsap.fromTo(overlay,
-      { opacity: 0 },
-      { opacity: 1, duration: 0.35, ease: "power2.out" }
-    );
-    gsap.fromTo(videoRef.current,
-      { scale: 0.88 },
-      { scale: 1, duration: 0.45, ease: "power3.out" }
-    );
-    videoRef.current?.play();
+    gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" });
+    gsap.fromTo(video,   { scale: 0.88 }, { scale: 1, duration: 0.45, ease: "power3.out" });
+
+    const p = video.play();
+    if (p) p.catch(() => {});
   };
 
   const closeVideo = () => {
@@ -617,9 +637,7 @@ export default function Tech4NaturePage() {
           ref={videoRef}
           src={process.env.NEXT_PUBLIC_T4N_HERO_VIDEO_URL || undefined}
           className="t4n-video-player"
-          muted
           playsInline
-          loop
           onClick={e => e.stopPropagation()}
         />
       </div>
@@ -645,11 +663,11 @@ export default function Tech4NaturePage() {
         </div>
 
         <div className="t4n-hero-ctas">
-          <button className="t4n-cta-btn t4n-cta-btn--filled" onClick={() => exitTo("#video")}>
+          <button className="t4n-cta-btn t4n-cta-btn--filled" onClick={e => { e.stopPropagation(); openVideo(); }}>
             <img src={`${BASE}/playvideo.svg`} alt="" className="t4n-cta-icon" />
             See Video
           </button>
-          <button className="t4n-cta-btn t4n-cta-btn--outline" onClick={() => exitTo("#results")}>
+          <button className="t4n-cta-btn t4n-cta-btn--outline" onClick={e => { e.stopPropagation(); infoRef.current?.scrollIntoView({ behavior: "smooth" }); }}>
             See Results
             <img src={`${BASE}/arrowDown.svg`} alt="" className="t4n-cta-icon" />
           </button>
