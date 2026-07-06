@@ -39,6 +39,8 @@ export default function Tech4NaturePage() {
   const barFillRef           = useRef<HTMLDivElement>(null);
   const router        = useRouter();
   const [cardVisible, setCardVisible] = useState(true);
+  const videoRef        = useRef<HTMLVideoElement>(null);
+  const videoOverlayRef = useRef<HTMLDivElement>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const [activePartnerTab, setActivePartnerTab] = useState("ledby");
 
@@ -560,6 +562,39 @@ export default function Tech4NaturePage() {
     });
   };
 
+  const openVideo = () => {
+    const overlay = videoOverlayRef.current;
+    if (!overlay) return;
+    gsap.killTweensOf([overlay, videoRef.current]);
+    gsap.set(overlay, { display: "flex", pointerEvents: "auto" });
+    gsap.fromTo(overlay,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.35, ease: "power2.out" }
+    );
+    gsap.fromTo(videoRef.current,
+      { scale: 0.88 },
+      { scale: 1, duration: 0.45, ease: "power3.out" }
+    );
+    videoRef.current?.play();
+  };
+
+  const closeVideo = () => {
+    const overlay = videoOverlayRef.current;
+    if (!overlay) return;
+    gsap.killTweensOf([overlay, videoRef.current]);
+    gsap.to(videoRef.current, { scale: 0.88, duration: 0.3, ease: "power2.in" });
+    gsap.to(overlay, {
+      opacity: 0, duration: 0.3, ease: "power2.in",
+      onComplete: () => {
+        gsap.set(overlay, { display: "none", pointerEvents: "none" });
+        if (videoRef.current) {
+          videoRef.current.pause();
+          videoRef.current.currentTime = 0;
+        }
+      },
+    });
+  };
+
   const dismissCard = () => {
     gsap.to(cardRef.current, {
       y: "110%", duration: 0.42, ease: "power3.in",
@@ -570,8 +605,27 @@ export default function Tech4NaturePage() {
   return (
     <div ref={pageRef} className="afb-page t4n-page">
 
+      {/* Fullscreen video overlay — always mounted, GSAP controls visibility */}
+      <div
+        ref={videoOverlayRef}
+        className="t4n-video-overlay"
+        style={{ display: "none", pointerEvents: "none" }}
+        onClick={closeVideo}
+      >
+        <button className="t4n-video-close" onClick={closeVideo} aria-label="Close video">×</button>
+        <video
+          ref={videoRef}
+          src={process.env.NEXT_PUBLIC_T4N_HERO_VIDEO_URL || undefined}
+          className="t4n-video-player"
+          muted
+          playsInline
+          loop
+          onClick={e => e.stopPropagation()}
+        />
+      </div>
+
       {/* Hero container */}
-      <div ref={heroRef} className="t4n-hero">
+      <div ref={heroRef} className="t4n-hero" onClick={openVideo} style={{ cursor: "pointer" }}>
 
         <img
           ref={heroBgRef}
