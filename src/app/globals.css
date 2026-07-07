@@ -10689,3 +10689,615 @@ body.brand-page-active {
   .t4n-info-logo { max-width: 160px; }
   .t4n-info-body { font-size: clamp(1.4rem, 6vw, 2rem); }
 }
+
+/* ==========================================================
+   BioScanner Launch — /bioscanner-launch
+   ========================================================== */
+
+.bsl-page {
+  display: flex;
+  min-height: 100dvh;
+  background: #F0F8D6;
+  font-family: var(--font-satoshi, sans-serif);
+  color: #0D3B2E;
+}
+
+/* ── Sidebar ── */
+.bsl-sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 2.2rem 1.8rem 2rem;
+  border-right: 1px solid rgba(13,59,46,0.08);
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  align-self: flex-start;
+}
+
+.bsl-logo {
+  height: 52px;
+  width: auto;
+  object-fit: contain;
+  object-position: left;
+  margin-bottom: 3rem;
+}
+
+.bsl-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.bsl-step {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 100px;
+  cursor: default;
+  transition: background 0.2s ease;
+}
+
+.bsl-step--active {
+  background: #CBE86B;
+}
+
+.bsl-step-dot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid #0D3B2E;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.bsl-step--active .bsl-step-dot {
+  background: #0D3B2E;
+  border-color: #0D3B2E;
+  color: #CBE86B;
+}
+
+.bsl-step--done .bsl-step-dot {
+  background: #0D3B2E;
+  border-color: #0D3B2E;
+  color: #F0F8D6;
+}
+
+.bsl-step-label {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: #0D3B2E;
+  line-height: 1;
+}
+
+.bsl-step--active .bsl-step-label {
+  font-weight: 700;
+}
+
+.bsl-conocemas {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  color: #0D3B2E;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: auto;
+  padding: 0.5rem 0.9rem;
+}
+
+/* ── Main ── */
+.bsl-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 2.2rem 5vw 2rem;
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bsl-title {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: #0D3B2E;
+  margin: 0 0 2rem;
+  letter-spacing: -0.02em;
+}
+
+.bsl-lang {
+  position: fixed;
+  top: 1.2rem;
+  right: 1.5rem;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  border: 1.5px solid #0D3B2E;
+  border-radius: 100px;
+  background: #F0F8D6;
+  color: #0D3B2E;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.bsl-lang:hover { background: rgba(203,232,107,0.5); }
+
+/* ── Progress bars ── */
+.bsl-progress {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.8rem;
+}
+
+.bsl-progress-track {
+  flex: 1;
+  height: 5px;
+  border-radius: 100px;
+  background: rgba(13,59,46,0.14);
+  overflow: hidden;
+}
+
+.bsl-progress-fill {
+  height: 100%;
+  width: 0;
+  background: #CBE86B;
+  border-radius: 100px;
+  transition: width 0.45s ease;
+}
+
+.bsl-progress-fill--active { width: 100%; }
+
+/* ── Form content ── */
+.bsl-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.bsl-form {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+
+.bsl-hint {
+  font-size: 0.82rem;
+  color: rgba(13,59,46,0.6);
+  margin: 0 0 0.4rem;
+}
+
+.bsl-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.bsl-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: rgba(13,59,46,0.55);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.bsl-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.bsl-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid rgba(13,59,46,0.25);
+  padding: 0.55rem 2.5rem 0.55rem 0;
+  font-family: inherit;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  color: #0D3B2E;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+.bsl-input::placeholder {
+  color: rgba(13,59,46,0.22);
+  font-weight: 400;
+}
+
+.bsl-input:focus {
+  border-bottom-color: #0D3B2E;
+}
+
+.bsl-input--error {
+  border-bottom-color: #D93025 !important;
+  color: #D93025;
+}
+
+.bsl-input--error::placeholder {
+  color: rgba(217,48,37,0.35);
+}
+
+.bsl-badge {
+  position: absolute;
+  right: 0;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.bsl-badge--ok {
+  background: #CBE86B;
+  color: #0D3B2E;
+}
+
+.bsl-badge--err {
+  background: #FDDBD9;
+  color: #D93025;
+}
+
+/* ── Sí/No toggle ── */
+.bsl-yesno {
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+  padding: 0.55rem 0 0.55rem 0;
+}
+
+.bsl-yesno-sep {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  color: rgba(13,59,46,0.22);
+  margin: 0 0.15rem;
+  user-select: none;
+}
+
+.bsl-yesno-opt {
+  font-family: inherit;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 700;
+  color: rgba(13,59,46,0.22);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+  line-height: 1;
+}
+
+.bsl-yesno-opt:hover {
+  color: rgba(13,59,46,0.55);
+}
+
+.bsl-yesno-opt--active {
+  color: #0D3B2E;
+}
+
+.bsl-yesno-opt--err {
+  color: rgba(217,48,37,0.4);
+}
+
+.bsl-yesno-underline {
+  height: 1.5px;
+  background: rgba(13,59,46,0.25);
+  border-radius: 100px;
+}
+
+/* ── Back button ── */
+.bsl-back {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(13,59,46,0.5);
+  cursor: pointer;
+  padding: 0.5rem 0;
+  transition: color 0.2s ease;
+  margin-right: auto;
+}
+
+.bsl-back:hover { color: #0D3B2E; }
+
+.bsl-cta--loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ── Toast ── */
+.bsl-toast {
+  position: fixed;
+  top: 1.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: #0D3B2E;
+  color: #F0F8D6;
+  font-size: 0.92rem;
+  font-weight: 600;
+  padding: 0.75rem 1.6rem;
+  border-radius: 100px;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.18);
+  animation: bsl-toast-in 0.3s ease forwards;
+}
+
+@keyframes bsl-toast-in {
+  from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ── Country autocomplete ── */
+.bsl-suggestions {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1.5px solid rgba(13,59,46,0.15);
+  border-radius: 12px;
+  overflow: hidden;
+  list-style: none;
+  margin: 0;
+  padding: 0.3rem 0;
+  z-index: 50;
+  box-shadow: 0 8px 24px rgba(13,59,46,0.1);
+}
+
+.bsl-suggestion-item {
+  padding: 0.65rem 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #0D3B2E;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.bsl-suggestion-item:hover {
+  background: #F0F8D6;
+}
+
+/* ── Footer / CTA ── */
+.bsl-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 2rem;
+}
+
+.bsl-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.4rem;
+  border: none;
+  border-radius: 100px;
+  background: rgba(13,59,46,0.15);
+  color: rgba(13,59,46,0.35);
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: not-allowed;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.bsl-cta--enabled {
+  background: #0D3B2E;
+  color: #F0F8D6;
+  cursor: pointer;
+}
+
+
+.bsl-cta--enabled:hover {
+  background: #0a2e24;
+}
+
+/* ── Submit screen ── */
+.bsl-submit {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.6rem;
+  padding: 2rem 1rem;
+}
+
+/* Folder illustration — fixed canvas, folder at bottom, cards emerge above */
+.bsl-submit-stack {
+  position: relative;
+  width: 240px;
+  height: 300px;
+  flex-shrink: 0;
+}
+
+/* folderBack SVG: 178×124 → rendered at 220px wide → height ≈ 153px */
+.bsl-folder-back {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: auto;
+  z-index: 1;
+}
+
+/* folderFront SVG: 178×88 → rendered at 220px wide → height ≈ 109px
+   Its top edge is at 300 - 109 = 191px from container top.
+   Cards with bottoms at ~222px appear to emerge from it. */
+.bsl-folder-front {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: auto;
+  z-index: 5;
+}
+
+/* Photo cards — at y:0 their bottoms sit ~30px behind the folder front */
+.bsl-anim-card {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.22);
+}
+
+/* Left card */
+.bsl-anim-card--1 {
+  top: 112px;
+  left: 14px;
+  transform: rotate(-18deg);
+  z-index: 2;
+}
+
+/* Right card */
+.bsl-anim-card--2 {
+  top: 104px;
+  right: 10px;
+  transform: rotate(14deg);
+  z-index: 3;
+}
+
+/* Center card — left avoids translateX so GSAP y composes cleanly */
+.bsl-anim-card--3 {
+  top: 122px;
+  left: calc(50% - 50px);
+  transform: rotate(-4deg);
+  z-index: 4;
+}
+
+/* ── Success screen ── */
+.bsl-success {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.bsl-success-avatar {
+  width: 220px;
+  height: auto;
+  object-fit: contain;
+  margin-bottom: 0.4rem;
+}
+
+.bsl-success-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #0D3B2E;
+  margin: 0;
+  opacity: 0.7;
+}
+
+.bsl-success-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #0D3B2E;
+  line-height: 1.25;
+  margin: 0.2rem 0 0.8rem;
+  letter-spacing: -0.02em;
+}
+
+.bsl-success-body {
+  font-size: 0.95rem;
+  color: rgba(13,59,46,0.65);
+  line-height: 1.55;
+  max-width: 340px;
+  margin: 0 0 1.6rem;
+}
+
+.bsl-success-update {
+  width: 100%;
+  max-width: 320px;
+  padding: 1rem 1.5rem;
+  border: 2px solid #0D3B2E;
+  border-radius: 100px;
+  background: transparent;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0D3B2E;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.bsl-success-update:hover {
+  background: #0D3B2E;
+  color: #F0F8D6;
+}
+
+.bsl-success-cancel {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgba(13,59,46,0.5);
+  cursor: pointer;
+  padding: 0.3rem 0;
+  transition: color 0.2s ease;
+}
+
+.bsl-success-cancel:hover { color: #0D3B2E; }
+
+.bsl-submit-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0D3B2E;
+  text-align: center;
+  margin: 0;
+}
+
+.bsl-submit-sub {
+  font-size: 0.95rem;
+  color: rgba(13,59,46,0.55);
+  text-align: center;
+  margin: 0;
+}
+
+/* ── Mobile ── */
+@media (max-width: 767px) {
+  .bsl-page { flex-direction: column; }
+
+  .bsl-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid rgba(13,59,46,0.08);
+    padding: 1.4rem 1.2rem 1rem;
+    flex-direction: row;
+    align-items: center;
+    gap: 0;
+  }
+
+  .bsl-logo { height: 36px; margin-bottom: 0; margin-right: auto; }
+  .bsl-steps { flex-direction: row; flex: unset; gap: 0.4rem; }
+  .bsl-step-label { display: none; }
+  .bsl-step { padding: 0.4rem; background: transparent !important; }
+  .bsl-conocemas { display: none; }
+  .bsl-main { padding: 1.4rem 1.2rem 1.6rem; }
+}

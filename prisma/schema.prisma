@@ -15,6 +15,17 @@ model Post {
   views       Int      @default(0)
 }
 
+model BioscannerLaunch {
+  id            String   @id @default(cuid())
+  name          String
+  lastname      String
+  email         String   @unique
+  organization  String
+  country       String
+  have_computer Boolean
+  createdAt     DateTime @default(now())
+}
+
 model Contact {
   id               String   @id @default(cuid())
   name             String

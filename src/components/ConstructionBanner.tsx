@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import BorderGlow from "../../components/reactbits/BorderGlow";
 
-const HIDDEN_PATHS = ["/aiforbiodiversity"];
+const HIDDEN_PATHS = ["/aiforbiodiversity", "/bioscanner-launch"];
 
 const COOKIE_NAME = "cminds_banner_ok";
 const COOKIE_DAYS = 3;
