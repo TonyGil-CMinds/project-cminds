@@ -58,6 +58,12 @@ const TRANSLATIONS = {
 const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 const isValidName  = (v: string) => v.trim().length >= 2;
 
+const STRIP_NAME = /[^a-zA-ZáéíóúüñÁÉÍÓÚÜÑ ]/g;
+const toNameValue = (raw: string) =>
+  raw
+    .replace(STRIP_NAME, "")
+    .replace(/\S+/g, w => w[0].toUpperCase() + w.slice(1).toLowerCase());
+
 function setCookie(key: string, value: string, days = 60) {
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
   document.cookie = `${key}=${encodeURIComponent(value)}; expires=${expires}; path=/; SameSite=Lax`;
@@ -429,7 +435,7 @@ export default function BioscannerLaunchPage() {
                     type="text"
                     placeholder={t.phName}
                     value={name}
-                    onChange={e => setName(e.target.value)}
+                    onChange={e => setName(toNameValue(e.target.value))}
                     onBlur={() => setNameTouched(true)}
                   />
                   {nameTouched && name.trim() && (
@@ -449,7 +455,7 @@ export default function BioscannerLaunchPage() {
                     type="text"
                     placeholder={t.phLast}
                     value={lastname}
-                    onChange={e => setLastname(e.target.value)}
+                    onChange={e => setLastname(toNameValue(e.target.value))}
                     onBlur={() => setLastTouched(true)}
                   />
                   {lastTouched && lastname.trim() && (
