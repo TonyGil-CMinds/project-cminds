@@ -4,11 +4,56 @@ import { useRef, useState, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
-const STEPS = [
-  { id: 0, label: "Datos personales" },
-  { id: 1, label: "Equipo de Computo" },
-  { id: 2, label: "Experiencia en Monitoreo" },
-];
+const STEPS = [{ id: 0 }, { id: 1 }, { id: 2 }];
+
+const TRANSLATIONS = {
+  ES: {
+    title: "Pre-registro",
+    steps: ["Datos personales", "Equipo de Computo", "Experiencia en Monitoreo"],
+    hint: "Completa todos los campos. Verifica tu información antes de enviar.",
+    labelName: "Nombre", labelLast: "Apellido", labelEmail: "Correo electrónico",
+    labelOrg: "Organización", labelCountry: "País",
+    phName: "Américo González", phLast: "Guerrero, Gómez...",
+    phEmail: "correo@ejemplo.com", phOrg: "UNAM, WWF...", phCountry: "México, Colombia...",
+    laptop: "¿Cuentas con equipo de cómputo portátil (Laptop)?",
+    monitoring: "¿Trabajas con monitoreo?",
+    yes: "Sí", no: "No",
+    continueBtn: "Continuar", finishBtn: "Finalizar registro",
+    backBtn: "Regresar", sendingBtn: "Enviando...",
+    sendingTitle: "Enviando información...",
+    sendingSub: "Esto puede tomar unos segundos",
+    successTitle: "Hemos recibido tu\ninformación con éxito.",
+    successBody: "Recibirás un correo electrónico los próximos días con más información sobre el taller de prueba de la BETA de Bioscanner.",
+    updateData: "Actualizar datos", cancelReg: "Cancelar registro",
+    knowMore: "Conoce más",
+    toastExists: "Ya te encuentras en la lista",
+    toastFull: "Cupo lleno",
+    toastError: "Error de conexión, intenta de nuevo",
+  },
+  EN: {
+    title: "Pre-registration",
+    steps: ["Personal info", "Computer equipment", "Monitoring experience"],
+    hint: "Complete all fields. Verify your information before submitting.",
+    labelName: "Name", labelLast: "Lastname", labelEmail: "Email",
+    labelOrg: "Organization", labelCountry: "Country",
+    phName: "Américo González", phLast: "Smith, Johnson...",
+    phEmail: "like@email.com", phOrg: "Harvard, WWF...", phCountry: "Mexico, Colombia...",
+    laptop: "Do you have a portable computer (Laptop)?",
+    monitoring: "Do you work with biodiversity monitoring?",
+    yes: "Yes", no: "No",
+    continueBtn: "Continue", finishBtn: "Finish registration",
+    backBtn: "Go back", sendingBtn: "Sending...",
+    sendingTitle: "Sending information...",
+    sendingSub: "This may take a few seconds",
+    successTitle: "We received your\ninformation successfully.",
+    successBody: "You will receive an email in the coming days with more information about the BioScanner BETA testing workshop.",
+    updateData: "Update data", cancelReg: "Cancel registration",
+    knowMore: "Learn more",
+    toastExists: "You are already on the list",
+    toastFull: "Registration is full",
+    toastError: "Connection error, please try again",
+  },
+} as const;
 
 const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 const isValidName  = (v: string) => v.trim().length >= 2;
@@ -53,6 +98,8 @@ export default function BioscannerLaunchPage() {
   const anim2Ref      = useRef<HTMLImageElement>(null);
   const anim3Ref      = useRef<HTMLImageElement>(null);
   const [step, setStep] = useState(0);
+  const [lang, setLang] = useState<"ES" | "EN">("ES");
+  const t = TRANSLATIONS[lang];
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -68,7 +115,6 @@ export default function BioscannerLaunchPage() {
       ? "/bioscanner/success-avatar-woman.png"
       : "/bioscanner/success-avatar-men.png"
   );
-  const [lang, setLang] = useState<"ES" | "EN">("ES");
 
   // Step 1 fields + touched state
   const [name,         setName]         = useState("");
@@ -216,11 +262,11 @@ export default function BioscannerLaunchPage() {
         const data = await res.json();
 
         if (data.error === "full") {
-          showToast("Cupo lleno");
+          showToast(t.toastFull);
           return;
         }
         if (data.error === "exists") {
-          showToast("Ya te encuentras en la lista");
+          showToast(t.toastExists);
           setCookie("bsl_name", name);
           setCookie("bsl_email", email);
           setTimeout(() => setStep(4), 1200);
@@ -231,7 +277,7 @@ export default function BioscannerLaunchPage() {
         setCookie("bsl_email", email);
         animateNext(3);
       } catch {
-        showToast("Error de conexión, intenta de nuevo");
+        showToast(t.toastError);
       } finally {
         setSubmitting(false);
       }
@@ -337,21 +383,21 @@ export default function BioscannerLaunchPage() {
                   ? <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
                   : null}
               </span>
-              <span className="bsl-step-label">{s.label}</span>
+              <span className="bsl-step-label">{t.steps[s.id]}</span>
             </div>
           ))}
         </nav>
 
         <a href="https://bioscanner.io" target="_blank" rel="noopener noreferrer" className="bsl-conocemas">
           <img src="/bioscanner/icon-conocemas.svg" alt="" width="28" height="28" />
-          <span>Conoce más</span>
+          <span>{t.knowMore}</span>
         </a>
       </aside>
 
       {/* ── Main ── */}
       <main className="bsl-main">
 
-        {step < 3 && <h1 className="bsl-title">Pre-registro</h1>}
+        {step < 3 && <h1 className="bsl-title">{t.title}</h1>}
 
         {/* Progress bars */}
         {step < 3 && (
@@ -372,16 +418,16 @@ export default function BioscannerLaunchPage() {
         <div ref={contentRef} className="bsl-content">
           {step === 0 && (
             <div className="bsl-form">
-              <p className="bsl-hint">Completa todos los campos. Verifica tu información antes de enviar.</p>
+              <p className="bsl-hint">{t.hint}</p>
 
               {/* Name */}
               <div className="bsl-field">
-                <label className="bsl-label">Name</label>
+                <label className="bsl-label">{t.labelName}</label>
                 <div className="bsl-input-wrap">
                   <input
                     className={`bsl-input${nameError ? " bsl-input--error" : ""}`}
                     type="text"
-                    placeholder="Americo Gonzalez"
+                    placeholder={t.phName}
                     value={name}
                     onChange={e => setName(e.target.value)}
                     onBlur={() => setNameTouched(true)}
@@ -396,12 +442,12 @@ export default function BioscannerLaunchPage() {
 
               {/* Lastname */}
               <div className="bsl-field">
-                <label className="bsl-label">Lastname</label>
+                <label className="bsl-label">{t.labelLast}</label>
                 <div className="bsl-input-wrap">
                   <input
                     className={`bsl-input${lastError ? " bsl-input--error" : ""}`}
                     type="text"
-                    placeholder="Guerrero, Gómez..."
+                    placeholder={t.phLast}
                     value={lastname}
                     onChange={e => setLastname(e.target.value)}
                     onBlur={() => setLastTouched(true)}
@@ -416,12 +462,12 @@ export default function BioscannerLaunchPage() {
 
               {/* Email */}
               <div className="bsl-field">
-                <label className="bsl-label">Email</label>
+                <label className="bsl-label">{t.labelEmail}</label>
                 <div className="bsl-input-wrap">
                   <input
                     className={`bsl-input${emailError ? " bsl-input--error" : ""}`}
                     type="email"
-                    placeholder="like@email.com"
+                    placeholder={t.phEmail}
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     onBlur={() => setEmailTouched(true)}
@@ -436,12 +482,12 @@ export default function BioscannerLaunchPage() {
 
               {/* Organization */}
               <div className="bsl-field">
-                <label className="bsl-label">Organization</label>
+                <label className="bsl-label">{t.labelOrg}</label>
                 <div className="bsl-input-wrap">
                   <input
                     className={`bsl-input${orgError ? " bsl-input--error" : ""}`}
                     type="text"
-                    placeholder="UNAM, WWF..."
+                    placeholder={t.phOrg}
                     value={org}
                     onChange={e => setOrg(e.target.value)}
                     onBlur={() => setOrgTouched(true)}
@@ -456,12 +502,12 @@ export default function BioscannerLaunchPage() {
 
               {/* Country */}
               <div className="bsl-field" ref={countryRef}>
-                <label className="bsl-label">Country</label>
+                <label className="bsl-label">{t.labelCountry}</label>
                 <div className="bsl-input-wrap">
                   <input
                     className={`bsl-input${countryError ? " bsl-input--error" : ""}`}
                     type="text"
-                    placeholder="Mexico, Colombia..."
+                    placeholder={t.phCountry}
                     value={countryQuery}
                     autoComplete="off"
                     onChange={e => {
@@ -496,23 +542,23 @@ export default function BioscannerLaunchPage() {
 
           {step === 1 && (
             <div className="bsl-form">
-              <p className="bsl-hint">Completa todos los campos. Verifica tu información antes de enviar.</p>
+              <p className="bsl-hint">{t.hint}</p>
 
               <div className="bsl-field">
-                <label className="bsl-label">¿Cuentas con equipo de computo portátil (Laptop)?</label>
+                <label className="bsl-label">{t.laptop}</label>
                 <div className="bsl-yesno">
                   <button
                     className={`bsl-yesno-opt${laptop === "si" ? " bsl-yesno-opt--active" : ""}${laptopTouched && laptop === null ? " bsl-yesno-opt--err" : ""}`}
                     onClick={() => { setLaptop("si"); setLaptopTouched(true); }}
                   >
-                    Sí
+                    {t.yes}
                   </button>
                   <span className="bsl-yesno-sep">/</span>
                   <button
                     className={`bsl-yesno-opt${laptop === "no" ? " bsl-yesno-opt--active" : ""}${laptopTouched && laptop === null ? " bsl-yesno-opt--err" : ""}`}
                     onClick={() => { setLaptop("no"); setLaptopTouched(true); }}
                   >
-                    No
+                    {t.no}
                   </button>
                 </div>
                 <div className="bsl-yesno-underline" />
@@ -522,23 +568,23 @@ export default function BioscannerLaunchPage() {
 
           {step === 2 && (
             <div className="bsl-form">
-              <p className="bsl-hint">Completa todos los campos. Verifica tu información antes de enviar.</p>
+              <p className="bsl-hint">{t.hint}</p>
 
               <div className="bsl-field">
-                <label className="bsl-label">¿Trabajas con monitoreo?</label>
+                <label className="bsl-label">{t.monitoring}</label>
                 <div className="bsl-yesno">
                   <button
                     className={`bsl-yesno-opt${monitoring === "si" ? " bsl-yesno-opt--active" : ""}${monitoringTouched && monitoring === null ? " bsl-yesno-opt--err" : ""}`}
                     onClick={() => { setMonitoring("si"); setMonitoringTouched(true); }}
                   >
-                    Sí
+                    {t.yes}
                   </button>
                   <span className="bsl-yesno-sep">/</span>
                   <button
                     className={`bsl-yesno-opt${monitoring === "no" ? " bsl-yesno-opt--active" : ""}${monitoringTouched && monitoring === null ? " bsl-yesno-opt--err" : ""}`}
                     onClick={() => { setMonitoring("no"); setMonitoringTouched(true); }}
                   >
-                    No
+                    {t.no}
                   </button>
                 </div>
                 <div className="bsl-yesno-underline" />
@@ -550,16 +596,13 @@ export default function BioscannerLaunchPage() {
             <div className="bsl-success">
               <img src={avatarSrc} className="bsl-success-avatar" alt="" draggable={false} />
               <p className="bsl-success-name">{name}</p>
-              <h2 className="bsl-success-title">Hemos recibido tu<br/>información con éxito.</h2>
-              <p className="bsl-success-body">
-                Recibirás un correo electrónico los próximos días con más información
-                sobre el taller de prueba de la BETA de Bioscanner.
-              </p>
+              <h2 className="bsl-success-title" style={{ whiteSpace: "pre-line" }}>{t.successTitle}</h2>
+              <p className="bsl-success-body">{t.successBody}</p>
               <button className="bsl-success-update" onClick={() => setStep(0)}>
-                Actualizar datos
+                {t.updateData}
               </button>
               <button className="bsl-success-cancel" onClick={handleCancel}>
-                Cancelar registro
+                {t.cancelReg}
               </button>
             </div>
           )}
@@ -576,8 +619,8 @@ export default function BioscannerLaunchPage() {
                 {/* Folder front — sits on top of cards, hides their lower portion */}
                 <img src="/bioscanner/folderFront-animation.svg" className="bsl-folder-front" alt="" draggable={false} />
               </div>
-              <p className="bsl-submit-title">Enviando información...</p>
-              <p className="bsl-submit-sub">Esto puede tomar unos segundos</p>
+              <p className="bsl-submit-title">{t.sendingTitle}</p>
+              <p className="bsl-submit-sub">{t.sendingSub}</p>
             </div>
           )}
         </div>
@@ -587,7 +630,7 @@ export default function BioscannerLaunchPage() {
           <div className="bsl-footer">
             {step > 0 && (
               <button className="bsl-back" onClick={handleBack}>
-                Regresar
+                {t.backBtn}
               </button>
             )}
             <button
@@ -595,7 +638,7 @@ export default function BioscannerLaunchPage() {
               onClick={handleContinue}
               disabled={submitting}
             >
-              {submitting ? "Enviando..." : step === 2 ? "Finalizar registro" : "Continuar"}
+              {submitting ? t.sendingBtn : step === 2 ? t.finishBtn : t.continueBtn}
               {!submitting && <NextIcon />}
             </button>
           </div>

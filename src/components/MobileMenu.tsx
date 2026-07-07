@@ -4,9 +4,13 @@ import { useRef, useState, useCallback, useEffect, startTransition } from "react
 import { useRouter, usePathname } from "next/navigation";
 import gsap from "gsap";
 
+const HIDDEN_PATHS = ["/bioscanner-launch"];
+
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+
+  if (HIDDEN_PATHS.some(p => pathname.startsWith(p))) return null;
   const overlayRef  = useRef<HTMLDivElement>(null);
   const btnRef      = useRef<HTMLButtonElement>(null);
   const contentRef  = useRef<HTMLDivElement>(null);

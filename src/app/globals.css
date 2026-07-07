@@ -11284,20 +11284,72 @@ body.brand-page-active {
 @media (max-width: 767px) {
   .bsl-page { flex-direction: column; }
 
+  /* Sidebar becomes a compact column: logo then dots */
   .bsl-sidebar {
     width: 100%;
+    position: static;
+    height: auto;
+    flex-shrink: 0;
     border-right: none;
-    border-bottom: 1px solid rgba(13,59,46,0.08);
-    padding: 1.4rem 1.2rem 1rem;
-    flex-direction: row;
-    align-items: center;
-    gap: 0;
+    border-bottom: 1px solid rgba(13,59,46,0.1);
+    padding: 0.9rem 1.2rem 0.7rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.45rem;
   }
 
-  .bsl-logo { height: 36px; margin-bottom: 0; margin-right: auto; }
-  .bsl-steps { flex-direction: row; flex: unset; gap: 0.4rem; }
+  /* Logo top-left */
+  .bsl-logo {
+    height: 38px;
+    margin-bottom: 0;
+    margin-right: 0;
+  }
+
+  /* Step dots below logo, left-aligned */
+  .bsl-steps { flex-direction: row; flex: unset; gap: 0.3rem; align-items: center; }
   .bsl-step-label { display: none; }
-  .bsl-step { padding: 0.4rem; background: transparent !important; }
+  .bsl-step { padding: 0.3rem; background: transparent !important; }
+  .bsl-step-dot { width: 16px; height: 16px; }
+
   .bsl-conocemas { display: none; }
-  .bsl-main { padding: 1.4rem 1.2rem 1.6rem; }
+
+  /* Main content full-width, no centering auto margins */
+  .bsl-main {
+    flex: 1;
+    padding: 1.4rem 1.2rem 0;
+    max-width: 100%;
+    margin: 0;
+  }
+
+  /* Progress bars */
+  .bsl-progress { gap: 0.4rem; margin-bottom: 1rem; }
+
+  /* Form fields larger touch targets */
+  .bsl-input { font-size: 1.1rem; padding-bottom: 0.5rem; }
+  .bsl-label { font-size: 0.72rem; }
+  .bsl-form { gap: 1.6rem; }
+
+  /* Footer sticks to bottom */
+  .bsl-footer {
+    position: sticky;
+    bottom: 0;
+    padding: 1rem 1.2rem 1.4rem;
+    background: #F0F8D6;
+    border-top: 1px solid rgba(13,59,46,0.07);
+  }
+
+  /* Submit/success screens centered */
+  .bsl-submit { padding: 1.5rem 1rem; }
+  .bsl-submit-stack { width: 200px; height: 250px; }
+  .bsl-folder-back, .bsl-folder-front { width: 185px; }
+  .bsl-anim-card { width: 86px; height: 86px; }
+  .bsl-anim-card--1 { top: 96px; left: 8px; }
+  .bsl-anim-card--2 { top: 88px; right: 5px; }
+  .bsl-anim-card--3 { top: 106px; left: calc(50% - 43px); }
+
+  .bsl-success-avatar { width: 180px; }
+  .bsl-success-title { font-size: 1.3rem; }
+
+  /* Language toggle closer to edge on mobile */
+  .bsl-lang { top: 1rem; right: 1rem; }
 }
