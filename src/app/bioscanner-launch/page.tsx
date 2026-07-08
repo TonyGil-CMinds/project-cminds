@@ -9,7 +9,7 @@ const STEPS = [{ id: 0 }, { id: 1 }, { id: 2 }];
 const TRANSLATIONS = {
   ES: {
     title: "Pre-registro",
-    steps: ["Datos personales", "Equipo de Computo", "Experiencia en Monitoreo"],
+    steps: ["Datos personales", "Equipo de Cómputo", "Experiencia en Monitoreo"],
     hint: "Completa todos los campos. Verifica tu información antes de enviar.",
     labelName: "Nombre", labelLast: "Apellido", labelEmail: "Correo electrónico",
     labelOrg: "Organización", labelCountry: "País",
