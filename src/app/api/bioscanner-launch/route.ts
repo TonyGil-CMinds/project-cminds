@@ -4,6 +4,25 @@ import { Pool } from "pg";
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const MAX_SEATS = 30;
 
+export async function GET(req: Request) {
+  const apiKey = req.headers.get("x-api-key");
+  if (!apiKey || apiKey !== process.env.BIOSCANNER_API_KEY) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  const client = await pool.connect();
+  try {
+    const { rows } = await client.query(
+      `SELECT id, name, lastname, email, organization, country, have_computer, monitoring, "createdAt"
+       FROM "BioscannerLaunch"
+       ORDER BY "createdAt" DESC`
+    );
+    return NextResponse.json({ total: rows.length, seats_left: MAX_SEATS - rows.length, records: rows });
+  } finally {
+    client.release();
+  }
+}
+
 export async function POST(req: Request) {
   const { name, lastname, email, organization, country, have_computer, monitoring } = await req.json();
 
