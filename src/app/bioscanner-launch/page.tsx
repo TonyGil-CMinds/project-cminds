@@ -263,6 +263,7 @@ export default function BioscannerLaunchPage() {
             name, lastname, email,
             organization: org, country,
             have_computer: laptop === "si",
+            monitoring: monitoring === "si",
           }),
         });
         const data = await res.json();

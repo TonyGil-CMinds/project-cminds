@@ -5,9 +5,9 @@ const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const MAX_SEATS = 30;
 
 export async function POST(req: Request) {
-  const { name, lastname, email, organization, country, have_computer } = await req.json();
+  const { name, lastname, email, organization, country, have_computer, monitoring } = await req.json();
 
-  if (!name || !lastname || !email || !organization || !country || have_computer === undefined) {
+  if (!name || !lastname || !email || !organization || !country || have_computer === undefined || monitoring === undefined) {
     return NextResponse.json({ error: "missing_fields" }, { status: 400 });
   }
 
@@ -31,9 +31,9 @@ export async function POST(req: Request) {
     }
 
     await client.query(
-      `INSERT INTO "BioscannerLaunch" (id, name, lastname, email, organization, country, have_computer, "createdAt")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())`,
-      [crypto.randomUUID(), name, lastname, email, organization, country, have_computer]
+      `INSERT INTO "BioscannerLaunch" (id, name, lastname, email, organization, country, have_computer, monitoring, "createdAt")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW())`,
+      [crypto.randomUUID(), name, lastname, email, organization, country, have_computer, monitoring]
     );
 
     return NextResponse.json({ success: true }, { status: 201 });

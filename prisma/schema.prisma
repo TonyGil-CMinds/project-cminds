@@ -23,6 +23,7 @@ model BioscannerLaunch {
   organization  String
   country       String
   have_computer Boolean
+  monitoring    Boolean  @default(false)
   createdAt     DateTime @default(now())
 }
 
