@@ -28,10 +28,10 @@ function fmtDate(raw: string) {
   } catch { return raw; }
 }
 
-function saveAs(url: string, title: string) {
-  if (!url || url === "#") return;
-  const ext      = url.split("?")[0].split(".").pop()?.toLowerCase() || "pdf";
-  const proxy    = `/api/download?url=${encodeURIComponent(url)}`;
+function saveAs(reportId: string, lang: string, title: string, url?: string) {
+  if (!reportId) return;
+  const ext      = (url ? url.split("?")[0].split(".").pop()?.toLowerCase() : "") || "pdf";
+  const proxy    = `/api/download?reportId=${encodeURIComponent(reportId)}&lang=${encodeURIComponent(lang)}`;
   const filename = title.replace(/[^a-zA-ZÀ-ÿ0-9 _-]/g, "").trim().slice(0, 80) || "report";
   const a        = document.createElement("a");
   a.href         = proxy;
@@ -97,7 +97,7 @@ export default function ReportDetail({ report }: { report: RawReport }) {
           <div className="rp-actions">
             <button
               className="archive-download-btn"
-              onClick={() => saveAs(dlUrl, title)}
+              onClick={() => saveAs(report.id, file?.language ?? "", title, dlUrl)}
               disabled={!dlUrl || dlUrl === "#"}
             >
               Save as PDF

@@ -52,10 +52,10 @@ function fmtApiDate(raw: string): string {
 
 function str(v: unknown): string { return v ? String(v) : ""; }
 
-function saveAs(url: string, title: string) {
-  if (!url || url === "#") return;
-  const ext      = url.split("?")[0].split(".").pop()?.toLowerCase() || "pdf";
-  const proxy    = `/api/download?url=${encodeURIComponent(url)}`;
+function saveAs(reportId: string, lang: string, title: string, url?: string) {
+  if (!reportId) return;
+  const ext      = (url ? url.split("?")[0].split(".").pop()?.toLowerCase() : "") || "pdf";
+  const proxy    = `/api/download?reportId=${encodeURIComponent(reportId)}&lang=${encodeURIComponent(lang)}`;
   const filename = title.replace(/[^a-zA-ZÀ-ÿ0-9 _-]/g, "").trim().slice(0, 80) || "report";
   const a        = document.createElement("a");
   a.href         = proxy;
@@ -754,7 +754,7 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
 
           <button
             className="archive-download-btn"
-            onClick={() => saveAs(panelDownload, panelTitle)}
+            onClick={() => saveAs(panelItem.apiId, activeLangStr, panelTitle, panelDownload)}
             disabled={!panelDownload || panelDownload === "#"}
           >
             Save as PDF

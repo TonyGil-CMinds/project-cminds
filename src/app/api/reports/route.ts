@@ -21,10 +21,7 @@ export async function GET() {
     if (!res.ok) {
       const body = await res.text().catch(() => "");
       console.error("[reports] upstream", res.status, body);
-      return NextResponse.json(
-        { error: `Upstream error ${res.status}`, detail: body },
-        { status: res.status }
-      );
+      return NextResponse.json({ error: "Upstream error" }, { status: 502 });
     }
 
     const data = await res.json();
