@@ -62,7 +62,10 @@ export async function GET(req: NextRequest) {
       { headers: { "x-api-key": apiKey }, cache: "no-store" }
     );
     if (!res.ok) return NextResponse.json({ error: `Upstream ${res.status}` }, { status: 502 });
-    report = await res.json();
+    const payload = await res.json();
+    // Base44 by-id feed wraps the result: { count, reports: [ {...} ] }.
+    // Older/list responses may return the report object directly.
+    report = Array.isArray(payload?.reports) ? payload.reports[0] : payload;
   } catch {
     return NextResponse.json({ error: "Failed to fetch report" }, { status: 502 });
   }
