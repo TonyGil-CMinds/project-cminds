@@ -412,7 +412,7 @@ export default function MindscopePage() {
               icon: <img src="/mindscope/busqueda.svg" width={18} height={18} alt="Search" />,
               label: "Search",
               className: dockActive === 2 ? 'dock-item--active' : '',
-              onClick: () => setDockActive(2),
+              onClick: () => { window.dispatchEvent(new CustomEvent("cminds:open-search")); },
             },
           ]}
           panelHeight={60}

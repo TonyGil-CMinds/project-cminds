@@ -111,11 +111,18 @@ export default function NavSearch() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
-  const openModal = () => {
+  const openModal = useCallback(() => {
     if (closingRef.current) return;
     pillRectRef.current = pillRef.current?.getBoundingClientRect() ?? null;
     setOpen(true);
-  };
+  }, []);
+
+  /* External trigger (e.g. Mindscope dock "Search" item) */
+  useEffect(() => {
+    const h = () => openModal();
+    window.addEventListener("cminds:open-search", h);
+    return () => window.removeEventListener("cminds:open-search", h);
+  }, [openModal]);
 
   /* Animate in */
   useEffect(() => {
