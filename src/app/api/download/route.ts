@@ -18,7 +18,7 @@ interface RawReport {
   files:          ReportFile[];
 }
 
-const ALLOWED_EXACT_HOSTS = new Set(["cminds.base44.app", "base44.com"]);
+const ALLOWED_EXACT_HOSTS = new Set(["cminds.base44.app", "base44.app", "base44.com"]);
 const ALLOWED_SUFFIXES    = [".base44.com", ".base44.app"];
 
 function isAllowedHost(hostname: string): boolean {
