@@ -13,7 +13,12 @@ import SiteFooter from "../../components/SiteFooter";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const NAV_ITEMS = ["HOME", "WHO WE ARE", "WHERE WE COME FROM", "INITIATIVES"];
+const NAV_ITEMS = [
+  { label: "HOME",               target: "top" },
+  { label: "WHO WE ARE",         target: ".afb-who" },
+  { label: "WHERE WE COME FROM", target: ".afb-wcf" },
+  { label: "INITIATIVES",        target: "#initiatives" },
+];
 
 /* Rock center is intentionally excluded — it stays visible when the loader fades,
    creating a seamless handoff from the frame sequence to the hero. */
@@ -61,6 +66,14 @@ export default function AIForBiodiversityPage() {
     sessionStorage.setItem("afb-intro-done", "1");
     setShowLoader(false);
     setLoaderDone(true);
+  }, []);
+
+  const scrollToSection = useCallback((target: string) => {
+    if (target === "top") {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    document.querySelector(target)?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
   /* Subtle parallax on rocks + plants */
@@ -212,7 +225,21 @@ export default function AIForBiodiversityPage() {
             />
             <div className="afb-nav-center">
               {NAV_ITEMS.map((item) => (
-                <span key={item} className="afb-nav-item">{item}</span>
+                <span
+                  key={item.label}
+                  className="afb-nav-item"
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => scrollToSection(item.target)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      scrollToSection(item.target);
+                    }
+                  }}
+                >
+                  {item.label}
+                </span>
               ))}
             </div>
             <div className="afb-nav-search-wrap">
