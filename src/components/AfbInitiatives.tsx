@@ -8,7 +8,7 @@ import gsap from "gsap";
 import { useRouter } from "next/navigation";
 
 const IMAGES = [
-  { src: "/platforms/aiforbiodiversity/initiative-image-ai4manatees.png",  label: "AI For Manatees",    href: null },
+  { src: "/platforms/aiforbiodiversity/initiative-image-ai4manatees.png",  label: "AI For Manatees",    href: "/aiforbiodiversity/aiformanatees" },
   { src: "/platforms/aiforbiodiversity/initiative-image-ntl.png",          label: "NaturaTech LAC",      href: "/aiforbiodiversity/naturatechlac" },
   { src: "/platforms/aiforbiodiversity/initiative-image-vitalocenas.png",  label: "Vital Oceans",        href: "/aiforbiodiversity/vitaloceans" },
   { src: "/platforms/aiforbiodiversity/initiative-image-tech4nature.png",  label: "Tech4Nature México",  href: "/aiforbiodiversity/techfornature" },

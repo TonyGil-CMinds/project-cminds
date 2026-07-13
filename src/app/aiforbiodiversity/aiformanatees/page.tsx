@@ -8,18 +8,21 @@ import { useRouter } from "next/navigation";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const BASE = "/platforms/aiforbiodiversity/initiatives-naturatechlac";
+const BASE = "/platforms/aiforbiodiversity/initiative-aiformanatees";
 
-export default function NaturaTechLACPage() {
+// Flip to true once the report is ready — renders the hero report card
+// and the "Download report" CTA in the info section.
+const REPORT_ENABLED = false;
+
+export default function AiForManateesPage() {
   const pageRef        = useRef<HTMLDivElement>(null);
   const heroRef        = useRef<HTMLDivElement>(null);
   const heroBgRef      = useRef<HTMLImageElement>(null);
-  const playCenterRef  = useRef<HTMLDivElement>(null);
   const infoRef        = useRef<HTMLElement>(null);
-  const bodyRef        = useRef<HTMLParagraphElement>(null);
+  const bodyRef1       = useRef<HTMLParagraphElement>(null);
+  const bodyRef2       = useRef<HTMLParagraphElement>(null);
   const photoWrapRef   = useRef<HTMLDivElement>(null);
   const photoImgRef    = useRef<HTMLImageElement>(null);
-  const cardsRef       = useRef<HTMLAnchorElement>(null);
   const feat1WrapRef   = useRef<HTMLDivElement>(null);
   const feat1ImgRef    = useRef<HTMLImageElement>(null);
   const feat2WrapRef   = useRef<HTMLDivElement>(null);
@@ -28,27 +31,19 @@ export default function NaturaTechLACPage() {
   const logosWrapRef   = useRef<HTMLDivElement>(null);
   const transitionRef  = useRef<HTMLDivElement>(null);
   const barFillRef     = useRef<HTMLDivElement>(null);
-  const videoRef       = useRef<HTMLVideoElement>(null);
-  const videoOverlayRef = useRef<HTMLDivElement>(null);
   const router         = useRouter();
 
-  const [activePartnerTab, setActivePartnerTab] = useState("ledby");
+  const [activePartnerTab, setActivePartnerTab] = useState("partners");
 
   const PARTNER_TABS = [
     {
-      id: "ledby", label: "LED BY",
+      id: "partners", label: "PARTNERS AND OBSERVERS",
       logos: [
-        { src: `${BASE}/ledby-bidlab-1.svg`, alt: "BID LAB" },
-        { src: `${BASE}/ledby-cminds-2.svg`, alt: "C Minds" },
-      ],
-    },
-    {
-      id: "funding", label: "FUNDING PARTNERS",
-      logos: [
-        { src: `${BASE}/fundingpartners-suecia-1.svg`,           alt: "Suecia" },
-        { src: `${BASE}/fundingpartners-france-2.svg`,            alt: "France" },
-        { src: `${BASE}/fundingpartners-amazonia-3.svg`,          alt: "Amazonia" },
-        { src: `${BASE}/fundingpartners-climatecollective-4.svg`, alt: "Climate Collective" },
+        { src: `${BASE}/partner-uchule-1.svg`,  alt: "UCHULE" },
+        { src: `${BASE}/partner-ecosur-2.svg`,  alt: "ECOSUR" },
+        { src: `${BASE}/partner-dolphin-3.svg`, alt: "Dolphin" },
+        { src: `${BASE}/partner-cesco-4.svg`,   alt: "CESCO" },
+        { src: `${BASE}/partner-google-5.svg`,  alt: "Google" },
       ],
     },
   ];
@@ -81,7 +76,7 @@ export default function NaturaTechLACPage() {
         const partnersBottom = partnersRef.current?.getBoundingClientRect().bottom ?? 1;
         if (partnersBottom > 0) return;
         navigating = true;
-        gsap.to(el, { opacity: 0, duration: 0.35, onComplete: () => router.push("/aiforbiodiversity/aiformanatees") });
+        gsap.to(el, { opacity: 0, duration: 0.35, onComplete: () => router.push("/aiforbiodiversity/vitaloceans") });
       };
       el.addEventListener("click", onTap);
       return () => el.removeEventListener("click", onTap);
@@ -125,7 +120,7 @@ export default function NaturaTechLACPage() {
       if (progress >= 1) {
         navigating = true;
         if (drainId) clearTimeout(drainId);
-        gsap.to(el, { opacity: 0, duration: 0.45, onComplete: () => router.push("/aiforbiodiversity/aiformanatees") });
+        gsap.to(el, { opacity: 0, duration: 0.45, onComplete: () => router.push("/aiforbiodiversity/vitaloceans") });
       }
     };
 
@@ -138,47 +133,35 @@ export default function NaturaTechLACPage() {
     };
   }, [router]);
 
-  // Play center follows cursor inside hero
+  // Info body paragraphs: word-by-word line animation, run independently on each <p>
   useEffect(() => {
-    const hero = heroRef.current;
-    const el   = playCenterRef.current;
-    if (!hero || !el) return;
-    const xTo = gsap.quickTo(el, "x", { duration: 0.55, ease: "power2.out" });
-    const yTo = gsap.quickTo(el, "y", { duration: 0.55, ease: "power2.out" });
-    const onMove  = (e: MouseEvent) => {
-      const r = hero.getBoundingClientRect();
-      xTo(e.clientX - r.left - r.width / 2);
-      yTo(e.clientY - r.top  - r.height / 2);
-    };
-    const onLeave = () => { xTo(0); yTo(0); };
-    hero.addEventListener("mousemove", onMove);
-    hero.addEventListener("mouseleave", onLeave);
-    return () => {
-      hero.removeEventListener("mousemove", onMove);
-      hero.removeEventListener("mouseleave", onLeave);
-    };
-  }, []);
+    const paragraphs = [bodyRef1.current, bodyRef2.current].filter(
+      (el): el is HTMLParagraphElement => Boolean(el),
+    );
+    if (!paragraphs.length) return;
 
-  // Body paragraph: word-by-word line animation
-  useEffect(() => {
-    const el = bodyRef.current;
-    if (!el) return;
-    const originalHTML = el.innerHTML;
-    el.innerHTML = el.innerText.split(/\s+/).filter(Boolean)
-      .map(w => `<span class="ntl-body-word">${w}</span>`).join(" ");
-    const words = Array.from(el.querySelectorAll<HTMLElement>(".ntl-body-word"));
-    const lineMap = new Map<number, HTMLElement[]>();
-    words.forEach(w => {
-      const top = Math.round(w.offsetTop);
-      if (!lineMap.has(top)) lineMap.set(top, []);
-      lineMap.get(top)!.push(w);
+    const cleanups: Array<() => void> = [];
+
+    paragraphs.forEach(el => {
+      const originalHTML = el.innerHTML;
+      el.innerHTML = el.innerText.split(/\s+/).filter(Boolean)
+        .map(w => `<span class="ntl-body-word">${w}</span>`).join(" ");
+      const words = Array.from(el.querySelectorAll<HTMLElement>(".ntl-body-word"));
+      const lineMap = new Map<number, HTMLElement[]>();
+      words.forEach(w => {
+        const top = Math.round(w.offsetTop);
+        if (!lineMap.has(top)) lineMap.set(top, []);
+        lineMap.get(top)!.push(w);
+      });
+      gsap.set(words, { opacity: 0, y: 28 });
+      Array.from(lineMap.values()).forEach((line, i) => {
+        gsap.to(line, { opacity: 1, y: 0, duration: 0.65, ease: "power3.out", delay: i * 0.09,
+          scrollTrigger: { trigger: el, start: "top 88%" } });
+      });
+      cleanups.push(() => { el.innerHTML = originalHTML; });
     });
-    gsap.set(words, { opacity: 0, y: 28 });
-    Array.from(lineMap.values()).forEach((line, i) => {
-      gsap.to(line, { opacity: 1, y: 0, duration: 0.65, ease: "power3.out", delay: i * 0.09,
-        scrollTrigger: { trigger: el, start: "top 88%" } });
-    });
-    return () => { el.innerHTML = originalHTML; };
+
+    return () => { cleanups.forEach(fn => fn()); };
   }, []);
 
   useEffect(() => {
@@ -191,9 +174,9 @@ export default function NaturaTechLACPage() {
     gsap.fromTo(heroRef.current, { y: "100%" }, { y: 0, duration: 1.3, ease: "power3.out" });
     gsap.fromTo(heroBgRef.current, { scale: 1.28 }, { scale: 1, duration: 1.3, ease: "power3.out" });
     gsap.fromTo(
-      [heroRef.current?.querySelector(".ntl-hero-overlay"), playCenterRef.current],
+      heroRef.current?.querySelector(".vo-hero-overlay"),
       { opacity: 0 },
-      { opacity: 1, duration: 0.55, ease: "power2.out", delay: 0.55, stagger: 0.1 },
+      { opacity: 1, duration: 0.55, ease: "power2.out", delay: 0.55 },
     );
 
     // ── Info section ──
@@ -201,14 +184,14 @@ export default function NaturaTechLACPage() {
     gsap.fromTo(infoRef.current?.querySelector(".ntl-info-top"),
       { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out", scrollTrigger: ist });
 
-    // ── Photo: zoom-reveal (same as bioscanner) ──
+    // ── Photo: zoom-reveal ──
     const pst = { trigger: photoWrapRef.current, start: "top 80%" };
     gsap.fromTo(photoWrapRef.current,
       { scale: 0.82, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.15, ease: "power3.out", scrollTrigger: pst });
     gsap.fromTo(photoImgRef.current,
       { scale: 1.32 }, { scale: 1, duration: 1.15, ease: "power3.out", scrollTrigger: pst });
 
-    // ── Feature images: zoom-reveal (same as photo section) ──
+    // ── Feature images: zoom-reveal ──
     const f1st = { trigger: feat1WrapRef.current, start: "top 80%" };
     gsap.fromTo(feat1WrapRef.current,
       { scale: 0.82, opacity: 0 }, { scale: 1, opacity: 1, duration: 1.15, ease: "power3.out", scrollTrigger: f1st });
@@ -239,34 +222,6 @@ export default function NaturaTechLACPage() {
     }
   }, { scope: pageRef });
 
-  const openVideo = () => {
-    const overlay = videoOverlayRef.current;
-    const video   = videoRef.current;
-    if (!overlay || !video) return;
-    video.currentTime = 0;
-    video.volume = 1;
-    gsap.killTweensOf([overlay, video]);
-    gsap.set(overlay, { display: "flex", pointerEvents: "auto" });
-    gsap.fromTo(overlay, { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power2.out" });
-    gsap.fromTo(video,   { scale: 0.88 }, { scale: 1, duration: 0.45, ease: "power3.out" });
-    const p = video.play();
-    if (p) p.catch(() => {});
-  };
-
-  const closeVideo = () => {
-    const overlay = videoOverlayRef.current;
-    if (!overlay) return;
-    gsap.killTweensOf([overlay, videoRef.current]);
-    gsap.to(videoRef.current, { scale: 0.88, duration: 0.3, ease: "power2.in" });
-    gsap.to(overlay, {
-      opacity: 0, duration: 0.3, ease: "power2.in",
-      onComplete: () => {
-        gsap.set(overlay, { display: "none", pointerEvents: "none" });
-        if (videoRef.current) { videoRef.current.pause(); videoRef.current.currentTime = 0; }
-      },
-    });
-  };
-
   const goBack = () => {
     gsap.to(heroBgRef.current, { scale: 1.28, duration: 1.0, ease: "power3.in" });
     gsap.to(heroRef.current, { y: "100%", duration: 1.0, ease: "power3.in", onComplete: () => router.back() });
@@ -275,97 +230,97 @@ export default function NaturaTechLACPage() {
   return (
     <div ref={pageRef} className="afb-page ntl-page">
 
-      {/* Fullscreen video overlay */}
-      <div
-        ref={videoOverlayRef}
-        className="t4n-video-overlay"
-        style={{ display: "none", pointerEvents: "none" }}
-        onClick={closeVideo}
-      >
-        <button className="t4n-video-close" onClick={closeVideo} aria-label="Close video">×</button>
-        <video
-          ref={videoRef}
-          src={process.env.NEXT_PUBLIC_NTL_HERO_VIDEO_URL || undefined}
-          className="t4n-video-player"
-          playsInline
-          onClick={e => e.stopPropagation()}
-        />
-      </div>
+      {/* ── Hero (static image, not clickable) ── */}
+      <div ref={heroRef} className="t4n-hero ntl-hero">
+        <img ref={heroBgRef} src={`${BASE}/hero-manatees.png`} alt="AI For Manatees" className="t4n-hero-bg" />
+        <div className="vo-hero-overlay" aria-hidden="true" />
+        <button className="t4n-close" onClick={goBack} aria-label="Back">×</button>
 
-      {/* ── Hero (same structure as t4n) ── */}
-      <div ref={heroRef} className="t4n-hero ntl-hero" onClick={openVideo} style={{ cursor: "pointer" }}>
-        <img ref={heroBgRef} src={`${BASE}/hero.png`} alt="NaturaTech LAC" className="t4n-hero-bg" />
-        <div className="ntl-hero-overlay" aria-hidden="true" />
-        <button className="t4n-close" onClick={e => { e.stopPropagation(); goBack(); }} aria-label="Back">×</button>
-        <div ref={playCenterRef} className="t4n-play-center">
-          <img src="/platforms/aiforbiodiversity/initiative-tech4nature/playvideo.svg" alt="" className="t4n-play-center-icon" />
-        </div>
+        {REPORT_ENABLED && (
+          <div className="afm-report-card">
+            <img
+              src="/platforms/aiforbiodiversity/hero-featured-report-image.avif"
+              alt="AI4Manatees report cover"
+              className="afm-report-image"
+            />
+            <div className="afm-report-body">
+              <p className="afm-report-title">AI4Manatees: A Machine Learning Approach...</p>
+              <span className="afm-report-cta">
+                Download report
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M7 2v8m0 0L3.5 6.5M7 10l3.5-3.5M2 12h10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* ── Info section ── */}
       <section ref={infoRef} className="ntl-info">
         <div className="ntl-info-top">
           <div className="ntl-info-left">
-            <img src={`${BASE}/logo-naturatechlac.svg`} alt="NaturaTech LAC" className="ntl-info-logo" />
+            <img src={`${BASE}/logo-aiformanatees.svg`} alt="AI For Manatees" className="ntl-info-logo afm-info-logo" />
             <span className="ntl-info-location">
-              <svg width="10" height="13" viewBox="0 0 10 13" fill="none" aria-hidden="true">
-                <path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 1 1 5 3.5a1.5 1.5 0 0 1 0 3z" fill="currentColor"/>
-              </svg>
+              <img src="/platforms/aiforbiodiversity/initiative-tech4nature/location.svg" alt="" width="16" height="16" />
               Latin America and Caribbean
             </span>
           </div>
           <div className="ntl-info-right">
             <p className="ntl-info-tagline">
-              It drives conservation through technology, innovation and biocultural knowledge.
+              A Machine Learning Approach to better understand and protect manatees in Latin America and the Caribbean
             </p>
-            <a href="https://naturatech.org" target="_blank" rel="noopener noreferrer" className="ntl-info-cta">
-              See Initiative
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </a>
+            {REPORT_ENABLED && (
+              <button className="ntl-info-cta">
+                Download report
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M7 2v8m0 0L3.5 6.5M7 10l3.5-3.5M2 12h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            )}
           </div>
         </div>
-        <p ref={bodyRef} className="ntl-info-body">
-          At NaturaTech LAC, we are driven by the commitment to discover and explore the roots that emerge from territories: their stories and, above all, their innovation.
+        <p ref={bodyRef1} className="ntl-info-body">
+          AI 4 Manatees is a multi-sectoral alliance that aims to accelerate the conservation of manatee populations in the Caribbean, and regions in Central and South America.
+        </p>
+        <p ref={bodyRef2} className="ntl-info-body">
+          By building a mechanism for analyzing manatee vocalizations from submarine audio recordings harnessing the power of AI systems, we will produce tools that allow researchers and conservation practitioners to better understand manatees&apos; behavior and communication patterns.
         </p>
       </section>
 
-      {/* ── Photo (bioscanner-style zoom reveal) ── */}
+      {/* ── Photo ── */}
       <section className="ntl-photo-section">
         <div ref={photoWrapRef} className="ntl-photo-wrap">
-          <img ref={photoImgRef} src={`${BASE}/info-image.png`} alt="NaturaTech LAC fieldwork" className="ntl-photo-img" />
+          <img ref={photoImgRef} src={`${BASE}/image-info.png`} alt="AI For Manatees" className="ntl-photo-img" />
         </div>
       </section>
 
-      {/* ── Feature sections: Natura500 (image left) + Studio (image right) ── */}
-      <a ref={cardsRef} href="https://500.naturatech.org" target="_blank" rel="noopener noreferrer" className="ntl-feature ntl-feature--natura500">
+      {/* ── Feature sections (no chips, no links) ── */}
+      <div className="ntl-feature ntl-feature--natura500">
         <div className="ntl-feature-inner">
           <div ref={feat1WrapRef} className="ntl-feature-img-wrap">
-            <img ref={feat1ImgRef} src={`${BASE}/natura500.png`} alt="Natura500" className="ntl-feature-img" />
+            <img ref={feat1ImgRef} src={`${BASE}/image-section-1.png`} alt="AI For Manatees" className="ntl-feature-img" />
           </div>
-          <span className="ntl-feature-label">Natura500</span>
         </div>
-      </a>
-      <a href="https://naturatech.org/studio" target="_blank" rel="noopener noreferrer" className="ntl-feature ntl-feature--studio">
+      </div>
+      <div className="ntl-feature ntl-feature--studio">
         <div className="ntl-feature-inner">
           <div ref={feat2WrapRef} className="ntl-feature-img-wrap">
-            <img ref={feat2ImgRef} src={`${BASE}/studio.png`} alt="ScaleUp Studio" className="ntl-feature-img" />
+            <img ref={feat2ImgRef} src={`${BASE}/image-section-2.png`} alt="AI For Manatees" className="ntl-feature-img" />
           </div>
-          <span className="ntl-feature-label">ScaleUp Studio</span>
         </div>
-      </a>
+      </div>
 
       {/* ── Reveal shell ── */}
       <div className="t4n-reveal-shell">
 
         <div ref={transitionRef} className="t4n-transition">
           <div className="t4n-transition-card">
-            <img src="/platforms/aiforbiodiversity/initiative-image-ai4manatees.png" alt="AI For Manatees" className="t4n-transition-card-img" />
+            <img src="/platforms/aiforbiodiversity/initiatives-naturatechlac/next-vitaloceans.png" alt="Vital Oceans" className="t4n-transition-card-img" />
             <div className="t4n-transition-card-overlay" />
             <div className="t4n-transition-card-content">
               <span className="t4n-transition-next-label">Next up...</span>
-              <h2 className="t4n-transition-next-title">AI For Manatees</h2>
+              <h2 className="t4n-transition-next-title">Vital Oceans</h2>
             </div>
           </div>
           <div className="t4n-transition-bar-track">
