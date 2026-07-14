@@ -3933,6 +3933,63 @@ body {
 }
 .ms-post-body li { margin-bottom: 0.4rem; }
 
+/* ── Blog CMS content: figures, captions, tables, youtube ── */
+.ms-post-body .tt-figure {
+  margin: 1.8rem 0;
+  text-align: center;
+}
+.ms-post-body .tt-figure img {
+  display: block;
+  margin: 0 auto 0.6rem;
+  max-width: 100%;
+  border-radius: 12px;
+}
+.ms-post-body .tt-figcaption {
+  color: var(--color-text-dim) !important;
+  font-size: 0.85rem;
+  font-style: italic;
+  text-align: center;
+  line-height: 1.5;
+  margin-top: 0.5rem;
+}
+
+.ms-post-body a:has(img) {
+  text-decoration: none;
+}
+
+.ms-post-body .tt-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.8rem 0;
+  font-size: 0.95rem;
+  display: block;
+  overflow-x: auto;
+}
+.ms-post-body .tt-table th,
+.ms-post-body .tt-table td {
+  border: 1px solid rgba(255,255,255,0.14);
+  padding: 0.6rem 0.9rem;
+  text-align: left;
+}
+.ms-post-body .tt-table th {
+  background: rgba(var(--color-primary-rgb), 0.10);
+  font-weight: 700;
+  color: #fff !important;
+}
+.ms-post-body .tt-table tr:nth-child(even) td {
+  background: rgba(255,255,255,0.03);
+}
+
+.ms-post-body .tt-youtube {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border: 0;
+  border-radius: 12px;
+  margin: 1.8rem 0;
+}
+
 /* ── Share row ── */
 .ms-share-row {
   max-width: 700px;
