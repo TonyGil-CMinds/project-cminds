@@ -29,6 +29,13 @@ const TRANSLATIONS = {
     toastExists: "Ya te encuentras en la lista",
     toastFull: "Cupo lleno",
     toastError: "Error de conexión, intenta de nuevo",
+    closedTitle: "El registro ha cerrado",
+    closedBody: "El pre-registro para la BETA de Bioscanner ha finalizado. Agradecemos tu interés en formar parte de esta etapa. Mantente atento a nuestros canales para conocer las próximas oportunidades de participación.",
+    eventWhen: "15 de julio · 10:00 am",
+    eventVenue: "Casa Amate 62 — Mérida Centro",
+    eventAddress: "C. 62 #421, entre 49 y 51, Parque Santa Lucía, Centro, 97000 Mérida, Yuc.",
+    viewLocation: "Ver ubicación",
+    laptopReminder: "Recuerda llevar tu laptop.",
   },
   EN: {
     title: "Pre-registration",
@@ -52,8 +59,17 @@ const TRANSLATIONS = {
     toastExists: "You are already on the list",
     toastFull: "Registration is full",
     toastError: "Connection error, please try again",
+    closedTitle: "Registration is closed",
+    closedBody: "Pre-registration for the Bioscanner BETA has ended. Thank you for your interest in being part of this stage. Stay tuned to our channels for upcoming opportunities to participate.",
+    eventWhen: "July 15 · 10:00 am",
+    eventVenue: "Casa Amate 62 — Mérida Centro",
+    eventAddress: "C. 62 #421, between 49 and 51, Parque Santa Lucía, Centro, 97000 Mérida, Yuc.",
+    viewLocation: "View location",
+    laptopReminder: "Remember to bring your laptop.",
   },
 } as const;
+
+const REG_DEADLINE = Date.parse("2026-07-14T23:00:00Z"); // 5:00pm CDMX (UTC-6)
 
 const isValidEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 const isValidName  = (v: string) => v.trim().length >= 2;
@@ -106,6 +122,8 @@ export default function BioscannerLaunchPage() {
   const [step, setStep] = useState(0);
   const [lang, setLang] = useState<"ES" | "EN">("ES");
   const t = TRANSLATIONS[lang];
+  const [registered, setRegistered] = useState(false);
+  const [closed, setClosed] = useState(() => Date.now() >= REG_DEADLINE);
   const [submitting, setSubmitting] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -272,16 +290,24 @@ export default function BioscannerLaunchPage() {
           showToast(t.toastFull);
           return;
         }
+        if (data.error === "closed") {
+          setClosed(true);
+          return;
+        }
         if (data.error === "exists") {
           showToast(t.toastExists);
           setCookie("bsl_name", name);
           setCookie("bsl_email", email);
+          setCookie("bsl_laptop", laptop === "si" ? "si" : "no");
+          setRegistered(true);
           setTimeout(() => setStep(4), 1200);
           return;
         }
         // success — go to loading screen → auto-advances to step 4
         setCookie("bsl_name", name);
         setCookie("bsl_email", email);
+        setCookie("bsl_laptop", laptop === "si" ? "si" : "no");
+        setRegistered(true);
         animateNext(3);
       } catch {
         showToast(t.toastError);
@@ -294,6 +320,8 @@ export default function BioscannerLaunchPage() {
   const handleCancel = () => {
     deleteCookie("bsl_name");
     deleteCookie("bsl_email");
+    deleteCookie("bsl_laptop");
+    setRegistered(false);
     setStep(0);
     setName(""); setLastname(""); setEmail(""); setOrg(""); setCountryQuery(""); setCountry("");
     setLaptop(null); setMonitoring(null);
@@ -332,9 +360,22 @@ export default function BioscannerLaunchPage() {
     if (savedName && savedEmail) {
       setName(savedName);
       setEmail(savedEmail);
+      setRegistered(true);
       setStep(4);
     }
   }, []);
+
+  // Auto-flip an open page to closed exactly at the deadline
+  useEffect(() => {
+    if (closed) return;
+    const delay = REG_DEADLINE - Date.now();
+    if (!Number.isFinite(delay) || delay <= 0) return;
+    const timer = setTimeout(() => setClosed(true), delay);
+    return () => clearTimeout(timer);
+  }, [closed]);
+
+  const hasLaptop = laptop === "si" || getCookie("bsl_laptop") === "si";
+  const showClosedScreen = closed && !registered;
 
   useGSAP(() => {
     gsap.fromTo(pageRef.current,
@@ -382,18 +423,20 @@ export default function BioscannerLaunchPage() {
       <aside className="bsl-sidebar">
         <img src="/bioscanner/logo-bioscanner.svg" alt="BioScanner" className="bsl-logo" />
 
-        <nav className="bsl-steps">
-          {STEPS.map(s => (
-            <div key={s.id} className={`bsl-step${step === s.id ? " bsl-step--active" : ""}${step > s.id ? " bsl-step--done" : ""}`}>
-              <span className="bsl-step-dot">
-                {step > s.id
-                  ? <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                  : null}
-              </span>
-              <span className="bsl-step-label">{t.steps[s.id]}</span>
-            </div>
-          ))}
-        </nav>
+        {!showClosedScreen && (
+          <nav className="bsl-steps">
+            {STEPS.map(s => (
+              <div key={s.id} className={`bsl-step${step === s.id ? " bsl-step--active" : ""}${step > s.id ? " bsl-step--done" : ""}`}>
+                <span className="bsl-step-dot">
+                  {step > s.id
+                    ? <svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2 5l2.5 2.5L8 3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                    : null}
+                </span>
+                <span className="bsl-step-label">{t.steps[s.id]}</span>
+              </div>
+            ))}
+          </nav>
+        )}
 
         <a href="https://bioscanner.io" target="_blank" rel="noopener noreferrer" className="bsl-conocemas">
           <img src="/bioscanner/icon-conocemas.svg" alt="" width="28" height="28" />
@@ -404,10 +447,10 @@ export default function BioscannerLaunchPage() {
       {/* ── Main ── */}
       <main className="bsl-main">
 
-        {step < 3 && <h1 className="bsl-title">{t.title}</h1>}
+        {step < 3 && !showClosedScreen && <h1 className="bsl-title">{t.title}</h1>}
 
         {/* Progress bars */}
-        {step < 3 && (
+        {step < 3 && !showClosedScreen && (
           <div className="bsl-progress">
             <div className="bsl-progress-track">
               <div ref={bar1Ref} className="bsl-progress-fill" style={{ width: "0%" }} />
@@ -423,7 +466,15 @@ export default function BioscannerLaunchPage() {
 
         {/* Form content */}
         <div ref={contentRef} className="bsl-content">
-          {step === 0 && (
+          {showClosedScreen && (
+            <div className="bsl-closed">
+              <img src="/bioscanner/registration-closed.png" alt="" className="bsl-closed-img" draggable={false} />
+              <h2 className="bsl-closed-title">{t.closedTitle}</h2>
+              <p className="bsl-closed-body">{t.closedBody}</p>
+            </div>
+          )}
+
+          {!showClosedScreen && step === 0 && (
             <div className="bsl-form">
               <p className="bsl-hint">{t.hint}</p>
 
@@ -547,7 +598,7 @@ export default function BioscannerLaunchPage() {
             </div>
           )}
 
-          {step === 1 && (
+          {!showClosedScreen && step === 1 && (
             <div className="bsl-form">
               <p className="bsl-hint">{t.hint}</p>
 
@@ -573,7 +624,7 @@ export default function BioscannerLaunchPage() {
             </div>
           )}
 
-          {step === 2 && (
+          {!showClosedScreen && step === 2 && (
             <div className="bsl-form">
               <p className="bsl-hint">{t.hint}</p>
 
@@ -599,12 +650,24 @@ export default function BioscannerLaunchPage() {
             </div>
           )}
 
-          {step === 4 && (
+          {!showClosedScreen && step === 4 && (
             <div className="bsl-success">
               <img src={avatarSrc} className="bsl-success-avatar" alt="" draggable={false} />
               <p className="bsl-success-name">{name}</p>
               <h2 className="bsl-success-title" style={{ whiteSpace: "pre-line" }}>{t.successTitle}</h2>
-              <p className="bsl-success-body">{t.successBody}</p>
+              <div className="bsl-event">
+                <p className="bsl-event-row"><span className="bsl-event-ico">📅</span> {t.eventWhen}</p>
+                <div className="bsl-event-place">
+                  <p className="bsl-event-venue">{t.eventVenue}</p>
+                  <p className="bsl-event-address">{t.eventAddress}</p>
+                  <a className="bsl-location-btn" href="https://maps.app.goo.gl/hA75Xq7sdQYE1Fu28" target="_blank" rel="noopener noreferrer">
+                    <span className="bsl-event-ico">📍</span> {t.viewLocation}
+                  </a>
+                </div>
+                {hasLaptop && (
+                  <p className="bsl-laptop-note"><span className="bsl-event-ico">💻</span> {t.laptopReminder}</p>
+                )}
+              </div>
               <button className="bsl-success-update" onClick={() => setStep(0)}>
                 {t.updateData}
               </button>
@@ -614,7 +677,7 @@ export default function BioscannerLaunchPage() {
             </div>
           )}
 
-          {step === 3 && (
+          {!showClosedScreen && step === 3 && (
             <div className="bsl-submit">
               <div className="bsl-submit-stack">
                 {/* Folder back — lowest layer */}
@@ -633,7 +696,7 @@ export default function BioscannerLaunchPage() {
         </div>
 
         {/* Footer / CTA */}
-        {step < 3 && (
+        {step < 3 && !showClosedScreen && (
           <div className="bsl-footer">
             {step > 0 && (
               <button className="bsl-back" onClick={handleBack}>

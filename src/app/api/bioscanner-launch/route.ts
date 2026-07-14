@@ -6,6 +6,7 @@ import { getClientIp, writeLimiter } from "../../../lib/ratelimit";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 const MAX_SEATS = 30;
+const REG_DEADLINE = Date.parse("2026-07-14T23:00:00Z"); // 5:00pm CDMX (UTC-6)
 
 const bioscannerSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -81,6 +82,10 @@ export async function POST(req: Request) {
 
     if (existing) {
       return NextResponse.json({ error: "exists" }, { status: 200 });
+    }
+
+    if (Date.now() >= REG_DEADLINE) {
+      return NextResponse.json({ error: "closed" }, { status: 403 });
     }
 
     if (parseInt(countRow.count) >= MAX_SEATS) {

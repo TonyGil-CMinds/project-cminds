@@ -11389,6 +11389,120 @@ body.brand-page-active {
 
 .bsl-success-cancel:hover { color: #0D3B2E; }
 
+/* ── Bioscanner: closed screen + event details ── */
+.bsl-closed {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.bsl-closed-img {
+  max-width: 200px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  margin: 0 auto 0.8rem;
+}
+
+.bsl-closed-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  color: #0D3B2E;
+  line-height: 1.25;
+  margin: 0.2rem 0 0.8rem;
+  letter-spacing: -0.02em;
+}
+
+.bsl-closed-body {
+  font-size: 0.95rem;
+  color: rgba(13,59,46,0.65);
+  line-height: 1.55;
+  max-width: 340px;
+  margin: 0;
+}
+
+.bsl-event {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  margin: 0.2rem 0 1.6rem;
+  max-width: 340px;
+}
+
+.bsl-event-row {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.98rem;
+  font-weight: 600;
+  color: #0D3B2E;
+  margin: 0;
+}
+
+.bsl-event-place {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.bsl-event-venue {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0D3B2E;
+  margin: 0;
+}
+
+.bsl-event-address {
+  font-size: 0.85rem;
+  color: rgba(13,59,46,0.6);
+  line-height: 1.45;
+  margin: 0 0 0.5rem;
+}
+
+.bsl-location-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.2rem;
+  border-radius: 100px;
+  background: #0D3B2E;
+  color: #F0F8D6;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.bsl-location-btn:hover {
+  background: #0f4736;
+}
+
+.bsl-laptop-note {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0D3B2E;
+  background: rgba(203,232,107,0.55);
+  border-radius: 100px;
+  padding: 0.5rem 1rem;
+  margin: 0;
+}
+
+.bsl-event-ico {
+  font-size: 1em;
+  line-height: 1;
+}
+
 .bsl-submit-title {
   font-size: 1.3rem;
   font-weight: 700;
@@ -11476,4 +11590,10 @@ body.brand-page-active {
 
   /* Language toggle closer to edge on mobile */
   .bsl-lang { top: 1rem; right: 1rem; }
+
+  /* Closed screen + event details */
+  .bsl-closed-img { max-width: 140px; margin-bottom: 0.6rem; }
+  .bsl-closed-title { font-size: 1.3rem; }
+  .bsl-event { max-width: 100%; }
+  .bsl-event-address { max-width: 280px; }
 }
