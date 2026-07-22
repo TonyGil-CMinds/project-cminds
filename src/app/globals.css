@@ -705,6 +705,247 @@ body {
   will-change: transform, filter, opacity;
 }
 
+/* ── Home hero (dot-grid redesign) ── */
+
+.hero-glow {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 28%, rgba(255, 255, 255, 0.06), transparent 45%),
+    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(94, 193, 243, 0.16) 0%, rgba(94, 193, 243, 0.05) 35%, transparent 70%);
+}
+
+.hero-dotgrid {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.hero-bigtext {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 4vw;
+  pointer-events: none;
+  font-size: clamp(2.25rem, 8.5vw, 13rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  white-space: nowrap;
+  flex-wrap: nowrap;
+  gap: 0 0.3em;
+  color: #fff;
+  cursor: default;
+  user-select: none;
+}
+
+.hb-char {
+  display: inline-block;
+  will-change: transform, filter, opacity;
+}
+
+.hb-word-group {
+  display: inline-flex;
+  white-space: nowrap;
+}
+
+.hero-intro {
+  position: absolute;
+  left: 4%;
+  bottom: 4%;
+  z-index: 3;
+  max-width: 30rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.hero-intro p {
+  color: var(--color-text-dim);
+  font-size: 0.95rem;
+  line-height: 1.55;
+  margin: 0 0 1.5rem 0;
+}
+
+.hero-intro-lead {
+  color: #fff;
+}
+
+.hero-contact {
+  padding: 0.9rem 2rem;
+  text-decoration: none;
+  margin-bottom: 0;
+}
+
+.hero-scroll {
+  position: absolute;
+  left: 50%;
+  bottom: 3.5%;
+  transform: translateX(-50%);
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+
+.hero-scroll span {
+  color: var(--color-text-dim);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition: color 0.3s ease;
+}
+
+.hero-scroll:hover span {
+  color: #fff;
+}
+
+.hero-scroll-arrow {
+  width: 20px;
+  height: 20px;
+  animation: hero-scroll-bounce 1.6s ease-in-out infinite;
+}
+
+@keyframes hero-scroll-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(6px); }
+}
+
+.hero-post-card {
+  position: absolute;
+  right: 4%;
+  bottom: 4%;
+  z-index: 3;
+  width: 260px;
+  height: 220px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.35s ease;
+}
+
+.hero-post-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(var(--color-primary-rgb), 0.4);
+}
+
+.hero-post-card-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  z-index: 3;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.hero-post-card-close:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+/* Cover image fills the entire card as a background layer */
+.hero-post-card-img {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  background-color: rgba(255, 255, 255, 0.05);
+  transition: transform 0.5s ease;
+}
+
+.hero-post-card:hover .hero-post-card-img {
+  transform: scale(1.08);
+}
+
+/* Dark bottom→top gradient overlay: sits above the image, below the text */
+.hero-post-card-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.45) 45%, rgba(0, 0, 0, 0) 85%);
+}
+
+.hero-post-card-body {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  padding: 1rem 1.1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.hero-post-card-label {
+  color: var(--color-primary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.hero-post-card-title {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  .hero-bigtext {
+    font-size: clamp(2rem, 10vw, 3.4rem);
+    padding: 15vh 6vw 0;
+    white-space: normal;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    text-align: left;
+    gap: 0 0.28em;
+    row-gap: 0.1em;
+  }
+
+  .hero-intro {
+    left: 5%;
+    right: 5%;
+    bottom: 20%;
+    max-width: none;
+  }
+
+  .hero-post-card {
+    display: none;
+  }
+
+  .hero-scroll {
+    bottom: 3%;
+  }
+}
+
 /* ---- SCROLLABLE STEP 3 LAYOUT ---- */
 
 .page-container.is-scrollable {

@@ -13,7 +13,7 @@ import { Analytics } from '@vercel/analytics/next';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const LaserFlow = dynamic(() => import("../../components/reactbits/LaserFlow"), {
+const DotGridHills = dynamic(() => import("../../components/reactbits/DotGridHills"), {
   ssr: false,
   loading: () => null,
 });
@@ -32,10 +32,23 @@ const hexToRgb = (hex: string) => {
   return `${r}, ${g}, ${b}`;
 };
 
+const lerpHeroColor = (t: number): string => {
+  const a = [255, 255, 255];
+  const b = [94, 193, 243];
+  const r = Math.round(a[0] + (b[0] - a[0]) * t);
+  const g = Math.round(a[1] + (b[1] - a[1]) * t);
+  const bl = Math.round(a[2] + (b[2] - a[2]) * t);
+  return `rgb(${r}, ${g}, ${bl})`;
+};
+
 
 const COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
-const CYCLING_WORDS = ["Biodiversity", "Communities", "Oceans", "Cities"];
+
+const HERO_WORDS_A = ["FROM", "POSSIBILITY"];
+const HERO_WORDS_B = ["TO", "REALITY"];
+const MINDSCOPE_FEED_URL =
+  "https://cminds.base44.app/api/apps/6925f38be89e0d268185fecc/functions/publicBlogFeed?limit=6";
 
 const INITIATIVES = [
   {
@@ -141,6 +154,23 @@ const getColorCookie = (): string | null => {
   return match ? decodeURIComponent(match[1]) : null;
 };
 
+interface LatestPost {
+  title: string;
+  slug: string;
+  cover_image: string;
+}
+
+interface MindscopeFeedPost {
+  title: string;
+  slug: string;
+  cover_image: string;
+  language: string;
+}
+
+interface MindscopeFeedResponse {
+  posts: MindscopeFeedPost[];
+}
+
 
 export default function Hero() {
   const [loaderDone, setLoaderDone] = useState(false);
@@ -149,10 +179,34 @@ export default function Hero() {
     if (localStorage.getItem(LOADER_KEY) === "1") setLoaderDone(true);
   }, []);
   const [color, setColor] = useState(COLORS[0]);
-  const [currentWord, setCurrentWord] = useState(CYCLING_WORDS[0]);
-  const wordIndexRef = useRef(0);
-  const cyclingRef = useRef<HTMLSpanElement>(null);
-  const wordInitialized = useRef(false);
+
+  // Hero big text: hover-morphing phrase
+  const [heroPhrase, setHeroPhrase] = useState<"a" | "b">("a");
+  const heroTextRef = useRef<HTMLDivElement>(null);
+  const heroPhraseInitialized = useRef(false);
+
+  // Mobile: show the full static phrase instead of the hover morph
+  // Init false to match SSR output (avoids hydration mismatch); the effect
+  // below sets the real value right after mount.
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mql = window.matchMedia("(max-width: 767px)");
+    const handleChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    const handleResize = () => setIsMobile(mql.matches);
+    setIsMobile(mql.matches);
+    mql.addEventListener("change", handleChange);
+    window.addEventListener("resize", handleResize);
+    return () => {
+      mql.removeEventListener("change", handleChange);
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // Hero latest Mindscope post card
+  const [latestPost, setLatestPost] = useState<LatestPost | null>(null);
+  const [postCardDismissed, setPostCardDismissed] = useState(false);
 
   const [hwwWord, setHwwWord] = useState(HWW_WORDS[0]);
   const hwwWordIndexRef = useRef(0);
@@ -183,8 +237,8 @@ export default function Hero() {
         router.push(path);
       }
     };
-    // Animate hero text/button out, then trigger transition
-    gsap.to([".hero-line-anim", ".hero-scroll-btn"], {
+    // Animate hero text/cards out, then trigger transition
+    gsap.to([".hero-bigtext", ".hero-intro", ".hero-scroll", ".hero-post-card"], {
       opacity: 0, y: -22, filter: "blur(8px)",
       duration: 0.28, stagger: 0.04, ease: "power2.in",
       onComplete: doNavigate,
@@ -214,19 +268,40 @@ export default function Hero() {
     };
   }, [loaderDone]);
 
-  // Animate in each new word char-by-char (skip initial mount)
-  useGSAP(() => {
-    if (!wordInitialized.current) {
-      wordInitialized.current = true;
+  // Hero big text: per-character blur reveal. Stable, plain-effect driven
+  // (not useGSAP) so it fires reliably both on the loaderDone entrance and on
+  // every hover-morph, without depending on gsap context revert timing.
+  // Owns .hb-char opacity/transform/filter exclusively — nothing else in
+  // this component may touch those properties.
+  const animateHeroChars = () => {
+    if (!heroTextRef.current) return;
+    const chars = heroTextRef.current.querySelectorAll<HTMLSpanElement>('.hb-char');
+    if (!chars.length) return;
+    // Kill any in-flight tween (entrance or exit) so this always wins.
+    gsap.killTweensOf(chars);
+    gsap.fromTo(chars,
+      { opacity: 0, y: 46, filter: 'blur(16px)' },
+      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.7, stagger: { each: 0.035, from: 'start' }, ease: 'power3.out' }
+    );
+  };
+
+  // Entrance: run once loaderDone becomes true (also covers returning visitors
+  // where loaderDone is already true on first mount).
+  useEffect(() => {
+    if (loaderDone) animateHeroChars();
+  }, [loaderDone, isMobile]);
+
+  // Hover-morph "in" half: re-run the reveal every time the phrase changes,
+  // skipping the very first mount (handled by the loaderDone effect above
+  // instead). The "out" half runs synchronously in handleHeroPhraseHover
+  // below, before setHeroPhrase swaps the words.
+  useEffect(() => {
+    if (!heroPhraseInitialized.current) {
+      heroPhraseInitialized.current = true;
       return;
     }
-    if (!cyclingRef.current) return;
-    const chars = cyclingRef.current.querySelectorAll<HTMLSpanElement>('.hero-char');
-    gsap.fromTo(chars,
-      { opacity: 0, y: 18, filter: 'blur(10px)' },
-      { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.55, stagger: 0.05, ease: 'power2.out' }
-    );
-  }, [currentWord]);
+    animateHeroChars();
+  }, [heroPhrase]);
 
   // Animate in new hww cycling word when state changes (only after section entered)
   useGSAP(() => {
@@ -333,23 +408,67 @@ export default function Hero() {
     };
   }, [loaderDone]);
 
-  // Cycle words while on hero — wait for loader first
+  // Fetch the latest Mindscope publication for the hero post card
   useEffect(() => {
-    if (!loaderDone) return;
-    const id = setInterval(() => {
-      if (!cyclingRef.current) return;
-      const chars = cyclingRef.current.querySelectorAll<HTMLSpanElement>('.hero-char');
-      gsap.to(chars, {
-        opacity: 0, y: -15, filter: 'blur(10px)',
-        duration: 0.35, stagger: 0.04, ease: 'power2.in',
-        onComplete: () => {
-          wordIndexRef.current = (wordIndexRef.current + 1) % CYCLING_WORDS.length;
-          setCurrentWord(CYCLING_WORDS[wordIndexRef.current]);
-        }
-      });
-    }, 2800);
-    return () => clearInterval(id);
-  }, [loaderDone]);
+    let cancelled = false;
+    fetch(MINDSCOPE_FEED_URL)
+      .then((res) => res.json())
+      .then((data: MindscopeFeedResponse) => {
+        if (cancelled || !data?.posts?.length) return;
+        const enPosts = data.posts.filter((p) => p.language === "en");
+        const first = enPosts[0];
+        if (!first) return;
+        setLatestPost({ title: first.title, slug: first.slug, cover_image: first.cover_image });
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  // Featured post card entrance: animate in from below with a curved ease
+  // the first time it mounts (i.e. once latestPost is fetched). Owns
+  // .hero-post-card opacity/transform exclusively — excluded from the
+  // [loaderDone] entrance block above for the same reason.
+  useEffect(() => {
+    if (!latestPost || postCardDismissed) return;
+    gsap.fromTo(".hero-post-card",
+      { y: () => window.innerHeight, opacity: 0 },
+      { y: 0, opacity: 1, duration: 1.05, ease: "back.out(1.1)" }
+    );
+  }, [latestPost, postCardDismissed]);
+
+  // Featured post card exit: slide down off the viewport with a curved ease,
+  // then unmount once it's fully off-screen.
+  const dismissPostCard = () => {
+    gsap.killTweensOf(".hero-post-card");
+    gsap.to(".hero-post-card", {
+      y: () => window.innerHeight,
+      opacity: 0,
+      duration: 0.7,
+      ease: "back.in(1.2)",
+      onComplete: () => setPostCardDismissed(true),
+    });
+  };
+
+  // Hero big text hover morph: out -> swap -> in.
+  // Root cause of the previous "no visible animation" bug: the [loaderDone]
+  // useGSAP entrance block unconditionally ran `gsap.set(".hero-bigtext", { opacity: 1 })`
+  // and included ".hero-bigtext" in its hide/animate targets — a competing
+  // tween on the container fought with the per-char tweens below every time
+  // React re-rendered. The char-level animation now exclusively owns
+  // `.hb-char` opacity/transform/filter; the container is untouched.
+  const handleHeroPhraseHover = (phrase: "a" | "b") => {
+    if (isMobile) return; // mobile shows the full static phrase; no hover morph
+    if (heroPhrase === phrase) return; // guard: re-entering the same phrase is a no-op
+    if (!heroTextRef.current) { setHeroPhrase(phrase); return; }
+    const chars = heroTextRef.current.querySelectorAll<HTMLSpanElement>('.hb-char');
+    // Kill any in-flight tween so rapid hover in/out interrupts cleanly —
+    // whichever morph request lands last wins.
+    gsap.killTweensOf(chars);
+    gsap.to(chars, {
+      opacity: 0, y: -32, filter: 'blur(14px)', duration: 0.34, stagger: { each: 0.02, from: 'start' }, ease: 'power2.in',
+      onComplete: () => setHeroPhrase(phrase),
+    });
+  };
 
   // Sync Nav Indicator
   useEffect(() => {
@@ -369,7 +488,10 @@ export default function Hero() {
       const fromCore = typeof sessionStorage !== "undefined" && sessionStorage.getItem("vt_from") === "core";
 
       // When returning from /core, nav is already visible via view transition — don't hide it
-      const hideTargets: string[] = [".hero-line-anim", ".hero-scroll-btn", ".laser-container", ".orbit-bg"];
+      // ".hero-bigtext"/".hb-word" and ".hero-post-card" are intentionally
+      // excluded here — dedicated effects (animateWordsIn / the latestPost
+      // entrance effect below) own their opacity/transform exclusively.
+      const hideTargets: string[] = [".hero-intro", ".hero-scroll", ".hero-dotgrid"];
       if (!fromCore) hideTargets.unshift(".main-nav");
       gsap.set(hideTargets, { opacity: 0 });
 
@@ -383,13 +505,12 @@ export default function Hero() {
       if (!fromCore) {
         gsap.fromTo(".main-nav", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" });
       }
-      gsap.fromTo(".hero-line-anim", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 1.2, stagger: 0.2, ease: "power3.out", delay: 0.2 });
-      gsap.fromTo(".hero-scroll-btn", { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 1, ease: "power2.out", delay: 1 });
-      gsap.fromTo(".laser-container", { opacity: 0, y: 100 }, { opacity: 1, y: 0, duration: 2, ease: "power3.out", delay: 0.5 });
-      gsap.fromTo(".orbit-bg", { opacity: 0, scale: 1.1 }, { opacity: 1, scale: 1, duration: 2, ease: "power2.out", delay: 0.3 });
+      gsap.fromTo(".hero-dotgrid", { opacity: 0 }, { opacity: 1, duration: 1.5, ease: "power2.out", delay: 0.2 });
+      gsap.fromTo(".hero-intro", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 0.8 });
+      gsap.fromTo(".hero-scroll", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out", delay: 1 });
 
-      // Orbit fades out as core section enters, reverses on scroll back
-      gsap.fromTo(".orbit-bg",
+      // Dot-grid fades out as core section enters, reverses on scroll back
+      gsap.fromTo(".hero-dotgrid",
         { opacity: 1 },
         {
           opacity: 0,
@@ -682,6 +803,9 @@ export default function Hero() {
 
           {/* ── Hero viewport ── */}
           <div className="hero-section">
+            {/* Soft ambient light glow — backmost layer */}
+            <div className="hero-glow" aria-hidden="true" />
+
             {/* Navigation */}
             <nav className="main-nav">
               <div className="nav-brand" style={{ cursor: "pointer" }} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
@@ -711,101 +835,86 @@ export default function Hero() {
               <NavSearch />
             </nav>
 
-            {/* Orbit background */}
-            <div className="orbit-bg">
-              <svg viewBox="0 0 1213 616" fill="none" xmlns="http://www.w3.org/2000/svg" className="orbit-svg">
-                <defs>
-                  <linearGradient id="paint0_linear" x1="521.78" y1="0.250021" x2="521.78" y2="615.354" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="white" /><stop offset="1" stopColor="#999999" stopOpacity="0" />
-                  </linearGradient>
-                  <linearGradient id="paint1_linear" x1="365.142" y1="0.250004" x2="365.142" y2="615.354" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="white" /><stop offset="1" stopColor="#999999" stopOpacity="0" />
-                  </linearGradient>
-                  <linearGradient id="paint2_linear" x1="307.552" y1="0.249998" x2="307.552" y2="615.354" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="white" /><stop offset="1" stopColor="#999999" stopOpacity="0" />
-                  </linearGradient>
-                  <linearGradient id="paint3_linear" x1="365.142" y1="0.250004" x2="365.142" y2="615.354" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="white" /><stop offset="1" stopColor="#999999" stopOpacity="0" />
-                  </linearGradient>
-                  <linearGradient id="paint4_linear" x1="521.78" y1="0.250021" x2="521.78" y2="615.354" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="white" /><stop offset="1" stopColor="#999999" stopOpacity="0" />
-                  </linearGradient>
-                  <linearGradient id="paint5_linear" x1="614.853" y1="349.214" x2="702.05" y2="341.281" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="white" /><stop offset="1" stopColor="#999999" stopOpacity="0" />
-                  </linearGradient>
-                  <linearGradient id="paint6_linear" x1="1225.65" y1="391.256" x2="614.793" y2="257.092" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="white" /><stop offset="0.583254" stopColor="#999999" stopOpacity="0" />
-                  </linearGradient>
-                  <linearGradient id="paint7_linear" x1="1212.11" y1="303.113" x2="597.504" y2="312.476" gradientUnits="userSpaceOnUse">
-                    <stop stopColor="white" /><stop offset="0.529596" stopColor="#999999" stopOpacity="0" />
-                  </linearGradient>
-                  <path id="orbit1" d="M521.78 0.250021C470.377 0.250015 428.706 137.946 428.706 307.802C428.706 477.658 470.376 615.354 521.78 615.354C573.183 615.354 614.853 477.658 614.853 307.802C614.853 137.946 573.183 0.250026 521.78 0.250021Z" />
-                  <path id="orbit2" d="M365.142 0.250004C227.238 0.249989 115.445 137.946 115.445 307.802C115.445 477.658 227.238 615.354 365.142 615.354C503.046 615.354 614.839 477.658 614.839 307.802C614.839 137.946 503.046 0.250019 365.142 0.250004Z" />
-                  <path id="orbit3" d="M307.552 0.249998C137.834 0.24998 0.250097 137.946 0.250084 307.802C0.250071 477.658 137.834 615.354 307.552 615.354C477.27 615.354 614.853 477.658 614.853 307.802C614.853 137.946 477.27 0.250016 307.552 0.249998Z" />
-                  <path id="orbit4" d="M777.421 0.250074C687.637 0.250065 614.853 137.946 614.853 307.802C614.853 477.658 687.637 615.354 777.421 615.354C867.205 615.354 939.989 477.658 939.989 307.802C939.989 137.946 867.205 0.250084 777.421 0.250074Z" />
-                  <path id="orbit5" d="M857.047 0.250066C723.279 0.250052 614.839 137.946 614.839 307.802C614.839 477.658 723.279 615.354 857.047 615.354C990.816 615.354 1099.26 477.658 1099.26 307.802C1099.26 137.946 990.816 0.25008 857.047 0.250066Z" />
-                  <path id="orbit6" d="M904.806 0.250065C735.088 0.25005 597.504 137.946 597.504 307.802C597.504 477.658 735.088 615.354 904.806 615.354C1074.52 615.354 1212.11 477.658 1212.11 307.802C1212.11 137.946 1074.52 0.25008 904.806 0.250065Z" />
-                </defs>
-                <g opacity="0.8">
-                  <use href="#orbit1" stroke="url(#paint0_linear)" strokeWidth="0.5" strokeMiterlimit="10" />
-                  <use href="#orbit2" stroke="url(#paint1_linear)" strokeWidth="0.5" strokeMiterlimit="10" />
-                  <use href="#orbit3" stroke="url(#paint2_linear)" strokeWidth="0.5" strokeMiterlimit="10" />
-                  <use href="#orbit2" fill="url(#paint3_linear)" opacity="0.05" />
-                  <use href="#orbit1" fill="url(#paint4_linear)" opacity="0.05" />
-                  <use href="#orbit4" stroke="url(#paint5_linear)" strokeWidth="0.5" strokeMiterlimit="10" />
-                  <use href="#orbit5" stroke="url(#paint6_linear)" strokeWidth="0.5" strokeMiterlimit="10" />
-                  <use href="#orbit6" stroke="url(#paint7_linear)" strokeWidth="0.5" strokeMiterlimit="10" />
-                </g>
-                <circle r="4.5" fill="var(--color-primary)" opacity="0.9">
-                  <animateMotion dur="20s" repeatCount="indefinite" begin="0s"><mpath href="#orbit2" /></animateMotion>
-                </circle>
-                <circle r="3.5" fill="white" opacity="0.7">
-                  <animateMotion dur="35s" repeatCount="indefinite" begin="-5s"><mpath href="#orbit6" /></animateMotion>
-                </circle>
-                <circle r="2.5" fill="var(--color-primary)" opacity="0.5">
-                  <animateMotion dur="25s" repeatCount="indefinite" begin="-10s"><mpath href="#orbit4" /></animateMotion>
-                </circle>
-                <circle r="5.5" fill="white" opacity="0.6">
-                  <animateMotion dur="40s" repeatCount="indefinite" begin="-20s"><mpath href="#orbit1" /></animateMotion>
-                </circle>
-              </svg>
+            {/* Dot-grid ambient background */}
+            <div className="hero-dotgrid">
+              <DotGridHills color={color} />
             </div>
 
-            {/* Laser */}
-            <div className="laser-container">
-              <LaserFlow
-                className="" style={{}} dpr={1} color={color}
-                horizontalBeamOffset={0.0} verticalBeamOffset={0.0}
-                horizontalSizing={2} verticalSizing={3.8}
-                wispDensity={2} wispSpeed={15} wispIntensity={12.5}
-                flowSpeed={0.35} flowStrength={0.25}
-                fogIntensity={0.79} fogScale={0.3} fogFallSpeed={0.6}
-                decay={1.1} falloffStart={3}
-              />
-            </div>
-
-            {/* Hero copy */}
-            <div className="hero-content">
-              <h1 className="hero-heading">
-                <div className="hero-line-anim">Scaling</div>
-                <div className="hero-line-anim">Purposeful</div>
-                <div className="hero-line-anim">Innovation for</div>
-                <div className="hero-line-anim">
-                  <span className="hero-highlight" ref={cyclingRef}>
-                    {currentWord.split('').map((char, i) => (
-                      <span key={`${currentWord}-${i}`} className="hero-char">{char}</span>
-                    ))}
+            {/* Big morphing hero text */}
+            <div
+              className="hero-bigtext"
+              ref={heroTextRef}
+              onMouseEnter={() => handleHeroPhraseHover("b")}
+              onMouseLeave={() => handleHeroPhraseHover("a")}
+            >
+              {(() => {
+                const phrase = isMobile
+                  ? "FROM POSSIBILITY TO REALITY"
+                  : heroPhrase === "a" ? "FROM POSSIBILITY" : "TO REALITY";
+                const phraseKey = `${heroPhrase}-${isMobile}`;
+                const words = phrase.split(" ");
+                const total = phrase.replace(/ /g, "").length;
+                let idx = 0;
+                return words.map((word, wi) => (
+                  <span className="hb-word-group" key={`${phraseKey}-${wi}`}>
+                    {word.split("").map((ch, ci) => {
+                      const chColor = lerpHeroColor(total > 1 ? idx / (total - 1) : 0);
+                      idx += 1;
+                      return (
+                        <span key={ci} className="hb-char" style={{ color: chColor }}>
+                          {ch}
+                        </span>
+                      );
+                    })}
                   </span>
-                </div>
-              </h1>
-              <button
-                className="hero-button hero-scroll-btn"
-                style={{ padding: "0.9rem 2rem", marginTop: "1rem" }}
-                onClick={() => document.querySelector(".core-section")?.scrollIntoView({ behavior: "smooth" })}
-              >
-                Scroll down ↓
-              </button>
+                ));
+              })()}
             </div>
+
+            {/* Bottom-left intro + CTA */}
+            <div className="hero-intro">
+              <p>
+                <span className="hero-intro-lead">Meaningful transformation requires new forms of collaboration,</span> governance, and collective intelligence capable of bridging disciplines, sectors, cultures, and knowledge systems.
+              </p>
+              <a href="mailto:contact@cminds.co" className="hero-button hero-contact">
+                Contact us
+              </a>
+            </div>
+
+            {/* Center-bottom scroll indicator */}
+            <div
+              className="hero-scroll"
+              onClick={() => document.querySelector(".core-section")?.scrollIntoView({ behavior: "smooth" })}
+            >
+              <span>Scroll down</span>
+              <img src="/assets/ui/Down.svg" alt="" className="hero-scroll-arrow" />
+            </div>
+
+            {/* Bottom-right latest Mindscope post card */}
+            {latestPost && !postCardDismissed && (
+              <div
+                className="hero-post-card"
+                onClick={() => navigateWithTransition(`/mindscope/${latestPost.slug}`)}
+              >
+                <button
+                  type="button"
+                  className="hero-post-card-close"
+                  onClick={(e) => { e.stopPropagation(); dismissPostCard(); }}
+                  aria-label="Dismiss"
+                >
+                  ×
+                </button>
+                <div
+                  className="hero-post-card-img"
+                  style={{ backgroundImage: `url(${latestPost.cover_image})` }}
+                />
+                <div className="hero-post-card-overlay" />
+                <div className="hero-post-card-body">
+                  <span className="hero-post-card-label">New in Mindscope ®</span>
+                  <p className="hero-post-card-title">{latestPost.title}</p>
+                </div>
+              </div>
+            )}
 
           </div>{/* /hero-section */}
 

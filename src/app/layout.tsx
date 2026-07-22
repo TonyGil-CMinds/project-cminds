@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import ConstructionBanner from "../components/ConstructionBanner";
 import MobileMenu from "../components/MobileMenu";
 import SubscribeModalProvider from "../components/SubscribeModalProvider";
 
@@ -97,7 +96,6 @@ export default function RootLayout({
         <SubscribeModalProvider>
           <MobileMenu />
           {children}
-          <ConstructionBanner />
         </SubscribeModalProvider>
       </body>
     </html>
