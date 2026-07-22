@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import NavSearch from "../../../components/NavSearch";
+import { ScrollBar } from "@/components/v1/skiper1";
 import { ThinkingOrb } from "thinking-orbs";
 
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
@@ -80,10 +81,6 @@ export default function PostPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const msItemRef    = useRef<HTMLDivElement>(null);
   const navLightRef  = useRef<HTMLDivElement>(null);
-  const trackElRef      = useRef<HTMLDivElement>(null);
-  const isDragging      = useRef(false);
-  const swipeTouchStart = useRef<number | null>(null);
-  const sectionsRef  = useRef<Section[]>([]);
 
   const [post, setPost]             = useState<Post | null>(null);
   const [postHtml, setPostHtml]     = useState("");
@@ -103,8 +100,6 @@ export default function PostPage() {
   const nextPostRef     = useRef<Post | null>(null);
   const isNavigatingRef = useRef(false);
 
-  // Keep sectionsRef in sync to avoid stale closure in drag handler
-  useEffect(() => { sectionsRef.current = sections; }, [sections]);
   useEffect(() => { nextPostRef.current = nextPost; }, [nextPost]);
 
   // ── Color cookie ──────────────────────────────────────────
@@ -264,32 +259,6 @@ export default function PostPage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // ── Drag handler for slider thumb ─────────────────────────
-  useEffect(() => {
-    const onMove = (e: MouseEvent | TouchEvent) => {
-      if (!isDragging.current || !trackElRef.current) return;
-      const rect    = trackElRef.current.getBoundingClientRect();
-      const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-      const ratio   = Math.max(0, Math.min((clientX - rect.left) / rect.width, 1));
-      const idx     = Math.round(ratio * (sectionsRef.current.length - 1));
-      setActiveSection(idx);
-      const el = document.getElementById(sectionsRef.current[idx]?.id ?? "");
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    };
-    const onUp = () => { isDragging.current = false; };
-
-    document.addEventListener("mousemove", onMove);
-    document.addEventListener("mouseup", onUp);
-    document.addEventListener("touchmove", onMove, { passive: true });
-    document.addEventListener("touchend", onUp);
-    return () => {
-      document.removeEventListener("mousemove", onMove);
-      document.removeEventListener("mouseup", onUp);
-      document.removeEventListener("touchmove", onMove);
-      document.removeEventListener("touchend", onUp);
-    };
-  }, []);
-
   // ── Navigation ────────────────────────────────────────────
   const navigateWithTransition = (path: string) => {
     sessionStorage.setItem("vt_from", "post");
@@ -307,41 +276,6 @@ export default function PostPage() {
       onComplete: doNavigate,
     });
   };
-
-  const scrollToSection = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-
-  const handleTrackClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!trackElRef.current || isDragging.current) return;
-    const rect  = trackElRef.current.getBoundingClientRect();
-    const ratio = Math.max(0, Math.min((e.clientX - rect.left) / rect.width, 1));
-    const idx   = Math.round(ratio * (sections.length - 1));
-    setActiveSection(idx);
-    scrollToSection(sections[idx]?.id ?? "");
-  };
-
-  const handleCardTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
-    swipeTouchStart.current = e.touches[0].clientX;
-  };
-
-  const handleCardTouchEnd = (e: React.TouchEvent<HTMLDivElement>) => {
-    if (swipeTouchStart.current === null) return;
-    const delta = e.changedTouches[0].clientX - swipeTouchStart.current;
-    swipeTouchStart.current = null;
-    if (Math.abs(delta) < 40) return;
-    const next = delta < 0
-      ? Math.min(activeSection + 1, sections.length - 1)
-      : Math.max(activeSection - 1, 0);
-    if (next === activeSection) return;
-    setActiveSection(next);
-    scrollToSection(sections[next]?.id ?? "");
-  };
-
-  const thumbPct = sections.length > 1
-    ? (activeSection / (sections.length - 1)) * 100
-    : 0;
 
   return (
     <div ref={containerRef} className="ms-post-page">
@@ -434,52 +368,11 @@ export default function PostPage() {
             </div>
           )}
 
-          {/* Reading slider */}
-          {sections.length > 1 && (
-            <div className="ms-slider">
-              {/* Label card */}
-              <div className="ms-slider-label-card">
-                <span className="ms-slider-num">#{activeSection + 1}</span>
-                {" "}{sections[activeSection]?.label}
-              </div>
-
-              {/* Track card */}
-              <div
-                className="ms-slider-track-card"
-                onTouchStart={handleCardTouchStart}
-                onTouchEnd={handleCardTouchEnd}
-              >
-                <div
-                  ref={trackElRef}
-                  className="ms-slider-track"
-                  onClick={handleTrackClick}
-                >
-                  {/* Ruler: major ticks mark section starts, minor ticks fill gaps */}
-                  <div className="ms-slider-ticks">
-                    {Array.from({ length: 55 }, (_, i) => {
-                      const isMajor = sections.some((_, si) =>
-                        Math.round((si / Math.max(sections.length - 1, 1)) * 54) === i
-                      );
-                      return (
-                        <div
-                          key={i}
-                          className={`ms-slider-tick${isMajor ? " major" : ""}`}
-                        />
-                      );
-                    })}
-                  </div>
-
-                  {/* Draggable thumb */}
-                  <div
-                    className="ms-slider-thumb"
-                    style={{ left: `${thumbPct}%` }}
-                    onMouseDown={(e) => { e.stopPropagation(); isDragging.current = true; }}
-                    onTouchStart={(e) => { e.stopPropagation(); isDragging.current = true; }}
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Reading progress scrollbar */}
+          <ScrollBar
+            label={`#${activeSection + 1} · ${sections[activeSection]?.label ?? ""}`}
+            show={sections.length > 1}
+          />
         </>
       )}
 
