@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import NavSearch from "../../../components/NavSearch";
+import { ThinkingOrb } from "thinking-orbs";
 
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
@@ -376,7 +377,7 @@ export default function PostPage() {
       {/* Post content */}
       {loading && (
         <div className="ms-post-loading">
-          <span className="ms-post-loading-dot" />
+          <ThinkingOrb state="solving" size={64} theme="dark" />
         </div>
       )}
 
