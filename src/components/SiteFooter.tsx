@@ -17,6 +17,7 @@ export default function SiteFooter() {
   const pathname = usePathname();
   const emailId  = useId();
   const { open: openSubscribeModal } = useSubscribeModal();
+  const year = new Date().getFullYear();
 
   const navigate = (path: string) => {
     if (typeof document !== "undefined" && document.startViewTransition) {
@@ -40,7 +41,7 @@ export default function SiteFooter() {
       <div className="footer-main">
         <div className="footer-brand-block">
           <img src="/logo.svg" alt="C Minds" className="footer-logo" />
-          <p className="footer-copy desktop-copy">© 2025 C Minds All rights reserved.</p>
+          <p className="footer-copy desktop-copy">© {year} C Minds All rights reserved.</p>
         </div>
 
         <div className="footer-column footer-site-map">
@@ -83,7 +84,7 @@ export default function SiteFooter() {
           </div>
         </div>
 
-        <p className="footer-copy mobile-copy">© 2026 C Minds All rights reserved.</p>
+        <p className="footer-copy mobile-copy">© {year} C Minds All rights reserved.</p>
       </div>
     </footer>
   );
