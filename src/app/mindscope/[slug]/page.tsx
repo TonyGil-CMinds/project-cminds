@@ -82,6 +82,8 @@ export default function PostPage() {
   const containerRef = useRef<HTMLDivElement>(null);
   const msItemRef    = useRef<HTMLDivElement>(null);
   const navLightRef  = useRef<HTMLDivElement>(null);
+  const nextFillRef  = useRef<HTMLDivElement>(null);
+  const nextTeaseRef = useRef<HTMLDivElement>(null);
 
   const [post, setPost]             = useState<Post | null>(null);
   const [postHtml, setPostHtml]     = useState("");
@@ -89,7 +91,6 @@ export default function PostPage() {
   const [activeSection, setActiveSection] = useState(0);
   const [loading, setLoading]       = useState(true);
   const [nextPost, setNextPost]     = useState<Post | null>(null);
-  const [nextProgress, setNextProgress] = useState(0);
   const [copied, setCopied]         = useState(false);
 
   const handleCopy = () => {
@@ -127,7 +128,8 @@ export default function PostPage() {
   // ── Reset on slug change ──────────────────────────────────
   useEffect(() => {
     isNavigatingRef.current = false;
-    setNextProgress(0);
+    if (nextFillRef.current) gsap.set(nextFillRef.current, { scaleX: 0 });
+    if (nextTeaseRef.current) gsap.set(nextTeaseRef.current, { opacity: 0 });
     window.scrollTo(0, 0);
   }, [slug]);
 
@@ -223,42 +225,94 @@ export default function PostPage() {
     };
   }, [sections]);
 
-  // ── Next-post scroll trigger ──────────────────────────────
+  // ── Next-post wheel gate: wheel on desktop, tap on touch ──
   useEffect(() => {
-    // Total extra scroll: 220px tease zone + 560px confirmation zone = 780px
-    const BUFFER_H = 780;
-    // Navigation only fires once progress reaches 1 (absolute bottom)
-    const onScroll = () => {
+    const fill  = nextFillRef.current;
+    const tease = nextTeaseRef.current;
+
+    const atBottom = () =>
+      document.documentElement.scrollHeight - window.scrollY - window.innerHeight <= 4;
+
+    const navigateToNext = () => {
       if (isNavigatingRef.current) return;
-      const distFromBottom =
-        document.documentElement.scrollHeight - window.scrollY - window.innerHeight;
-      const progress = Math.max(0, Math.min(1, 1 - distFromBottom / BUFFER_H));
-      setNextProgress(progress);
-      if (distFromBottom <= 2 && nextPostRef.current) {
-        isNavigatingRef.current = true;
-        const next = nextPostRef.current;
-        gsap.to(".ms-post-date, .ms-post-title, .ms-post-cover, .ms-post-body", {
-          y: -50,
-          opacity: 0,
-          scale: 0.95,
-          duration: 0.45,
-          stagger: 0.06,
-          ease: "power3.in",
-          onComplete: () => {
-            if (typeof document !== "undefined" && "startViewTransition" in document) {
-              (document as any).startViewTransition(() => {
-                startTransition(() => { router.push(`/mindscope/${next.slug}`); });
-              });
-            } else {
-              router.push(`/mindscope/${next.slug}`);
-            }
-          },
-        });
+      const next = nextPostRef.current;
+      if (!next) return;
+      isNavigatingRef.current = true;
+      gsap.to(".ms-post-date, .ms-post-title, .ms-post-cover, .ms-post-body", {
+        y: -50,
+        opacity: 0,
+        scale: 0.95,
+        duration: 0.45,
+        stagger: 0.06,
+        ease: "power3.in",
+        onComplete: () => {
+          if (typeof document !== "undefined" && "startViewTransition" in document) {
+            (document as any).startViewTransition(() => {
+              startTransition(() => { router.push(`/mindscope/${next.slug}`); });
+            });
+          } else {
+            router.push(`/mindscope/${next.slug}`);
+          }
+        },
+      });
+    };
+
+    const isTouch = window.matchMedia("(pointer: coarse)").matches;
+
+    if (isTouch) {
+      const onTap = () => {
+        if (isNavigatingRef.current) return;
+        if (!atBottom()) return;
+        navigateToNext();
+      };
+      window.addEventListener("touchend", onTap);
+      return () => window.removeEventListener("touchend", onTap);
+    }
+
+    if (!fill) return;
+
+    let progress = 0;
+    let drainId: ReturnType<typeof setTimeout> | null = null;
+
+    const drainBack = () => {
+      progress = 0;
+      gsap.to(fill, { scaleX: 0, duration: 0.7, ease: "elastic.out(1, 0.45)" });
+      if (tease) gsap.to(tease, { opacity: 0, duration: 0.5, ease: "power2.out" });
+    };
+
+    const onWheel = (e: WheelEvent) => {
+      if (isNavigatingRef.current) return;
+      if (!atBottom()) return;
+      if (e.deltaY <= 0) {
+        if (progress > 0) { e.preventDefault(); drainBack(); }
+        return;
+      }
+
+      e.preventDefault();
+      if (tease) gsap.to(tease, { opacity: 1, duration: 0.3, ease: "power2.out" });
+
+      progress = Math.min(1, progress + e.deltaY / 700);
+      gsap.killTweensOf(fill);
+      gsap.to(fill, { scaleX: progress, duration: 0.22, ease: "power2.out" });
+
+      if (drainId) clearTimeout(drainId);
+      drainId = setTimeout(() => {
+        if (isNavigatingRef.current) return;
+        drainBack();
+      }, 700);
+
+      if (progress >= 1) {
+        if (drainId) clearTimeout(drainId);
+        navigateToNext();
       }
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+
+    window.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      if (drainId) clearTimeout(drainId);
+    };
+  }, [router]);
 
   // ── Navigation ────────────────────────────────────────────
   const navigateWithTransition = (path: string) => {
@@ -392,16 +446,13 @@ export default function PostPage() {
           {/* Next post scroll buffer */}
           {nextPost && (
             <div className="ms-next-buffer">
-              <div className="ms-next-tease" style={{ opacity: Math.max(0, Math.min(1, (nextProgress - 0.08) / 0.2)) }}>
+              <div ref={nextTeaseRef} className="ms-next-tease">
                 <p className="ms-next-tease-label">
                   Continue scrolling to<br />reveal next post
                 </p>
                 <div className="ms-next-arrow">↓</div>
                 <div className="ms-next-progress-track">
-                  <div
-                    className="ms-next-progress-fill"
-                    style={{ width: `${Math.max(0, Math.min(100, ((nextProgress - 0.28) / 0.72) * 100))}%` }}
-                  />
+                  <div ref={nextFillRef} className="ms-next-progress-fill" />
                 </div>
               </div>
             </div>
