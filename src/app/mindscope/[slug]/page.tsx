@@ -10,6 +10,7 @@ import { ThinkingOrb } from "thinking-orbs";
 
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://cminds.co";
 
 function hexToRgb(hex: string) {
   const n = parseInt(hex.slice(1), 16);
@@ -317,6 +318,44 @@ export default function PostPage() {
 
       {!loading && post && (
         <>
+          <nav className="ms-breadcrumb" aria-label="Breadcrumb">
+            <span className="ms-crumb-link" onClick={() => navigateWithTransition("/mindscope")}>
+              Mindscope
+            </span>
+            <span className="ms-crumb-sep">/</span>
+            <span className="ms-crumb-current" aria-current="page">{post.title}</span>
+          </nav>
+
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  {
+                    "@type": "ListItem",
+                    position: 1,
+                    name: "Home",
+                    item: `${SITE_URL}/`,
+                  },
+                  {
+                    "@type": "ListItem",
+                    position: 2,
+                    name: "Mindscope",
+                    item: `${SITE_URL}/mindscope`,
+                  },
+                  {
+                    "@type": "ListItem",
+                    position: 3,
+                    name: post.title,
+                    item: `${SITE_URL}/mindscope/${slug}`,
+                  },
+                ],
+              }),
+            }}
+          />
+
           <div className="ms-post-header">
             <p className="ms-post-date">
               {fmtDate(post.published_date)}

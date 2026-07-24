@@ -4083,11 +4083,37 @@ body {
 }
 .ms-post-not-found button:hover { border-color: var(--color-primary); }
 
+/* Breadcrumb — sits above the post header, clears the fixed .main-nav */
+.ms-breadcrumb {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: max(6rem, 14vh) 2rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text-dim);
+}
+.ms-crumb-link {
+  cursor: pointer;
+  color: var(--color-text-dim);
+  transition: color 0.2s;
+}
+.ms-crumb-link:hover { color: var(--color-primary); }
+.ms-crumb-sep { opacity: 0.4; }
+.ms-crumb-current {
+  color: rgba(255, 255, 255, 0.75);
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Post header — centered column */
 .ms-post-header {
   max-width: 700px;
   margin: 0 auto;
-  padding: max(6rem, 14vh) 2rem 0;
+  padding: 1.25rem 2rem 0;
   text-align: center;
 }
 
@@ -5776,8 +5802,14 @@ body {
 }
 
 @media (max-width: 768px) {
-  .ms-post-header {
+  .ms-breadcrumb {
     padding: max(5rem, 12vh) 1.4rem 0;
+  }
+  .ms-crumb-current {
+    max-width: 160px;
+  }
+  .ms-post-header {
+    padding: 1rem 1.4rem 0;
   }
   .ms-post-body {
     padding: 2.5rem 1.4rem 7rem;
