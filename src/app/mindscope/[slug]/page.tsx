@@ -229,8 +229,12 @@ export default function PostPage() {
   useEffect(() => {
     const fill  = nextFillRef.current;
 
+    // Engage once the end-of-article buffer is substantially in view
+    // (within half a viewport of the bottom), so the wheel fills the bar
+    // right where the "Continue scrolling" prompt appears.
     const atBottom = () =>
-      document.documentElement.scrollHeight - window.scrollY - window.innerHeight <= 4;
+      document.documentElement.scrollHeight - window.scrollY - window.innerHeight
+        <= window.innerHeight * 0.5;
 
     const navigateToNext = () => {
       if (isNavigatingRef.current) return;
@@ -309,7 +313,9 @@ export default function PostPage() {
       window.removeEventListener("wheel", onWheel);
       if (drainId) clearTimeout(drainId);
     };
-  }, [router]);
+    // Re-run once the post/next-post load so nextFillRef exists and the
+    // wheel listener actually gets attached (fill is null on first mount).
+  }, [router, nextPost, loading]);
 
   // ── Navigation ────────────────────────────────────────────
   const navigateWithTransition = (path: string) => {
