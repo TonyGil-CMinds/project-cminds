@@ -5780,7 +5780,7 @@ body {
   text-align: center;
   pointer-events: none;
   user-select: none;
-  opacity: 0;
+  opacity: 1;
 }
 
 .ms-next-tease-label {

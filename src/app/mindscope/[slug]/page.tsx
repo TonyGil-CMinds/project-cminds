@@ -228,7 +228,6 @@ export default function PostPage() {
   // ── Next-post wheel gate: wheel on desktop, tap on touch ──
   useEffect(() => {
     const fill  = nextFillRef.current;
-    const tease = nextTeaseRef.current;
 
     const atBottom = () =>
       document.documentElement.scrollHeight - window.scrollY - window.innerHeight <= 4;
@@ -277,7 +276,6 @@ export default function PostPage() {
     const drainBack = () => {
       progress = 0;
       gsap.to(fill, { scaleX: 0, duration: 0.7, ease: "elastic.out(1, 0.45)" });
-      if (tease) gsap.to(tease, { opacity: 0, duration: 0.5, ease: "power2.out" });
     };
 
     const onWheel = (e: WheelEvent) => {
@@ -289,7 +287,6 @@ export default function PostPage() {
       }
 
       e.preventDefault();
-      if (tease) gsap.to(tease, { opacity: 1, duration: 0.3, ease: "power2.out" });
 
       progress = Math.min(1, progress + e.deltaY / 700);
       gsap.killTweensOf(fill);
