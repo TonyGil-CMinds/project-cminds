@@ -4041,6 +4041,25 @@ body {
   overflow-x: hidden;
 }
 
+/* Blue light gradient anchored top-right, radiating diagonally toward
+   the mid/lower-left. Overrides the generic centered .bg-glow on this page. */
+.ms-post-page .bg-glow {
+  top: 0;
+  left: auto;
+  right: 0;
+  transform: none;
+  width: 100vw;
+  height: 95vh;
+  border-radius: 0;
+  background: radial-gradient(
+    ellipse 75% 80% at 88% 0%,
+    rgba(var(--color-primary-rgb), 0.22) 0%,
+    rgba(var(--color-primary-rgb), 0.08) 34%,
+    rgba(4, 3, 20, 0) 68%
+  );
+  filter: blur(90px);
+}
+
 /* Loading state */
 .ms-post-loading {
   display: flex;
@@ -4085,9 +4104,9 @@ body {
 
 /* Breadcrumb — sits above the post header, clears the fixed .main-nav */
 .ms-breadcrumb {
-  max-width: 700px;
-  margin: 0 auto;
-  padding: max(6rem, 14vh) 2rem 0;
+  max-width: none;
+  margin: 0;
+  padding: max(6rem, 14vh) 4rem 0;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -5803,7 +5822,9 @@ body {
 
 @media (max-width: 768px) {
   .ms-breadcrumb {
-    padding: max(5rem, 12vh) 1.4rem 0;
+    padding: max(6.5rem, 16vh) 1.4rem 1.5rem;
+    justify-content: center;
+    text-align: center;
   }
   .ms-crumb-current {
     max-width: 160px;
