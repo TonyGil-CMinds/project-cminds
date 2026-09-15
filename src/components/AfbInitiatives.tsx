@@ -6,14 +6,26 @@ import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import gsap from "gsap";
 import { useRouter } from "next/navigation";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
 
 const IMAGES = [
-  { src: "/platforms/aiforbiodiversity/initiative-image-ai4manatees.png",  label: "AI For Manatees",    href: "/aiforbiodiversity/aiformanatees" },
-  { src: "/platforms/aiforbiodiversity/initiative-image-ntl.png",          label: "NaturaTech LAC",      href: "/aiforbiodiversity/naturatechlac" },
-  { src: "/platforms/aiforbiodiversity/initiative-image-vitalocenas.png",  label: "Vital Oceans",        href: "/aiforbiodiversity/vitaloceans" },
-  { src: "/platforms/aiforbiodiversity/initiative-image-tech4nature.png",  label: "Tech4Nature México",  href: "/aiforbiodiversity/techfornature" },
+  { src: "/platforms/aiforbiodiversity/initiative-image-ai4manatees.png",  href: "/aiforbiodiversity/aiformanatees" },
+  { src: "/platforms/aiforbiodiversity/initiative-image-ntl.png",          href: "/aiforbiodiversity/naturatechlac" },
+  { src: "/platforms/aiforbiodiversity/initiative-image-vitalocenas.png",  href: "/aiforbiodiversity/vitaloceans" },
+  { src: "/platforms/aiforbiodiversity/initiative-image-tech4nature.png",  href: "/aiforbiodiversity/techfornature" },
 ];
 const SRCS = IMAGES.map(i => i.src);
+
+const copy = {
+  en: {
+    tabs: { spiral: "spiral", list: "list" },
+    labels: ["AI For Manatees", "NaturaTech LAC", "Vital Oceans", "Tech4Nature México"],
+  },
+  es: {
+    tabs: { spiral: "espiral", list: "lista" },
+    labels: ["AI For Manatees", "NaturaTech LAC", "Vital Oceans", "Tech4Nature México"],
+  },
+} as const;
 
 /* ── Cylinder constants ─────────────────────────────────────────────────────── */
 const N          = 11;
@@ -199,6 +211,9 @@ export default function AfbInitiatives() {
   const sectionRef    = useRef<HTMLElement>(null);
   const touchYRef     = useRef<number | null>(null);
   const router        = useRouter();
+  const locale        = useLocale();
+  const t             = copy[locale];
+  const lp            = useLocalePath();
 
   const [activeTab,  setActiveTab]  = useState<"spiral" | "list">("spiral");
   const [hovListIdx, setHovListIdx] = useState<number | null>(null);
@@ -217,10 +232,10 @@ export default function AfbInitiatives() {
         x: 0, y: 0, z: 0,
         duration: 0.32, delay: i * 0.032, ease: "power3.in",
         overwrite: "auto",
-        onComplete: i === N - 1 ? () => router.push(href) : undefined,
+        onComplete: i === N - 1 ? () => router.push(lp(href)) : undefined,
       });
     });
-  }, [router]);
+  }, [router, lp]);
 
   // Hide list items on mount so they're invisible until animated in
   useEffect(() => {
@@ -340,12 +355,12 @@ export default function AfbInitiatives() {
         <button
           className={`afb-init-tab${activeTab === "spiral" ? " afb-init-tab--active" : ""}`}
           onClick={() => switchView("spiral")}
-        >spiral</button>
+        >{t.tabs.spiral}</button>
         <span className="afb-init-dot" aria-hidden="true">•</span>
         <button
           className={`afb-init-tab${activeTab === "list" ? " afb-init-tab--active" : ""}`}
           onClick={() => switchView("list")}
-        >list</button>
+        >{t.tabs.list}</button>
       </div>
 
       <div className={`afb-init-canvas-wrap${activeTab !== "spiral" ? " afb-init-canvas-wrap--hidden" : ""}`}>
@@ -368,13 +383,13 @@ export default function AfbInitiatives() {
       >
         {IMAGES.map((item, i) => (
           <p
-            key={item.label}
+            key={item.href}
             ref={el => { listItemRefs.current[i] = el; }}
             className={`afb-init-list-item${hovListIdx !== null && hovListIdx !== i ? " afb-init-list-item--dim" : ""}${item.href ? " afb-init-list-item--link" : ""}`}
             onMouseEnter={() => setHovListIdx(i)}
             onClick={() => {
               if (!item.href) return;
-              const dest = item.href;
+              const dest = lp(item.href);
               // Exit: slide list items up + fade — mirrors switchView("spiral") list-out
               const items = [...(listItemRefs.current.filter(Boolean) as HTMLElement[])].reverse();
               gsap.to(items, {
@@ -383,7 +398,7 @@ export default function AfbInitiatives() {
               });
             }}
           >
-            {item.label}
+            {t.labels[i]}
           </p>
         ))}
       </div>

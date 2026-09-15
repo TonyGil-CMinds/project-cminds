@@ -8,6 +8,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import HexPattern from "./HexPattern";
+import { useLocale } from "@/i18n/useLocale";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -88,18 +89,59 @@ function tilt(i: number) {
 
 /* ── Data ──────────────────────────────────────────────────── */
 const ITEMS = [
-  { id:  0, name: "NaturaTech LAC",     tag: "Technology for nature conservation",  image: "/platforms/aiforbiodiversity/wherewecomefrom-img1.png" },
-  { id:  1, name: "BioMap Initiative",  tag: "Real-time biodiversity mapping",       image: "/platforms/aiforbiodiversity/wherewecomefrom-img2.png" },
-  { id:  2, name: "Climate AI Lab",     tag: "AI models for climate prediction",     image: "/platforms/aiforbiodiversity/hero-bg-image.png" },
-  { id:  3, name: "Species Monitor",    tag: "Endangered species tracking",          image: "/platforms/aiforbiodiversity/wherewecomefrom-img1.png" },
-  { id:  4, name: "EcoData Platform",   tag: "Open environmental data",              image: "/platforms/aiforbiodiversity/wherewecomefrom-img2.png" },
-  { id:  5, name: "Conservation Net",   tag: "Global network of conservationists",   image: "/platforms/aiforbiodiversity/hero-bg-image.png" },
-  { id:  6, name: "Wetlands Watch",     tag: "Protecting aquatic ecosystems",        image: "/platforms/aiforbiodiversity/wherewecomefrom-img2.png" },
-  { id:  7, name: "Forest AI",          tag: "Real-time deforestation alerts",       image: "/platforms/aiforbiodiversity/wherewecomefrom-img1.png" },
-  { id:  8, name: "Pollinator Network", tag: "Bee & butterfly habitat mapping",      image: "/platforms/aiforbiodiversity/hero-bg-image.png" },
-  { id:  9, name: "Ocean Data Lab",     tag: "Marine biodiversity intelligence",     image: "/platforms/aiforbiodiversity/wherewecomefrom-img2.png" },
-  { id: 10, name: "Carbon Tracker",     tag: "Automated carbon sequestration",       image: "/platforms/aiforbiodiversity/wherewecomefrom-img1.png" },
+  { id:  0, name: "NaturaTech LAC",     image: "/platforms/aiforbiodiversity/wherewecomefrom-img1.png" },
+  { id:  1, name: "BioMap Initiative",  image: "/platforms/aiforbiodiversity/wherewecomefrom-img2.png" },
+  { id:  2, name: "Climate AI Lab",     image: "/platforms/aiforbiodiversity/hero-bg-image.png" },
+  { id:  3, name: "Species Monitor",    image: "/platforms/aiforbiodiversity/wherewecomefrom-img1.png" },
+  { id:  4, name: "EcoData Platform",   image: "/platforms/aiforbiodiversity/wherewecomefrom-img2.png" },
+  { id:  5, name: "Conservation Net",   image: "/platforms/aiforbiodiversity/hero-bg-image.png" },
+  { id:  6, name: "Wetlands Watch",     image: "/platforms/aiforbiodiversity/wherewecomefrom-img2.png" },
+  { id:  7, name: "Forest AI",          image: "/platforms/aiforbiodiversity/wherewecomefrom-img1.png" },
+  { id:  8, name: "Pollinator Network", image: "/platforms/aiforbiodiversity/hero-bg-image.png" },
+  { id:  9, name: "Ocean Data Lab",     image: "/platforms/aiforbiodiversity/wherewecomefrom-img2.png" },
+  { id: 10, name: "Carbon Tracker",     image: "/platforms/aiforbiodiversity/wherewecomefrom-img1.png" },
 ];
+
+const copy = {
+  en: {
+    eyebrow: "INITIATIVES",
+    titleLine1: "Featured",
+    titleLine2: "Initiatives",
+    tabs: { spiral: "Spiral", list: "List" },
+    tags: [
+      "Technology for nature conservation",
+      "Real-time biodiversity mapping",
+      "AI models for climate prediction",
+      "Endangered species tracking",
+      "Open environmental data",
+      "Global network of conservationists",
+      "Protecting aquatic ecosystems",
+      "Real-time deforestation alerts",
+      "Bee & butterfly habitat mapping",
+      "Marine biodiversity intelligence",
+      "Automated carbon sequestration",
+    ],
+  },
+  es: {
+    eyebrow: "INICIATIVAS",
+    titleLine1: "Iniciativas",
+    titleLine2: "destacadas",
+    tabs: { spiral: "Espiral", list: "Lista" },
+    tags: [
+      "Tecnología para la conservación de la naturaleza",
+      "Mapeo de biodiversidad en tiempo real",
+      "Modelos de IA para predicción climática",
+      "Monitoreo de especies en peligro",
+      "Datos ambientales abiertos",
+      "Red global de conservacionistas",
+      "Protección de ecosistemas acuáticos",
+      "Alertas de deforestación en tiempo real",
+      "Mapeo de hábitats de abejas y mariposas",
+      "Inteligencia de biodiversidad marina",
+      "Captura automatizada de carbono",
+    ],
+  },
+} as const;
 
 /* ── R3F scene ─────────────────────────────────────────────── */
 interface SceneProps {
@@ -267,6 +309,9 @@ export default function AfbInitiativesSection() {
   const [view,      setView]      = useState<View>("spiral");
   const [frontCard, setFrontCard] = useState(0);
 
+  const locale = useLocale();
+  const t      = copy[locale];
+
   /* A/B crossfade: two layers swap opacity so background transitions smoothly */
   const [bgState, setBgState] = useState<{ a: string; b: string; active: BgLayer }>({
     a: ITEMS[0].image,
@@ -377,10 +422,10 @@ export default function AfbInitiativesSection() {
       {/* Header */}
       <div className="afb-init-header">
         <div className="afb-init-header-left">
-          <span className="afb-init-eyebrow" style={{ opacity: 0 }}>INITIATIVES</span>
+          <span className="afb-init-eyebrow" style={{ opacity: 0 }}>{t.eyebrow}</span>
           <h2 className="afb-init-title" style={{ opacity: 0 }}>
-            Featured<br />
-            <span className="afb-init-title-green">Initiatives</span>
+            {t.titleLine1}<br />
+            <span className="afb-init-title-green">{t.titleLine2}</span>
           </h2>
         </div>
         <div className="afb-init-toggle">
@@ -389,14 +434,14 @@ export default function AfbInitiativesSection() {
             onClick={() => switchView("spiral")}
             style={{ opacity: 0 }}
           >
-            Spiral
+            {t.tabs.spiral}
           </button>
           <button
             className={`afb-init-nav-btn${view === "list" ? " active" : ""}`}
             onClick={() => switchView("list")}
             style={{ opacity: 0 }}
           >
-            List
+            {t.tabs.list}
           </button>
         </div>
       </div>
@@ -428,7 +473,7 @@ export default function AfbInitiativesSection() {
         </div>
         <div className="afb-init-chip-text">
           <span className="afb-init-chip-name">{hovItem?.name ?? " "}</span>
-          <span className="afb-init-chip-tag">{hovItem?.tag  ?? " "}</span>
+          <span className="afb-init-chip-tag">{hovered !== null ? t.tags[hovered] : " "}</span>
         </div>
       </div>
     </section>

@@ -11,6 +11,9 @@ import SiteFooter from "@/components/SiteFooter";
 import NavSearch from "@/components/NavSearch";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Analytics } from '@vercel/analytics/next';
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
+import { common } from "@/i18n/common";
+import { copy } from "./copy";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -44,20 +47,21 @@ const lerpHeroColor = (t: number): string => {
 
 
 const COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
-const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
+// Stable ids drive navigation logic; labels are resolved per-locale at render
+// time from `common.nav` so Spanish labels never break the click targets.
+const NAV_ITEM_IDS = ["home", "core", "mindscope", "careers"] as const;
 
-const HERO_WORDS_A = ["FROM", "POSSIBILITY"];
-const HERO_WORDS_B = ["TO", "REALITY"];
 const MINDSCOPE_FEED_URL =
   "https://cminds.base44.app/api/apps/6925f38be89e0d268185fecc/functions/publicBlogFeed?limit=6";
 
+// Pills + label are locale-dependent copy (see `initiatives.items` in copy.ts,
+// keyed by the same id). titleA/titleB are initiative/product names — kept
+// untranslated per the Spanish style guide.
 const INITIATIVES = [
   {
     id: "ntl",
     url: "https://naturatech.org",
     image: "/home/featured-ntl.png",
-    pills: ["Regenerative", "Innovation"],
-    label: "Purposeful Tech for Biodiversity",
     titleA: "NaturaTech",
     titleB: "LAC",
   },
@@ -65,8 +69,6 @@ const INITIATIVES = [
     id: "t4n",
     url: "https://youtu.be/4cKLMpL_des?si=UaqwBqQWkqbFSdLb",
     image: "/home/featured-t4n.png",
-    pills: ["Conservation", "Local leadership"],
-    label: "AI-powered biodiversity monitoring platform",
     titleA: "Tech4",
     titleB: "Nature",
   },
@@ -74,8 +76,6 @@ const INITIATIVES = [
     id: "vo",
     url: "https://oceanosvitales.org",
     image: "/home/featured-vo.png",
-    pills: ["Ocean", "Protection"],
-    label: "Community-led Marine Protected Areas",
     titleA: "Vital",
     titleB: "Oceans",
   },
@@ -83,23 +83,12 @@ const INITIATIVES = [
     id: "a4m",
     url: "https://youtu.be/_O1yxttZ2m8?si=m8G08n1JI4oCYn4G",
     image: "/home/featured-a4m.png",
-    pills: ["AI systems", "Conservation"],
-    label: "A Machine Learning Approach",
     titleA: "AI for",
     titleB: "Manatees",
   },
-];
-const ORBIT_WORDS = [
-  "TANGIBLE IMPACT",
-  "INCUBATION",
-  "REGIONAL STRATEGIES",
-  "POLICIES",
-  "GOVERNANCE FRAMEWORKS",
-  "SCALE INITIATIVES",
-  "EMERGING TECHNOLOGIES",
-];
-
-const HWW_WORDS = ["governments", "civil society", "organizations", "local communities"];
+] as const;
+// ORBIT_WORDS and HWW_WORDS moved into copy.ts (`t.orbitWords` / `t.hww.cyclingWords`)
+// so the floating word-particles and the "How we work" cycling word are locale-aware.
 
 const PARTNERS_ROW1 = [
   { src: "/partners/logo-bidlab-fila1.svg",           alt: "BID Lab" },
@@ -127,24 +116,22 @@ const PARTNERS_ROW3 = [
   { src: "/partners/logo-kinray-fila3.svg",   alt: "Kinray Hub" },
 ];
 
+// title/body are locale-dependent copy (see `awards.items` in copy.ts, keyed
+// by the same id).
 const AWARDS = [
   {
     id: "paris-peace-forum",
     logo: "/home/svgs/logo-parispeaceforum.svg",
     alt: "Paris Peace Forum",
-    title: "Scale-up Program\n2024-25",
-    body: "Emerging technologies, new conditions for the planet",
     url: "https://parispeaceforum.org/projects/ai-for-climate/",
   },
   {
     id: "forbes",
     logo: "/home/svgs/logo-forbes.svg",
     alt: "Forbes",
-    title: "Leaders of AI in\nMéxico 2024",
-    body: "Honor for Contanza Gómez Mont, Founder of C Minds, Director of NaturaTech LAC",
     url: "https://forbes.com.mx/la-ia-avanza-en-mexico/",
   },
-];
+] as const;
 
 const COOKIE_KEY = "cminds_color";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365; // 1 year
@@ -174,6 +161,11 @@ interface MindscopeFeedResponse {
 
 
 export default function Hero() {
+  const locale = useLocale();
+  const lp = useLocalePath();
+  const t = copy[locale];
+  const tNav = common[locale].nav;
+
   const [loaderDone, setLoaderDone] = useState(false);
 
   useLayoutEffect(() => {
@@ -209,7 +201,7 @@ export default function Hero() {
   const [latestPost, setLatestPost] = useState<LatestPost | null>(null);
   const [postCardDismissed, setPostCardDismissed] = useState(false);
 
-  const [hwwWord, setHwwWord] = useState(HWW_WORDS[0]);
+  const [hwwWord, setHwwWord] = useState(t.hww.cyclingWords[0]);
   const hwwWordIndexRef = useRef(0);
   const hwwCyclingRef = useRef<HTMLSpanElement>(null);
   const hwwEnteredRef = useRef(false);
@@ -227,15 +219,17 @@ export default function Hero() {
 
   const router = useRouter();
 
+  // `path` is an app-relative, un-prefixed path (e.g. "/core") — locale-prefixed here.
   const navigateWithTransition = (path: string) => {
+    const target = lp(path);
     sessionStorage.setItem("vt_from", "home");
     const doNavigate = () => {
       if (typeof document !== "undefined" && "startViewTransition" in document) {
         (document as any).startViewTransition(() => {
-          startTransition(() => { router.push(path); });
+          startTransition(() => { router.push(target); });
         });
       } else {
-        router.push(path);
+        router.push(target);
       }
     };
     // Animate hero text/cards out, then trigger transition
@@ -337,7 +331,7 @@ export default function Hero() {
         if (Math.sqrt(dx * dx + dy * dy) < MIN_GAP) return;
       }
 
-      const text = ORBIT_WORDS[Math.floor(Math.random() * ORBIT_WORDS.length)];
+      const text = t.orbitWords[Math.floor(Math.random() * t.orbitWords.length)];
 
       const wrap = document.createElement("div");
       wrap.className = "wwd-word-particle";
@@ -407,7 +401,7 @@ export default function Hero() {
       active.forEach(p => { gsap.killTweensOf(p.querySelectorAll("span")); p.remove(); });
       activePos.clear();
     };
-  }, [loaderDone]);
+  }, [loaderDone, locale]);
 
   // Fetch the latest Mindscope publication for the hero post card
   useEffect(() => {
@@ -416,14 +410,14 @@ export default function Hero() {
       .then((res) => res.json())
       .then((data: MindscopeFeedResponse) => {
         if (cancelled || !data?.posts?.length) return;
-        const enPosts = data.posts.filter((p) => p.language === "en");
-        const first = enPosts[0];
+        const localePosts = data.posts.filter((p) => p.language === locale);
+        const first = localePosts[0];
         if (!first) return;
         setLatestPost({ title: first.title, slug: first.slug, cover_image: first.cover_image });
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, []);
+  }, [locale]);
 
   // Featured post card entrance: animate in from below with a curved ease
   // the first time it mounts (i.e. once latestPost is fetched). Owns
@@ -652,7 +646,7 @@ export default function Hero() {
           hwwEnteredRef.current = false;
           hwwWordIndexRef.current = 0;
           hwwAnimatingRef.current = false;
-          setHwwWord(HWW_WORDS[0]);
+          setHwwWord(t.hww.cyclingWords[0]);
           gsap.to(".hww-tw", { opacity: 0, y: 28, filter: "blur(12px)", duration: 0.4 });
           gsap.to(".hww-cw", { opacity: 0, duration: 0.3 });
         }
@@ -665,7 +659,7 @@ export default function Hero() {
         end: "bottom bottom",
         onUpdate: (self) => {
           if (!hwwEnteredRef.current) return;
-          const idx = Math.min(HWW_WORDS.length - 1, Math.floor(self.progress * HWW_WORDS.length));
+          const idx = Math.min(t.hww.cyclingWords.length - 1, Math.floor(self.progress * t.hww.cyclingWords.length));
           if (idx === hwwWordIndexRef.current || hwwAnimatingRef.current) return;
           const isForward = idx > hwwWordIndexRef.current;
           hwwAnimatingRef.current = true;
@@ -674,7 +668,7 @@ export default function Hero() {
             : [];
           const doSwap = () => {
             hwwWordIndexRef.current = idx;
-            setHwwWord(HWW_WORDS[idx]);
+            setHwwWord(t.hww.cyclingWords[idx]);
             hwwAnimatingRef.current = false;
           };
           if (spans.length > 0) {
@@ -815,20 +809,20 @@ export default function Hero() {
 
               <div className="nav-menu" onMouseLeave={() => setHoverNav(null)}>
                 <div className="nav-menu-light" style={indicatorStyle}></div>
-                {NAV_ITEMS.map((item, idx) => (
+                {NAV_ITEM_IDS.map((id, idx) => (
                   <div
-                    key={item}
+                    key={id}
                     ref={(el) => { navRefs.current[idx] = el }}
                     className={`nav-item ${activeNav === idx ? 'active' : ''}`}
                     onMouseEnter={() => setHoverNav(idx)}
                     onClick={() => {
                       setActiveNav(idx);
-                      if (item === "Core") navigateWithTransition("/core");
-                      if (item === "Mindscope ®") navigateWithTransition("/mindscope");
-                      if (item === "Careers") navigateWithTransition("/careers");
+                      if (id === "core") navigateWithTransition("/core");
+                      if (id === "mindscope") navigateWithTransition("/mindscope");
+                      if (id === "careers") navigateWithTransition("/careers");
                     }}
                   >
-                    {item}
+                    {tNav[id]}
                   </div>
                 ))}
               </div>
@@ -851,8 +845,8 @@ export default function Hero() {
             >
               {(() => {
                 const phrase = isMobile
-                  ? "FROM POSSIBILITY TO REALITY"
-                  : heroPhrase === "a" ? "FROM POSSIBILITY" : "TO REALITY";
+                  ? t.hero.mobilePhrase
+                  : heroPhrase === "a" ? t.hero.phraseA : t.hero.phraseB;
                 const phraseKey = `${heroPhrase}-${isMobile}`;
                 const words = phrase.split(" ");
                 const total = phrase.replace(/ /g, "").length;
@@ -876,10 +870,10 @@ export default function Hero() {
             {/* Bottom-left intro + CTA */}
             <div className="hero-intro">
               <p>
-                <span className="hero-intro-lead">Meaningful transformation requires new forms of collaboration,</span> governance, and collective intelligence capable of bridging disciplines, sectors, cultures, and knowledge systems.
+                <span className="hero-intro-lead">{t.hero.introLead}</span>{t.hero.introRest}
               </p>
               <a href="mailto:contact@cminds.co" className="hero-button hero-contact">
-                Contact us
+                {t.hero.contactCta}
               </a>
             </div>
 
@@ -888,7 +882,7 @@ export default function Hero() {
               className="hero-scroll"
               onClick={() => document.querySelector(".core-section")?.scrollIntoView({ behavior: "smooth" })}
             >
-              <span>Scroll down</span>
+              <span>{t.hero.scrollDown}</span>
               <img src="/assets/ui/Down.svg" alt="" className="hero-scroll-arrow" />
             </div>
 
@@ -902,7 +896,7 @@ export default function Hero() {
                   type="button"
                   className="hero-post-card-close"
                   onClick={(e) => { e.stopPropagation(); dismissPostCard(); }}
-                  aria-label="Dismiss"
+                  aria-label={t.hero.dismissAria}
                 >
                   ×
                 </button>
@@ -912,7 +906,7 @@ export default function Hero() {
                 />
                 <div className="hero-post-card-overlay" />
                 <div className="hero-post-card-body">
-                  <span className="hero-post-card-label">New in Mindscope ®</span>
+                  <span className="hero-post-card-label">{t.hero.newInMindscope}</span>
                   <p className="hero-post-card-title">{latestPost.title}</p>
                 </div>
               </div>
@@ -922,34 +916,31 @@ export default function Hero() {
 
           {/* ── Core Section ── */}
           <section className="core-section">
-            <h2 className="core-title">Core</h2>
+            <h2 className="core-title">{t.core.title}</h2>
 
             <div className="core-columns">
-              <div className="core-col">
-                <p>C Minds catalyzes technological, financial, and entrepreneurship innovation for both people and the planet in Latin America. We play at the edge of possibility, where strategy meets action.</p>
-              </div>
-              <div className="core-divider" />
-              <div className="core-col">
-                <p>We develop AI policies and ethical frameworks. We lead multi-sector and systems-based strategies. We incubate and scale local, national and regional initiatives.</p>
-              </div>
-              <div className="core-divider" />
-              <div className="core-col">
-                <p>For over two decades we have been a partner of choice of our financial and impact partners. We contribute to shaping futures where innovation is routed in justice, access to opportunities and regeneration.</p>
-              </div>
+              {t.core.columns.flatMap((col, i) => [
+                i > 0 ? <div className="core-divider" key={`div-${i}`} /> : null,
+                <div className="core-col" key={`col-${i}`}>
+                  <p>{col}</p>
+                </div>,
+              ])}
             </div>
 
-            <button className="hero-button core-btn" onClick={() => navigateWithTransition("/core")}>Learn more</button>
+            <button className="hero-button core-btn" onClick={() => navigateWithTransition("/core")}>{t.core.learnMore}</button>
           </section>
 
           {/* ── Featured Initiatives ── */}
           <section className="initiatives-section">
             <div className="initiatives-header">
-              <h2 className="initiatives-heading">Featured Initiatives</h2>
-              <p className="initiatives-subheading">Some of our selected projects we launched</p>
+              <h2 className="initiatives-heading">{t.initiatives.heading}</h2>
+              <p className="initiatives-subheading">{t.initiatives.subheading}</p>
             </div>
 
             <div className="initiatives-list">
-              {INITIATIVES.map((item) => (
+              {INITIATIVES.map((item) => {
+                const itemCopy = t.initiatives.items[item.id as keyof typeof t.initiatives.items];
+                return (
                 <div
                   key={item.id}
                   className="initiative-card"
@@ -970,17 +961,18 @@ export default function Hero() {
                   )}
                   <div className="initiative-content">
                     <div className="initiative-pills">
-                      {item.pills.map((pill) => (
+                      {itemCopy.pills.map((pill) => (
                         <span key={pill} className="initiative-pill">{pill}</span>
                       ))}
                     </div>
                     <div className="initiative-meta">
-                      <p className="initiative-label">{item.label}</p>
+                      <p className="initiative-label">{itemCopy.label}</p>
                       <h3 className="initiative-title">{item.titleA} {item.titleB}</h3>
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
@@ -998,14 +990,14 @@ export default function Hero() {
 
               <div className="bold-text">
                 <div className="bold-line">
-                  <span className="bold-word" id="bw-bold">BOLD</span>
-                  <span className="bold-word" id="bw-and">&nbsp;AND</span>
+                  <span className="bold-word" id="bw-bold">{t.bold.bold}</span>
+                  <span className="bold-word" id="bw-and">{t.bold.and}</span>
                 </div>
                 <div className="bold-line">
-                  <span className="bold-word" id="bw-meaningful">MEANINGFUL</span>
+                  <span className="bold-word" id="bw-meaningful">{t.bold.meaningful}</span>
                 </div>
                 <div className="bold-line">
-                  <span className="bold-word" id="bw-changes">TRANSFORMATIONS</span>
+                  <span className="bold-word" id="bw-changes">{t.bold.transformations}</span>
                 </div>
               </div>
             </div>
@@ -1016,29 +1008,29 @@ export default function Hero() {
             <div className="wwd-inner">
               <div className="wwd-group">
                 <div className="wwd-pill">
-                  <span style={{ color: "var(--color-primary)" }}>•</span> What we do
+                  <span style={{ color: "var(--color-primary)" }}>•</span> {t.wwd.pill}
                 </div>
                 <div className="wwd-phases">
                   {/* Phase A */}
                   <div className="wwd-headline wwd-phase-a">
                     <div className="wwd-hl-line">
-                      <span className="wwd-w" id="wwa-we">We</span>
-                      <span className="wwd-w wwd-accent" id="wwa-codesign">codesign</span>
-                      <span className="wwd-w wwd-accent" id="wwa-visions">visions</span>
+                      <span className="wwd-w" id="wwa-we">{t.wwd.phaseA.we}</span>
+                      <span className="wwd-w wwd-accent" id="wwa-codesign">{t.wwd.phaseA.codesign}</span>
+                      <span className="wwd-w wwd-accent" id="wwa-visions">{t.wwd.phaseA.visions}</span>
                     </div>
                     <div className="wwd-hl-line">
-                      <span className="wwd-w" id="wwa-with">with our partners</span>
+                      <span className="wwd-w" id="wwa-with">{t.wwd.phaseA.with}</span>
                     </div>
                   </div>
 
                   {/* Phase B — overlays Phase A */}
                   <div className="wwd-headline wwd-phase-b">
                     <div className="wwd-hl-line">
-                      <span className="wwd-w" id="wwb-line1">We transform these into</span>
+                      <span className="wwd-w" id="wwb-line1">{t.wwd.phaseB.line1}</span>
                     </div>
                     <div className="wwd-hl-line">
-                      <span className="wwd-w wwd-accent" id="wwb-tang">tangible </span>
-                      <span className="wwd-w wwd-accent" id="wwb-impact">impact</span>
+                      <span className="wwd-w wwd-accent" id="wwb-tang">{t.wwd.phaseB.tangible}</span>
+                      <span className="wwd-w wwd-accent" id="wwb-impact">{t.wwd.phaseB.impact}</span>
                     </div>
                   </div>
                 </div>
@@ -1058,15 +1050,15 @@ export default function Hero() {
 
             <div className="hww-content">
               <div className="hww-pill">
-                <span style={{ color: "var(--color-primary)" }}>•</span> How we work
+                <span style={{ color: "var(--color-primary)" }}>•</span> {t.hww.pill}
               </div>
               <h2 className="hww-title">
                 <div className="hww-title-line">
-                  <span className="hww-tw">We</span>{" "}
-                  <span className="hww-tw">collaborate</span>
+                  <span className="hww-tw">{t.hww.titleWe}</span>{" "}
+                  <span className="hww-tw">{t.hww.titleCollaborate}</span>
                 </div>
                 <div className="hww-title-line">
-                  <span className="hww-tw">with</span>{" "}
+                  <span className="hww-tw">{t.hww.titleWith}</span>{" "}
                   <span className="hww-cycling-word" ref={hwwCyclingRef}>
                     {hwwWord.split(" ").map((w, i, arr) => (
                       <span key={i} className="hww-cw">{w}{i < arr.length - 1 ? " " : ""}</span>
@@ -1075,7 +1067,7 @@ export default function Hero() {
                 </div>
               </h2>
               <p className="hww-body">
-                {"We explore how technologies like GenAI, IoT, blockchain can help accelerate and scale impact contextually. We are rooted in the value of fairness. We prototype what doesn't yet exist—and scale what's already working.".split(" ").map((word, i) => (
+                {t.hww.body.split(" ").map((word, i) => (
                   <span key={i} className="hww-word">{word}{" "}</span>
                 ))}
               </p>
@@ -1087,7 +1079,7 @@ export default function Hero() {
           <section className="partners-section">
             <div className="partners-inner">
               <h2 className="partners-title">
-                Our partners<br />in change
+                {t.partners.titleLine1}<br />{t.partners.titleLine2}
               </h2>
 
               <div className="marquee-rows">
@@ -1131,16 +1123,18 @@ export default function Hero() {
           <section className="awards-section">
             <div className="awards-inner">
               <div className="awards-pill">
-                <span style={{ color: "var(--color-primary)" }}>•</span> Awards
+                <span style={{ color: "var(--color-primary)" }}>•</span> {t.awards.pill}
               </div>
 
               <h2 className="awards-title">
-                <span className="awards-title-line">C Minds and our team</span>
-                <span className="awards-title-line">have been awarded</span>
+                <span className="awards-title-line">{t.awards.titleLine1}</span>
+                <span className="awards-title-line">{t.awards.titleLine2}</span>
               </h2>
 
               <div className="awards-grid">
-                {AWARDS.map((award, index) => (
+                {AWARDS.map((award, index) => {
+                  const awardCopy = t.awards.items[award.id as keyof typeof t.awards.items];
+                  return (
                   <article
                     key={award.id}
                     ref={(el) => { awardCardRefs.current[index] = el; }}
@@ -1160,7 +1154,7 @@ export default function Hero() {
                     </div>
                     <div className="award-copy">
                       <h3>
-                        {award.title.split("\n").map((line, lineIndex) => (
+                        {awardCopy.title.split("\n").map((line, lineIndex) => (
                           <span className="award-copy-line" key={`${award.id}-title-${lineIndex}`}>
                             {line.split(" ").map((word, wordIndex) => (
                               <span className="award-copy-word" key={`${award.id}-title-${lineIndex}-${wordIndex}`}>
@@ -1171,15 +1165,16 @@ export default function Hero() {
                         ))}
                       </h3>
                       <p>
-                        {award.body.split(" ").map((word, wordIndex) => (
+                        {awardCopy.body.split(" ").map((word, wordIndex) => (
                           <span className="award-copy-word" key={`${award.id}-body-${wordIndex}`}>
-                            {word}{wordIndex < award.body.split(" ").length - 1 ? "\u00a0" : ""}
+                            {word}{wordIndex < awardCopy.body.split(" ").length - 1 ? "\u00a0" : ""}
                           </span>
                         ))}
                       </p>
                     </div>
                   </article>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </section>

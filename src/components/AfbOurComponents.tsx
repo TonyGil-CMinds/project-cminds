@@ -4,40 +4,88 @@ import { useRef, useCallback } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useLocale } from "@/i18n/useLocale";
 
 gsap.registerPlugin(ScrollTrigger);
+
+/* ── Copy ──────────────────────────────────────────────── */
+
+const copy = {
+  en: {
+    label: "OUR COMPONENTS",
+    slides: [
+      {
+        title: ["Global Learning", "Platform"],
+        body: [
+          "Bridging silos between tech innovation, the climate, and conservation fields by creating spaces to share best practices, technologies, and resources.",
+          "This includes annual high-level global forums, and much more.",
+        ],
+        tag: "SPECIES",
+      },
+      {
+        title: ["AI Living Labs for", "Conservation"],
+        body: [
+          "Harnessing the power of AI to strengthen the protection and management of public and private nature reserves around the planet.",
+          "Our aim is to create a global network of AI-driven Living Labs of natural reserves.",
+        ],
+        tag: "SPECIES",
+      },
+      {
+        title: ["Open Data Pool", "for AI Training"],
+        body: [
+          "Accelerating the access to open robust data to train AI models to fast-forward the world's conservation and restoration solutions, as well as provide viable, AI-powered alternatives.",
+        ],
+        tag: "HUMAN",
+      },
+    ],
+  },
+  es: {
+    label: "NUESTROS COMPONENTES",
+    slides: [
+      {
+        title: ["Plataforma Global", "de Aprendizaje"],
+        body: [
+          "Conectamos la innovación tecnológica con el clima y la conservación, creando espacios para compartir mejores prácticas, tecnologías y recursos.",
+          "Esto incluye foros globales de alto nivel cada año, entre muchas otras iniciativas.",
+        ],
+        tag: "ESPECIE",
+      },
+      {
+        title: ["AI Living Labs para", "la Conservación"],
+        body: [
+          "Aprovechamos el poder de la IA para fortalecer la protección y gestión de reservas naturales públicas y privadas alrededor del planeta.",
+          "Buscamos crear una red global de AI Living Labs en reservas naturales.",
+        ],
+        tag: "ESPECIE",
+      },
+      {
+        title: ["Banco de Datos Abiertos", "para Entrenar IA"],
+        body: [
+          "Aceleramos el acceso a datos abiertos y robustos para entrenar modelos de IA que impulsen soluciones de conservación y restauración a nivel mundial, además de ofrecer alternativas viables con IA.",
+        ],
+        tag: "HUMANO",
+      },
+    ],
+  },
+} as const;
 
 // box: position within the image (all percentages)
 // top/left anchor the box; width/height size it to the object
 const SLIDES = [
   {
-    title: ["Global Learning", "Platform"],
-    body: [
-      "Bridging silos between tech innovation, the climate, and conservation fields by creating spaces to share best practices, technologies, and resources.",
-      "This includes annual high-level global forums, and much more.",
-    ],
     image: "/platforms/aiforbiodiversity/were-we-come-from/image-wherewecomefrom-1.webp",
     // Flamingo stands on the right half — tall narrow box framing body + legs
-    detection: { tag: "SPECIES", pct: 94, box: { top: 10, left: 50, width: 38, height: 84 } },
+    detection: { pct: 94, box: { top: 10, left: 50, width: 38, height: 84 } },
   },
   {
-    title: ["AI Living Labs for", "Conservation"],
-    body: [
-      "Harnessing the power of AI to strengthen the protection and management of public and private nature reserves around the planet.",
-      "Our aim is to create a global network of AI-driven Living Labs of natural reserves.",
-    ],
     image: "/platforms/aiforbiodiversity/were-we-come-from/image-wherewecomefrom-2.webp",
     // Manatee head fills left-center of image — tall box from top edge
-    detection: { tag: "SPECIES", pct: 91, box: { top: 3, left: 8, width: 58, height: 82 } },
+    detection: { pct: 91, box: { top: 3, left: 8, width: 58, height: 82 } },
   },
   {
-    title: ["Open Data Pool", "for AI Training"],
-    body: [
-      "Accelerating the access to open robust data to train AI models to fast-forward the world's conservation and restoration solutions, as well as provide viable, AI-powered alternatives.",
-    ],
     image: "/platforms/aiforbiodiversity/were-we-come-from/image-wherewecomefrom-3.webp",
     // Person (face + upper body) centered in image
-    detection: { tag: "HUMAN", pct: 97, box: { top: 5, left: 34, width: 44, height: 60 } },
+    detection: { pct: 97, box: { top: 5, left: 34, width: 44, height: 60 } },
   },
 ];
 
@@ -45,6 +93,8 @@ const N             = SLIDES.length;
 const SCROLL_PER_CHAP = 1000;
 
 export default function AfbOurComponents() {
+  const locale = useLocale();
+  const t      = copy[locale];
   const sectionRef = useRef<HTMLElement>(null);
   const chapIdxRef = useRef(0);
 
@@ -103,7 +153,7 @@ export default function AfbOurComponents() {
       scale: 0.05, duration: 0.2, ease: "power2.in",
       onComplete: () => {
         applyBox(idx);
-        if (detLabelRef.current) detLabelRef.current.textContent = slide.detection.tag;
+        if (detLabelRef.current) detLabelRef.current.textContent = t.slides[idx].tag;
         if (detPctRef.current)   detPctRef.current.textContent   = "0%";
 
         gsap.to(detBoxRef.current, { scale: 1, duration: 0.55, ease: "back.out(1.8)" });
@@ -139,7 +189,7 @@ export default function AfbOurComponents() {
         { y: 0, opacity: 1, duration: 0.48, stagger: 0.1, ease: "power3.out", delay: 0.3 },
       );
     }
-  }, [applyBox]);
+  }, [applyBox, t]);
 
   useGSAP(() => {
     // Init visibility
@@ -149,7 +199,7 @@ export default function AfbOurComponents() {
 
     // Init detection box to slide 0 geometry
     applyBox(0);
-    if (detLabelRef.current) detLabelRef.current.textContent = SLIDES[0].detection.tag;
+    if (detLabelRef.current) detLabelRef.current.textContent = t.slides[0].tag;
     if (detPctRef.current)   detPctRef.current.textContent   = SLIDES[0].detection.pct + "%";
 
     ScrollTrigger.create({
@@ -174,19 +224,19 @@ export default function AfbOurComponents() {
         if (chap < chapIdxRef.current && chapProg > 0.92) animateTo(chap);
       },
     });
-  }, { scope: sectionRef, dependencies: [animateTo, applyBox] });
+  }, { scope: sectionRef, dependencies: [animateTo, applyBox, t] });
 
   return (
     <section ref={sectionRef} className="afb-comp">
       <div className="afb-comp-inner">
 
-        <p className="afb-comp-label">OUR COMPONENTS</p>
+        <p className="afb-comp-label">{t.label}</p>
 
         {/* Title — top-left, in flow, z above image */}
         <div className="afb-comp-title-wrap">
-          {SLIDES.map((slide, i) => (
+          {SLIDES.map((_, i) => (
             <div key={i} ref={el => { titleLayerRefs.current[i] = el; }} className="afb-comp-title-layer">
-              {slide.title.map((line, j) => (
+              {t.slides[i].title.map((line, j) => (
                 <span key={j} className="afb-comp-title-line">{line}</span>
               ))}
             </div>
@@ -217,9 +267,9 @@ export default function AfbOurComponents() {
 
         {/* Paragraph — absolute, bottom-right, z above image */}
         <div className="afb-comp-para-wrap">
-          {SLIDES.map((slide, i) => (
+          {SLIDES.map((_, i) => (
             <div key={i} ref={el => { paraLayerRefs.current[i] = el; }} className="afb-comp-para-layer">
-              {slide.body.map((p, j) => (
+              {t.slides[i].body.map((p, j) => (
                 <p key={j} className="afb-comp-para">{p}</p>
               ))}
             </div>

@@ -3,6 +3,8 @@
 import { createContext, useContext, useState, useRef, useCallback, useEffect } from "react";
 import gsap from "gsap";
 import SubscribeModal, { type CloseResult } from "./SubscribeModal";
+import { common } from "@/i18n/common";
+import { useLocale } from "@/i18n/useLocale";
 
 interface SubscribeModalContextValue {
   open: (onSuccess?: () => void) => void;
@@ -47,6 +49,8 @@ export default function SubscribeModalProvider({ children }: { children: React.R
   const [isOpen, setIsOpen]   = useState(false);
   const [toast, setToast]     = useState<string | null>(null);
   const onSuccessRef           = useRef<(() => void) | undefined>(undefined);
+  const locale = useLocale();
+  const t = common[locale].subscribeForm;
 
   const open = useCallback((onSuccess?: () => void) => {
     onSuccessRef.current = onSuccess;
@@ -62,9 +66,9 @@ export default function SubscribeModalProvider({ children }: { children: React.R
       document.cookie = "cminds_subscribed=1; path=/; max-age=31536000; SameSite=Lax";
       onSuccessRef.current?.();
       onSuccessRef.current = undefined;
-      setToast("You're already subscribed!");
+      setToast(t.alreadySubscribed);
     }
-  }, []);
+  }, [t.alreadySubscribed]);
 
   return (
     <SubscribeModalContext.Provider value={{ open }}>

@@ -3,12 +3,14 @@
 import { useRef, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { useLocale } from "@/i18n/useLocale";
+import { copy } from "./copy";
 
-const LINKS = [
-  { label: "NaturaTech LAC Initiative", url: "https://naturatech.org" },
-  { label: "Vital Oceans Initiative",   url: "https://oceanosvitales.org" },
-  { label: "Tech4Nature Initiative",    url: "https://youtu.be/4cKLMpL_des?si=UaqwBqQWkqbFSdLb" },
-  { label: "AI4Manatees",              url: "https://youtu.be/_O1yxttZ2m8?si=m8G08n1JI4oCYn4G" },
+const LINK_URLS = [
+  "https://naturatech.org",
+  "https://oceanosvitales.org",
+  "https://youtu.be/4cKLMpL_des?si=UaqwBqQWkqbFSdLb",
+  "https://youtu.be/_O1yxttZ2m8?si=m8G08n1JI4oCYn4G",
 ];
 
 const SOCIALS = [
@@ -52,6 +54,9 @@ const SOCIALS = [
 
 export default function BioPage() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const locale = useLocale();
+  const t = copy[locale];
+  const links = t.links.map((l, i) => ({ label: l.label, url: LINK_URLS[i] }));
 
   // Hide the global mobile nav header on this page
   useEffect(() => {
@@ -104,7 +109,7 @@ export default function BioPage() {
 
       {/* Main content */}
       <div className="bio-content">
-        <h1 className="bio-title">C Minds | A new era</h1>
+        <h1 className="bio-title">{t.title}</h1>
 
         <a
           href="https://www.cminds.co"
@@ -112,11 +117,11 @@ export default function BioPage() {
           rel="noopener noreferrer"
           className="bio-visit-btn"
         >
-          Visit our website
+          {t.visitSite}
         </a>
 
         <div className="bio-links">
-          {LINKS.map((link) => (
+          {links.map((link) => (
             <a
               key={link.label}
               href={link.url}
@@ -146,7 +151,7 @@ export default function BioPage() {
             </a>
           ))}
         </div>
-        <p className="bio-copyright">© 2025 C Minds All rights reserved.</p>
+        <p className="bio-copyright">{t.copyright}</p>
       </footer>
     </div>
   );

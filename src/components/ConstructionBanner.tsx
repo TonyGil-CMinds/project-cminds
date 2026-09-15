@@ -4,6 +4,8 @@ import { useRef, useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
 import BorderGlow from "../../components/reactbits/BorderGlow";
+import { common } from "@/i18n/common";
+import { useLocale } from "@/i18n/useLocale";
 
 const HIDDEN_PATHS = ["/aiforbiodiversity", "/bioscanner-launch"];
 
@@ -22,11 +24,14 @@ function setDismissedCookie() {
 
 export default function ConstructionBanner() {
   const pathname = usePathname();
+  const locale = useLocale();
+  const t = common[locale];
   const [visible, setVisible] = useState(false);
   const shellRef = useRef<HTMLDivElement>(null);
+  const localPathname = pathname.replace(new RegExp(`^/${locale}(?=/|$)`), "") || "/";
 
   useEffect(() => {
-    if (HIDDEN_PATHS.some((p) => pathname.startsWith(p))) return;
+    if (HIDDEN_PATHS.some((p) => localPathname.startsWith(p))) return;
     if (hasDismissedCookie()) return;
     setVisible(true);
     const el = shellRef.current;
@@ -66,16 +71,15 @@ export default function ConstructionBanner() {
         colors={["#E31352", "#FF749F", "#FF759F"]}
       >
         <div className="cb-panel">
-          <button className="cb-close" onClick={dismiss} aria-label="Close notice">
+          <button className="cb-close" onClick={dismiss} aria-label={t.constructionBanner.closeAria}>
             <svg viewBox="0 0 14 14" fill="none" aria-hidden="true">
               <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
           </button>
           <img src="/assets/glass/Danger.svg" alt="" className="cb-icon" draggable={false} aria-hidden="true" />
           <p className="cb-text">
-            <strong>Site under construction.</strong><br />
-            Some links may not work and some pages may appear incomplete.
-            We&rsquo;re still working on the best experience for the new era of C&nbsp;Minds.
+            <strong>{t.constructionBanner.title}</strong><br />
+            {t.constructionBanner.body}
           </p>
         </div>
       </BorderGlow>

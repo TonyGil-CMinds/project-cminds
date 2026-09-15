@@ -3,15 +3,10 @@
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useLocale } from "@/i18n/useLocale";
+import { copy } from "@/app/[locale]/core/copy";
 
 gsap.registerPlugin(ScrollTrigger);
-
-const QUOTES = [
-  "We refuse to accept futures built on exclusion, extraction, or inequality.",
-  "We are not just thinkers, we are bold minds that put the future into action.",
-  "We believe in the power of intersecting ethics, emerging technology, and life dignity, to spark bold and meaningful change.",
-  "We collaborate across sectors, geographies, and disciplines to rewrite the systems shaping our world.",
-] as const;
 
 // Called by the parent (core/page) to wire up the shared progress indicator
 export type ProgressRef = {
@@ -28,6 +23,9 @@ export default function ManifestoSection({ onScrollProgress }: Props) {
   const quoteRefs    = useRef<(HTMLDivElement | null)[]>([null, null, null, null]);
   const unitsRef     = useRef<HTMLSpanElement>(null);
   const lastPhaseRef = useRef(0);
+  const locale = useLocale();
+  const c = copy[locale].manifesto;
+  const QUOTES = c.quotes;
 
   useEffect(() => {
     const pin = pinRef.current;
@@ -127,7 +125,7 @@ export default function ManifestoSection({ onScrollProgress }: Props) {
         <div className="mf-spotlight" aria-hidden="true" />
 
         <p className="mf-label">
-          <span style={{ color: "var(--color-primary)" }}>•</span> Our Manifesto
+          <span style={{ color: "var(--color-primary)" }}>•</span> {c.label}
         </p>
 
         {/* All quotes stacked; visibility controlled by gsap autoAlpha */}

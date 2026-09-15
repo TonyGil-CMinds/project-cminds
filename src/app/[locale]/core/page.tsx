@@ -15,7 +15,9 @@ import SideRays          from "@reactbits/SideRays";
 import SiteFooter        from "@/components/SiteFooter";
 import NavSearch from "@/components/NavSearch";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
+import { common } from "@/i18n/common";
+import { copy } from "./copy";
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 
 function hexToRgb(hex: string) {
@@ -35,6 +37,16 @@ export default function CorePage() {
   const globalFillRef  = useRef<HTMLDivElement>(null);
   const globalDotRef   = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const locale = useLocale();
+  const lp = useLocalePath();
+  const t = common[locale];
+  const c = copy[locale];
+  const NAV_ITEMS = [
+    { key: "home", label: t.nav.home, path: "/" },
+    { key: "core", label: t.nav.core, path: "/core" },
+    { key: "mindscope", label: t.nav.mindscope, path: "/mindscope" },
+    { key: "careers", label: t.nav.careers, path: "/careers" },
+  ];
   const [primaryColor, setPrimaryColor] = useState('#5EC1F3');
 
   // Combined progress indicator driven by callbacks from child sections.
@@ -160,24 +172,20 @@ export default function CorePage() {
       </div>
       {/* Navigation */}
       <nav className="main-nav">
-        <div className="nav-brand" style={{ cursor: "pointer" }} onClick={() => navigateWithTransition("/")}>
+        <div className="nav-brand" style={{ cursor: "pointer" }} onClick={() => navigateWithTransition(lp("/"))}>
           <img src="/logo.svg" alt="C Minds" />
         </div>
         <div className="nav-menu" onMouseLeave={() => setHoverNav(null)}>
           <div className="nav-menu-light" ref={navLightRef} style={indicatorStyle} />
           {NAV_ITEMS.map((item, idx) => (
             <div
-              key={item}
+              key={item.key}
               ref={(el) => { navItemRefs.current[idx] = el; }}
-              className={`nav-item${item === "Core" ? " active" : ""}`}
+              className={`nav-item${item.key === "core" ? " active" : ""}`}
               onMouseEnter={() => setHoverNav(idx)}
-              onClick={() => {
-                if (item === "Home") navigateWithTransition("/");
-                if (item === "Mindscope ®") navigateWithTransition("/mindscope");
-                if (item === "Careers") navigateWithTransition("/careers");
-              }}
+              onClick={() => navigateWithTransition(lp(item.path))}
             >
-              {item}
+              {item.label}
             </div>
           ))}
         </div>
@@ -190,15 +198,13 @@ export default function CorePage() {
 
 
         <h1 className="core-h1">
-          <span className="core-word">We are.</span>
+          <span className="core-word">{c.hero.wordWe}</span>
           {" "}
-          <span className="core-word core-still">Still</span>
+          <span className="core-word core-still">{c.hero.wordStill}</span>
         </h1>
 
         <p className="core-para-text">
-          C Minds is a systemic innovation action tank that integrates technological,
-          financial, business, and governance frontiers to drive new logics and strategies
-          aimed at equitable prosperity and biodiversity conservation.
+          {c.hero.body}
         </p>
 
         <button
@@ -206,7 +212,7 @@ export default function CorePage() {
           style={{ padding: "0.9rem 2rem", opacity: 0 }}
           onClick={() => scrollWrapRef.current?.scrollIntoView({ behavior: "smooth" })}
         >
-          Scroll down ↓
+          {c.hero.scroll}
         </button>
       </div>
 

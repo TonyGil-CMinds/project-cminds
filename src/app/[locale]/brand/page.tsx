@@ -2,15 +2,17 @@
 
 import { useEffect, useState, useRef } from "react";
 import gsap from "gsap";
+import { useLocale } from "@/i18n/useLocale";
+import { copy, type BrandCopy } from "./copy";
 
 const NAV_ITEMS = [
-  { id: "logo",            label: "Logo",            parent: true  },
-  { id: "primary-logo",    label: "Primary logo"                   },
-  { id: "hexagone",        label: "Hexagone"                       },
-  { id: "clearspace",      label: "Clearspace"                     },
-  { id: "partnership",     label: "Partnership"                    },
-  { id: "color-usage",     label: "Color usage"                    },
-  { id: "incorrect-usage", label: "Incorrect usage"                },
+  { id: "logo",            parent: true  },
+  { id: "primary-logo"                   },
+  { id: "hexagone"                       },
+  { id: "clearspace"                     },
+  { id: "partnership"                    },
+  { id: "color-usage"                    },
+  { id: "incorrect-usage"                },
 ];
 
 const COLOR_IMGS = [
@@ -20,13 +22,13 @@ const COLOR_IMGS = [
   "/brand/usage-gradientbg.webp",
 ];
 
-const INCORRECT = [
-  { src: "/brand/not-oldlogo.png",        caption: "Do not use the old logo"                      },
-  { src: "/brand/not-strech.png",         caption: "Do not stretch/squeeze the hexagone"          },
-  { src: "/brand/not-custom.png",         caption: "Do not create custom logos"                   },
-  { src: "/brand/not-type.png",           caption: "Do not alter the logo type"                   },
-  { src: "/brand/not-multiplecolors.png", caption: "Do not apply multiple colors to the logo"     },
-  { src: "/brand/not-othercolor.png",     caption: "Do not use unapproved colors"                 },
+const INCORRECT_SRCS = [
+  "/brand/not-oldlogo.png",
+  "/brand/not-strech.png",
+  "/brand/not-custom.png",
+  "/brand/not-type.png",
+  "/brand/not-multiplecolors.png",
+  "/brand/not-othercolor.png",
 ];
 
 function HoverImg({ src, hover, alt }: { src: string; hover: string; alt: string }) {
@@ -42,10 +44,12 @@ function SidebarNav({
   active,
   onNav,
   onMediaKit,
+  t,
 }: {
   active: string;
   onNav: (id: string) => void;
   onMediaKit: () => void;
+  t: BrandCopy;
 }) {
   return (
     <>
@@ -58,20 +62,20 @@ function SidebarNav({
           className={`brand-sb-parent${active === "logo" ? " active" : ""}`}
           onClick={() => onNav("logo")}
         >
-          Logo
+          {t.nav.logo}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="brand-sb-chevron">
             <path d="M18 15l-6-6-6 6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
 
         <ul className="brand-sb-list">
-          {NAV_ITEMS.filter((n) => !n.parent).map(({ id, label }) => (
+          {NAV_ITEMS.filter((n) => !n.parent).map(({ id }) => (
             <li key={id}>
               <button
                 className={`brand-sb-link${active === id ? " active" : ""}`}
                 onClick={() => onNav(id)}
               >
-                {label}
+                {t.nav[id as keyof typeof t.nav]}
               </button>
             </li>
           ))}
@@ -84,7 +88,7 @@ function SidebarNav({
           className="brand-mediakit-btn brand-mediakit-btn--disabled"
         >
           <img src="/brand/mediakit-icon.svg" alt="" width={16} height={16} className="brand-icon-inv" />
-          Download MediaKit
+          {t.mediaKitBtn}
         </button>
       </div>
     </>
@@ -92,6 +96,8 @@ function SidebarNav({
 }
 
 export default function BrandPage() {
+  const locale = useLocale();
+  const t = copy[locale];
   const [active, setActive]     = useState("logo");
   const [menuOpen, setMenu]     = useState(false);
   const [showModal, setModal]   = useState(false);
@@ -140,14 +146,14 @@ export default function BrandPage() {
 
       {/* ── Desktop sidebar ── */}
       <aside className="brand-sidebar">
-        <SidebarNav active={active} onNav={goTo} onMediaKit={() => setModal(true)} />
+        <SidebarNav active={active} onNav={goTo} onMediaKit={() => setModal(true)} t={t} />
       </aside>
 
       {/* ── Mobile burger ── */}
       <button
         className={`brand-burger${menuOpen ? " is-open" : ""}`}
         onClick={() => setMenu(!menuOpen)}
-        aria-label={menuOpen ? "Close menu" : "Open navigation"}
+        aria-label={menuOpen ? t.burgerClose : t.burgerOpen}
       >
         <span /><span /><span />
       </button>
@@ -158,7 +164,7 @@ export default function BrandPage() {
         onClick={() => setMenu(false)}
       >
         <div className="brand-mobile-panel" onClick={(e) => e.stopPropagation()}>
-          <SidebarNav active={active} onNav={goTo} onMediaKit={() => { setMenu(false); setModal(true); }} />
+          <SidebarNav active={active} onNav={goTo} onMediaKit={() => { setMenu(false); setModal(true); }} t={t} />
         </div>
       </div>
 
@@ -167,9 +173,9 @@ export default function BrandPage() {
         <div ref={modalOverlayRef} className="brand-modal-overlay" onClick={() => setModal(false)}>
           <div ref={modalCardRef} className="brand-modal" onClick={(e) => e.stopPropagation()}>
             <img src="/assets/glass/Danger.svg" alt="" className="brand-modal-icon" aria-hidden="true" />
-            <h3 className="brand-modal-title">Coming soon</h3>
-            <p className="brand-modal-body">The Media Kit will be available for download shortly. Check back soon.</p>
-            <button className="brand-modal-close" onClick={() => setModal(false)}>Got it</button>
+            <h3 className="brand-modal-title">{t.modal.title}</h3>
+            <p className="brand-modal-body">{t.modal.body}</p>
+            <button className="brand-modal-close" onClick={() => setModal(false)}>{t.modal.close}</button>
           </div>
         </div>
       )}
@@ -179,22 +185,22 @@ export default function BrandPage() {
 
         {/* Hero */}
         <div className="brand-hero">
-          <h1 className="brand-hero-title">Brand Guidelines</h1>
+          <h1 className="brand-hero-title">{t.hero.title}</h1>
         </div>
 
         {/* Logo */}
         <section id="logo" className="brand-section">
           <div className="brand-sh">
-            <h2 className="brand-st">Logo</h2>
+            <h2 className="brand-st">{t.nav.logo}</h2>
             <div className="brand-sd">
-              <p>The logo is a brand's primary identifier. It contains both the symbol and our name in wordmark form. It should be used most often to represent our brand, especially to audiences unfamiliar with it.</p>
+              <p>{t.logo.desc}</p>
               <a
                 href="/brand/C%20Minds%20-%20Logos.zip"
                 download="C Minds - Logos.zip"
                 className="brand-dl-btn"
               >
                 <img src="/brand/download-icon.svg" alt="" width={16} height={16} className="brand-icon-inv" />
-                Download logo
+                {t.logo.download}
               </a>
             </div>
           </div>
@@ -203,69 +209,69 @@ export default function BrandPage() {
         {/* Primary logo */}
         <section id="primary-logo" className="brand-section">
           <div className="brand-sh">
-            <h2 className="brand-st">Primary logo</h2>
+            <h2 className="brand-st">{t.primaryLogo.title}</h2>
             <div className="brand-sd">
-              <p>Our logo is our first impression. Its symbol, a dotted hexagone, embodies "C Minds" and the wordmark complements this symbol with its neutral and organic look.</p>
+              <p>{t.primaryLogo.desc}</p>
             </div>
           </div>
           <div className="brand-img-card">
-            <HoverImg src="/brand/primary-logo.png" hover="/brand/primary-logo-hover.webp" alt="C Minds primary logo" />
+            <HoverImg src="/brand/primary-logo.png" hover="/brand/primary-logo-hover.webp" alt={t.primaryLogo.alt} />
           </div>
         </section>
 
         {/* Hexagone */}
         <section id="hexagone" className="brand-section">
           <div className="brand-sh">
-            <h2 className="brand-st">Hexagone</h2>
+            <h2 className="brand-st">{t.hexagone.title}</h2>
             <div className="brand-sd">
-              <p>The hexagon is one of nature's most efficient and resilient structures, appearing across living systems from honeycombs to cellular networks. For C Minds, it symbolizes the power of interconnectedness, collaboration, and systems thinking—core principles that have guided our work for over two decades. Its evolution reflects our continued commitment to building bridges across sectors, disciplines, and knowledge systems to help shape more equitable and bioprosperous futures.</p>
+              <p>{t.hexagone.desc}</p>
             </div>
           </div>
           <div className="brand-img-card">
-            <HoverImg src="/brand/hexagone.png" hover="/brand/hexagone-hover.webp" alt="C Minds hexagone symbol" />
+            <HoverImg src="/brand/hexagone.png" hover="/brand/hexagone-hover.webp" alt={t.hexagone.alt} />
           </div>
         </section>
 
         {/* Clearspace */}
         <section id="clearspace" className="brand-section">
           <div className="brand-sh">
-            <h2 className="brand-st">Clearspace</h2>
+            <h2 className="brand-st">{t.clearspace.title}</h2>
             <div className="brand-sd">
-              <p>Be sure not to crowd the logo. When placing elements nearby, use the letter "C" in the wordmark as a guide for spacing.</p>
+              <p>{t.clearspace.desc}</p>
             </div>
           </div>
           <div className="brand-img-card">
-            <HoverImg src="/brand/Cleaspace.png" hover="/brand/Clearspace-hover.webp" alt="C Minds logo clearspace guide" />
+            <HoverImg src="/brand/Cleaspace.png" hover="/brand/Clearspace-hover.webp" alt={t.clearspace.alt} />
           </div>
         </section>
 
         {/* Partnership */}
         <section id="partnership" className="brand-section">
           <div className="brand-sh">
-            <h2 className="brand-st">Partnership</h2>
+            <h2 className="brand-st">{t.partnership.title}</h2>
             <div className="brand-sd">
-              <p>When positioning dual logos in brand partnerships, apply the same clearspace principles. Use a 1.5 px line that extends from the top to the bottom of the symbol's height as a divider between the two logos.</p>
+              <p>{t.partnership.desc}</p>
             </div>
           </div>
           <div className="brand-img-card">
-            <HoverImg src="/brand/partnership.png" hover="/brand/partnership-hover.webp" alt="C Minds partnership logo usage" />
+            <HoverImg src="/brand/partnership.png" hover="/brand/partnership-hover.webp" alt={t.partnership.alt} />
           </div>
         </section>
 
         {/* Color usage */}
         <section id="color-usage" className="brand-section">
           <div className="brand-sh brand-sh--full">
-            <h2 className="brand-st">Color usage</h2>
+            <h2 className="brand-st">{t.colorUsage.title}</h2>
             <div className="brand-sd-cols">
               <div className="brand-sd">
-                <p>Our logo should only appear in black, white, or C Minds Blue 600 from the core palette. When placing the logo over imagery, ensure there is enough contrast to maintain clear legibility.</p>
+                <p>{t.colorUsage.desc1}</p>
               </div>
               <div className="brand-sd">
-                <p>Monochrome versions can be used in the following cases:</p>
+                <p>{t.colorUsage.desc2}</p>
                 <ol className="brand-ol">
-                  <li>The background color or image clashes with C Minds Blue.</li>
-                  <li>Printing is limited to black, white, or one color.</li>
-                  <li>The logo appears alongside a partner logo.</li>
+                  {t.colorUsage.list.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
                 </ol>
               </div>
             </div>
@@ -273,7 +279,7 @@ export default function BrandPage() {
           <div className="brand-color-grid">
             {COLOR_IMGS.map((src, i) => (
               <div key={i} className="brand-img-card brand-img-card--fill">
-                <img src={src} alt={`Logo on ${["white", "blue", "black", "gradient"][i]} background`} />
+                <img src={src} alt={t.colorUsage.altTemplate.replace("{bg}", t.colorUsage.bgLabels[i])} />
               </div>
             ))}
           </div>
@@ -282,18 +288,18 @@ export default function BrandPage() {
         {/* Incorrect usage */}
         <section id="incorrect-usage" className="brand-section">
           <div className="brand-sh">
-            <h2 className="brand-st">Incorrect usage</h2>
+            <h2 className="brand-st">{t.incorrectUsage.title}</h2>
             <div className="brand-sd">
-              <p>Do not alter the logo. Avoid the following treatments.</p>
+              <p>{t.incorrectUsage.intro}</p>
             </div>
           </div>
           <div className="brand-incorrect-grid">
-            {INCORRECT.map((item, i) => (
+            {INCORRECT_SRCS.map((src, i) => (
               <div key={i} className="brand-incorrect-item">
                 <div className="brand-img-card brand-img-card--fill">
-                  <img src={item.src} alt={item.caption} />
+                  <img src={src} alt={t.incorrectUsage.captions[i]} />
                 </div>
-                <p className="brand-incorrect-caption">{item.caption}</p>
+                <p className="brand-incorrect-caption">{t.incorrectUsage.captions[i]}</p>
               </div>
             ))}
           </div>

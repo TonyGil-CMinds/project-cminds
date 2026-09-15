@@ -5,47 +5,98 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HexPattern from "./HexPattern";
+import { useLocale } from "@/i18n/useLocale";
 
 gsap.registerPlugin(ScrollTrigger);
+
+/* ── Copy ──────────────────────────────────────────────── */
+
+const copy = {
+  en: {
+    eyebrow: "OUR COMPONENTS",
+    components: {
+      platform: {
+        title: ["GLOBAL", "LEARNING", "PLATFORM"],
+        detectLabel: "HUMAN",
+        desc: [
+          "Bridging silos between tech innovation, the climate, and conservation fields by creating spaces to share best practices, technologies, and resources.",
+          "This includes annual high-level global forums, and much more.",
+        ],
+      },
+      technology: {
+        title: ["TECHNOLOGY", "DEVELOPMENT"],
+        detectLabel: "SPECIES",
+        desc: [
+          "Building AI-powered tools that enable field researchers to identify, track, and protect endangered species with unprecedented accuracy.",
+          "From computer vision models to acoustic monitoring and satellite data fusion.",
+        ],
+      },
+      network: {
+        title: ["CONSERVATION", "NETWORK"],
+        detectLabel: "HABITAT",
+        desc: [
+          "A connected global network of conservation organizations, researchers, and local communities working together.",
+          "Sharing data, open-source tools, and knowledge to protect the world's biodiversity.",
+        ],
+      },
+    },
+  },
+  es: {
+    eyebrow: "NUESTROS COMPONENTES",
+    components: {
+      platform: {
+        title: ["PLATAFORMA", "GLOBAL DE", "APRENDIZAJE"],
+        detectLabel: "HUMANO",
+        desc: [
+          "Conectamos la innovación tecnológica con el clima y la conservación, creando espacios para compartir mejores prácticas, tecnologías y recursos.",
+          "Esto incluye foros globales de alto nivel cada año, entre muchas otras iniciativas.",
+        ],
+      },
+      technology: {
+        title: ["DESARROLLO", "TECNOLÓGICO"],
+        detectLabel: "ESPECIE",
+        desc: [
+          "Creamos herramientas con IA que permiten a investigadores de campo identificar, monitorear y proteger especies en peligro con una precisión sin precedentes.",
+          "Desde modelos de visión por computadora hasta monitoreo acústico y fusión de datos satelitales.",
+        ],
+      },
+      network: {
+        title: ["RED DE", "CONSERVACIÓN"],
+        detectLabel: "HÁBITAT",
+        desc: [
+          "Una red global conectada de organizaciones de conservación, investigadores y comunidades locales que trabajan en conjunto.",
+          "Compartiendo datos, herramientas de código abierto y conocimiento para proteger la biodiversidad del planeta.",
+        ],
+      },
+    },
+  },
+} as const;
 
 /* ── Data ──────────────────────────────────────────────── */
 
 const COMPONENTS = [
   {
     id: "platform",
-    title: ["GLOBAL", "LEARNING", "PLATFORM"],
-    detect: { label: "HUMAN", confidence: 80 },
-    desc: [
-      "Bridging silos between tech innovation, the climate, and conservation fields by creating spaces to share best practices, technologies, and resources.",
-      "This includes annual high-level global forums, and much more.",
-    ],
+    confidence: 80,
     image: "/platforms/aiforbiodiversity/wherewecomefrom-img1.png",
   },
   {
     id: "technology",
-    title: ["TECHNOLOGY", "DEVELOPMENT"],
-    detect: { label: "SPECIES", confidence: 94 },
-    desc: [
-      "Building AI-powered tools that enable field researchers to identify, track, and protect endangered species with unprecedented accuracy.",
-      "From computer vision models to acoustic monitoring and satellite data fusion.",
-    ],
+    confidence: 94,
     image: "/platforms/aiforbiodiversity/wherewecomefrom-img2.png",
   },
   {
     id: "network",
-    title: ["CONSERVATION", "NETWORK"],
-    detect: { label: "HABITAT", confidence: 91 },
-    desc: [
-      "A connected global network of conservation organizations, researchers, and local communities working together.",
-      "Sharing data, open-source tools, and knowledge to protect the world's biodiversity.",
-    ],
+    confidence: 91,
     image: "/platforms/aiforbiodiversity/hero-bg-image.png",
   },
-];
+] as const;
 
 /* ── Component ─────────────────────────────────────────── */
 
 export default function AfbComponentsSection() {
+  const locale = useLocale();
+  const t      = copy[locale];
   const containerRef  = useRef<HTMLDivElement>(null);
   const confRef       = useRef<HTMLSpanElement>(null);
   const rightBarRef   = useRef<HTMLDivElement>(null);
@@ -97,7 +148,7 @@ export default function AfbComponentsSection() {
     const comp = COMPONENTS[active];
     const obj  = { val: 0 };
     gsap.to(obj, {
-      val: comp.detect.confidence, duration: 1.1, ease: "power2.out", delay: 0.5,
+      val: comp.confidence, duration: 1.1, ease: "power2.out", delay: 0.5,
       onUpdate: () => { if (confRef.current) confRef.current.textContent = Math.round(obj.val) + "%"; },
     });
   }, [active]);
@@ -157,7 +208,7 @@ export default function AfbComponentsSection() {
         /* Confidence count-up */
         const obj = { val: 0 };
         gsap.to(obj, {
-          val: COMPONENTS[0].detect.confidence,
+          val: COMPONENTS[0].confidence,
           duration: 1.4, ease: "power2.out", delay: 1.5,
           onUpdate: () => { if (confRef.current) confRef.current.textContent = Math.round(obj.val) + "%"; },
         });
@@ -177,7 +228,8 @@ export default function AfbComponentsSection() {
 
   }, { scope: containerRef });
 
-  const comp = COMPONENTS[active];
+  const comp     = COMPONENTS[active];
+  const compCopy = t.components[comp.id];
 
   return (
     <section ref={containerRef} id="our-components" className="afb-section afb-section-components">
@@ -189,7 +241,7 @@ export default function AfbComponentsSection() {
         <div className="afb-comp-left">
 
           <span className="afb-comp-eyebrow-el afb-comp-eyebrow" style={{ opacity: 0 }}>
-            OUR COMPONENTS
+            {t.eyebrow}
           </span>
 
           {/* Tab selector */}
@@ -201,14 +253,14 @@ export default function AfbComponentsSection() {
                 aria-selected={i === active}
                 className={`afb-comp-tab${i === active ? " active" : ""}`}
                 onClick={() => switchTo(i)}
-                title={c.title.join(" ")}
+                title={t.components[c.id].title.join(" ")}
               />
             ))}
           </div>
 
           {/* Animated title */}
           <h2 className="afb-comp-title">
-            {comp.title.map((word, i) => (
+            {compCopy.title.map((word, i) => (
               <div key={`${active}-${i}`} className="afb-comp-title-line">
                 <span className="afb-comp-title-inner">{word}</span>
               </div>
@@ -217,7 +269,7 @@ export default function AfbComponentsSection() {
 
           {/* Description */}
           <div className="afb-comp-description">
-            {comp.desc.map((p, i) => (
+            {compCopy.desc.map((p, i) => (
               <p key={`${active}-${i}`} className="afb-comp-desc-p">{p}</p>
             ))}
           </div>
@@ -235,7 +287,7 @@ export default function AfbComponentsSection() {
             <img
               key={active}
               src={comp.image}
-              alt={comp.title.join(" ")}
+              alt={compCopy.title.join(" ")}
               className="afb-comp-image"
             />
           </div>
@@ -243,7 +295,7 @@ export default function AfbComponentsSection() {
           {/* AI detection bounding box */}
           <div className="afb-comp-detect" aria-hidden="true">
             <span className="afb-detect-label-text">
-              {comp.detect.label.split("").map((ch, i) => (
+              {compCopy.detectLabel.split("").map((ch, i) => (
                 <span key={`${active}-${i}`} className="afb-detect-char">{ch}</span>
               ))}
             </span>

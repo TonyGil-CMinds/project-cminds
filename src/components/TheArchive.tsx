@@ -4,6 +4,8 @@ import { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import gsap from "gsap";
+import { useLocale } from "@/i18n/useLocale";
+import { copy } from "@/app/[locale]/mindscope/copy";
 
 /* ─── Constants ───────────────────────────────────────────── */
 const CW               = 1.65;
@@ -43,10 +45,10 @@ const BG_PALETTE: [string, string][] = [
 ];
 
 /* ─── API helpers ─────────────────────────────────────────── */
-function fmtApiDate(raw: string): string {
+function fmtApiDate(raw: string, locale: string): string {
   if (!raw) return "—";
   try {
-    return new Date(raw).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    return new Date(raw).toLocaleDateString(locale === "es" ? "es-MX" : "en-US", { month: "short", day: "numeric", year: "numeric" });
   } catch { return raw; }
 }
 
@@ -97,12 +99,12 @@ function findFileUrl(obj: Record<string, unknown>): string {
   return "#";
 }
 
-function mapReport(raw: Record<string, unknown>, idx: number): ArchiveItem {
+function mapReport(raw: Record<string, unknown>, idx: number, locale: string): ArchiveItem {
   // Shared fields (same for all languages)
   const sharedTitle = str(raw.title ?? raw.name);
   const sharedDesc  = str(raw.description ?? raw.summary);
   const sharedCover = str(raw.cover_image ?? raw.image ?? raw.thumbnail);
-  const sharedDate  = fmtApiDate(str(raw.published_date ?? raw.date ?? raw.created_at));
+  const sharedDate  = fmtApiDate(str(raw.published_date ?? raw.date ?? raw.created_at), locale);
 
   // Build langData from files[] → { language, url, file_name }
   const langData: Record<string, LangData> = {};
@@ -453,6 +455,8 @@ interface TheArchiveProps {
 }
 
 export default function TheArchive({ visible, onExpand, openReportId }: TheArchiveProps) {
+  const locale = useLocale();
+  const t = copy[locale].archive;
   const wrapRef        = useRef<HTMLDivElement>(null);
   const panelRef       = useRef<HTMLDivElement>(null);
   const progressRef    = useRef(0);
@@ -495,7 +499,7 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
               ? data.data
               : [];
         if (rawArr.length > 0) {
-          const mapped = rawArr.slice(0, SCAT_POS.length).map(mapReport);
+          const mapped = rawArr.slice(0, SCAT_POS.length).map((raw, idx) => mapReport(raw, idx, locale));
           setItems(mapped);
           setCarouselOff(((mapped.length - 1) / 2) * CAROUSEL_SPACING);
         }
@@ -503,7 +507,7 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
       .catch(() => {})
       .finally(() => setLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible]);
+  }, [visible, locale]);
 
   /* auto-open card when arriving from /reportes/[id] */
   useEffect(() => {
@@ -701,14 +705,14 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
       {/* Title */}
       <div className={`archive-title-wrap${progress > 0.12 ? " archive-title-wrap--up" : ""}${activeIdx !== null ? " archive-title-wrap--hidden" : ""}`}>
         <h2 className="archive-heading">
-          <span className="archive-heading-the">The </span>
-          <span className="archive-heading-arc">Archive</span>
+          <span className="archive-heading-the">{t.headingThe}</span>
+          <span className="archive-heading-arc">{t.headingArchive}</span>
         </h2>
       </div>
 
       {/* Scroll hint */}
       <div className={`archive-scroll-hint${progress > 0.07 ? " archive-scroll-hint--gone" : ""}`}>
-        <span>Scroll to arrange</span>
+        <span>{t.scrollHint}</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
           <line x1="12" y1="4" x2="12" y2="20" /><polyline points="18 14 12 20 6 14" />
         </svg>
@@ -728,7 +732,7 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
           <button
             className="archive-panel-close"
             onClick={() => { setActiveIdx(null); setActiveLang(0); onExpand?.(false); }}
-            aria-label="Close"
+            aria-label={t.close}
           >
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -757,7 +761,7 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
             onClick={() => saveAs(panelItem.apiId, activeLangStr, panelTitle, panelDownload)}
             disabled={!panelDownload || panelDownload === "#"}
           >
-            Save as PDF
+            {t.saveAsPdf}
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />

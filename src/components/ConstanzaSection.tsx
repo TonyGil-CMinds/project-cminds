@@ -4,40 +4,17 @@ import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import CycleSlider from "./CycleSlider";
+import { useLocale } from "@/i18n/useLocale";
+import { copy } from "@/app/[locale]/core/copy";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const QUOTE = "Bridging worlds. The future needs translators who can connect science with policy, Indigenous wisdom with innovation, and finance with regeneration. Real impact happens in between.".split(" ");
-
-const SLIDES = [
-  {
-    icon: "/core/forbes.svg",
-    iconH: 22,
-    text: "Recognized by Forbes México and NTT DATA as a leader in AI 2024, highlighting her role in advancing AI in Mexico.",
-    href: "#",
-  },
-  {
-    icon: "/core/wef.svg",
-    iconH: 30,
-    text: "Recognized by the WEF as a Global Shaper",
-    href: "#",
-  },
-  {
-    icon: "/core/govuk.svg",
-    iconH: 14,
-    text: "Recognized by the UK Government as an International Leader",
-    href: "#",
-  },
-  {
-    icon: "/core/parispeace.svg",
-    iconH: 26,
-    text: "Have won the Paris Peace Forum Award for one of the 10 most promising initiatives.",
-    href: "#",
-  },
-];
-
 export default function ConstanzaSection() {
   const sectionRef  = useRef<HTMLElement>(null);
+  const locale = useLocale();
+  const c = copy[locale].constanza;
+  const QUOTE = c.quote.split(" ");
+  const SLIDES = c.slides;
 
   // Scroll-triggered entrance animations
   useEffect(() => {
@@ -75,11 +52,11 @@ export default function ConstanzaSection() {
       <div className="cz-top">
         <div className="cz-left">
           <div className="cz-left-head">
-            <h2 className="cz-name" style={{ opacity: 0 }}>Constanza<br />Gómez Mont</h2>
-            <p className="cz-founder-title" style={{ opacity: 0 }}>Founder and Chief Executive Officer</p>
+            <h2 className="cz-name" style={{ opacity: 0 }}>{c.name[0]}<br />{c.name[1]}</h2>
+            <p className="cz-founder-title" style={{ opacity: 0 }}>{c.title}</p>
           </div>
           <p className="cz-bio" style={{ opacity: 0 }}>
-            Founder & CEO of C Minds, AI ethics strategist, and social entrepreneur advancing responsible technology and AI for good in emerging economies.
+            {c.bio}
           </p>
         </div>
       </div>
@@ -107,7 +84,12 @@ export default function ConstanzaSection() {
 
       {/* ── Slider (desktop: abs top-right; mobile: below quote) ── */}
       <div className="cz-slider" style={{ opacity: 0 }}>
-        <CycleSlider slides={SLIDES} autoplayDelay={4000} />
+        <CycleSlider
+          slides={SLIDES}
+          autoplayDelay={4000}
+          articleLinkText={copy[locale].cycleSlider.articleLink}
+          slideLabel={copy[locale].cycleSlider.slide}
+        />
       </div>
     </section>
   );

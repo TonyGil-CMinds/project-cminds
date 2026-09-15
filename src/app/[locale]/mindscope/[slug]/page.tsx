@@ -8,18 +8,21 @@ import NavSearch from "@/components/NavSearch";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { ScrollBar } from "@/components/v1/skiper1";
 import { ThinkingOrb } from "thinking-orbs";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
+import { common } from "@/i18n/common";
+import { copy } from "../copy";
 
-const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
+const NAV_KEYS = ["home", "core", "mindscope", "careers"] as const;
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://cminds.co";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.cminds.co";
 
 function hexToRgb(hex: string) {
   const n = parseInt(hex.slice(1), 16);
   return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
 }
 
-function fmtDate(d: string) {
-  return new Date(d + "T00:00:00").toLocaleDateString("en-US", {
+function fmtDate(d: string, locale: string) {
+  return new Date(d + "T00:00:00").toLocaleDateString(locale === "es" ? "es-MX" : "en-US", {
     month: "short", day: "numeric", year: "numeric",
   });
 }
@@ -79,6 +82,10 @@ function prepareContent(html: string): { sections: Section[]; html: string } {
 export default function PostPage() {
   const { slug } = useParams<{ slug: string }>();
   const router   = useRouter();
+  const locale   = useLocale();
+  const lp       = useLocalePath();
+  const t        = copy[locale];
+  const nav      = common[locale].nav;
 
   const containerRef = useRef<HTMLDivElement>(null);
   const msItemRef    = useRef<HTMLDivElement>(null);
@@ -132,7 +139,7 @@ export default function PostPage() {
     if (nextFillRef.current) gsap.set(nextFillRef.current, { scaleX: 0 });
     if (nextTeaseRef.current) gsap.set(nextTeaseRef.current, { opacity: 0 });
     window.scrollTo(0, 0);
-  }, [slug]);
+  }, [slug, locale]);
 
   // ── Fetch post ────────────────────────────────────────────
   useEffect(() => {
@@ -143,9 +150,9 @@ export default function PostPage() {
           "https://cminds.base44.app/api/apps/6925f38be89e0d268185fecc/functions/publicBlogFeed?limit=84"
         );
         const data = await res.json();
-        const allPosts: Post[] = (data.posts ?? []).filter((p: Post) => p.language === "en");
+        const allPosts: Post[] = (data.posts ?? []).filter((p: Post) => p.language === locale);
         const found: Post | undefined = (data.posts ?? []).find(
-          (p: Post) => p.slug === slug
+          (p: Post) => p.slug === slug && p.language === locale
         );
         if (found) {
           setPost(found);
@@ -168,7 +175,7 @@ export default function PostPage() {
       }
     };
     fetch_();
-  }, [slug]);
+  }, [slug, locale]);
 
   // ── Entry animation ───────────────────────────────────────
   useGSAP(() => {
@@ -250,12 +257,13 @@ export default function PostPage() {
         stagger: 0.06,
         ease: "power3.in",
         onComplete: () => {
+          const target = lp(`/mindscope/${next.slug}`);
           if (typeof document !== "undefined" && "startViewTransition" in document) {
             (document as any).startViewTransition(() => {
-              startTransition(() => { router.push(`/mindscope/${next.slug}`); });
+              startTransition(() => { router.push(target); });
             });
           } else {
-            router.push(`/mindscope/${next.slug}`);
+            router.push(target);
           }
         },
       });
@@ -316,18 +324,19 @@ export default function PostPage() {
     };
     // Re-run once the post/next-post load so nextFillRef exists and the
     // wheel listener actually gets attached (fill is null on first mount).
-  }, [router, nextPost, loading]);
+  }, [router, nextPost, loading, locale]);
 
   // ── Navigation ────────────────────────────────────────────
   const navigateWithTransition = (path: string) => {
     sessionStorage.setItem("vt_from", "post");
+    const target = lp(path);
     const doNavigate = () => {
       if (typeof document !== "undefined" && "startViewTransition" in document) {
         (document as any).startViewTransition(() => {
-          startTransition(() => { router.push(path); });
+          startTransition(() => { router.push(target); });
         });
       } else {
-        router.push(path);
+        router.push(target);
       }
     };
     gsap.to(".ms-post-date, .ms-post-title, .ms-post-cover", {
@@ -348,19 +357,19 @@ export default function PostPage() {
         </div>
         <div className="nav-menu">
           <div className="nav-menu-light" ref={navLightRef} />
-          {NAV_ITEMS.map((item) => (
+          {NAV_KEYS.map((key) => (
             <div
-              key={item}
-              ref={item === "Mindscope ®" ? msItemRef : undefined}
-              className={`nav-item${item === "Mindscope ®" ? " active" : ""}`}
+              key={key}
+              ref={key === "mindscope" ? msItemRef : undefined}
+              className={`nav-item${key === "mindscope" ? " active" : ""}`}
               onClick={() => {
-                if (item === "Home")         navigateWithTransition("/");
-                if (item === "Core")         navigateWithTransition("/core");
-                if (item === "Careers")      navigateWithTransition("/careers");
-                if (item === "Mindscope ®")  navigateWithTransition("/mindscope");
+                if (key === "home")       navigateWithTransition("/");
+                if (key === "core")       navigateWithTransition("/core");
+                if (key === "careers")    navigateWithTransition("/careers");
+                if (key === "mindscope")  navigateWithTransition("/mindscope");
               }}
             >
-              {item}
+              {nav[key]}
             </div>
           ))}
         </div>
@@ -377,9 +386,9 @@ export default function PostPage() {
 
       {!loading && post && (
         <>
-          <nav className="ms-breadcrumb" aria-label="Breadcrumb">
+          <nav className="ms-breadcrumb" aria-label={t.post.breadcrumbAria}>
             <span className="ms-crumb-link" onClick={() => navigateWithTransition("/mindscope")}>
-              Mindscope
+              {t.post.breadcrumbMindscope}
             </span>
             <span className="ms-crumb-sep">/</span>
             <span className="ms-crumb-current" aria-current="page">{post.title}</span>
@@ -395,20 +404,20 @@ export default function PostPage() {
                   {
                     "@type": "ListItem",
                     position: 1,
-                    name: "Home",
-                    item: `${SITE_URL}/`,
+                    name: t.post.breadcrumbHome,
+                    item: `${SITE_URL}/${locale}`,
                   },
                   {
                     "@type": "ListItem",
                     position: 2,
-                    name: "Mindscope",
-                    item: `${SITE_URL}/mindscope`,
+                    name: t.post.breadcrumbMindscope,
+                    item: `${SITE_URL}/${locale}/mindscope`,
                   },
                   {
                     "@type": "ListItem",
                     position: 3,
                     name: post.title,
-                    item: `${SITE_URL}/mindscope/${slug}`,
+                    item: `${SITE_URL}/${locale}/mindscope/${slug}`,
                   },
                 ],
               }),
@@ -417,8 +426,8 @@ export default function PostPage() {
 
           <div className="ms-post-header">
             <p className="ms-post-date">
-              {fmtDate(post.published_date)}
-              {post.reading_time_minutes ? ` · ${post.reading_time_minutes} min read` : ""}
+              {fmtDate(post.published_date, locale)}
+              {post.reading_time_minutes ? ` · ${post.reading_time_minutes} ${t.post.minRead}` : ""}
             </p>
             <h1 className="ms-post-title">{post.title}</h1>
             <div className="ms-post-cover">
@@ -430,20 +439,20 @@ export default function PostPage() {
 
           <div
             className="ms-post-body"
-            dangerouslySetInnerHTML={{ __html: postHtml || "<p>No content available.</p>" }}
+            dangerouslySetInnerHTML={{ __html: postHtml || `<p>${t.post.noContent}</p>` }}
           />
 
           {/* Share row */}
           <div className="ms-share-row">
-            <span className="ms-share-text">Share with friends</span>
-            <button className="ms-share-btn" onClick={handleCopy} aria-label="Copy link">
-              <span className="ms-share-tooltip">Copy to share</span>
+            <span className="ms-share-text">{t.post.shareText}</span>
+            <button className="ms-share-btn" onClick={handleCopy} aria-label={t.post.copyLink}>
+              <span className="ms-share-tooltip">{t.post.copyTooltip}</span>
               {copied ? (
                 <svg key="check" className="ms-share-icon-enter" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               ) : (
-                <img key="link" src="/link.svg" width={17} height={10} alt="Copy link" />
+                <img key="link" src="/link.svg" width={17} height={10} alt={t.post.copyLink} />
               )}
             </button>
           </div>
@@ -453,7 +462,7 @@ export default function PostPage() {
             <div className="ms-next-buffer">
               <div ref={nextTeaseRef} className="ms-next-tease">
                 <p className="ms-next-tease-label">
-                  Continue scrolling to<br />reveal next post
+                  {t.post.continueScroll}<br />{t.post.revealNext}
                 </p>
                 <div className="ms-next-arrow">↓</div>
                 <div className="ms-next-progress-track">
@@ -473,8 +482,8 @@ export default function PostPage() {
 
       {!loading && !post && (
         <div className="ms-post-not-found">
-          <p>Post not found.</p>
-          <button onClick={() => navigateWithTransition("/mindscope")}>← Back to Mindscope</button>
+          <p>{t.post.notFound}</p>
+          <button onClick={() => navigateWithTransition("/mindscope")}>{t.post.backToMindscope}</button>
         </div>
       )}
     </div>

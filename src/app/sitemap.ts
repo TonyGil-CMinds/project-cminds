@@ -66,7 +66,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const postEntries = posts
     .filter((p) => p.slug && LOCALES.includes(p.language as (typeof LOCALES)[number]))
     .map((p) => ({
-      url: `${SITE_URL}/${p.language}/mindscope/${p.slug}`,
+      // Spanish slugs carry accents — percent-encode so the sitemap stays ASCII-safe.
+      url: `${SITE_URL}/${p.language}/mindscope/${encodeURIComponent(p.slug)}`,
       lastModified: p.published_date ? new Date(p.published_date) : now,
       changeFrequency: "monthly" as const,
       priority: 0.7,

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { toLocale, OG_LOCALES, type Locale } from "@/i18n/config";
 
 const FEED_URL =
   "https://cminds.base44.app/api/apps/6925f38be89e0d268185fecc/functions/publicBlogFeed";
@@ -9,6 +10,7 @@ type Post = {
   cover_image?: string;
   content?: string;
   published_date?: string;
+  language?: string;
 };
 
 function stripHtml(html: string): string {
@@ -22,8 +24,10 @@ function stripHtml(html: string): string {
     .trim();
 }
 
-function deriveDescription(content?: string): string {
-  const fallback = "Read the latest from C Minds Mindscope®.";
+function deriveDescription(content: string | undefined, locale: Locale): string {
+  const fallback = locale === "es"
+    ? "Lee lo más reciente de C Minds Mindscope®."
+    : "Read the latest from C Minds Mindscope®.";
   if (!content) return fallback;
 
   const text = stripHtml(content);
@@ -41,9 +45,10 @@ function deriveDescription(content?: string): string {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale: rawLocale, slug } = await params;
+  const locale = toLocale(rawLocale);
 
   try {
     const res = await fetch(
@@ -52,29 +57,48 @@ export async function generateMetadata({
     );
     const data = await res.json();
 
-    let post: Post | undefined = data.post;
+    const posts: Post[] = Array.isArray(data)
+      ? data
+      : Array.isArray(data.posts)
+        ? data.posts
+        : data.post
+          ? [data.post]
+          : [];
+
+    // Pick the post matching BOTH slug and the active locale.
+    const post = posts.find((p) => p.slug === slug && p.language === locale);
+
     if (!post) {
-      const posts: Post[] = Array.isArray(data) ? data : (data.posts ?? []);
-      post = posts.find((p) => p.slug === slug);
+      return { title: locale === "es" ? "Artículo — Mindscope®" : "Article — Mindscope®" };
     }
 
-    if (!post) return { title: "Article — Mindscope®" };
+    // Does a version of this slug exist in the *other* language? Only then
+    // do we emit an hreflang alternate for it.
+    const hasEn = posts.some((p) => p.slug === slug && p.language === "en");
+    const hasEs = posts.some((p) => p.slug === slug && p.language === "es");
 
-    const description = deriveDescription(post.content);
-    const canonicalPath = `/mindscope/${slug}`;
+    const description = deriveDescription(post.content, locale);
+    const canonicalPath = `/${locale}/mindscope/${slug}`;
     const ogTitle = `${post.title} — Mindscope® | C Minds`;
 
+    const languages: Record<string, string> = {};
+    if (hasEn) languages.en = `/en/mindscope/${slug}`;
+    if (hasEs) languages.es = `/es/mindscope/${slug}`;
+
     return {
-      metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://cminds.co"),
       title: `${post.title} — Mindscope®`,
       description,
-      alternates: { canonical: canonicalPath },
+      alternates: {
+        canonical: canonicalPath,
+        ...(Object.keys(languages).length > 0 ? { languages } : {}),
+      },
       openGraph: {
         type: "article",
         title: ogTitle,
         description,
         url: canonicalPath,
         siteName: "C Minds",
+        locale: OG_LOCALES[locale],
         publishedTime: post.published_date,
         images: post.cover_image
           ? [{ url: post.cover_image, width: 1200, height: 630, alt: post.title }]
@@ -88,7 +112,7 @@ export async function generateMetadata({
       },
     };
   } catch {
-    return { title: "Article — Mindscope®" };
+    return { title: locale === "es" ? "Artículo — Mindscope®" : "Article — Mindscope®" };
   }
 }
 

@@ -7,24 +7,68 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HexPattern from "./HexPattern";
 import AfbComponentsSection from "./AfbComponentsSection";
 import AfbInitiativesSection from "./AfbInitiativesSection";
+import { useLocale } from "@/i18n/useLocale";
 
 gsap.registerPlugin(ScrollTrigger);
 
 /* ── Data ──────────────────────────────────────────────── */
 
-const SECTIONS_DATA = [
-  { id: "who-are-we",        label: "WHO ARE WE",        number: "01" },
-  { id: "where-we-come-from", label: "WHERE WE COME FROM", number: "02" },
-  { id: "our-components",    label: "OUR COMPONENTS",    number: "03" },
-  { id: "initiatives",       label: "INITIATIVES",        number: "04" },
-];
-
-const WHO_TEXT =
-  "A global initiative that explores the use of today's most advanced technologies to mitigate the risk of environmental crises in the world and to activate the economy in the poverty-stricken communities around nature reserves.";
+const copy = {
+  en: {
+    sections: [
+      { id: "who-are-we",         label: "WHO ARE WE",         number: "01" },
+      { id: "where-we-come-from", label: "WHERE WE COME FROM", number: "02" },
+      { id: "our-components",    label: "OUR COMPONENTS",    number: "03" },
+      { id: "initiatives",       label: "INITIATIVES",       number: "04" },
+    ],
+    whoText:
+      "A global initiative that explores the use of today's most advanced technologies to mitigate the risk of environmental crises in the world and to activate the economy in the poverty-stricken communities around nature reserves.",
+    origin: {
+      eyebrow: "WHERE WE COME FROM",
+      titleLine1Pre: "AI for ",
+      titleLine1Green: "Climate",
+      titleLine1Post: " is",
+      titleLine2Pre: "an ",
+      titleLine2Em: "initiative",
+      titleLine3Pre: "founded by C ",
+      titleLine3Green: "Minds",
+      mainImgAlt: "AI for Climate team",
+      secondaryImgAlt: "Biodiversity in action",
+      statLabelLine1: "Projects",
+      statLabelLine2: "worldwide",
+    },
+  },
+  es: {
+    sections: [
+      { id: "who-are-we",         label: "QUIÉNES SOMOS",       number: "01" },
+      { id: "where-we-come-from", label: "DE DÓNDE VENIMOS",    number: "02" },
+      { id: "our-components",    label: "NUESTROS COMPONENTES", number: "03" },
+      { id: "initiatives",       label: "INICIATIVAS",         number: "04" },
+    ],
+    whoText:
+      "Una iniciativa global que explora el uso de las tecnologías más avanzadas de hoy para mitigar el riesgo de crisis ambientales en el mundo y activar la economía en las comunidades en situación de pobreza que rodean las reservas naturales.",
+    origin: {
+      eyebrow: "DE DÓNDE VENIMOS",
+      titleLine1Pre: "AI for ",
+      titleLine1Green: "Climate",
+      titleLine1Post: " es",
+      titleLine2Pre: "una ",
+      titleLine2Em: "iniciativa",
+      titleLine3Pre: "fundada por C ",
+      titleLine3Green: "Minds",
+      mainImgAlt: "Equipo de AI for Climate",
+      secondaryImgAlt: "Biodiversidad en acción",
+      statLabelLine1: "Proyectos",
+      statLabelLine2: "en el mundo",
+    },
+  },
+} as const;
 
 /* ── Component ─────────────────────────────────────────── */
 
 export default function AfbSections() {
+  const locale = useLocale();
+  const t = copy[locale];
   const containerRef = useRef<HTMLDivElement>(null);
   const fillRef      = useRef<HTMLDivElement>(null);
   const dotRef       = useRef<HTMLDivElement>(null);
@@ -197,7 +241,7 @@ export default function AfbSections() {
 
   }, { scope: containerRef });
 
-  const active = SECTIONS_DATA[activeIdx] ?? SECTIONS_DATA[0];
+  const active = t.sections[activeIdx] ?? t.sections[0];
 
   return (
     <div ref={containerRef} className="afb-sections-root">
@@ -222,7 +266,7 @@ export default function AfbSections() {
         <div className="afb-section-glow" aria-hidden="true" />
         <div className="afb-section-inner">
           <p className="afb-reveal-text">
-            {WHO_TEXT.split(" ").map((word, i, arr) => (
+            {t.whoText.split(" ").map((word, i, arr) => (
               <span key={i} className="afb-reveal-word">
                 {word}{i < arr.length - 1 ? " " : ""}
               </span>
@@ -242,24 +286,24 @@ export default function AfbSections() {
 
           {/* Section label */}
           <div className="afb-origin-header">
-            <span className="afb-origin-header-eyebrow">WHERE WE COME FROM</span>
+            <span className="afb-origin-header-eyebrow">{t.origin.eyebrow}</span>
           </div>
 
           {/* Title */}
           <h2 className="afb-origin-title">
             <div className="afb-origin-title-line">
               <span className="afb-otl-inner">
-                AI for <span className="afb-otl-green">Climate</span> is
+                {t.origin.titleLine1Pre}<span className="afb-otl-green">{t.origin.titleLine1Green}</span>{t.origin.titleLine1Post}
               </span>
             </div>
             <div className="afb-origin-title-line">
               <span className="afb-otl-inner afb-otl-dim">
-                an <em>initiative</em>
+                {t.origin.titleLine2Pre}<em>{t.origin.titleLine2Em}</em>
               </span>
             </div>
             <div className="afb-origin-title-line">
               <span className="afb-otl-inner">
-                founded by C <span className="afb-otl-green">Minds</span>
+                {t.origin.titleLine3Pre}<span className="afb-otl-green">{t.origin.titleLine3Green}</span>
               </span>
             </div>
           </h2>
@@ -272,7 +316,7 @@ export default function AfbSections() {
               <div className="afb-origin-card-frame">
                 <img
                   src="/platforms/aiforbiodiversity/wherewecomefrom-img1.png"
-                  alt="AI for Climate team"
+                  alt={t.origin.mainImgAlt}
                 />
               </div>
               <div className="afb-origin-accents">
@@ -289,13 +333,13 @@ export default function AfbSections() {
               <div className="afb-origin-card-frame">
                 <img
                   src="/platforms/aiforbiodiversity/wherewecomefrom-img2.png"
-                  alt="Biodiversity in action"
+                  alt={t.origin.secondaryImgAlt}
                 />
               </div>
               {/* Floating stat chip */}
               <div className="afb-origin-stat">
                 <span className="afb-origin-stat-number">0+</span>
-                <span className="afb-origin-stat-label">Projects<br />worldwide</span>
+                <span className="afb-origin-stat-label">{t.origin.statLabelLine1}<br />{t.origin.statLabelLine2}</span>
               </div>
             </div>
 

@@ -5,6 +5,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRouter } from "next/navigation";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
+import { copy } from "./copy";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -31,19 +33,22 @@ export default function NaturaTechLACPage() {
   const videoRef       = useRef<HTMLVideoElement>(null);
   const videoOverlayRef = useRef<HTMLDivElement>(null);
   const router         = useRouter();
+  const locale         = useLocale();
+  const lp             = useLocalePath();
+  const t              = copy[locale];
 
   const [activePartnerTab, setActivePartnerTab] = useState("ledby");
 
   const PARTNER_TABS = [
     {
-      id: "ledby", label: "LED BY",
+      id: "ledby", label: t.partnerTabs.ledby,
       logos: [
         { src: `${BASE}/ledby-bidlab-1.svg`, alt: "BID LAB" },
         { src: `${BASE}/ledby-cminds-2.svg`, alt: "C Minds" },
       ],
     },
     {
-      id: "funding", label: "FUNDING PARTNERS",
+      id: "funding", label: t.partnerTabs.funding,
       logos: [
         { src: `${BASE}/fundingpartners-suecia-1.svg`,           alt: "Suecia" },
         { src: `${BASE}/fundingpartners-france-2.svg`,            alt: "France" },
@@ -81,7 +86,7 @@ export default function NaturaTechLACPage() {
         const partnersBottom = partnersRef.current?.getBoundingClientRect().bottom ?? 1;
         if (partnersBottom > 0) return;
         navigating = true;
-        gsap.to(el, { opacity: 0, duration: 0.35, onComplete: () => router.push("/aiforbiodiversity/aiformanatees") });
+        gsap.to(el, { opacity: 0, duration: 0.35, onComplete: () => router.push(lp("/aiforbiodiversity/aiformanatees")) });
       };
       el.addEventListener("click", onTap);
       return () => el.removeEventListener("click", onTap);
@@ -125,7 +130,7 @@ export default function NaturaTechLACPage() {
       if (progress >= 1) {
         navigating = true;
         if (drainId) clearTimeout(drainId);
-        gsap.to(el, { opacity: 0, duration: 0.45, onComplete: () => router.push("/aiforbiodiversity/aiformanatees") });
+        gsap.to(el, { opacity: 0, duration: 0.45, onComplete: () => router.push(lp("/aiforbiodiversity/aiformanatees")) });
       }
     };
 
@@ -136,7 +141,7 @@ export default function NaturaTechLACPage() {
       window.removeEventListener("wheel", onWheel);
       if (drainId) clearTimeout(drainId);
     };
-  }, [router]);
+  }, [router, lp]);
 
   // Play center follows cursor inside hero
   useEffect(() => {
@@ -282,7 +287,7 @@ export default function NaturaTechLACPage() {
         style={{ display: "none", pointerEvents: "none" }}
         onClick={closeVideo}
       >
-        <button className="t4n-video-close" onClick={closeVideo} aria-label="Close video">×</button>
+        <button className="t4n-video-close" onClick={closeVideo} aria-label={t.closeVideoAria}>×</button>
         <video
           ref={videoRef}
           src={process.env.NEXT_PUBLIC_NTL_HERO_VIDEO_URL || undefined}
@@ -296,7 +301,7 @@ export default function NaturaTechLACPage() {
       <div ref={heroRef} className="t4n-hero ntl-hero" onClick={openVideo} style={{ cursor: "pointer" }}>
         <img ref={heroBgRef} src={`${BASE}/hero.png`} alt="NaturaTech LAC" className="t4n-hero-bg" />
         <div className="ntl-hero-overlay" aria-hidden="true" />
-        <button className="t4n-close" onClick={e => { e.stopPropagation(); goBack(); }} aria-label="Back">×</button>
+        <button className="t4n-close" onClick={e => { e.stopPropagation(); goBack(); }} aria-label={t.backAria}>×</button>
         <div ref={playCenterRef} className="t4n-play-center">
           <img src="/platforms/aiforbiodiversity/initiative-tech4nature/playvideo.svg" alt="" className="t4n-play-center-icon" />
         </div>
@@ -311,15 +316,15 @@ export default function NaturaTechLACPage() {
               <svg width="10" height="13" viewBox="0 0 10 13" fill="none" aria-hidden="true">
                 <path d="M5 0C2.24 0 0 2.24 0 5c0 3.75 5 8 5 8s5-4.25 5-8c0-2.76-2.24-5-5-5zm0 6.5A1.5 1.5 0 1 1 5 3.5a1.5 1.5 0 0 1 0 3z" fill="currentColor"/>
               </svg>
-              Latin America and Caribbean
+              {t.location}
             </span>
           </div>
           <div className="ntl-info-right">
             <p className="ntl-info-tagline">
-              It drives conservation through technology, innovation and biocultural knowledge.
+              {t.tagline}
             </p>
             <a href="https://naturatech.org" target="_blank" rel="noopener noreferrer" className="ntl-info-cta">
-              See Initiative
+              {t.seeInitiative}
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                 <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -327,7 +332,7 @@ export default function NaturaTechLACPage() {
           </div>
         </div>
         <p ref={bodyRef} className="ntl-info-body">
-          At NaturaTech LAC, we are driven by the commitment to discover and explore the roots that emerge from territories: their stories and, above all, their innovation.
+          {t.body}
         </p>
       </section>
 
@@ -344,7 +349,7 @@ export default function NaturaTechLACPage() {
           <div ref={feat1WrapRef} className="ntl-feature-img-wrap">
             <img ref={feat1ImgRef} src={`${BASE}/natura500.png`} alt="Natura500" className="ntl-feature-img" />
           </div>
-          <span className="ntl-feature-label">Natura500</span>
+          <span className="ntl-feature-label">{t.featureLabels.natura500}</span>
         </div>
       </a>
       <a href="https://naturatech.org/studio" target="_blank" rel="noopener noreferrer" className="ntl-feature ntl-feature--studio">
@@ -352,7 +357,7 @@ export default function NaturaTechLACPage() {
           <div ref={feat2WrapRef} className="ntl-feature-img-wrap">
             <img ref={feat2ImgRef} src={`${BASE}/studio.png`} alt="ScaleUp Studio" className="ntl-feature-img" />
           </div>
-          <span className="ntl-feature-label">ScaleUp Studio</span>
+          <span className="ntl-feature-label">{t.featureLabels.studio}</span>
         </div>
       </a>
 
@@ -364,15 +369,15 @@ export default function NaturaTechLACPage() {
             <img src="/platforms/aiforbiodiversity/initiative-image-ai4manatees.png" alt="AI For Manatees" className="t4n-transition-card-img" />
             <div className="t4n-transition-card-overlay" />
             <div className="t4n-transition-card-content">
-              <span className="t4n-transition-next-label">Next up...</span>
-              <h2 className="t4n-transition-next-title">AI For Manatees</h2>
+              <span className="t4n-transition-next-label">{t.nextUpLabel}</span>
+              <h2 className="t4n-transition-next-title">{t.nextUpTitle}</h2>
             </div>
           </div>
           <div className="t4n-transition-bar-track">
             <div ref={barFillRef} className="t4n-transition-bar-fill" />
           </div>
           <div className="t4n-transition-hint">
-            <span>Keep scrolling!</span>
+            <span>{t.keepScrolling}</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -392,7 +397,7 @@ export default function NaturaTechLACPage() {
             ))}
           </div>
           <div ref={logosWrapRef} className="t4n-partners-logos">
-            {PARTNER_TABS.find(t => t.id === activePartnerTab)?.logos.map((logo, i) => (
+            {PARTNER_TABS.find(tab => tab.id === activePartnerTab)?.logos.map((logo, i) => (
               <img key={i} src={logo.src} alt={logo.alt} className="t4n-partners-logo" />
             ))}
           </div>

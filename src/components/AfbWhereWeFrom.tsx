@@ -4,8 +4,22 @@ import { useRef, useCallback } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useLocale } from "@/i18n/useLocale";
 
 gsap.registerPlugin(ScrollTrigger);
+
+const copy = {
+  en: {
+    label: "WHERE WE COME FROM",
+    titleLine1: "AI for Climate is an initiative",
+    titleLine2: "founded by C Minds",
+  },
+  es: {
+    label: "DE DÓNDE VENIMOS",
+    titleLine1: "AI for Climate es una iniciativa",
+    titleLine2: "fundada por C Minds",
+  },
+} as const;
 
 const IMAGES = [
   "/platforms/aiforbiodiversity/were-we-come-from/image-wherewecomefrom-1.webp",
@@ -20,6 +34,9 @@ const SCROLL_PER_CHAP = 900;
 const SQ_FACTOR     = 0.52;
 
 export default function AfbWhereWeFrom() {
+  const locale = useLocale();
+  const t = copy[locale];
+
   const sectionRef       = useRef<HTMLElement>(null);
   const galleryRef       = useRef<HTMLDivElement>(null);
 
@@ -182,10 +199,10 @@ export default function AfbWhereWeFrom() {
       <div className="afb-wcf-inner">
 
         <div className="afb-wcf-header">
-          <p className="afb-wcf-label">WHERE WE COME FROM</p>
-          <span ref={line1Ref} className="afb-wcf-title-line">AI for Climate is an initiative</span>
+          <p className="afb-wcf-label">{t.label}</p>
+          <span ref={line1Ref} className="afb-wcf-title-line">{t.titleLine1}</span>
           <br />
-          <span ref={line2Ref} className="afb-wcf-title-line">founded by C Minds</span>
+          <span ref={line2Ref} className="afb-wcf-title-line">{t.titleLine2}</span>
         </div>
 
         <div ref={galleryRef} className="afb-wcf-gallery">

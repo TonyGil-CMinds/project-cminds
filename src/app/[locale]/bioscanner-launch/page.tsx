@@ -3,71 +3,10 @@
 import { useRef, useState, useEffect } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
+import { useLocale } from "@/i18n/useLocale";
+import { copy } from "./copy";
 
 const STEPS = [{ id: 0 }, { id: 1 }, { id: 2 }];
-
-const TRANSLATIONS = {
-  ES: {
-    title: "Pre-registro",
-    steps: ["Datos personales", "Equipo de Cómputo", "Experiencia en Monitoreo"],
-    hint: "Completa todos los campos. Verifica tu información antes de enviar.",
-    labelName: "Nombre", labelLast: "Apellido", labelEmail: "Correo electrónico",
-    labelOrg: "Organización", labelCountry: "País",
-    phName: "Américo González", phLast: "Guerrero, Gómez...",
-    phEmail: "correo@ejemplo.com", phOrg: "UNAM, WWF...", phCountry: "México, Colombia...",
-    laptop: "¿Cuentas con equipo de cómputo portátil (Laptop)?",
-    monitoring: "¿Trabajas con monitoreo de biodiversidad con fototrampeo?",
-    yes: "Sí", no: "No",
-    continueBtn: "Continuar", finishBtn: "Finalizar registro",
-    backBtn: "Regresar", sendingBtn: "Enviando...",
-    sendingTitle: "Enviando información...",
-    sendingSub: "Esto puede tomar unos segundos",
-    successTitle: "Hemos recibido tu\ninformación con éxito.",
-    successBody: "Recibirás un correo electrónico los próximos días con más información sobre el taller de prueba de la BETA de Bioscanner.",
-    updateData: "Actualizar datos", cancelReg: "Cancelar registro",
-    knowMore: "Conoce más",
-    toastExists: "Ya te encuentras en la lista",
-    toastFull: "Cupo lleno",
-    toastError: "Error de conexión, intenta de nuevo",
-    closedTitle: "El registro ha cerrado",
-    closedBody: "El pre-registro para la BETA de Bioscanner ha finalizado. Agradecemos tu interés en formar parte de esta etapa. Mantente atento a nuestros canales para conocer las próximas oportunidades de participación.",
-    eventWhen: "15 de julio · 10:00 am",
-    eventVenue: "Casa Amate 62 — Mérida Centro",
-    eventAddress: "C. 62 #421, entre 49 y 51, Parque Santa Lucía, Centro, 97000 Mérida, Yuc.",
-    viewLocation: "Ver ubicación",
-    laptopReminder: "Recuerda llevar tu laptop.",
-  },
-  EN: {
-    title: "Pre-registration",
-    steps: ["Personal info", "Computer equipment", "Monitoring experience"],
-    hint: "Complete all fields. Verify your information before submitting.",
-    labelName: "Name", labelLast: "Lastname", labelEmail: "Email",
-    labelOrg: "Organization", labelCountry: "Country",
-    phName: "Américo González", phLast: "Smith, Johnson...",
-    phEmail: "like@email.com", phOrg: "Harvard, WWF...", phCountry: "Mexico, Colombia...",
-    laptop: "Do you have a portable computer (Laptop)?",
-    monitoring: "Do you work with biodiversity monitoring using camera trapping?",
-    yes: "Yes", no: "No",
-    continueBtn: "Continue", finishBtn: "Finish registration",
-    backBtn: "Go back", sendingBtn: "Sending...",
-    sendingTitle: "Sending information...",
-    sendingSub: "This may take a few seconds",
-    successTitle: "We received your\ninformation successfully.",
-    successBody: "You will receive an email in the coming days with more information about the BioScanner BETA testing workshop.",
-    updateData: "Update data", cancelReg: "Cancel registration",
-    knowMore: "Learn more",
-    toastExists: "You are already on the list",
-    toastFull: "Registration is full",
-    toastError: "Connection error, please try again",
-    closedTitle: "Registration is closed",
-    closedBody: "Pre-registration for the Bioscanner BETA has ended. Thank you for your interest in being part of this stage. Stay tuned to our channels for upcoming opportunities to participate.",
-    eventWhen: "July 15 · 10:00 am",
-    eventVenue: "Casa Amate 62 — Mérida Centro",
-    eventAddress: "C. 62 #421, between 49 and 51, Parque Santa Lucía, Centro, 97000 Mérida, Yuc.",
-    viewLocation: "View location",
-    laptopReminder: "Remember to bring your laptop.",
-  },
-} as const;
 
 const REG_DEADLINE = Date.parse("2026-07-14T23:00:00Z"); // 5:00pm CDMX (UTC-6)
 
@@ -120,8 +59,9 @@ export default function BioscannerLaunchPage() {
   const anim2Ref      = useRef<HTMLImageElement>(null);
   const anim3Ref      = useRef<HTMLImageElement>(null);
   const [step, setStep] = useState(0);
-  const [lang, setLang] = useState<"ES" | "EN">("ES");
-  const t = TRANSLATIONS[lang];
+  const locale = useLocale();
+  const [lang, setLang] = useState<"es" | "en">(locale);
+  const t = copy[lang];
   const [registered, setRegistered] = useState(false);
   const [closed, setClosed] = useState(() => Date.now() >= REG_DEADLINE);
   const [submitting, setSubmitting] = useState(false);
@@ -409,14 +349,14 @@ export default function BioscannerLaunchPage() {
       {/* Language toggle — fixed top-right */}
       <button
         className="bsl-lang"
-        onClick={() => setLang(l => l === "ES" ? "EN" : "ES")}
+        onClick={() => setLang(l => l === "es" ? "en" : "es")}
       >
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
           <circle cx="7" cy="7" r="6" stroke="currentColor" strokeWidth="1.2"/>
           <ellipse cx="7" cy="7" rx="2.8" ry="6" stroke="currentColor" strokeWidth="1.2"/>
           <path d="M1 7h12" stroke="currentColor" strokeWidth="1.2"/>
         </svg>
-        {lang}
+        {lang.toUpperCase()}
       </button>
 
       {/* ── Sidebar ── */}

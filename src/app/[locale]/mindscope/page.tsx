@@ -11,10 +11,13 @@ import Dock from "@reactbits/Dock";
 import NavSearch from "@/components/NavSearch";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useSubscribeModal } from "@/components/SubscribeModalProvider";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
+import { common } from "@/i18n/common";
+import { copy } from "./copy";
 const TheArchive = dynamic(() => import("@/components/TheArchive"), { ssr: false });
 gsap.registerPlugin(ScrollTrigger);
 
-const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
+const NAV_KEYS = ["home", "core", "mindscope", "careers"] as const;
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 
 function hexToRgb(hex: string) {
@@ -22,8 +25,8 @@ function hexToRgb(hex: string) {
   return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
 }
 
-function fmtDate(d: string) {
-  return new Date(d + "T00:00:00").toLocaleDateString("en-US", {
+function fmtDate(d: string, locale: string) {
+  return new Date(d + "T00:00:00").toLocaleDateString(locale === "es" ? "es-MX" : "en-US", {
     month: "short", day: "numeric", year: "numeric",
   });
 }
@@ -90,9 +93,15 @@ export default function MindscopePage() {
   const bellMountedRef = useRef(false);
   const router = useRouter();
   const { open: openSubscribeModal } = useSubscribeModal();
+  const locale = useLocale();
+  const lp = useLocalePath();
+  const t = copy[locale];
+  const nav = common[locale].nav;
+  const [postsLoaded, setPostsLoaded] = useState(false);
 
   // ── Fetch blog feed ────────────────────────────────────────
   useEffect(() => {
+    setPostsLoaded(false);
     const fetchPosts = async () => {
       try {
         const res = await fetch(
@@ -100,17 +109,23 @@ export default function MindscopePage() {
         );
         if (!res.ok) throw new Error(`HTTP error ${res.status}`);
         const data = await res.json();
-        setPosts((data.posts ?? []).filter((p: ReelPost) => p.language === "en"));
+        setPosts((data.posts ?? []).filter((p: ReelPost) => p.language === locale));
       } catch (error) {
         console.error("Error fetching blog feed:", error);
         setPosts([]);
+      } finally {
+        setPostsLoaded(true);
       }
     };
     fetchPosts();
-  }, []);
+  }, [locale]);
 
   // ── Reel: RAF-driven drum ──────────────────────────────────
   useEffect(() => {
+    // Reset the drum index whenever the post set changes (e.g. locale switch)
+    // so we never carry a stale index from a different-length post list.
+    reelActiveRef.current = 0;
+    setReelActive(0);
     if (posts.length === 0) return;
     const loopLen = posts.length * 3;
     let rafId: number;
@@ -133,7 +148,7 @@ export default function MindscopePage() {
     window.addEventListener("scroll", onScroll, { passive: true });
     update();
     return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(rafId); };
-  }, [posts.length]);
+  }, [posts.length, locale]);
 
   // ── Color + subscribed cookies ────────────────────────────
   useLayoutEffect(() => {
@@ -211,13 +226,14 @@ export default function MindscopePage() {
   // ── Page navigation ───────────────────────────────────────
   const navigateWithTransition = (path: string) => {
     sessionStorage.setItem("vt_from", "mindscope");
+    const target = lp(path);
     const doNavigate = () => {
       if (typeof document !== "undefined" && "startViewTransition" in document) {
         (document as any).startViewTransition(() => {
-          startTransition(() => { router.push(path); });
+          startTransition(() => { router.push(target); });
         });
       } else {
-        router.push(path);
+        router.push(target);
       }
     };
     gsap.to([".ms-pill", ".ms-word", ".ms-subscribe-wrap", ".ms-dock-wrap", ".ms-feat-section"], {
@@ -229,12 +245,13 @@ export default function MindscopePage() {
 
   const openPost = (slug: string) => {
     sessionStorage.setItem("vt_from", "mindscope");
+    const target = lp(`/mindscope/${slug}`);
     if (typeof document !== "undefined" && "startViewTransition" in document) {
       (document as any).startViewTransition(() => {
-        startTransition(() => { router.push(`/mindscope/${slug}`); });
+        startTransition(() => { router.push(target); });
       });
     } else {
-      router.push(`/mindscope/${slug}`);
+      router.push(target);
     }
   };
 
@@ -298,19 +315,19 @@ export default function MindscopePage() {
         </div>
         <div className="nav-menu" onMouseLeave={() => setHoverNav(null)}>
           <div className="nav-menu-light" ref={navLightRef} style={indicatorStyle} />
-          {NAV_ITEMS.map((item, idx) => (
+          {NAV_KEYS.map((key, idx) => (
             <div
-              key={item}
+              key={key}
               ref={(el) => { navItemRefs.current[idx] = el; }}
-              className={`nav-item${item === "Mindscope ®" ? " active" : ""}`}
+              className={`nav-item${key === "mindscope" ? " active" : ""}`}
               onMouseEnter={() => setHoverNav(idx)}
               onClick={() => {
-                if (item === "Home") navigateWithTransition("/");
-                if (item === "Core") navigateWithTransition("/core");
-                if (item === "Careers") navigateWithTransition("/careers");
+                if (key === "home") navigateWithTransition("/");
+                if (key === "core") navigateWithTransition("/core");
+                if (key === "careers") navigateWithTransition("/careers");
               }}
             >
-              {item}
+              {nav[key]}
             </div>
           ))}
         </div>
@@ -338,8 +355,8 @@ export default function MindscopePage() {
         </div>
         <div className="ms-hero-group">
           <h1 className="ms-heading">
-            <span className="ms-word">Unfolds Multiple</span>
-            <span className="ms-word ms-gradient-word">Dimensions</span>
+            <span className="ms-word">{t.hero.line1}</span>
+            <span className="ms-word ms-gradient-word">{t.hero.line2}</span>
           </h1>
         </div>
         <div className="ms-subscribe-wrap">
@@ -369,11 +386,11 @@ export default function MindscopePage() {
               onClick={subscribed ? handleUnsubscribe : undefined}
             >
               {subscribed
-                ? <>Cancel subscription <span style={{ fontSize: '1rem', lineHeight: 1 }}>×</span></>
-                : 'You will be notified about new releases.'}
+                ? <>{t.subscribe.cancel} <span style={{ fontSize: '1rem', lineHeight: 1 }}>×</span></>
+                : t.subscribe.tooltip}
             </span>
             <span className="ms-bell-text" ref={bellTextRef}>
-              {(subscribed ? 'Subscribed' : 'Subscribe').split('').map((ch, i) => (
+              {(subscribed ? t.subscribe.subscribed : t.subscribe.subscribe).split('').map((ch, i) => (
                 <span key={`${subscribed ? 's' : 'u'}-${i}`} className="ms-bell-char">{ch}</span>
               ))}
             </span>
@@ -399,20 +416,20 @@ export default function MindscopePage() {
         <Dock
           items={[
             {
-              icon: <img src="/mindscope/publicaciones.svg" width={19} height={19} alt="Publications" />,
-              label: "Publications",
+              icon: <img src="/mindscope/publicaciones.svg" width={19} height={19} alt={t.dock.publications} />,
+              label: t.dock.publications,
               className: dockActive === 0 ? 'dock-item--active' : '',
               onClick: () => { setDockActive(0); pubSectionRef.current?.scrollIntoView({ behavior: 'smooth' }); },
             },
             {
-              icon: <img src="/mindscope/reportes.svg" width={22} height={22} alt="Reports" />,
-              label: "Reports",
+              icon: <img src="/mindscope/reportes.svg" width={22} height={22} alt={t.dock.reports} />,
+              label: t.dock.reports,
               className: dockActive === 1 ? 'dock-item--active' : '',
               onClick: () => setDockActive(1),
             },
             {
-              icon: <img src="/mindscope/busqueda.svg" width={18} height={18} alt="Search" />,
-              label: "Search",
+              icon: <img src="/mindscope/busqueda.svg" width={18} height={18} alt={t.dock.search} />,
+              label: t.dock.search,
               className: dockActive === 2 ? 'dock-item--active' : '',
               onClick: () => { window.dispatchEvent(new CustomEvent("cminds:open-search")); },
             },
@@ -426,26 +443,44 @@ export default function MindscopePage() {
 
       {/* Featured */}
       <section ref={pubSectionRef} className="ms-feat-section">
-        <div className="ms-feat-wrap">
+        {postsLoaded && posts.length === 0 ? (
           <div
-            className="ms-feat-card"
-            style={featPost?.cover_image
-              ? { background: `url(${featPost.cover_image}) center/cover no-repeat` }
-              : undefined}
-            onClick={() => featPost && openPost(featPost.slug)}
+            className="ms-empty-state"
+            style={{
+              display: "flex", flexDirection: "column", alignItems: "center",
+              justifyContent: "center", textAlign: "center", gap: "0.75rem",
+              minHeight: "40vh", width: "100%",
+            }}
           >
-            {!featPost?.cover_image && <div className="ms-feat-card-dots" />}
-            {!featPost?.cover_image && (
-              <img src="/loader-logo.svg" className="ms-feat-card-logo" alt="" aria-hidden="true" />
-            )}
-          </div>
-          <div className="ms-feat-text">
-            <p className="ms-feat-meta">
-              {featPost ? `${fmtDate(featPost.published_date)} · ${featPost.reading_time_minutes} min` : ""}
+            <p className="ms-empty-title" style={{ fontSize: "1.5rem", fontWeight: 600, color: "var(--color-text-white)" }}>
+              {t.empty.title}
             </p>
-            <h2 className="ms-feat-title">{featPost?.title ?? ""}</h2>
+            <p className="ms-empty-body" style={{ color: "var(--color-text-dim)", maxWidth: "32ch" }}>
+              {t.empty.body}
+            </p>
           </div>
-        </div>
+        ) : (
+          <div className="ms-feat-wrap">
+            <div
+              className="ms-feat-card"
+              style={featPost?.cover_image
+                ? { background: `url(${featPost.cover_image}) center/cover no-repeat` }
+                : undefined}
+              onClick={() => featPost && openPost(featPost.slug)}
+            >
+              {!featPost?.cover_image && <div className="ms-feat-card-dots" />}
+              {!featPost?.cover_image && (
+                <img src="/loader-logo.svg" className="ms-feat-card-logo" alt="" aria-hidden="true" />
+              )}
+            </div>
+            <div className="ms-feat-text">
+              <p className="ms-feat-meta">
+                {featPost ? `${fmtDate(featPost.published_date, locale)} · ${featPost.reading_time_minutes} min` : ""}
+              </p>
+              <h2 className="ms-feat-title">{featPost?.title ?? ""}</h2>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Reel */}
@@ -464,8 +499,8 @@ export default function MindscopePage() {
             </div>
             <div className="ms-reel-left">
               <div className="ms-reel-header">
-                <span>Date</span>
-                <span>Title</span>
+                <span>{t.reel.date}</span>
+                <span>{t.reel.title}</span>
               </div>
               <div className="ms-reel-drum" ref={drumRef}>
                 <div className="ms-reel-drum-center-line" />
@@ -476,7 +511,7 @@ export default function MindscopePage() {
                       className={`ms-reel-item${i === reelActive ? " ms-reel-active" : ""}`}
                       onClick={() => openPost(post.slug)}
                     >
-                      <span className="ms-reel-date">{fmtDate(post.published_date)}</span>
+                      <span className="ms-reel-date">{fmtDate(post.published_date, locale)}</span>
                       <p className="ms-reel-title">{post.title}</p>
                     </div>
                   ))}

@@ -4,6 +4,8 @@ import { useEffect } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import SiteFooter from "./SiteFooter";
+import { common } from "@/i18n/common";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
 
 const DIGITS = [4, 0, 4];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
@@ -14,6 +16,10 @@ function hexToRgb(hex: string) {
 }
 
 export default function NotFoundClient() {
+  const locale = useLocale();
+  const lp = useLocalePath();
+  const t = common[locale];
+
   useEffect(() => {
     const match = document.cookie.match(/(?:^|;\s*)cminds_color=([^;]+)/);
     if (match) {
@@ -52,7 +58,7 @@ export default function NotFoundClient() {
             <img src="/logo.svg" alt="C Minds" />
           </div>
           <div className="nav-menu">
-            {["Home", "Core", "Mindscope ®", "Careers"].map((item, i) => (
+            {[t.nav.home, t.nav.core, t.nav.mindscope, t.nav.careers].map((item, i) => (
               <div key={item} className={`nav-item${i === 0 ? " active" : ""}`}>
                 {item}
               </div>
@@ -73,18 +79,17 @@ export default function NotFoundClient() {
         </div>
 
         <div className="nf-card">
-          <h1 className="nf-card-title">Oops, page not found</h1>
+          <h1 className="nf-card-title">{t.notFound.title}</h1>
           <p className="nf-card-desc">
-            The page you are looking for does not exist or it was a typo mistake.
-            Are you sure it was the right one?
+            {t.notFound.body}
           </p>
           <div className="nf-divider">
             <span className="nf-divider-line" />
-            <span className="nf-divider-or">or</span>
+            <span className="nf-divider-or">{t.notFound.or}</span>
             <span className="nf-divider-line" />
           </div>
-          <Link href="/" className="hero-button nf-home-btn">
-            Back to home page
+          <Link href={lp("/")} className="hero-button nf-home-btn">
+            {t.notFound.cta}
           </Link>
         </div>
       </main>

@@ -5,6 +5,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRouter } from "next/navigation";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
+import { copy } from "./copy";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -31,12 +33,15 @@ export default function VitalOceansPage() {
   const videoRef       = useRef<HTMLVideoElement>(null);
   const videoOverlayRef = useRef<HTMLDivElement>(null);
   const router         = useRouter();
+  const locale         = useLocale();
+  const lp             = useLocalePath();
+  const t              = copy[locale];
 
   const [activePartnerTab, setActivePartnerTab] = useState("ledby");
 
   const PARTNER_TABS = [
     {
-      id: "ledby", label: "LED BY",
+      id: "ledby", label: t.partners.ledBy,
       logos: [
         { src: `${BASE}/ledby-bidlab.svg`,  alt: "BID LAB" },
         { src: `${BASE}/ledby-cminds.svg`,  alt: "C Minds" },
@@ -72,7 +77,7 @@ export default function VitalOceansPage() {
         const partnersBottom = partnersRef.current?.getBoundingClientRect().bottom ?? 1;
         if (partnersBottom > 0) return;
         navigating = true;
-        gsap.to(el, { opacity: 0, duration: 0.35, onComplete: () => router.push("/aiforbiodiversity/techfornature") });
+        gsap.to(el, { opacity: 0, duration: 0.35, onComplete: () => router.push(lp("/aiforbiodiversity/techfornature")) });
       };
       el.addEventListener("click", onTap);
       return () => el.removeEventListener("click", onTap);
@@ -116,7 +121,7 @@ export default function VitalOceansPage() {
       if (progress >= 1) {
         navigating = true;
         if (drainId) clearTimeout(drainId);
-        gsap.to(el, { opacity: 0, duration: 0.45, onComplete: () => router.push("/aiforbiodiversity/techfornature") });
+        gsap.to(el, { opacity: 0, duration: 0.45, onComplete: () => router.push(lp("/aiforbiodiversity/techfornature")) });
       }
     };
 
@@ -127,7 +132,7 @@ export default function VitalOceansPage() {
       window.removeEventListener("wheel", onWheel);
       if (drainId) clearTimeout(drainId);
     };
-  }, [router]);
+  }, [router, lp]);
 
   // Play center follows cursor inside hero
   useEffect(() => {
@@ -273,7 +278,7 @@ export default function VitalOceansPage() {
         style={{ display: "none", pointerEvents: "none" }}
         onClick={closeVideo}
       >
-        <button className="t4n-video-close" onClick={closeVideo} aria-label="Close video">×</button>
+        <button className="t4n-video-close" onClick={closeVideo} aria-label={t.hero.closeVideoAria}>×</button>
         <video
           ref={videoRef}
           src={process.env.NEXT_PUBLIC_VO_HERO_VIDEO_URL || undefined}
@@ -287,7 +292,7 @@ export default function VitalOceansPage() {
       <div ref={heroRef} className="t4n-hero ntl-hero" onClick={openVideo} style={{ cursor: "pointer" }}>
         <img ref={heroBgRef} src={`${BASE}/hero-vitaloceans.png`} alt="Vital Oceans" className="t4n-hero-bg" />
         <div className="vo-hero-overlay" aria-hidden="true" />
-        <button className="t4n-close" onClick={e => { e.stopPropagation(); goBack(); }} aria-label="Back">×</button>
+        <button className="t4n-close" onClick={e => { e.stopPropagation(); goBack(); }} aria-label={t.hero.backAria}>×</button>
         <div ref={playCenterRef} className="t4n-play-center">
           <img src="/platforms/aiforbiodiversity/initiative-tech4nature/playvideo.svg" alt="" className="t4n-play-center-icon" />
         </div>
@@ -300,15 +305,15 @@ export default function VitalOceansPage() {
             <img src={`${BASE}/logo-vitaloceans.svg`} alt="Vital Oceans" className="ntl-info-logo vo-info-logo" />
             <span className="ntl-info-location">
               <img src="/platforms/aiforbiodiversity/initiative-tech4nature/location.svg" alt="" width="16" height="16" />
-              Latin America and Caribbean
+              {t.info.location}
             </span>
           </div>
           <div className="ntl-info-right">
             <p className="ntl-info-tagline">
-              Protecting Oceans,<br />Entitlening Communities
+              {t.info.taglineLine1}<br />{t.info.taglineLine2}
             </p>
             <a href="https://vitaloceans.org" target="_blank" rel="noopener noreferrer" className="ntl-info-cta">
-              See Initiative
+              {t.info.cta}
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                 <path d="M2 7h10M7 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
@@ -316,7 +321,7 @@ export default function VitalOceansPage() {
           </div>
         </div>
         <p ref={bodyRef} className="ntl-info-body">
-          Vital Oceans Platform enables users to identify, visualize, and analyze potential Marine Protected Areas through an interactive map. By selecting a specific area, users can generate structured, data-driven reports that support decision-making, facilitate stakeholder engagement, and strengthen the case for marine protection.
+          {t.info.body}
         </p>
       </section>
 
@@ -351,15 +356,15 @@ export default function VitalOceansPage() {
             <img src={`${BASE}/next-tech4nature.png`} alt="Tech4Nature" className="t4n-transition-card-img" />
             <div className="t4n-transition-card-overlay" />
             <div className="t4n-transition-card-content">
-              <span className="t4n-transition-next-label">Next up...</span>
-              <h2 className="t4n-transition-next-title">Tech4Nature</h2>
+              <span className="t4n-transition-next-label">{t.transition.nextLabel}</span>
+              <h2 className="t4n-transition-next-title">{t.transition.nextTitle}</h2>
             </div>
           </div>
           <div className="t4n-transition-bar-track">
             <div ref={barFillRef} className="t4n-transition-bar-fill" />
           </div>
           <div className="t4n-transition-hint">
-            <span>Keep scrolling!</span>
+            <span>{t.transition.hint}</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>

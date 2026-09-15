@@ -6,23 +6,11 @@ import gsap from "gsap";
 import SiteFooter from "@/components/SiteFooter";
 import NavSearch from "@/components/NavSearch";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
+import { common } from "@/i18n/common";
+import { copy } from "./copy";
 
-const NAV_ITEMS    = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
-
-const SECTIONS = [
-  { id: "sec-i",    roman: "I",    title: "Accordance with the Law" },
-  { id: "sec-ii",   roman: "II",   title: "Confidentiality & Privacy" },
-  { id: "sec-iii",  roman: "III",  title: "Discrimination & Harassment" },
-  { id: "sec-iv",   roman: "IV",   title: "Health and Safety" },
-  { id: "sec-v",    roman: "V",    title: "Recordkeeping & Integrity" },
-  { id: "sec-vi",   roman: "VI",   title: "Professional Behavior" },
-  { id: "sec-vii",  roman: "VII",  title: "Fiduciary Duty" },
-  { id: "sec-viii", roman: "VIII", title: "C Minds Activities" },
-  { id: "sec-ix",   roman: "IX",   title: "Environment" },
-  { id: "sec-x",    roman: "X",    title: "Questions & Violations" },
-  { id: "sec-xi",   roman: "XI",   title: "Periodic Certification" },
-];
 
 function hexToRgb(hex: string) {
   const n = parseInt(hex.slice(1), 16);
@@ -37,6 +25,12 @@ export default function EthicsPage() {
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
   const [primaryColor, setPrimaryColor]     = useState("#5EC1F3");
   const router = useRouter();
+  const locale = useLocale();
+  const lp     = useLocalePath();
+  const t      = copy[locale];
+  const tc     = common[locale];
+  const NAV_ITEMS = [tc.nav.home, tc.nav.core, tc.nav.mindscope, tc.nav.careers];
+  const SECTIONS = t.toc.sections;
 
   useLayoutEffect(() => {
     const match = document.cookie.match(/(?:^|;\s*)cminds_color=([^;]+)/);
@@ -86,12 +80,13 @@ export default function EthicsPage() {
   };
 
   const navigateWithTransition = (path: string) => {
+    const target = lp(path);
     if (typeof document !== "undefined" && "startViewTransition" in document) {
       (document as any).startViewTransition(() => {
-        startTransition(() => { router.push(path); });
+        startTransition(() => { router.push(target); });
       });
     } else {
-      router.push(path);
+      router.push(target);
     }
   };
 
@@ -111,10 +106,10 @@ export default function EthicsPage() {
               className="nav-item"
               onMouseEnter={() => setHoverNav(idx)}
               onClick={() => {
-                if (item === "Home")         navigateWithTransition("/");
-                if (item === "Core")         navigateWithTransition("/core");
-                if (item === "Mindscope ®")  navigateWithTransition("/mindscope");
-                if (item === "Careers")      navigateWithTransition("/careers");
+                if (item === tc.nav.home)      navigateWithTransition("/");
+                if (item === tc.nav.core)      navigateWithTransition("/core");
+                if (item === tc.nav.mindscope) navigateWithTransition("/mindscope");
+                if (item === tc.nav.careers)   navigateWithTransition("/careers");
               }}
             >{item}</div>
           ))}
@@ -126,10 +121,10 @@ export default function EthicsPage() {
       {/* Page header */}
       <div ref={headerRef} className="prv-header">
         <div className="prv-header-top">
-          <h1 className="prv-title">Code of Ethics</h1>
+          <h1 className="prv-title">{t.header.title}</h1>
           <div className="prv-date">
-            <span className="prv-date-label">Last updated</span>
-            <span className="prv-date-value">Jun 24, 2026</span>
+            <span className="prv-date-label">{t.header.dateLabel}</span>
+            <span className="prv-date-value">{t.header.dateValue}</span>
           </div>
         </div>
         <div className="prv-rule" />
@@ -140,7 +135,7 @@ export default function EthicsPage() {
 
         {/* ── Left sticky TOC ── */}
         <aside className="prv-toc">
-          <p className="prv-toc-label">Contents</p>
+          <p className="prv-toc-label">{t.toc.label}</p>
           <nav>
             {SECTIONS.map(({ id, roman, title }) => (
               <button
@@ -160,89 +155,88 @@ export default function EthicsPage() {
 
           <section id="sec-i" className="prv-section">
             <p className="prv-body">
-              <strong>Employees, partners, and Board members are expected to comply with all applicable legal requirements</strong> and understand the major laws and regulations that apply to their work. If you have any questions about the laws that govern our work, please consult our Office Manager.
+              <strong>{t.body.secI.text}</strong>{t.body.secI.rest}
             </p>
           </section>
 
           <section id="sec-ii" className="prv-section">
             <p className="prv-body">
-              <strong>Plans, projects, and any other information expressed in confidence will not be shared</strong> with anyone outside the relevant parties unless explicitly stated.
+              <strong>{t.body.secII.text}</strong>{t.body.secII.rest}
             </p>
           </section>
 
           <section id="sec-iii" className="prv-section">
             <p className="prv-body">
-              <strong>C Minds will not tolerate any kind of discrimination or harassment</strong> among its employees, its partners, or towards the general public.
+              <strong>{t.body.secIII.p1Strong}</strong>{t.body.secIII.p1Rest}
             </p>
             <p className="prv-body">
-              During your time at C Minds, any comments, actions, or views that we are made aware of will be subject to scrutiny, and appropriate steps will be taken as a consequence of any behavior deemed inappropriate. C Minds will not tolerate any form of discrimination or harassment by collaborators.
+              {t.body.secIII.p2}
             </p>
           </section>
 
           <section id="sec-iv" className="prv-section">
             <p className="prv-body">
-              <strong>C Minds is committed to providing a clean, safe, and healthy work environment.</strong> Each employee has a responsibility for maintaining a safe and healthy workplace by following safety and health rules and practices and reporting accidents, injuries and unsafe conditions, procedures, or behaviors.
+              <strong>{t.body.secIV.p1Strong}</strong>{t.body.secIV.p1Rest}
             </p>
             <p className="prv-body">
-              Violence and threatening behaviors are not permitted and any suspicion of such comportment will result in disciplinary measures.
+              {t.body.secIV.p2}
             </p>
             <p className="prv-body">
-              Employees must report to work in a condition to perform their duties, free from the influence of recreational drugs or alcohol.
+              {t.body.secIV.p3}
             </p>
           </section>
 
           <section id="sec-v" className="prv-section">
             <p className="prv-body">
-              <strong>C Minds' accounts, records, and financial statements must be maintained in appropriate detail,</strong> must properly reflect the organization's transactions and must conform to both applicable law and to the organization's system of internal controls.
+              <strong>{t.body.secV.strong}</strong>{t.body.secV.rest}
             </p>
           </section>
 
           <section id="sec-vi" className="prv-section">
             <p className="prv-body">
-              <strong>C Minds strictly forbids offering, providing, or accepting,</strong> either directly by employees or indirectly through third-parties:
+              {t.body.secVI.intro}
             </p>
             <ol className="prv-list prv-list--alpha">
-              <li>Bribes in both government and commercial business;</li>
-              <li>Facilitating payments to secure or expedite a routine government action by a government official.</li>
+              {t.body.secVI.list.map((item, i) => <li key={i}>{item}</li>)}
             </ol>
             <p className="prv-body">
-              C Minds expects all parties involved to behave in a respectful and professional manner, upholding the C Minds values and positively representing the organization in both appearance and conduct.
+              {t.body.secVI.outro}
             </p>
           </section>
 
           <section id="sec-vii" className="prv-section">
             <p className="prv-body">
-              <strong>C Minds stakeholders will always act in the best interest of the community</strong> that we are collaborating with and contributing to at the time.
+              <strong>{t.body.secVII.strong}</strong>{t.body.secVII.rest}
             </p>
           </section>
 
           <section id="sec-viii" className="prv-section">
             <p className="prv-body">
-              <strong>C Minds seeks to contribute to an inclusive Fourth Industrial Revolution and improved living conditions of communities,</strong> therefore we only accept projects, articles, events, and other engagements that reflect this belief and fit into our strategy to achieve this objective.
+              <strong>{t.body.secVIII.strong}</strong>{t.body.secVIII.rest}
             </p>
           </section>
 
           <section id="sec-ix" className="prv-section">
             <p className="prv-body">
-              <strong>C Minds stakeholders will take reasonable actions to minimize their carbon footprint</strong> by not relying on paper, recycling when possible, and making smart environmental choices in all areas related to C Minds work and operations.
+              <strong>{t.body.secIX.strong}</strong>{t.body.secIX.rest}
             </p>
           </section>
 
           <section id="sec-x" className="prv-section">
             <p className="prv-body">
-              Employees should speak with the Head of Operations when they have a question about the application of the Code of Conduct or when in doubt about how to properly act in a particular situation.
+              {t.body.secX.p1}
             </p>
             <p className="prv-body">
-              <strong>C Minds will not allow retaliation against an employee or relevant actor for reporting actual or suspected misconduct</strong> by others in good faith. Any reports may be anonymous, however, we encourage adding your names so that we may contact you if any further action is needed. Reports can be made to the Head of Operations, the CEO, and the Board if necessary.
+              <strong>{t.body.secX.p2Strong}</strong>{t.body.secX.p2Rest}
             </p>
           </section>
 
           <section id="sec-xi" className="prv-section">
             <p className="prv-body">
-              <strong>C Minds leadership will conduct a periodical revision of anti-corruption risk assessment</strong> to identify, assess, and prioritize key compliance risk mitigation or remediation needs.
+              <strong>{t.body.secXI.p1Strong}</strong>{t.body.secXI.p1Rest}
             </p>
             <p className="prv-body">
-              The C Minds Head of Operations will act as Compliance Officer. To report any concerns, you may contact this person at <a className="prv-link" href="mailto:regina@cminds.co">regina@cminds.co</a>. You may also reach out to the CEO, Constanza Gómez Mont, at <a className="prv-link" href="mailto:constanzagm@cminds.co">constanzagm@cminds.co</a> at any time.
+              {t.body.secXI.p2Start}<a className="prv-link" href="mailto:regina@cminds.co">regina@cminds.co</a>{t.body.secXI.p2Mid}<a className="prv-link" href="mailto:constanzagm@cminds.co">constanzagm@cminds.co</a>{t.body.secXI.p2End}
             </p>
           </section>
 

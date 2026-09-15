@@ -10,102 +10,30 @@ import BorderGlow from "@reactbits/BorderGlow";
 import SiteFooter from "@/components/SiteFooter";
 import NavSearch from "@/components/NavSearch";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
+import { common } from "@/i18n/common";
+import { copy } from "./copy";
 gsap.registerPlugin(ScrollTrigger);
-const NAV_ITEMS    = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 
-const PEOPLE = [
-  {
-    name: "Alex Muñoz",
-    role: "Director, Vital Oceans",
-    img:  "/team/AlexMunos.png",
-    quote: "The ocean covers more than 70% of our planet, yet we understand so little of it. Every decision we make at Vital Oceans is a step toward closing that gap — before it's too late.",
-  },
-  {
-    name: "Ángel Escalante",
-    role: "Lead, Digital Product",
-    img:  "/team/Angel Escalante.png",
-    quote: "A great digital product doesn't just work — it earns trust. The best interfaces are the ones people forget they're using because everything just flows.",
-  },
-  {
-    name: "Antonio Gil",
-    role: "Lead, Interactive Design",
-    img:  "/team/Tony Gil.png",
-    quote: "Every great project starts with understanding people. Design isn't decoration — it's how we communicate what matters most and why it's worth building.",
-  },
-  {
-    name: "Bryan Ruiz",
-    role: "Head, Exploration Studio",
-    img:  "/team/Bryan Ruiz.png",
-    quote: "Exploration means being comfortable with not knowing the answer yet. The Exploration Studio exists to ask questions the rest of the world hasn't thought to ask — and to build what comes after.",
-  },
-  {
-    name: "Camila Valdez",
-    role: "Editorial Design",
-    img:  "/team/Camila Valdes.png",
-    quote: "Visual storytelling is how complex ideas become accessible. Good editorial design doesn't just present information — it makes people feel something before they've read a single word.",
-  },
-  {
-    name: "Carlo Angeles",
-    role: "Head of Impact",
-    img:  "/team/Carlo Angeles.png",
-    quote: "Impact without measurement is just intention. Our job is to make sure that what we do in rooms and boardrooms actually reaches the people and ecosystems we're working for.",
-  },
-  {
-    name: "Eduardo Gómez Restrepo",
-    role: "Head, ScaleUp Studio",
-    img:  "/team/Eduardo Gómez.png",
-    quote: "Scaling an idea isn't just about growth — it's about making sure the right things grow in the right way. The ScaleUp Studio exists to make that distinction matter.",
-  },
-  {
-    name: "Enrique Portillo",
-    role: "Administration Lead",
-    img:  "/team/Enrique Portillo.png",
-    quote: "Every great initiative runs on trust and structure. Behind every launch, every partnership, every milestone — there's a foundation that makes it all possible.",
-  },
-  {
-    name: "Fernanda Reséndiz",
-    role: "Communication",
-    img:  "/team/Fernanda Resendiz.png",
-    quote: "Telling the right story to the right audience at the right moment is a craft. Communication is how we turn our work into something the world can understand and believe in.",
-  },
-  {
-    name: "Regina Cervera",
-    role: "Head, Nature Innovation Programs",
-    img:  "/team/Regina Cervera.png",
-    quote: "Innovation for nature isn't a metaphor — it's a necessity. Every program we design has to meet the urgency of what's at stake and the ambition of what's possible.",
-  },
-  {
-    name: "Xiomy Vázquez",
-    role: "Lead, Branding",
-    img:  "/team/Xiomy Vazquez.png",
-    quote: "A brand is a promise. My job is to make sure C Minds keeps that promise consistently — in every color, every word, and every experience we put into the world.",
-  },
+const PEOPLE_META = [
+  { name: "Alex Muñoz",              img: "/team/AlexMunos.png" },
+  { name: "Ángel Escalante",         img: "/team/Angel Escalante.png" },
+  { name: "Antonio Gil",             img: "/team/Tony Gil.png" },
+  { name: "Bryan Ruiz",              img: "/team/Bryan Ruiz.png" },
+  { name: "Camila Valdez",           img: "/team/Camila Valdes.png" },
+  { name: "Carlo Angeles",           img: "/team/Carlo Angeles.png" },
+  { name: "Eduardo Gómez Restrepo",  img: "/team/Eduardo Gómez.png" },
+  { name: "Enrique Portillo",        img: "/team/Enrique Portillo.png" },
+  { name: "Fernanda Reséndiz",       img: "/team/Fernanda Resendiz.png" },
+  { name: "Regina Cervera",          img: "/team/Regina Cervera.png" },
+  { name: "Xiomy Vázquez",           img: "/team/Xiomy Vazquez.png" },
 ];
 
-const BENEFITS = [
-  {
-    icon:  "/assets/glass/Home.svg",
-    title: "Working your way",
-    desc:  "We're fully remote by design, not by default. That means no commute, more autonomy, and the freedom to do your best work — wherever that happens to be.",
-    wide:  false,
-  },
-  {
-    icon:  "/assets/glass/Learn.svg",
-    title: "Love to learn.",
-    desc:  "Curious minds thrive here. Use your $500 annual learning stipend on whatever helps you grow — design conferences, dev workshops, or something unexpected.",
-    wide:  false,
-  },
-  {
-    icon:  "/assets/glass/getTogether.svg",
-    title: "Get Together.",
-    desc:  "Every month, we bring the whole team together — face-to-face, human-to-human. Expect good food, shared ideas, and the kind of conversations that don't happen on Zoom.",
-    wide:  true,
-  },
-];
-
-const POSITIONS = [
-  { title: "Project Manager", type: "Full time", location: "LATAM", mode: "Remote", status: "Closed" as const },
+const BENEFIT_META = [
+  { icon: "/assets/glass/Home.svg",         wide: false },
+  { icon: "/assets/glass/Learn.svg",        wide: false },
+  { icon: "/assets/glass/getTogether.svg",  wide: true },
 ];
 
 function hexToRgb(hex: string) {
@@ -151,6 +79,15 @@ export default function CareersPage() {
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
   const [primaryColor, setPrimaryColor]     = useState('#5EC1F3');
   const router        = useRouter();
+  const locale        = useLocale();
+  const lp            = useLocalePath();
+  const t             = copy[locale];
+  const tc            = common[locale];
+
+  const PEOPLE = PEOPLE_META.map((meta, i) => ({ ...meta, ...t.people.list[i] }));
+  const BENEFITS = BENEFIT_META.map((meta, i) => ({ ...meta, ...t.benefits.items[i] }));
+  const POSITIONS = t.positions.items;
+  const NAV_ITEMS = [tc.nav.home, tc.nav.core, tc.nav.mindscope, tc.nav.careers];
 
   useLayoutEffect(() => {
     const match = document.cookie.match(/(?:^|;\s*)cminds_color=([^;]+)/);
@@ -182,13 +119,14 @@ export default function CareersPage() {
 
   const navigateWithTransition = (path: string) => {
     sessionStorage.setItem("vt_from", "careers");
+    const target = lp(path);
     const doNavigate = () => {
       if (typeof document !== "undefined" && "startViewTransition" in document) {
         (document as any).startViewTransition(() => {
-          startTransition(() => { router.push(path); });
+          startTransition(() => { router.push(target); });
         });
       } else {
-        router.push(path);
+        router.push(target);
       }
     };
     gsap.to([".careers-word", ".careers-scroll-btn", ".careers-anchor-links"], {
@@ -343,12 +281,12 @@ export default function CareersPage() {
             <div
               key={item}
               ref={(el) => { navItemRefs.current[idx] = el; }}
-              className={`nav-item${item === "Careers" ? " active" : ""}`}
+              className={`nav-item${item === tc.nav.careers ? " active" : ""}`}
               onMouseEnter={() => setHoverNav(idx)}
               onClick={() => {
-                if (item === "Home") navigateWithTransition("/");
-                if (item === "Core") navigateWithTransition("/core");
-                if (item === "Mindscope ®") navigateWithTransition("/mindscope");
+                if (item === tc.nav.home) navigateWithTransition("/");
+                if (item === tc.nav.core) navigateWithTransition("/core");
+                if (item === tc.nav.mindscope) navigateWithTransition("/mindscope");
               }}
             >
               {item}
@@ -379,8 +317,8 @@ export default function CareersPage() {
         </div>
         <div className="careers-hero-inner">
           <h1 className="careers-h1">
-            <span className="careers-word">Join the team</span>
-            <span className="careers-word careers-word-accent">shaping what&apos;s next.</span>
+            <span className="careers-word">{t.hero.title1}</span>
+            <span className="careers-word careers-word-accent">{t.hero.title2}</span>
           </h1>
 
           <button
@@ -388,14 +326,14 @@ export default function CareersPage() {
             style={{ padding: "0.9rem 2rem", opacity: 0 }}
             onClick={() => document.querySelector("#open-positions")?.scrollIntoView({ behavior: "smooth" })}
           >
-            Scroll down ↓
+            {t.hero.scroll}
           </button>
 
           <div className="careers-anchor-links" style={{ opacity: 0 }}>
-            <a href="#open-positions" className="careers-anchor-link" onClick={(e) => scrollToSection('open-positions', e)}>Open positions</a>
-            <a href="#culture"        className="careers-anchor-link" onClick={(e) => scrollToSection('culture', e)}>Culture</a>
-            <a href="#people"         className="careers-anchor-link" onClick={(e) => scrollToSection('people', e)}>People</a>
-            <a href="#benefits"       className="careers-anchor-link" onClick={(e) => scrollToSection('benefits', e)}>Benefits</a>
+            <a href="#open-positions" className="careers-anchor-link" onClick={(e) => scrollToSection('open-positions', e)}>{t.hero.anchors.positions}</a>
+            <a href="#culture"        className="careers-anchor-link" onClick={(e) => scrollToSection('culture', e)}>{t.hero.anchors.culture}</a>
+            <a href="#people"         className="careers-anchor-link" onClick={(e) => scrollToSection('people', e)}>{t.hero.anchors.people}</a>
+            <a href="#benefits"       className="careers-anchor-link" onClick={(e) => scrollToSection('benefits', e)}>{t.hero.anchors.benefits}</a>
           </div>
         </div>
       </section>
@@ -414,7 +352,7 @@ export default function CareersPage() {
       <section id="open-positions" className="careers-positions-section" style={{ opacity: 0 }}>
         <div className="careers-positions-header">
           <span className="careers-section-dot" />
-          <h2 className="careers-section-label">Positions</h2>
+          <h2 className="careers-section-label">{t.positions.label}</h2>
         </div>
 
         <div className="careers-positions-list">
@@ -425,23 +363,23 @@ export default function CareersPage() {
                 <p className="careers-position-tags">{pos.type} · {pos.location} · {pos.mode}</p>
               </div>
               <span className={`careers-position-status careers-position-status--${pos.status.toLowerCase()}`}>
-                {pos.status}
+                {t.positions.statusLabels[pos.status]}
               </span>
             </div>
           ))}
         </div>
 
-        <p className="careers-positions-empty">Not more positions available</p>
+        <p className="careers-positions-empty">{t.positions.empty}</p>
       </section>
 
       {/* Culture section */}
       <section id="culture" className="careers-culture-section" ref={culturePinRef}>
         <div className="careers-positions-header">
           <span className="careers-section-dot" />
-          <h2 className="careers-section-label">Culture</h2>
+          <h2 className="careers-section-label">{t.culture.label}</h2>
         </div>
         <p className="careers-culture-text">
-          {"We are a collaborative, growth-minded team that values curiosity, mentorship, meaningful work, and the people behind it.".split(" ").map((word, i) => (
+          {t.culture.text.split(" ").map((word, i) => (
             <span key={i} className="careers-culture-word">{word}{" "}</span>
           ))}
         </p>
@@ -466,7 +404,7 @@ export default function CareersPage() {
       >
         <div className="careers-positions-header">
           <span className="careers-section-dot" />
-          <h2 className="careers-section-label">People</h2>
+          <h2 className="careers-section-label">{t.people.label}</h2>
         </div>
 
         <div className="careers-people-inner">
@@ -499,12 +437,12 @@ export default function CareersPage() {
 
             {/* Static — no transition animation */}
             <div className="careers-people-nav">
-              <button className="careers-people-btn" onClick={() => goToPerson(activePersonRef.current - 1)} aria-label="Previous">
+              <button className="careers-people-btn" onClick={() => goToPerson(activePersonRef.current - 1)} aria-label={t.people.prev}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="14" height="14">
                   <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
-              <button className="careers-people-btn" onClick={() => goToPerson(activePersonRef.current + 1)} aria-label="Next">
+              <button className="careers-people-btn" onClick={() => goToPerson(activePersonRef.current + 1)} aria-label={t.people.next}>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="14" height="14">
                   <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -518,7 +456,7 @@ export default function CareersPage() {
       <section id="benefits" className="careers-benefits-section">
         <div className="careers-positions-header">
           <span className="careers-section-dot" />
-          <h2 className="careers-section-label">Benefits</h2>
+          <h2 className="careers-section-label">{t.benefits.label}</h2>
         </div>
 
         <div className="careers-benefits-grid">

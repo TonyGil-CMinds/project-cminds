@@ -5,6 +5,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRouter } from "next/navigation";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
+import { copy } from "./copy";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -38,6 +40,9 @@ export default function Tech4NaturePage() {
   const transitionRef        = useRef<HTMLDivElement>(null);
   const barFillRef           = useRef<HTMLDivElement>(null);
   const router        = useRouter();
+  const locale = useLocale();
+  const t = copy[locale];
+  const lp = useLocalePath();
   const [cardVisible, setCardVisible] = useState(true);
   const videoRef        = useRef<HTMLVideoElement>(null);
   const videoOverlayRef = useRef<HTMLDivElement>(null);
@@ -46,7 +51,7 @@ export default function Tech4NaturePage() {
 
   const PARTNER_TABS = [
     {
-      id: "ledby", label: "LED BY",
+      id: "ledby", label: t.partners.tabs.ledby,
       logos: [
         { src: `${BASE}/ledby-cminds-1.svg`,      alt: "C Minds" },
         { src: `${BASE}/ledby-aiforclimate-2.svg`, alt: "Ai for Climate and Biodiversity" },
@@ -54,13 +59,13 @@ export default function Tech4NaturePage() {
       ],
     },
     {
-      id: "innovation", label: "INNOVATION PARTNERS",
+      id: "innovation", label: t.partners.tabs.innovation,
       logos: [
         { src: `${BASE}/innovationpartner-upy.svg`, alt: "UPY" },
       ],
     },
     {
-      id: "supported", label: "SUPPORTED BY",
+      id: "supported", label: t.partners.tabs.supported,
       logos: [
         { src: `${BASE}/supportedby-iucn-1.svg`,    alt: "IUCN" },
         { src: `${BASE}/supportedby-greenlist-2.svg`, alt: "Green List" },
@@ -83,38 +88,12 @@ export default function Tech4NaturePage() {
     });
   };
 
-  const SLIDES = [
-    {
-      entry: "ENTRY 01",
-      title: "Automated detection",
-      image: `${BASE}/theimpact-jaguar.png`,
-      rows: [
-        { label: "Images / Video", value: "100,000+" },
-        { label: "Audio Files",    value: "600,000+" },
-        { label: "Analysis",       value: "3 yrs → months" },
-      ],
-    },
-    {
-      entry: "ENTRY 02",
-      title: "Two new algorithms",
-      image: `${BASE}/theimpact-algorithm.png`,
-      rows: [
-        { label: "Algorithms",  value: "2" },
-        { label: "Accuracy",    value: "90%+" },
-        { label: "Individuals", value: "9 jaguars" },
-      ],
-    },
-    {
-      entry: "ENTRY 03",
-      title: "Platform & people",
-      image: `${BASE}/theimpact-platform.png`,
-      rows: [
-        { label: "Platform", value: "First-of-kind" },
-        { label: "Reports",  value: "Open · ethical" },
-        { label: "Students", value: "12+" },
-      ],
-    },
+  const SLIDE_IMAGES = [
+    `${BASE}/theimpact-jaguar.png`,
+    `${BASE}/theimpact-algorithm.png`,
+    `${BASE}/theimpact-platform.png`,
   ];
+  const SLIDES = t.impact.slides.map((slide, i) => ({ ...slide, image: SLIDE_IMAGES[i] }));
 
   // Auto-advance slideshow
   useEffect(() => {
@@ -140,7 +119,7 @@ export default function Tech4NaturePage() {
         navigating = true;
         gsap.to(el, {
           opacity: 0, duration: 0.35,
-          onComplete: () => router.push("/aiforbiodiversity/naturatechlac"),
+          onComplete: () => router.push(lp("/aiforbiodiversity/naturatechlac")),
         });
       };
       el.addEventListener("click", onTap);
@@ -201,7 +180,7 @@ export default function Tech4NaturePage() {
         if (drainId) clearTimeout(drainId);
         gsap.to(el, {
           opacity: 0, duration: 0.45,
-          onComplete: () => router.push("/aiforbiodiversity/naturatechlac"),
+          onComplete: () => router.push(lp("/aiforbiodiversity/naturatechlac")),
         });
       }
     };
@@ -638,7 +617,7 @@ export default function Tech4NaturePage() {
         style={{ display: "none", pointerEvents: "none" }}
         onClick={closeVideo}
       >
-        <button className="t4n-video-close" onClick={closeVideo} aria-label="Close video">×</button>
+        <button className="t4n-video-close" onClick={closeVideo} aria-label={t.hero.closeVideoAria}>×</button>
         <video
           ref={videoRef}
           src={process.env.NEXT_PUBLIC_T4N_HERO_VIDEO_URL || undefined}
@@ -654,13 +633,13 @@ export default function Tech4NaturePage() {
         <img
           ref={heroBgRef}
           src={`${BASE}/tech4nature-hero.png`}
-          alt="Tech4Nature México"
+          alt={t.hero.bgAlt}
           className="t4n-hero-bg"
         />
 
         <div className="t4n-hero-overlay" aria-hidden="true" />
 
-        <button className="t4n-close" onClick={goBack} aria-label="Back to Initiatives">
+        <button className="t4n-close" onClick={goBack} aria-label={t.hero.closeAria}>
           ×
         </button>
 
@@ -671,10 +650,10 @@ export default function Tech4NaturePage() {
         <div className="t4n-hero-ctas">
           <button className="t4n-cta-btn t4n-cta-btn--filled" onClick={e => { e.stopPropagation(); openVideo(); }}>
             <img src={`${BASE}/playvideo.svg`} alt="" className="t4n-cta-icon" />
-            See Video
+            {t.hero.seeVideo}
           </button>
           <button className="t4n-cta-btn t4n-cta-btn--outline" onClick={e => { e.stopPropagation(); infoRef.current?.scrollIntoView({ behavior: "smooth" }); }}>
-            See Results
+            {t.hero.seeResults}
             <img src={`${BASE}/arrowDown.svg`} alt="" className="t4n-cta-icon" />
           </button>
         </div>
@@ -687,40 +666,35 @@ export default function Tech4NaturePage() {
 
           <div className="t4n-info-left">
             <div className="t4n-info-meta">
-              <span className="t4n-info-chip">PHASE 1</span>
-              <span className="t4n-info-date">2022 - 2024</span>
+              <span className="t4n-info-chip">{t.info.phaseChip}</span>
+              <span className="t4n-info-date">{t.info.dateRange}</span>
             </div>
 
             <img
               src={`${BASE}/logo-tech4nature.svg`}
-              alt="Tech4Nature México"
+              alt={t.info.logoAlt}
               className="t4n-info-logo"
             />
 
             <div className="t4n-info-location">
               <img src={`${BASE}/location.svg`} alt="" className="t4n-info-loc-icon" />
-              <span>Dzilam State Reserve</span>
+              <span>{t.info.location}</span>
             </div>
           </div>
 
           <div className="t4n-info-right">
             <h5 className="t4n-info-desc">
-              A multisectoral collaboration for jaguar conservation in the Yucatán Peninsula.
+              {t.info.desc}
             </h5>
             <button className="t4n-info-download">
-              Download report
+              {t.info.downloadReport}
               <img src={`${BASE}/arrowDown.svg`} alt="" className="t4n-info-dl-icon" />
             </button>
           </div>
 
         </div>
 
-        <h3 ref={bodyRef} className="t4n-info-body">
-          <strong>Tech4Nature Mexico</strong> works to accelerate the effective conservation and
-          regeneration of biodiversity and ecosystem health, strengthening monitoring, conservation,
-          and understanding of the impacts of climate change on ecosystems and priority species
-          in the mangrove area of the Yucatán Peninsula.
-        </h3>
+        <h3 ref={bodyRef} className="t4n-info-body" dangerouslySetInnerHTML={{ __html: t.info.bodyHtml }} />
       </section>
 
       {/* ── Mission section ── */}
@@ -730,20 +704,23 @@ export default function Tech4NaturePage() {
           <img
             ref={missionImgRef}
             src={`${BASE}/themision.png`}
-            alt="The Mission"
+            alt={t.mission.imgAlt}
             className="t4n-mission-img"
           />
         </div>
 
-        <h3 className="t4n-mission-title">The Mision</h3>
+        <h3 className="t4n-mission-title">{t.mission.title}</h3>
 
         <div className="t4n-mission-body">
           <div className="t4n-mission-col">
-            <p>Our mission at Tech4Nature México centers on understanding, preserving and restoring the Dzilam State Reserve to provide a secure sanctuary for a rich variety of plant and animal species.</p>
-            <p>Nestled in the northeastern region of Yucatan, the Dzilam State Reserve is a natural protected area with over <strong>69,000 hectares</strong> that belongs to the municipalities of Dzilam de Bravo and San Felipe.</p>
+            {t.mission.col1.map((html, i) => (
+              <p key={i} dangerouslySetInnerHTML={{ __html: html }} />
+            ))}
           </div>
           <div className="t4n-mission-col">
-            <p>This reserve holds a special status as a critical wetland conservation site, boasting nearly <strong>290 species of fauna</strong> intricately linked with over <strong>300 flora species</strong>. It spans five distinct vegetation types, including coastal dunes, mangroves, petenes, along with vibrant aquatic flora in coastal lagoons.</p>
+            {t.mission.col2.map((html, i) => (
+              <p key={i} dangerouslySetInnerHTML={{ __html: html }} />
+            ))}
           </div>
         </div>
 
@@ -752,10 +729,9 @@ export default function Tech4NaturePage() {
       {/* ── Impact section ── */}
       <section ref={impactRef} className="t4n-impact">
 
-        <h3 className="t4n-impact-title">The Impact</h3>
+        <h3 className="t4n-impact-title">{t.impact.title}</h3>
         <p className="t4n-impact-desc">
-          Camera traps, audio recorders and two custom AI models turned an overwhelming archive
-          into a living catalogue of individuals — observed, logged and identified.
+          {t.impact.desc}
         </p>
 
         {/* KPI cards */}
@@ -764,21 +740,21 @@ export default function Tech4NaturePage() {
             <span ref={kpi1Ref} className="t4n-impact-kpi-num">0</span>
             <div className="t4n-impact-kpi-label">
               <img src={`${BASE}/icon-individuals.svg`} alt="" className="t4n-impact-kpi-icon" />
-              Individual jaguars identified
+              {t.impact.kpis.jaguars}
             </div>
           </div>
           <div className="t4n-impact-kpi">
             <span ref={kpi2Ref} className="t4n-impact-kpi-num">0%+</span>
             <div className="t4n-impact-kpi-label">
               <img src={`${BASE}/icon-levelaccuracy.svg`} alt="" className="t4n-impact-kpi-icon" />
-              Individual-level accuracy
+              {t.impact.kpis.accuracy}
             </div>
           </div>
           <div className="t4n-impact-kpi">
             <span ref={kpi3Ref} className="t4n-impact-kpi-num">0</span>
             <div className="t4n-impact-kpi-label">
-              Species detected
-              <span className="t4n-impact-kpi-risk">40 at risk</span>
+              {t.impact.kpis.species}
+              <span className="t4n-impact-kpi-risk">{t.impact.kpis.atRisk}</span>
             </div>
           </div>
         </div>
@@ -811,7 +787,7 @@ export default function Tech4NaturePage() {
                 key={i}
                 className={`t4n-impact-dot${activeSlide === i ? " active" : ""}`}
                 onClick={() => setActiveSlide(i)}
-                aria-label={`Slide ${i + 1}`}
+                aria-label={t.impact.slideAriaLabel(i + 1)}
               />
             ))}
           </div>
@@ -831,11 +807,11 @@ export default function Tech4NaturePage() {
             <img
               ref={bioscannerImgRef}
               src={`${BASE}/bioscanner.png`}
-              alt="Bioscanner"
+              alt={t.bioscanner.imgAlt}
               className="t4n-bioscanner-img"
             />
           </div>
-          <span className="t4n-bioscanner-chip">Bioscanner <strong>BETA</strong></span>
+          <span className="t4n-bioscanner-chip" dangerouslySetInnerHTML={{ __html: t.bioscanner.chipHtml }} />
         </a>
       </section>
 
@@ -851,11 +827,11 @@ export default function Tech4NaturePage() {
             <img
               ref={arbimonImgRef}
               src={`${BASE}/audibon.png`}
-              alt="Arbimon"
+              alt={t.arbimon.imgAlt}
               className="t4n-bioscanner-img"
             />
           </div>
-          <span className="t4n-bioscanner-chip t4n-bioscanner-chip--right">ARBIMON</span>
+          <span className="t4n-bioscanner-chip t4n-bioscanner-chip--right">{t.arbimon.chip}</span>
         </a>
       </section>
 
@@ -868,13 +844,13 @@ export default function Tech4NaturePage() {
           <div className="t4n-transition-card">
             <img
               src={`${BASE}/next-naturatechlac.png`}
-              alt="NaturaTech LAC"
+              alt={t.transition.cardImgAlt}
               className="t4n-transition-card-img"
             />
             <div className="t4n-transition-card-overlay" />
             <div className="t4n-transition-card-content">
-              <span className="t4n-transition-next-label">Next up...</span>
-              <h2 className="t4n-transition-next-title">NaturaTech LAC</h2>
+              <span className="t4n-transition-next-label">{t.transition.nextLabel}</span>
+              <h2 className="t4n-transition-next-title">{t.transition.nextTitle}</h2>
             </div>
           </div>
 
@@ -885,7 +861,7 @@ export default function Tech4NaturePage() {
 
           {/* Bottom hint */}
           <div className="t4n-transition-hint">
-            <span>Keep <em>scrolling!</em></span>
+            <span dangerouslySetInnerHTML={{ __html: t.transition.hintHtml }} />
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
               <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -921,12 +897,12 @@ export default function Tech4NaturePage() {
       {/* Report card — fixed bottom-right */}
       {cardVisible && (
         <div ref={cardRef} className="t4n-report-card">
-          <button className="t4n-report-close" onClick={dismissCard} aria-label="Close">×</button>
+          <button className="t4n-report-close" onClick={dismissCard} aria-label={t.report.closeAria}>×</button>
           <img src={`${BASE}/report1.png`} alt="" className="t4n-report-image" />
           <div className="t4n-report-body">
-            <span className="t4n-report-chip">PHASE I</span>
-            <p className="t4n-report-title">Ethical Use of AI Systems for Biodiversity...</p>
-            <button className="t4n-report-cta">Download Report</button>
+            <span className="t4n-report-chip">{t.report.chip}</span>
+            <p className="t4n-report-title">{t.report.title}</p>
+            <button className="t4n-report-cta">{t.report.cta}</button>
           </div>
         </div>
       )}

@@ -4,16 +4,10 @@ import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import * as THREE from "three";
+import { useLocale } from "@/i18n/useLocale";
+import { copy } from "@/app/[locale]/core/copy";
 
 gsap.registerPlugin(ScrollTrigger);
-
-const PHRASES = ["place of action", "disruptive team", "living network"] as const;
-
-const PARAS = [
-  "C Minds is not just a think tank. It's where bold, meaningful ideas are put into motion. We map the intersection between technology, ethics, and life dignity imagine and build futures that work for all life on Earth.",
-  "From the beginning, we've understood that lasting transformation requires more than innovation. It demands a reimagination of our orbit. We challenge default systems with purpose, because the world requires paradigm shifts; new coordinates.",
-  "C Minds brings together thought-provoking minds paving new paths toward a more inclusive, ethical, and innovative future. We believe in the power of technology—when guided by purpose—to drive meaningful change.",
-] as const;
 
 const N = 500;
 
@@ -99,6 +93,10 @@ export default function CoreScrollSection({ onScrollProgress }: Props) {
   const phraseRefs   = useRef<(HTMLSpanElement | null)[]>([null, null, null]);
   const paraRefs     = useRef<(HTMLParagraphElement | null)[]>([null, null, null]);
   const lastPhaseRef = useRef(0);
+  const locale = useLocale();
+  const c = copy[locale].coreScroll;
+  const PHRASES = c.phrases;
+  const PARAS = c.paras;
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -265,7 +263,7 @@ export default function CoreScrollSection({ onScrollProgress }: Props) {
       <div ref={pinRef} className="cs-pin">
 
         <div className="cs-left">
-          <h2 className="cs-static">We are a</h2>
+          <h2 className="cs-static">{c.static}</h2>
           <div className="cs-phrase-wrap">
             {PHRASES.map((ph, i) => (
               <span

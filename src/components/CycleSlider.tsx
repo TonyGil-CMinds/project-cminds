@@ -14,9 +14,16 @@ interface Slide {
 interface CycleSliderProps {
   slides: Slide[];
   autoplayDelay?: number;
+  articleLinkText?: string;
+  slideLabel?: string;
 }
 
-export default function CycleSlider({ slides, autoplayDelay = 4000 }: CycleSliderProps) {
+export default function CycleSlider({
+  slides,
+  autoplayDelay = 4000,
+  articleLinkText = "Go to article →",
+  slideLabel = "Slide",
+}: CycleSliderProps) {
   const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
   const activeRef = useRef(0);
   const [activeDot, setActiveDot] = useState(0);
@@ -72,7 +79,7 @@ export default function CycleSlider({ slides, autoplayDelay = 4000 }: CycleSlide
             <p className="cz-slide-text">{slide.text}</p>
             {slide.href && (
               <a className="cz-article-link" href={slide.href} target="_blank" rel="noopener noreferrer">
-                Ir al articulo →
+                {articleLinkText}
               </a>
             )}
           </div>
@@ -85,7 +92,7 @@ export default function CycleSlider({ slides, autoplayDelay = 4000 }: CycleSlide
             key={i}
             className={`cz-dot${activeDot === i ? " cz-dot--active" : ""}`}
             onClick={() => goToSlide(i)}
-            aria-label={`Slide ${i + 1}`}
+            aria-label={`${slideLabel} ${i + 1}`}
           />
         ))}
       </div>

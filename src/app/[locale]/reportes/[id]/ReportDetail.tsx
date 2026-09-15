@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
+import { copy } from "./copy";
 
 interface ReportFile {
   language:    string;
@@ -21,10 +23,10 @@ interface RawReport {
   files:          ReportFile[];
 }
 
-function fmtDate(raw: string) {
-  if (!raw) return "—";
+function fmtDate(raw: string, locale: "en" | "es", noDate: string) {
+  if (!raw) return noDate;
   try {
-    return new Date(raw).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+    return new Date(raw).toLocaleDateString(locale === "es" ? "es-MX" : "en-US", { month: "long", day: "numeric", year: "numeric" });
   } catch { return raw; }
 }
 
@@ -43,6 +45,9 @@ function saveAs(reportId: string, lang: string, title: string, url?: string) {
 
 export default function ReportDetail({ report }: { report: RawReport }) {
   const [activeLang, setActiveLang] = useState(0);
+  const locale = useLocale();
+  const lp = useLocalePath();
+  const t = copy[locale];
 
   const files    = report.files ?? [];
   const file     = files[activeLang] ?? null;
@@ -50,17 +55,17 @@ export default function ReportDetail({ report }: { report: RawReport }) {
   const desc     = file?.description || report.description;
   const cover    = file?.cover_image || report.cover_image;
   const dlUrl    = file?.url         || "#";
-  const date     = fmtDate(report.published_date);
+  const date     = fmtDate(report.published_date, locale, t.noDate);
 
   return (
     <div className="rp-root">
       {/* Back nav */}
       <nav className="rp-nav">
-        <Link href="/mindscope" className="rp-nav-back">
+        <Link href={lp("/mindscope")} className="rp-nav-back">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
             <polyline points="15 18 9 12 15 6" />
           </svg>
-          Mindscope
+          {t.backToMindscope}
         </Link>
       </nav>
 
@@ -100,15 +105,15 @@ export default function ReportDetail({ report }: { report: RawReport }) {
               onClick={() => saveAs(report.id, file?.language ?? "", title, dlUrl)}
               disabled={!dlUrl || dlUrl === "#"}
             >
-              Save as PDF
+              {t.downloadPdf}
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                 <polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
               </svg>
             </button>
 
-            <Link href={`/mindscope?report=${report.id}`} className="rp-archive-btn">
-              Ver en The Archive
+            <Link href={lp(`/mindscope?report=${report.id}`)} className="rp-archive-btn">
+              {t.viewInArchive}
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
                 <polyline points="9 18 15 12 9 6" />
               </svg>

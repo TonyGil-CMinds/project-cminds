@@ -5,6 +5,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRouter } from "next/navigation";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
+import { copy } from "./copy";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -32,12 +34,15 @@ export default function AiForManateesPage() {
   const transitionRef  = useRef<HTMLDivElement>(null);
   const barFillRef     = useRef<HTMLDivElement>(null);
   const router         = useRouter();
+  const locale         = useLocale();
+  const lp             = useLocalePath();
+  const t              = copy[locale];
 
   const [activePartnerTab, setActivePartnerTab] = useState("partners");
 
   const PARTNER_TABS = [
     {
-      id: "partners", label: "PARTNERS AND OBSERVERS",
+      id: "partners", label: t.partnerTabs.partners,
       logos: [
         { src: `${BASE}/partner-uchule-1.svg`,  alt: "UCHULE" },
         { src: `${BASE}/partner-ecosur-2.svg`,  alt: "ECOSUR" },
@@ -76,7 +81,7 @@ export default function AiForManateesPage() {
         const partnersBottom = partnersRef.current?.getBoundingClientRect().bottom ?? 1;
         if (partnersBottom > 0) return;
         navigating = true;
-        gsap.to(el, { opacity: 0, duration: 0.35, onComplete: () => router.push("/aiforbiodiversity/vitaloceans") });
+        gsap.to(el, { opacity: 0, duration: 0.35, onComplete: () => router.push(lp("/aiforbiodiversity/vitaloceans")) });
       };
       el.addEventListener("click", onTap);
       return () => el.removeEventListener("click", onTap);
@@ -120,7 +125,7 @@ export default function AiForManateesPage() {
       if (progress >= 1) {
         navigating = true;
         if (drainId) clearTimeout(drainId);
-        gsap.to(el, { opacity: 0, duration: 0.45, onComplete: () => router.push("/aiforbiodiversity/vitaloceans") });
+        gsap.to(el, { opacity: 0, duration: 0.45, onComplete: () => router.push(lp("/aiforbiodiversity/vitaloceans")) });
       }
     };
 
@@ -131,7 +136,7 @@ export default function AiForManateesPage() {
       window.removeEventListener("wheel", onWheel);
       if (drainId) clearTimeout(drainId);
     };
-  }, [router]);
+  }, [router, lp]);
 
   // Info body paragraphs: word-by-word line animation, run independently on each <p>
   useEffect(() => {
@@ -234,7 +239,7 @@ export default function AiForManateesPage() {
       <div ref={heroRef} className="t4n-hero ntl-hero">
         <img ref={heroBgRef} src={`${BASE}/hero-manatees.png`} alt="AI For Manatees" className="t4n-hero-bg" />
         <div className="vo-hero-overlay" aria-hidden="true" />
-        <button className="t4n-close" onClick={goBack} aria-label="Back">×</button>
+        <button className="t4n-close" onClick={goBack} aria-label={t.backAria}>×</button>
 
         {REPORT_ENABLED && (
           <div className="afm-report-card">
@@ -244,9 +249,9 @@ export default function AiForManateesPage() {
               className="afm-report-image"
             />
             <div className="afm-report-body">
-              <p className="afm-report-title">AI4Manatees: A Machine Learning Approach...</p>
+              <p className="afm-report-title">{t.reportTitle}</p>
               <span className="afm-report-cta">
-                Download report
+                {t.downloadReport}
                 <svg width="12" height="12" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                   <path d="M7 2v8m0 0L3.5 6.5M7 10l3.5-3.5M2 12h10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -263,16 +268,16 @@ export default function AiForManateesPage() {
             <img src={`${BASE}/logo-aiformanatees.svg`} alt="AI For Manatees" className="ntl-info-logo afm-info-logo" />
             <span className="ntl-info-location">
               <img src="/platforms/aiforbiodiversity/initiative-tech4nature/location.svg" alt="" width="16" height="16" />
-              Latin America and Caribbean
+              {t.location}
             </span>
           </div>
           <div className="ntl-info-right">
             <p className="ntl-info-tagline">
-              A Machine Learning Approach to better understand and protect manatees in Latin America and the Caribbean
+              {t.tagline}
             </p>
             {REPORT_ENABLED && (
               <button className="ntl-info-cta">
-                Download report
+                {t.downloadReport}
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                   <path d="M7 2v8m0 0L3.5 6.5M7 10l3.5-3.5M2 12h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -281,10 +286,10 @@ export default function AiForManateesPage() {
           </div>
         </div>
         <p ref={bodyRef1} className="ntl-info-body">
-          AI 4 Manatees is a multi-sectoral alliance that aims to accelerate the conservation of manatee populations in the Caribbean, and regions in Central and South America.
+          {t.body1}
         </p>
         <p ref={bodyRef2} className="ntl-info-body">
-          By building a mechanism for analyzing manatee vocalizations from submarine audio recordings harnessing the power of AI systems, we will produce tools that allow researchers and conservation practitioners to better understand manatees&apos; behavior and communication patterns.
+          {t.body2}
         </p>
       </section>
 
@@ -319,15 +324,15 @@ export default function AiForManateesPage() {
             <img src="/platforms/aiforbiodiversity/initiatives-naturatechlac/next-vitaloceans.png" alt="Vital Oceans" className="t4n-transition-card-img" />
             <div className="t4n-transition-card-overlay" />
             <div className="t4n-transition-card-content">
-              <span className="t4n-transition-next-label">Next up...</span>
-              <h2 className="t4n-transition-next-title">Vital Oceans</h2>
+              <span className="t4n-transition-next-label">{t.nextUpLabel}</span>
+              <h2 className="t4n-transition-next-title">{t.nextUpTitle}</h2>
             </div>
           </div>
           <div className="t4n-transition-bar-track">
             <div ref={barFillRef} className="t4n-transition-bar-fill" />
           </div>
           <div className="t4n-transition-hint">
-            <span>Keep scrolling!</span>
+            <span>{t.keepScrolling}</span>
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
               <path d="M8 3v10M3 8l5 5 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -347,7 +352,7 @@ export default function AiForManateesPage() {
             ))}
           </div>
           <div ref={logosWrapRef} className="t4n-partners-logos">
-            {PARTNER_TABS.find(t => t.id === activePartnerTab)?.logos.map((logo, i) => (
+            {PARTNER_TABS.find(tab => tab.id === activePartnerTab)?.logos.map((logo, i) => (
               <img key={i} src={logo.src} alt={logo.alt} className="t4n-partners-logo" />
             ))}
           </div>

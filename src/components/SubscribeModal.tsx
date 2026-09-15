@@ -2,6 +2,8 @@
 
 import { useRef, useEffect, useState } from "react";
 import gsap from "gsap";
+import { common } from "@/i18n/common";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
 
 export type CloseResult = "success" | "already_subscribed" | false;
 
@@ -13,6 +15,9 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const sheetRef   = useRef<HTMLDivElement>(null);
   const closingRef = useRef(false);
+  const locale = useLocale();
+  const lp = useLocalePath();
+  const t = common[locale].subscribeForm;
 
   const [form, setForm] = useState({
     gender: "",
@@ -47,7 +52,7 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.data_agreement || !form.policy_agreement) {
-      setError("Please accept both agreements to continue.");
+      setError(t.errorAgreements);
       return;
     }
     setSubmitting(true);
@@ -66,13 +71,13 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Submission failed. Please try again.");
+        throw new Error(data.error || t.errorSubmission);
       }
 
       document.cookie = "cminds_subscribed=1; path=/; max-age=31536000; SameSite=Lax";
       animateClose("success");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setError(err instanceof Error ? err.message : t.errorGeneric);
       setSubmitting(false);
     }
   };
@@ -80,7 +85,7 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
   return (
     <div ref={overlayRef} className="sub-overlay" onClick={() => animateClose(false)}>
       <div ref={sheetRef} className="sub-sheet" onClick={(e) => e.stopPropagation()}>
-        <button className="sub-close" onClick={() => animateClose(false)} aria-label="Close">
+        <button className="sub-close" onClick={() => animateClose(false)} aria-label={t.closeAria}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
@@ -88,8 +93,8 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
         </button>
 
         <div className="sub-header">
-          <h2 className="sub-title">Subscribe to Mindscope® — C&nbsp;Minds&#39; newsroom</h2>
-          <p className="sub-subtitle">Fill in all fields to complete your subscription.</p>
+          <h2 className="sub-title">{t.title}</h2>
+          <p className="sub-subtitle">{t.subtitle}</p>
         </div>
 
         <form className="sub-form" onSubmit={handleSubmit} noValidate>
@@ -100,38 +105,38 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
                 value={form.gender}
                 onChange={(e) => setForm((f) => ({ ...f, gender: e.target.value }))}
               >
-                <option value="">Form of address</option>
-                <option value="Mr.">Mr.</option>
-                <option value="Ms.">Ms.</option>
-                <option value="Prefer not to say">Prefer not to say</option>
-                <option value="Other">Other</option>
+                <option value="">{t.formOfAddress}</option>
+                <option value="Mr.">{t.mr}</option>
+                <option value="Ms.">{t.ms}</option>
+                <option value="Prefer not to say">{t.preferNotToSay}</option>
+                <option value="Other">{t.other}</option>
               </select>
             </div>
           </div>
 
           <div className="sub-row">
             <div className="sub-field">
-              <input className="sub-input" type="text" placeholder="Name" value={form.name}
+              <input className="sub-input" type="text" placeholder={t.name} value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} required />
             </div>
             <div className="sub-field">
-              <input className="sub-input" type="text" placeholder="Last name" value={form.lastname}
+              <input className="sub-input" type="text" placeholder={t.lastName} value={form.lastname}
                 onChange={(e) => setForm((f) => ({ ...f, lastname: e.target.value }))} required />
             </div>
           </div>
 
           <div className="sub-field">
-            <input className="sub-input" type="email" placeholder="Email" value={form.email}
+            <input className="sub-input" type="email" placeholder={t.email} value={form.email}
               onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} required />
           </div>
 
           <div className="sub-row">
             <div className="sub-field">
-              <input className="sub-input" type="text" placeholder="Organization" value={form.organization}
+              <input className="sub-input" type="text" placeholder={t.organization} value={form.organization}
                 onChange={(e) => setForm((f) => ({ ...f, organization: e.target.value }))} />
             </div>
             <div className="sub-field">
-              <input className="sub-input" type="text" placeholder="Country" value={form.country}
+              <input className="sub-input" type="text" placeholder={t.country} value={form.country}
                 onChange={(e) => setForm((f) => ({ ...f, country: e.target.value }))} />
             </div>
           </div>
@@ -140,19 +145,19 @@ export default function SubscribeModal({ onClose }: SubscribeModalProps) {
             <label className="sub-check-label">
               <input type="checkbox" className="sub-checkbox" checked={form.data_agreement}
                 onChange={(e) => setForm((f) => ({ ...f, data_agreement: e.target.checked }))} />
-              <span>I confirm that I have read the <a href="/privacy" target="_blank" rel="noopener noreferrer">Privacy Notice</a> and agree to the data use policies.</span>
+              <span>{t.privacyAgreementPre} <a href={lp("/privacy")} target="_blank" rel="noopener noreferrer">{t.privacyAgreementLink}</a> {t.privacyAgreementPost}</span>
             </label>
             <label className="sub-check-label">
               <input type="checkbox" className="sub-checkbox" checked={form.policy_agreement}
                 onChange={(e) => setForm((f) => ({ ...f, policy_agreement: e.target.checked }))} />
-              <span>I agree to the <a href="/ethics" target="_blank" rel="noopener noreferrer">Code of Ethics</a>.</span>
+              <span>{t.ethicsAgreementPre} <a href={lp("/ethics")} target="_blank" rel="noopener noreferrer">{t.ethicsAgreementLink}</a>{t.ethicsAgreementPost}</span>
             </label>
           </div>
 
           {error && <p className="sub-error">{error}</p>}
 
           <button type="submit" className="sub-submit" disabled={submitting}>
-            {submitting ? "Sending…" : "Subscribe"}
+            {submitting ? t.sending : t.submit}
           </button>
         </form>
       </div>

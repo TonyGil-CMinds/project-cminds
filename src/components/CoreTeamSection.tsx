@@ -3,24 +3,26 @@
 import { useRef, useState, useLayoutEffect, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
+import { copy } from "@/app/[locale]/core/copy";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const TEAM = [
-  { name: "Alex Muñoz",            role: "Director, Vital Oceans",            img: "/team/AlexMunos.png",          linkedin: "#" },
-  { name: "Ángel Escalante",       role: "Lead, Digital Product",             img: "/team/Angel Escalante.png",    linkedin: "#" },
-  { name: "Antonio Gil",           role: "Lead, Interactive Design",          img: "/team/Tony Gil.png",           linkedin: "#" },
-  { name: "Bryan Ruiz",            role: "Head, Exploration Studio",          img: "/team/Bryan Ruiz.png",         linkedin: "#" },
-  { name: "Camila Valdez",         role: "Editorial Design",                  img: "/team/Camila Valdes.png",      linkedin: "#" },
-  { name: "Carlo Angeles",         role: "Head of Impact",                    img: "/team/Carlo Angeles.png",      linkedin: "#" },
-  { name: "Eduardo Gómez Restrepo",role: "Head, ScaleUp Studio",              img: "/team/Eduardo Gómez.png",      linkedin: "#" },
-  { name: "Enrique Portillo",      role: "Administration Lead",               img: "/team/Enrique Portillo.png",   linkedin: "#" },
-  { name: "Fernanda Reséndiz",     role: "Communication",                     img: "/team/Fernanda Resendiz.png",  linkedin: "#" },
-  { name: "Regina Cervera",        role: "Head, Nature Innovation Programs",  img: "/team/Regina Cervera.png",     linkedin: "#" },
-  { name: "Xiomy Vázquez",         role: "Lead, Branding",                    img: "/team/Xiomy Vazquez.png",      linkedin: "#" },
+const TEAM_META = [
+  { img: "/team/AlexMunos.png",          linkedin: "#" },
+  { img: "/team/Angel Escalante.png",    linkedin: "#" },
+  { img: "/team/Tony Gil.png",           linkedin: "#" },
+  { img: "/team/Bryan Ruiz.png",         linkedin: "#" },
+  { img: "/team/Camila Valdes.png",      linkedin: "#" },
+  { img: "/team/Carlo Angeles.png",      linkedin: "#" },
+  { img: "/team/Eduardo Gómez.png",      linkedin: "#" },
+  { img: "/team/Enrique Portillo.png",   linkedin: "#" },
+  { img: "/team/Fernanda Resendiz.png",  linkedin: "#" },
+  { img: "/team/Regina Cervera.png",     linkedin: "#" },
+  { img: "/team/Xiomy Vazquez.png",      linkedin: "#" },
 ];
 
-const N      = TEAM.length;
+const N      = TEAM_META.length;
 const OFFSET = 320;
 
 const getCardState = (i: number, activeIdx: number) => {
@@ -38,8 +40,12 @@ export default function CoreTeamSection() {
   const cardRefs              = useRef<(HTMLDivElement | null)[]>([]);
   const infoRef               = useRef<HTMLDivElement>(null);
   const sectionRef            = useRef<HTMLElement>(null);
-  const [display, setDisplay] = useState(TEAM[0]);
   const touchStartX           = useRef(0);
+  const locale = useLocale();
+  const lp = useLocalePath();
+  const t = copy[locale].team;
+  const TEAM = TEAM_META.map((m, i) => ({ ...m, name: t.members[i].name, role: t.members[i].role }));
+  const display = TEAM[active];
 
   useLayoutEffect(() => {
     TEAM.forEach((_, i) => {
@@ -141,7 +147,6 @@ export default function CoreTeamSection() {
     gsap.to(infoRef.current, {
       opacity: 0, y: 8, duration: 0.18, ease: "power2.in",
       onComplete: () => {
-        setDisplay(TEAM[newActive]);
         setActive(newActive);
         activeRef.current = newActive;
         gsap.fromTo(infoRef.current,
@@ -178,7 +183,7 @@ export default function CoreTeamSection() {
             <div className="ct-card-mobile-overlay">
               <p className="ct-role">{m.role}</p>
               <h3 className="ct-name">{m.name}</h3>
-              <a href={m.linkedin} className="ct-linkedin" aria-label="LinkedIn">
+              <a href={m.linkedin} className="ct-linkedin" aria-label={t.linkedin}>
                 <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
                   <path d="M6.7 8.6h3v9h-3v-9Zm1.5-4.2c1 0 1.7.7 1.7 1.6s-.7 1.6-1.7 1.6S6.5 6.9 6.5 6s.7-1.6 1.7-1.6Zm3.2 4.2h2.9v1.2h.1c.4-.7 1.3-1.4 2.7-1.4 2.9 0 3.4 1.9 3.4 4.3v4.9h-3v-4.4c0-1 0-2.4-1.5-2.4s-1.7 1.1-1.7 2.3v4.5h-3v-9Z" />
                 </svg>
@@ -191,12 +196,12 @@ export default function CoreTeamSection() {
       {/* ── Left: heading + links ── */}
       <div className="ct-left">
         <div>
-          <h2 className="ct-heading" style={{ opacity: 0 }}>Get to<br />know us</h2>
-          <p className="ct-sub" style={{ opacity: 0 }}>Our core team</p>
+          <h2 className="ct-heading" style={{ opacity: 0 }}>{t.heading[0]}<br />{t.heading[1]}</h2>
+          <p className="ct-sub" style={{ opacity: 0 }}>{t.sub}</p>
         </div>
         <div className="ct-links">
-          <a className="ct-link" href="/careers" style={{ opacity: 0 }}>Want to join our team?</a>
-          <a className="ct-link" href="#" style={{ opacity: 0 }}>Want to join the LAC ecosystem?</a>
+          <a className="ct-link" href={lp("/careers")} style={{ opacity: 0 }}>{t.joinTeam}</a>
+          <a className="ct-link" href="#" style={{ opacity: 0 }}>{t.joinEcosystem}</a>
         </div>
       </div>
 
@@ -204,7 +209,7 @@ export default function CoreTeamSection() {
       <div className="ct-info" ref={infoRef} style={{ opacity: 0 }}>
         <p className="ct-role">{display.role}</p>
         <h3 className="ct-name">{display.name}</h3>
-        <a href={display.linkedin} className="ct-linkedin" aria-label="LinkedIn">
+        <a href={display.linkedin} className="ct-linkedin" aria-label={t.linkedin}>
           <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
             <path d="M6.7 8.6h3v9h-3v-9Zm1.5-4.2c1 0 1.7.7 1.7 1.6s-.7 1.6-1.7 1.6S6.5 6.9 6.5 6s.7-1.6 1.7-1.6Zm3.2 4.2h2.9v1.2h.1c.4-.7 1.3-1.4 2.7-1.4 2.9 0 3.4 1.9 3.4 4.3v4.9h-3v-4.4c0-1 0-2.4-1.5-2.4s-1.7 1.1-1.7 2.3v4.5h-3v-9Z" />
           </svg>
@@ -213,12 +218,12 @@ export default function CoreTeamSection() {
 
       {/* ── Nav arrows ── */}
       <div className="ct-nav" style={{ opacity: 0 }}>
-        <button className="ct-btn" onClick={() => goTo(activeRef.current - 1)} aria-label="Previous">
+        <button className="ct-btn" onClick={() => goTo(activeRef.current - 1)} aria-label={t.prev}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
             <path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </button>
-        <button className="ct-btn" onClick={() => goTo(activeRef.current + 1)} aria-label="Next">
+        <button className="ct-btn" onClick={() => goTo(activeRef.current + 1)} aria-label={t.next}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="16" height="16">
             <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
           </svg>

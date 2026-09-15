@@ -4,6 +4,8 @@ import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Stack from "../../components/reactbits/Stack";
+import { useLocale } from "@/i18n/useLocale";
+import { copy } from "@/app/[locale]/core/copy";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,15 +18,6 @@ const IMAGES = [
   "/core/guidance/guidance-image-6.png",
 ];
 
-const cards = IMAGES.map((src, i) => (
-  <img
-    key={i}
-    src={src}
-    alt={`Guidance ${i + 1}`}
-    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-  />
-));
-
 export default function GuidanceSection() {
   const sectionRef  = useRef<HTMLElement>(null);
   const stackRef    = useRef<HTMLDivElement>(null);
@@ -32,6 +25,16 @@ export default function GuidanceSection() {
   const line2Ref    = useRef<HTMLSpanElement>(null);
   const line3Ref    = useRef<HTMLSpanElement>(null);
   const bodyRef     = useRef<HTMLParagraphElement>(null);
+  const locale = useLocale();
+  const c = copy[locale].guidance;
+  const cards = IMAGES.map((src, i) => (
+    <img
+      key={i}
+      src={src}
+      alt={`${c.alt} ${i + 1}`}
+      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+    />
+  ));
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -93,13 +96,12 @@ export default function GuidanceSection() {
 
         <div className="gd-text">
           <h2 className="gd-heading">
-            <span ref={line1Ref} className="gd-line" style={{ opacity: 0 }}>Guiding</span><br />
-            <span ref={line2Ref} className="gd-line gd-gradient" style={{ opacity: 0 }}>emerging tech</span><br />
-            <span ref={line3Ref} className="gd-line" style={{ opacity: 0 }}>responsibly</span>
+            <span ref={line1Ref} className="gd-line" style={{ opacity: 0 }}>{c.line1}</span><br />
+            <span ref={line2Ref} className="gd-line gd-gradient" style={{ opacity: 0 }}>{c.line2}</span><br />
+            <span ref={line3Ref} className="gd-line" style={{ opacity: 0 }}>{c.line3}</span>
           </h2>
           <p ref={bodyRef} className="gd-body" style={{ opacity: 0 }}>
-            We partner with communities and institutions to prototype and scale
-            responsible emerging technologies for contextual impact.
+            {c.body}
           </p>
         </div>
 

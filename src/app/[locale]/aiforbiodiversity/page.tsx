@@ -11,15 +11,10 @@ import AfbInitiatives from "@/components/AfbInitiatives";
 import AfbOurComponents from "@/components/AfbOurComponents";
 import AfbWhereWeFrom from "@/components/AfbWhereWeFrom";
 import SiteFooter from "@/components/SiteFooter";
+import { useLocale } from "@/i18n/useLocale";
+import { copy } from "./copy";
 
 gsap.registerPlugin(ScrollTrigger);
-
-const NAV_ITEMS = [
-  { label: "HOME",               target: "top" },
-  { label: "WHO WE ARE",         target: ".afb-who" },
-  { label: "WHERE WE COME FROM", target: ".afb-wcf" },
-  { label: "INITIATIVES",        target: "#initiatives" },
-];
 
 /* Rock center is intentionally excluded — it stays visible when the loader fades,
    creating a seamless handoff from the frame sequence to the hero. */
@@ -36,15 +31,11 @@ const HERO_SELECTORS = [
   ".afb-hero-plants",
 ];
 
-const WHO_WORDS = [
-  "A","global","initiative","that","explores","the","use","of",
-  "today's","most","advanced","technologies","to","mitigate","the",
-  "risk","of","environmental","crises","in","the","world","and","to",
-  "activate","the","economy","in","the","poverty-stricken","communities",
-  "around","nature","reserves.",
-];
-
 export default function AIForBiodiversityPage() {
+  const locale = useLocale();
+  const t = copy[locale];
+  const whoWords = t.who.text.split(" ");
+
   const containerRef = useRef<HTMLDivElement>(null);
   const rockLeftRef  = useRef<HTMLImageElement>(null);
   const rockRightRef = useRef<HTMLImageElement>(null);
@@ -221,11 +212,11 @@ export default function AIForBiodiversityPage() {
           <nav className="afb-nav">
             <img
               src="/platforms/aiforbiodiversity/logo-aiforclimate.svg"
-              alt="AI for Climate"
+              alt={t.nav.logoAlt}
               className="afb-nav-logo"
             />
             <div className="afb-nav-center">
-              {NAV_ITEMS.map((item) => (
+              {t.nav.items.map((item) => (
                 <span
                   key={item.label}
                   className="afb-nav-item"
@@ -289,35 +280,34 @@ export default function AIForBiodiversityPage() {
           {/* Hero title */}
           <div className="afb-hero-content">
             <h1 className="afb-hero-title">
-              <span className="afb-word">Harnessing</span>{" "}
-              <span className="afb-word">the</span>
+              <span className="afb-word">{t.hero.titleWords[0]}</span>{" "}
+              <span className="afb-word">{t.hero.titleWords[1]}</span>
               <br />
-              <span className="afb-word">power</span>{" "}
-              <span className="afb-word">of</span>{" "}
-              <span className="afb-word">AI</span>{" "}
-              <span className="afb-word">against</span>
+              <span className="afb-word">{t.hero.titleWords[2]}</span>{" "}
+              <span className="afb-word">{t.hero.titleWords[3]}</span>{" "}
+              <span className="afb-word">{t.hero.titleWords[4]}</span>{" "}
+              <span className="afb-word">{t.hero.titleWords[5]}</span>
               <br />
-              <span className="afb-word afb-climate-gradient">Climate</span>{" "}
-              <span className="afb-word afb-climate-gradient">Change</span>
+              <span className="afb-word afb-climate-gradient">{t.hero.titleWords[6]}</span>{" "}
+              <span className="afb-word afb-climate-gradient">{t.hero.titleWords[7]}</span>
             </h1>
           </div>
 
           {/* Subtitle */}
           <h5 className="afb-hero-subtitle">
-            We explore the use of AI to strengthen the protection, restoration, and management
-            of public and private nature reserves around the globe.
+            {t.hero.subtitle}
           </h5>
 
           {/* Featured report card */}
           <div className="afb-featured-card">
             <img
               src="/platforms/aiforbiodiversity/hero-featured-report-image.avif"
-              alt="Tech4Nature México anual report 2024"
+              alt={t.hero.featured.imageAlt}
               className="afb-featured-card__image"
             />
             <div className="afb-featured-card__body">
-              <p className="afb-featured-card__title">Tech4Nature México anual report 2024</p>
-              <button className="afb-featured-card__cta">See last report →</button>
+              <p className="afb-featured-card__title">{t.hero.featured.title}</p>
+              <button className="afb-featured-card__cta">{t.hero.featured.cta}</button>
             </div>
           </div>
 
@@ -335,9 +325,9 @@ export default function AIForBiodiversityPage() {
         <section className="afb-who">
           <div className="afb-who-sticky">
             <div className="afb-who-glow" aria-hidden="true" />
-            <p className="afb-who-label">WHO ARE WE</p>
-            <p className="afb-who-text" aria-label="Who we are">
-              {WHO_WORDS.map((word, i) => (
+            <p className="afb-who-label">{t.who.label}</p>
+            <p className="afb-who-text" aria-label={t.who.ariaLabel}>
+              {whoWords.map((word, i) => (
                 <span key={i} className="afb-who-word">{word}{" "}</span>
               ))}
             </p>

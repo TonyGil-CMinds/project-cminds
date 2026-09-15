@@ -4,13 +4,8 @@ import { startTransition, useId } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import ContactButton from "./ContactButton";
 import { useSubscribeModal } from "./SubscribeModalProvider";
-
-const SITE_MAP = [
-  { label: "Home",      path: "/" },
-  { label: "Core",      path: "/core" },
-  { label: "Mindscope", path: "/mindscope" },
-  { label: "Careers",   path: "/careers" },
-];
+import { common } from "@/i18n/common";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
 
 export default function SiteFooter() {
   const router   = useRouter();
@@ -18,6 +13,16 @@ export default function SiteFooter() {
   const emailId  = useId();
   const { open: openSubscribeModal } = useSubscribeModal();
   const year = new Date().getFullYear();
+  const locale = useLocale();
+  const lp = useLocalePath();
+  const t = common[locale];
+
+  const SITE_MAP = [
+    { label: t.nav.home,      path: lp("/") },
+    { label: t.nav.core,      path: lp("/core") },
+    { label: t.nav.mindscope, path: lp("/mindscope") },
+    { label: t.nav.careers,   path: lp("/careers") },
+  ];
 
   const navigate = (path: string) => {
     if (typeof document !== "undefined" && document.startViewTransition) {
@@ -34,18 +39,18 @@ export default function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="footer-cta">
-        <h2>Bold &amp; Meaningful<br />Transformations</h2>
+        <h2>{t.footer.ctaLine1}<br />{t.footer.ctaLine2}</h2>
         <ContactButton variant="footer" />
       </div>
 
       <div className="footer-main">
         <div className="footer-brand-block">
           <img src="/logo.svg" alt="C Minds" className="footer-logo" />
-          <p className="footer-copy desktop-copy">© {year} C Minds All rights reserved.</p>
+          <p className="footer-copy desktop-copy">© {year} C Minds {t.footer.rights}</p>
         </div>
 
         <div className="footer-column footer-site-map">
-          <h3>SITE MAP</h3>
+          <h3>{t.footer.siteMap}</h3>
           {siteMapLinks.map((item) => (
             <a key={item.path} style={{ cursor: "pointer" }} onClick={() => navigate(item.path)}>
               {item.label}
@@ -54,37 +59,37 @@ export default function SiteFooter() {
         </div>
 
         <div className="footer-column footer-resources">
-          <h3>RESOURCES</h3>
-          <a href="/brand">MediaKit</a>
-          <a style={{ cursor: "pointer" }} onClick={() => navigate("/privacy")}>Privacy policy</a>
-          <a style={{ cursor: "pointer" }} onClick={() => navigate("/ethics")}>Code of ethics</a>
+          <h3>{t.footer.resources}</h3>
+          <a href={lp("/brand")}>{t.footer.mediaKit}</a>
+          <a style={{ cursor: "pointer" }} onClick={() => navigate(lp("/privacy"))}>{t.footer.privacyPolicy}</a>
+          <a style={{ cursor: "pointer" }} onClick={() => navigate(lp("/ethics"))}>{t.footer.codeOfEthics}</a>
         </div>
 
         <div className="footer-join">
-          <h3>JOIN US</h3>
+          <h3>{t.footer.joinUs}</h3>
           <div className="footer-form">
-            <label className="sr-only" htmlFor={emailId}>Email</label>
-            <input id={emailId} type="email" placeholder="I name@email.com" readOnly onClick={() => openSubscribeModal()} style={{ cursor: 'pointer' }} />
-            <button type="button" onClick={() => openSubscribeModal()}>Suscribe</button>
+            <label className="sr-only" htmlFor={emailId}>{t.footer.emailLabel}</label>
+            <input id={emailId} type="email" placeholder={t.footer.emailPlaceholder} readOnly onClick={() => openSubscribeModal()} style={{ cursor: 'pointer' }} />
+            <button type="button" onClick={() => openSubscribeModal()}>{t.footer.subscribeCta}</button>
           </div>
 
           <div className="footer-socials" aria-label="Social links">
-            <a href="https://www.linkedin.com/company/c-minds/" aria-label="LinkedIn">
+            <a href="https://www.linkedin.com/company/c-minds/" aria-label={t.social.linkedin}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.7 8.6h3v9h-3v-9Zm1.5-4.2c1 0 1.7.7 1.7 1.6s-.7 1.6-1.7 1.6S6.5 6.9 6.5 6s.7-1.6 1.7-1.6Zm3.2 4.2h2.9v1.2h.1c.4-.7 1.3-1.4 2.7-1.4 2.9 0 3.4 1.9 3.4 4.3v4.9h-3v-4.4c0-1 0-2.4-1.5-2.4s-1.7 1.1-1.7 2.3v4.5h-3v-9Z" /></svg>
             </a>
-            <a href="https://www.instagram.com/cminds_co/" aria-label="Instagram">
+            <a href="https://www.instagram.com/cminds_co/" aria-label={t.social.instagram}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.1 4.8h7.8c1.8 0 3.3 1.5 3.3 3.3v7.8c0 1.8-1.5 3.3-3.3 3.3H8.1c-1.8 0-3.3-1.5-3.3-3.3V8.1c0-1.8 1.5-3.3 3.3-3.3Zm0 1.6c-.9 0-1.7.8-1.7 1.7v7.8c0 .9.8 1.7 1.7 1.7h7.8c.9 0 1.7-.8 1.7-1.7V8.1c0-.9-.8-1.7-1.7-1.7H8.1Zm3.9 2.3a3.3 3.3 0 1 1 0 6.6 3.3 3.3 0 0 1 0-6.6Zm0 1.6a1.7 1.7 0 1 0 0 3.4 1.7 1.7 0 0 0 0-3.4Zm4-2.4a.8.8 0 1 1 0 1.6.8.8 0 0 1 0-1.6Z" /></svg>
             </a>
-            <a href="https://www.facebook.com/CMindsImpact/" aria-label="Facebook">
+            <a href="https://www.facebook.com/CMindsImpact/" aria-label={t.social.facebook}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.4 20v-7.3h2.4l.4-2.8h-2.8V8.1c0-.8.2-1.4 1.4-1.4h1.5V4.2C16 4.1 15.1 4 14 4c-2.2 0-3.7 1.3-3.7 3.8v2.1H7.8v2.8h2.5V20h3.1Z" /></svg>
             </a>
-            <a href="https://www.youtube.com/cmindsco" aria-label="YouTube">
+            <a href="https://www.youtube.com/cmindsco" aria-label={t.social.youtube}>
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 8.2c-.2-.9-.9-1.5-1.7-1.7C17.2 6.1 12 6.1 12 6.1s-5.2 0-6.7.4c-.8.2-1.5.9-1.7 1.7-.4 1.5-.4 3.8-.4 3.8s0 2.4.4 3.8c.2.9.9 1.5 1.7 1.7 1.5.4 6.7.4 6.7.4s5.2 0 6.7-.4c.8-.2 1.5-.9 1.7-1.7.4-1.5.4-3.8.4-3.8s0-2.4-.4-3.8ZM10.2 14.5v-5l4.5 2.5-4.5 2.5Z" /></svg>
             </a>
           </div>
         </div>
 
-        <p className="footer-copy mobile-copy">© {year} C Minds All rights reserved.</p>
+        <p className="footer-copy mobile-copy">© {year} C Minds {t.footer.rights}</p>
       </div>
     </footer>
   );

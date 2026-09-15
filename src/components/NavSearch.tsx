@@ -4,6 +4,8 @@ import { useRef, useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { createPortal } from "react-dom";
+import { common } from "@/i18n/common";
+import { useLocale, useLocalePath } from "@/i18n/useLocale";
 
 interface SearchItem {
   label:   string;
@@ -17,40 +19,43 @@ interface SearchSection {
   items: SearchItem[];
 }
 
-/* ─── Static sections (always visible when no query) ── */
-const STATIC_SECTIONS: SearchSection[] = [
-  {
-    id: "pages", label: "Pages",
-    items: [
-      { label: "Home",      icon: "/assets/ui/search-page-icon.svg", href: "/" },
-      { label: "Core",      icon: "/assets/ui/search-page-icon.svg", href: "/core" },
-      { label: "Mindscope", icon: "/assets/ui/search-page-icon.svg", href: "/mindscope" },
-      { label: "Careers",   icon: "/assets/ui/search-page-icon.svg", href: "/careers" },
-    ],
-  },
-  {
-    id: "getstarted", label: "Get Started",
-    items: [
-      { label: "Privacy Policy", icon: "/assets/ui/search-getstarted-icon.svg", href: "/privacy" },
-      { label: "Code of Ethics", icon: "/assets/ui/search-getstarted-icon.svg", href: "/ethics" },
-    ],
-  },
-  {
-    id: "actions", label: "Actions",
-    items: [
-      { label: "Contact us",   icon: "/assets/ui/search-actions-contact-icon.svg", href: "mailto:contact@cminds.co" },
-      { label: "Refresh page", icon: "/assets/ui/search-actions-icon.svg",         action: "refresh" },
-    ],
-  },
-  {
-    id: "jobs", label: "Job Opportunity",
-    items: [
-      { label: "Project Manager — LATAM, Remote", icon: "/assets/ui/search-jobopportunity-icon.svg", href: "/careers" },
-    ],
-  },
-];
-
 export default function NavSearch() {
+  const locale = useLocale();
+  const lp = useLocalePath();
+  const t = common[locale];
+
+  /* ─── Static sections (always visible when no query) ── */
+  const STATIC_SECTIONS: SearchSection[] = [
+    {
+      id: "pages", label: t.search.sections.pages,
+      items: [
+        { label: t.search.items.home,      icon: "/assets/ui/search-page-icon.svg", href: lp("/") },
+        { label: t.search.items.core,      icon: "/assets/ui/search-page-icon.svg", href: lp("/core") },
+        { label: t.search.items.mindscope, icon: "/assets/ui/search-page-icon.svg", href: lp("/mindscope") },
+        { label: t.search.items.careers,   icon: "/assets/ui/search-page-icon.svg", href: lp("/careers") },
+      ],
+    },
+    {
+      id: "getstarted", label: t.search.sections.getstarted,
+      items: [
+        { label: t.search.items.privacy, icon: "/assets/ui/search-getstarted-icon.svg", href: lp("/privacy") },
+        { label: t.search.items.ethics, icon: "/assets/ui/search-getstarted-icon.svg", href: lp("/ethics") },
+      ],
+    },
+    {
+      id: "actions", label: t.search.sections.actions,
+      items: [
+        { label: t.search.items.contact,   icon: "/assets/ui/search-actions-contact-icon.svg", href: "mailto:contact@cminds.co" },
+        { label: t.search.items.refresh, icon: "/assets/ui/search-actions-icon.svg",         action: "refresh" },
+      ],
+    },
+    {
+      id: "jobs", label: t.search.sections.jobs,
+      items: [
+        { label: t.search.items.projectManagerJob, icon: "/assets/ui/search-jobopportunity-icon.svg", href: lp("/careers") },
+      ],
+    },
+  ];
   const [open,    setOpen]    = useState(false);
   const [query,   setQuery]   = useState("");
   const [mounted, setMounted] = useState(false);
@@ -58,7 +63,7 @@ export default function NavSearch() {
   /* fetched data */
   const [reports,  setReports]  = useState<SearchItem[]>([]);
   const [posts,    setPosts]    = useState<SearchItem[]>([]);
-  const fetchedRef = useRef(false);
+  const fetchedRef = useRef<string | null>(null);
 
   const backdropRef = useRef<HTMLDivElement>(null);
   const modalRef    = useRef<HTMLDivElement>(null);
@@ -70,19 +75,19 @@ export default function NavSearch() {
 
   useEffect(() => { setMounted(true); }, []);
 
-  /* Fetch reports + publications once on first open */
+  /* Fetch reports + publications on first open, and again whenever the locale changes */
   useEffect(() => {
-    if (!open || fetchedRef.current) return;
-    fetchedRef.current = true;
+    if (!open || fetchedRef.current === locale) return;
+    fetchedRef.current = locale;
 
     fetch("/api/reports")
       .then(r => r.json())
       .then(data => {
         const raw: Array<{ id: string; title: string }> = Array.isArray(data?.reports) ? data.reports : [];
         setReports(raw.map(r => ({
-          label: r.title || "Untitled",
+          label: r.title || t.search.items.untitled,
           icon:  "/assets/ui/search-reports-icon.svg",
-          href:  `/reportes/${r.id}`,
+          href:  lp(`/reportes/${r.id}`),
         })));
       })
       .catch(() => {});
@@ -93,15 +98,15 @@ export default function NavSearch() {
         const raw: Array<{ slug: string; title: string; language: string }> =
           Array.isArray(data?.posts) ? data.posts : [];
         setPosts(raw
-          .filter(p => p.language === "en")
+          .filter(p => p.language === locale)
           .map(p => ({
-            label: p.title || "Untitled",
+            label: p.title || t.search.items.untitled,
             icon:  "/assets/ui/search-publications-icon.svg",
-            href:  `/mindscope/${p.slug}`,
+            href:  lp(`/mindscope/${p.slug}`),
           })));
       })
       .catch(() => {});
-  }, [open]);
+  }, [open, locale]);
 
   /* Escape to close */
   useEffect(() => {
@@ -186,12 +191,12 @@ export default function NavSearch() {
           .filter(s => s.items.length > 0),
         /* Dynamic: reports matching query */
         ...(reports.filter(r => r.label.toLowerCase().includes(q)).length > 0 ? [{
-          id: "reports", label: "Reports",
+          id: "reports", label: t.search.sections.reports,
           items: reports.filter(r => r.label.toLowerCase().includes(q)).slice(0, 5),
         }] : []),
         /* Dynamic: publications matching query */
         ...(posts.filter(p => p.label.toLowerCase().includes(q)).length > 0 ? [{
-          id: "publications", label: "Publications",
+          id: "publications", label: t.search.sections.publications,
           items: posts.filter(p => p.label.toLowerCase().includes(q)).slice(0, 5),
         }] : []),
       ]
@@ -199,27 +204,27 @@ export default function NavSearch() {
         /* Default: all static sections + browse links for reports/publications */
         ...STATIC_SECTIONS,
         {
-          id: "reports", label: "Reports",
-          items: [{ label: "Browse The Archive", icon: "/assets/ui/search-reports-icon.svg", href: "/mindscope" }],
+          id: "reports", label: t.search.sections.reports,
+          items: [{ label: t.search.items.browseArchive, icon: "/assets/ui/search-reports-icon.svg", href: lp("/mindscope") }],
         },
         {
-          id: "publications", label: "Publications",
-          items: [{ label: "Browse Mindscope", icon: "/assets/ui/search-publications-icon.svg", href: "/mindscope" }],
+          id: "publications", label: t.search.sections.publications,
+          items: [{ label: t.search.items.browseMindscope, icon: "/assets/ui/search-publications-icon.svg", href: lp("/mindscope") }],
         },
       ];
 
   return (
     <>
       {open ? (
-        <button className="nav-search nav-search--close" onClick={closeModal} aria-label="Close search">
+        <button className="nav-search nav-search--close" onClick={closeModal} aria-label={t.search.close}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
             <line x1="18" y1="6" x2="6"  y2="18" />
             <line x1="6"  y1="6" x2="18" y2="18" />
           </svg>
         </button>
       ) : (
-        <button ref={pillRef} className="nav-search" onClick={openModal} aria-label="Open search">
-          <span className="nav-search__label">Search...</span>
+        <button ref={pillRef} className="nav-search" onClick={openModal} aria-label={t.search.open}>
+          <span className="nav-search__label">{t.search.pill}</span>
           <span className="nav-search__icon">
             <img src="/assets/ui/iconsax-command.svg" alt="" width={17} height={17} draggable={false} />
           </span>
@@ -238,13 +243,13 @@ export default function NavSearch() {
                 ref={inputRef}
                 className="srch-input-field"
                 type="search"
-                placeholder="Search Anything..."
+                placeholder={t.search.placeholder}
                 value={query}
                 onChange={e => setQuery(e.target.value)}
                 autoComplete="off"
               />
               {query && (
-                <button className="srch-input-clear" onClick={() => { setQuery(""); inputRef.current?.focus(); }} aria-label="Clear">
+                <button className="srch-input-clear" onClick={() => { setQuery(""); inputRef.current?.focus(); }} aria-label={t.search.clear}>
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
                     <line x1="18" y1="6" x2="6"  y2="18" />
                     <line x1="6"  y1="6" x2="18" y2="18" />
@@ -255,7 +260,7 @@ export default function NavSearch() {
 
             <div className="srch-body">
               {filtered.length === 0 ? (
-                <p className="srch-empty">No results for &ldquo;{query}&rdquo;</p>
+                <p className="srch-empty">{t.search.empty} &ldquo;{query}&rdquo;</p>
               ) : (
                 filtered.map(section => (
                   <div key={section.id} className="srch-section">

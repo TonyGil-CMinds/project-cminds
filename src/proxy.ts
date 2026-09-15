@@ -45,7 +45,9 @@ export default function proxy(request: NextRequest) {
 }
 
 export const config = {
-  // Skip API routes, Next internals, and anything that looks like a static file.
-  matcher: ["/((?!api|_next|.*\..*).*)"],
+  // Skip API routes, Next internals, and anything with a file extension.
+  // The backslash must survive into the regex, so it is escaped for the string
+  // literal too: a single \. collapses to a bare dot, which turns the last
+  // alternative into .*..* and silently excludes EVERY non-root path.
+  matcher: ["/((?!api|_next|.*\\..*).*)"],
 };
-
