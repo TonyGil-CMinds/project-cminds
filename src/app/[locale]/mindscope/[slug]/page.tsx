@@ -4,7 +4,8 @@ import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "r
 import { useParams, useRouter } from "next/navigation";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
-import NavSearch from "../../../components/NavSearch";
+import NavSearch from "@/components/NavSearch";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { ScrollBar } from "@/components/v1/skiper1";
 import { ThinkingOrb } from "thinking-orbs";
 
@@ -364,6 +365,7 @@ export default function PostPage() {
           ))}
         </div>
         <NavSearch />
+        <LanguageSwitcher />
       </nav>
 
       {/* Post content */}

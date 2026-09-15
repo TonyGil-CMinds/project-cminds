@@ -6,19 +6,20 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import HexLoader from "../components/HexLoader";
-import SiteFooter from "../components/SiteFooter";
-import NavSearch from "../components/NavSearch";
+import HexLoader from "@/components/HexLoader";
+import SiteFooter from "@/components/SiteFooter";
+import NavSearch from "@/components/NavSearch";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Analytics } from '@vercel/analytics/next';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const DotGridHills = dynamic(() => import("../../components/reactbits/DotGridHills"), {
+const DotGridHills = dynamic(() => import("@reactbits/DotGridHills"), {
   ssr: false,
   loading: () => null,
 });
 
-const FluidGlass = dynamic(() => import("../../components/reactbits/FluidGlass"), {
+const FluidGlass = dynamic(() => import("@reactbits/FluidGlass"), {
   ssr: false,
   loading: () => null,
 });
@@ -833,6 +834,7 @@ export default function Hero() {
               </div>
 
               <NavSearch />
+              <LanguageSwitcher />
             </nav>
 
             {/* Dot-grid ambient background */}

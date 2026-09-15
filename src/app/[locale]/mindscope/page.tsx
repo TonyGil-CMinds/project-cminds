@@ -6,11 +6,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import SideRays from "../../../components/reactbits/SideRays";
-import Dock from "../../../components/reactbits/Dock";
-import NavSearch from "../../components/NavSearch";
-import { useSubscribeModal } from "../../components/SubscribeModalProvider";
-const TheArchive = dynamic(() => import("../../components/TheArchive"), { ssr: false });
+import SideRays from "@reactbits/SideRays";
+import Dock from "@reactbits/Dock";
+import NavSearch from "@/components/NavSearch";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useSubscribeModal } from "@/components/SubscribeModalProvider";
+const TheArchive = dynamic(() => import("@/components/TheArchive"), { ssr: false });
 gsap.registerPlugin(ScrollTrigger);
 
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
@@ -314,6 +315,7 @@ export default function MindscopePage() {
           ))}
         </div>
         <NavSearch />
+        <LanguageSwitcher />
       </nav>
 
       {/* Hero */}

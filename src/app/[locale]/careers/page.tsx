@@ -5,10 +5,11 @@ import { useGSAP } from "@gsap/react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import SideRays from "../../../components/reactbits/SideRays";
-import BorderGlow from "../../../components/reactbits/BorderGlow";
-import SiteFooter from "../../components/SiteFooter";
-import NavSearch from "../../components/NavSearch";
+import SideRays from "@reactbits/SideRays";
+import BorderGlow from "@reactbits/BorderGlow";
+import SiteFooter from "@/components/SiteFooter";
+import NavSearch from "@/components/NavSearch";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 gsap.registerPlugin(ScrollTrigger);
 const NAV_ITEMS    = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
@@ -355,6 +356,7 @@ export default function CareersPage() {
           ))}
         </div>
         <NavSearch />
+        <LanguageSwitcher />
       </nav>
 
       {/* Hero */}

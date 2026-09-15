@@ -19,7 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@reactbits/*": ["./components/reactbits/*"]
     }
   },
   "include": [

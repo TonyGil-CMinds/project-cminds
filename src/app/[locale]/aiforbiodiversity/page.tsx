@@ -4,12 +4,13 @@ import { useEffect, useLayoutEffect, useRef, useState, useCallback } from "react
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import NavSearch from "../../components/NavSearch";
-import AfbLoader from "../../components/AfbLoader";
-import AfbInitiatives from "../../components/AfbInitiatives";
-import AfbOurComponents from "../../components/AfbOurComponents";
-import AfbWhereWeFrom from "../../components/AfbWhereWeFrom";
-import SiteFooter from "../../components/SiteFooter";
+import NavSearch from "@/components/NavSearch";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import AfbLoader from "@/components/AfbLoader";
+import AfbInitiatives from "@/components/AfbInitiatives";
+import AfbOurComponents from "@/components/AfbOurComponents";
+import AfbWhereWeFrom from "@/components/AfbWhereWeFrom";
+import SiteFooter from "@/components/SiteFooter";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -244,6 +245,7 @@ export default function AIForBiodiversityPage() {
             </div>
             <div className="afb-nav-search-wrap">
               <NavSearch />
+              <LanguageSwitcher />
             </div>
           </nav>
 

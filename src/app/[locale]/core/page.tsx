@@ -6,14 +6,15 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
-import CoreScrollSection from "../../components/CoreScrollSection";
-import ManifestoSection  from "../../components/ManifestoSection";
-import GuidanceSection   from "../../components/GuidanceSection";
-import CoreTeamSection   from "../../components/CoreTeamSection";
-import ConstanzaSection  from "../../components/ConstanzaSection";
-import SideRays          from "../../../components/reactbits/SideRays";
-import SiteFooter        from "../../components/SiteFooter";
-import NavSearch from "../../components/NavSearch";
+import CoreScrollSection from "@/components/CoreScrollSection";
+import ManifestoSection  from "@/components/ManifestoSection";
+import GuidanceSection   from "@/components/GuidanceSection";
+import CoreTeamSection   from "@/components/CoreTeamSection";
+import ConstanzaSection  from "@/components/ConstanzaSection";
+import SideRays          from "@reactbits/SideRays";
+import SiteFooter        from "@/components/SiteFooter";
+import NavSearch from "@/components/NavSearch";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 const NAV_ITEMS = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
 
@@ -181,6 +182,7 @@ export default function CorePage() {
           ))}
         </div>
         <NavSearch />
+        <LanguageSwitcher />
       </nav>
 
       {/* Hero content */}

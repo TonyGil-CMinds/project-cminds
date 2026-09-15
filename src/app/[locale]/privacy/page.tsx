@@ -3,8 +3,9 @@
 import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
-import SiteFooter from "../../components/SiteFooter";
-import NavSearch from "../../components/NavSearch";
+import SiteFooter from "@/components/SiteFooter";
+import NavSearch from "@/components/NavSearch";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const NAV_ITEMS  = ["Home", "Core", "Mindscope ®", "Careers"];
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
@@ -119,6 +120,7 @@ export default function PrivacyPage() {
           ))}
         </div>
         <NavSearch />
+        <LanguageSwitcher />
       </nav>
 
       {/* Page header */}
