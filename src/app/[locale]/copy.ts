@@ -126,10 +126,14 @@ export const copy = {
       },
     },
     bold: {
-      bold: "AUDAZ",
-      and: " Y",
-      meaningful: "SIGNIFICATIVA",
-      transformations: "TRANSFORMACIÓN",
+      // "Transformación audaz y significativa" — Spanish leads with the noun, so
+      // the bright first line carries one word and the pair moves down to line 2.
+      // These keys are render slots, not meanings: line 1 = bold + and,
+      // line 2 = meaningful, line 3 = transformations.
+      bold: "TRANSFORMACIÓN",
+      and: "",
+      meaningful: "AUDAZ Y",
+      transformations: "SIGNIFICATIVA",
     },
     wwd: {
       pill: "Qué hacemos",
