@@ -20,7 +20,7 @@ export const copy = {
       introLead: "Meaningful transformation requires new forms of collaboration,",
       introRest:
         " governance, and collective intelligence capable of bridging disciplines, sectors, cultures, and knowledge systems.",
-      contactCta: "Contact us",
+      contactCta: "Get Involved",
       scrollDown: "Scroll down",
       newInMindscope: "New in Mindscope ®",
       dismissAria: "Dismiss",
