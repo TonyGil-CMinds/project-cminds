@@ -98,7 +98,7 @@ export const copy = {
       phraseA: "DE LA IDEA",
       phraseB: "A LA REALIDAD",
       mobilePhrase: "DE LA IDEA A LA REALIDAD",
-      introLead: "La transformación significativa requiere nuevas formas de colaboración,",
+      introLead: "La transformación requiere nuevas formas de colaboración,",
       introRest:
         " gobernanza e inteligencia colectiva capaces de conectar disciplinas, sectores, culturas y sistemas de conocimiento.",
       contactCta: "Contáctanos",
