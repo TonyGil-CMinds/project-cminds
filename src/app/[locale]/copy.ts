@@ -17,7 +17,7 @@ export const copy = {
       phraseA: "FROM POSSIBILITY",
       phraseB: "TO REALITY",
       mobilePhrase: "FROM POSSIBILITY TO REALITY",
-      introLead: "Meaningful transformation requires new forms of collaboration,",
+      introLead: "Transformation requires new forms of collaboration,",
       introRest:
         " governance, and collective intelligence capable of bridging disciplines, sectors, cultures, and knowledge systems.",
       contactCta: "Get Involved",
