@@ -3,29 +3,42 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/i18n/useLocale";
-import { ACTIONS, toolkitHref } from "../data";
+import { STAGES, toolkitHref } from "../data";
 import { useToolkit } from "./ToolkitState";
 import { IconArrowRight, IconCheck, IconCheckCircle, IconCopy } from "./icons";
 
-/** Cierre de cada acción: marcarla como revisada y pasar a la siguiente página. */
-export function ActionFinish({ id, code, nextSlug, nextLabel }: { id: string; code: string; nextSlug?: string; nextLabel?: string }) {
+/** Cierre de cada etapa: marcarla como revisada y pasar a la siguiente página. */
+export function ActionFinish({
+  id,
+  code,
+  label,
+  nextSlug,
+  nextLabel,
+}: {
+  id: string;
+  code: string;
+  /** Nombre visible, por ejemplo «Etapa 1». */
+  label: string;
+  nextSlug?: string;
+  nextLabel?: string;
+}) {
   const { isDone, setDone, done } = useToolkit();
   const router = useRouter();
   const locale = useLocale();
   const reviewed = isDone(id);
-  const left = ACTIONS.length - done.length;
+  const left = STAGES.length - done.length;
   return (
     <div className="tk-finish" data-done={reviewed || undefined}>
       <div>
-        <strong>{reviewed ? `${code} revisada` : `¿Terminaste ${code}?`}</strong>
+        <strong>{reviewed ? `${label} revisada` : `¿Terminaste la ${label.toLowerCase()}?`}</strong>
         <span>
           {left === 0
-            ? "Revisaste las 12 acciones: tu insignia está desbloqueada."
-            : `Te faltan ${left} ${left === 1 ? "acción" : "acciones"} para desbloquear la insignia del toolkit.`}
+            ? "Revisaste las cinco etapas: tu insignia está desbloqueada."
+            : `Te ${left === 1 ? "falta" : "faltan"} ${left} ${left === 1 ? "etapa" : "etapas"} para desbloquear la insignia del toolkit.`}
         </span>
       </div>
       <div className="tk-finish-actions">
-        <ActionDone id={id} code={code} />
+        <ActionDone id={id} code={code} label={label} />
         {nextSlug ? (
           <button
             type="button"
@@ -45,8 +58,8 @@ export function ActionFinish({ id, code, nextSlug, nextLabel }: { id: string; co
   );
 }
 
-/** Marca una acción como revisada; el avance se guarda en el navegador. */
-export function ActionDone({ id, code }: { id: string; code: string }) {
+/** Marca una etapa como revisada; el avance se guarda en el navegador. */
+export function ActionDone({ id, code, label = code }: { id: string; code: string; label?: string }) {
   const { isDone, toggleDone } = useToolkit();
   const done = isDone(id);
   return (
@@ -54,7 +67,7 @@ export function ActionDone({ id, code }: { id: string; code: string }) {
       type="button"
       className="tk-done"
       aria-pressed={done}
-      aria-label={done ? `${code} revisada. Desmarcar` : `Marcar ${code} como revisada`}
+      aria-label={done ? `${label} revisada. Desmarcar` : `Marcar ${label} como revisada`}
       onClick={() => toggleDone(id)}
     >
       {done ? <IconCheck /> : <IconCheckCircle />}

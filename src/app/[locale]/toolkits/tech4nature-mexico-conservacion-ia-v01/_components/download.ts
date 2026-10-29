@@ -1,4 +1,4 @@
-import { TOOLKIT_VERSION, slugify, templateSlug, toolkitHref, type Template } from "../data";
+import { HERO, TOOLKIT_DATE_LABEL, TOOLKIT_VERSION, TEMPLATES_INTRO, slugify, templateSlug, toolkitHref, type Template } from "../data";
 
 /** Descarga un texto generado en el navegador. */
 export function downloadFile(name: string, content: string, type: string) {
@@ -20,46 +20,44 @@ export function toCsv(rows: string[][]): string {
   return "﻿" + rows.map((r) => r.map(cell).join(",")).join("\r\n");
 }
 
+/** Filas vacías que ofrece un registro por columnas (plantilla 3). */
+const LOG_ROWS = 12;
+
+const fieldText = (f: Template["fields"][number]) => (f.hint ? `${f.label} (${f.hint})` : f.label);
+
 function sourceLine(t: Template): string {
   const origin = typeof window === "undefined" ? "" : window.location.origin;
-  return `Fuente: Toolkit para iniciativas de conservación con IA en México, v${TOOLKIT_VERSION} — C Minds / Tech4Nature México, octubre de 2026. ${origin}${toolkitHref("es", templateSlug(t))}`;
+  return `Fuente: ${HERO.title}, v${TOOLKIT_VERSION} — C Minds / Tech4Nature México, ${TOOLKIT_DATE_LABEL.toLowerCase()}. ${origin}${toolkitHref("es", templateSlug(t))}`;
 }
 
-/** Hoja de trabajo: las filas de la plantilla con columnas vacías para completar. */
+/** Hoja de trabajo: un campo por fila, o un registro con sus columnas. */
 export function templateCsv(t: Template): string {
-  return toCsv([
-    [...t.table.head, "Respuesta", "Responsable", "Fecha"],
-    ...t.table.rows.map((r) => [...r, "", "", ""]),
-    [],
-    [sourceLine(t)],
-  ]);
+  if (t.layout === "log") {
+    return toCsv([
+      t.fields.map((f) => f.label),
+      ...Array.from({ length: LOG_ROWS }, () => t.fields.map(() => "")),
+      [],
+      [sourceLine(t)],
+    ]);
+  }
+  return toCsv([["Campo", "Respuesta"], ...t.fields.map((f) => [fieldText(f), ""]), [], [sourceLine(t)]]);
 }
 
 export function templateMarkdown(t: Template): string {
   const row = (r: string[]) => `| ${r.map((c) => c.replace(/\|/g, "\\|")).join(" | ")} |`;
-  const lines = [
-    `# ${t.code} ${t.title}`,
-    "",
-    t.intro,
-    "",
-    row([...t.table.head, "Respuesta"]),
-    row([...t.table.head, "Respuesta"].map(() => "---")),
-    ...t.table.rows.map((r) => row([...r, " "])),
-    "",
-  ];
-  for (const s of t.sections) {
-    lines.push(`## ${s.title}`, "");
-    if (s.example) lines.push(`> ${s.example}`, "");
-    s.paragraphs?.forEach((p) => lines.push(p, ""));
-    s.list?.forEach((li) => lines.push(`- ${li}`));
-    if (s.list) lines.push("");
+  const lines = [`# Plantilla ${t.n}. ${t.title}`, "", TEMPLATES_INTRO, ""];
+  if (t.layout === "log") {
+    const head = t.fields.map((f) => f.label);
+    lines.push(row(head), row(head.map(() => "---")), ...Array.from({ length: 3 }, () => row(head.map(() => " "))));
+  } else {
+    lines.push(row(["Campo", "Respuesta"]), row(["---", "---"]), ...t.fields.map((f) => row([`**${f.label}**${f.hint ? ` (${f.hint})` : ""}`, " "])));
   }
-  lines.push(`**Control de salida:** ${t.control}`, "", `Acciones asociadas: ${t.actions.join(", ")}`, "", `_${sourceLine(t)}_`, "");
+  lines.push("", `_${sourceLine(t)}_`, "");
   return lines.join("\n");
 }
 
 export function downloadTemplate(t: Template, format: "csv" | "md") {
-  const name = `${t.code}-${slugify(t.title)}.${format}`;
+  const name = `plantilla-${t.n}-${slugify(t.title)}.${format}`;
   if (format === "csv") downloadFile(name, templateCsv(t), "text/csv");
   else downloadFile(name, templateMarkdown(t), "text/markdown");
 }

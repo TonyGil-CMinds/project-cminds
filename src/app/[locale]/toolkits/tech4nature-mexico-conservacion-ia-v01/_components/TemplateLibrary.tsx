@@ -56,8 +56,8 @@ export function TemplateFolder({ template, index, width = 260 }: { template: Tem
       art={ARTS[index % ARTS.length]}
       seed={index * 7 + 3}
       label={template.short}
-      meta={`${template.code} · ${template.table.rows.length} campos`}
-      files={template.table.rows.map((r) => ({ name: r[0], meta: template.code }))}
+      meta={`Plantilla ${template.n} · ${template.fields.length} ${template.layout === "log" ? "columnas" : "campos"}`}
+      files={template.fields.map((f) => ({ name: f.label, meta: `Plantilla ${template.n}` }))}
       action="more"
       strings={FOLDER_STRINGS}
       menu={[
@@ -80,7 +80,7 @@ export function TemplateShelf() {
           <TemplateFolder template={t} index={i} />
           <PageLink slug={templateSlug(t)} className="tk-folder-caption" data-ref={t.code}>
             <span className="tk-side-code">{t.code}</span>
-            <span>{t.title}</span>
+            <span>Plantilla {t.n}. {t.title}</span>
             <IconArrowRight />
           </PageLink>
         </li>

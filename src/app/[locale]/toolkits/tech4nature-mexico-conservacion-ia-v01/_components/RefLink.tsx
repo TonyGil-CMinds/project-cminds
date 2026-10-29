@@ -5,19 +5,21 @@ import Link from "next/link";
 import { useLocale } from "@/i18n/useLocale";
 import { targetOf, toolkitHref } from "../data";
 
-const KIND_LABEL: Record<string, string> = { A: "Acción", T: "Plantilla", R: "Recurso", E: "Evidencia" };
+const KIND_LABEL: Record<string, string> = { E: "Etapa", P: "Plantilla", R: "Recurso" };
+/** Clase de color de cada tipo de referencia. */
+const KIND_CLASS: Record<string, string> = { E: "a", P: "t", R: "r" };
 
-/** Chip de referencia (A01, T01, R01, E01) que lleva a su página dentro del toolkit. */
+/** Chip de referencia (E1, P1, R01) que lleva a su página dentro del toolkit. */
 export function Ref({ code }: { code: string }) {
   const locale = useLocale();
   const { slug, hash } = targetOf(code);
   const kind = code[0];
   return (
     <Link
-      className={`tk-ref tk-ref--${kind.toLowerCase()}`}
+      className={`tk-ref tk-ref--${KIND_CLASS[kind] ?? "r"}`}
       href={toolkitHref(locale, slug, hash)}
       data-ref={code}
-      aria-label={`${KIND_LABEL[kind]} ${code}`}
+      aria-label={`${KIND_LABEL[kind]} ${code.slice(1).replace(/^0/, "")}`}
     >
       {code}
     </Link>

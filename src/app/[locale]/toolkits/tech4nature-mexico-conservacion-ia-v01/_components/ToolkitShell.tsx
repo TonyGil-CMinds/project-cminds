@@ -11,11 +11,11 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import SiteFooter from "@/components/SiteFooter";
 import { localePath, type Locale } from "@/i18n/config";
 import {
-  ACTIONS,
   GROUPS,
   IMAGES,
   PAGES,
   PAGE_BY_SLUG,
+  STAGES,
   TOOLKIT_SLUG,
   TOOLKIT_VERSION,
   targetOf,
@@ -38,10 +38,9 @@ const BIOSCANNER_APP = "https://app.bioscanner.io";
 
 const TOP_LINKS: { label: string; slug: string; match: (p: ToolkitPage) => boolean }[] = [
   { label: "Inicio", slug: "", match: (p) => p.kind === "inicio" },
-  { label: "Acciones", slug: targetOf("A01").slug, match: (p) => p.kind === "accion" },
+  { label: "Etapas", slug: targetOf("E1").slug, match: (p) => p.kind === "etapa" },
+  { label: "Herramientas", slug: "caja-de-herramientas", match: (p) => p.kind === "caja" },
   { label: "Plantillas", slug: "plantillas", match: (p) => p.group === "plantillas" },
-  { label: "Biblioteca", slug: "biblioteca", match: (p) => p.kind === "biblioteca" },
-  { label: "Glosario", slug: "glosario", match: (p) => p.kind === "glosario" },
 ];
 
 /** Slug de la página actual dentro del toolkit ("" en la portada). */
@@ -145,7 +144,7 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
     () => {
       const root = rootRef.current;
       if (!root) return;
-      const lines = gsap.utils.toArray<HTMLElement>(".tk-steps, .tk-ninety, .tk-chain");
+      const lines = gsap.utils.toArray<HTMLElement>(".tk-steps, .tk-ninety");
 
       if (reducedMotion) {
         lines.forEach((el) => {
@@ -193,7 +192,7 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
         });
       });
 
-      // Líneas de progreso: procedimientos, 90 días y cadena documental.
+      // Líneas de progreso: pasos clave y línea de tiempo.
       lines.forEach((el) => {
         gsap.fromTo(
           el,
@@ -327,7 +326,7 @@ function Sidebar({ page, locale, onNavigate }: { page: ToolkitPage; locale: Loca
       {GROUPS.map((group) => {
         const pages = PAGES.filter((p) => p.group === group.id);
         const open = overrides[group.id] ?? group.id === page.group;
-        const actions = pages.filter((p) => p.kind === "accion");
+        const actions = pages.filter((p) => p.kind === "etapa");
         const doneCount = actions.filter((p) => p.ref && isDone(p.ref)).length;
         return (
           <div key={group.id} className="tk-side-group" data-current={group.id === page.group || undefined}>
@@ -358,7 +357,7 @@ function Sidebar({ page, locale, onNavigate }: { page: ToolkitPage; locale: Loca
                     {p.code ? <span className="tk-side-code">{p.code}</span> : null}
                     <span className="tk-side-label">{p.label}</span>
                     {route && inRoute(p.slug) ? <span className="tk-side-badge">ruta</span> : null}
-                    {p.kind === "accion" && p.ref && isDone(p.ref) ? (
+                    {p.kind === "etapa" && p.ref && isDone(p.ref) ? (
                       <>
                         <IconCheck className="tk-side-check" />
                         <span className="sr-only">(revisada)</span>
@@ -379,7 +378,7 @@ function ProgressRing({ value, total }: { value: number; total: number }) {
   const r = 22;
   const c = 2 * Math.PI * r;
   return (
-    <svg className="tk-ring" viewBox="0 0 54 54" role="img" aria-label={`${value} de ${total} acciones revisadas`}>
+    <svg className="tk-ring" viewBox="0 0 54 54" role="img" aria-label={`${value} de ${total} etapas revisadas`}>
       <circle className="tk-ring-track" cx="27" cy="27" r={r} />
       <circle
         className="tk-ring-fill"
@@ -399,10 +398,10 @@ function ProgressRing({ value, total }: { value: number; total: number }) {
 
 function ProgressSummary({ compact = false, locale }: { compact?: boolean; locale: Locale }) {
   const { done, route, isDone, complete } = useToolkit();
-  const total = ACTIONS.length;
+  const total = STAGES.length;
   const count = done.length;
-  const next = route?.path.find((key) => /^A\d{2}$/.test(key) && !isDone(key.toLowerCase()));
-  const nextAction = next ? ACTIONS.find((a) => a.code === next) : null;
+  const next = route?.path.find((key) => /^E\d$/.test(key) && !isDone(key.toLowerCase()));
+  const nextAction = next ? STAGES.find((s) => s.code === next) : null;
 
   if (compact) {
     return (
@@ -410,7 +409,7 @@ function ProgressSummary({ compact = false, locale }: { compact?: boolean; local
         <ProgressRing value={count} total={total} />
         <div>
           <strong>Tu avance</strong>
-          <span>{route ? `Ruta: ${route.title}` : `${count} de ${total} acciones revisadas`}</span>
+          <span>{route ? `Ruta: ${route.title}` : `${count} de ${total} etapas revisadas`}</span>
         </div>
       </div>
     );
@@ -423,7 +422,7 @@ function ProgressSummary({ compact = false, locale }: { compact?: boolean; local
         <div>
           <p className="tk-progress-title">Tu avance</p>
           <p className="tk-progress-sub">
-            {count} de {total} acciones revisadas. {complete ? "Insignia desbloqueada." : "Al completarlas desbloqueas tu insignia."}
+            {count} de {total} etapas revisadas. {complete ? "Insignia desbloqueada." : "Al completarlas desbloqueas tu insignia."}
           </p>
         </div>
       </div>
@@ -439,7 +438,7 @@ function ProgressSummary({ compact = false, locale }: { compact?: boolean; local
         <Link className="tk-progress-next" href={toolkitHref(locale, targetOf(nextAction.code).slug)}>
           <span>
             <small>Siguiente en tu ruta</small>
-            {nextAction.code} · {nextAction.short}
+            Etapa {nextAction.n} · {nextAction.short}
           </span>
           <IconArrowRight />
         </Link>
@@ -531,7 +530,8 @@ function BioScannerCard() {
         <span className="tk-eyebrow">Tech4Nature México</span>
         <p className="tk-promo-title">Valida tus datos con BioScanner</p>
         <p className="tk-promo-text">
-          Análisis asistido por IA, revisión humana, identidades de jaguar e informes, con control sobre el uso de tus datos.
+          Detecta y clasifica especies, identifica jaguares por el patrón de sus manchas y genera reportes. Interfaz en
+          español, inglés, portugués y maya.
         </p>
         <a className="tk-cta tk-cta--block" href={BIOSCANNER_APP} target="_blank" rel="noopener noreferrer">
           Entrar a BioScanner
@@ -540,7 +540,7 @@ function BioScannerCard() {
         <div className="tk-promo-foot">
           <span className="tk-pulse" aria-hidden="true" />
           <span>
-            <strong>333,099</strong> archivos incorporados en el caso Yucatán
+            <strong>333,099</strong> archivos procesados en Dzilam a septiembre de 2026
           </span>
         </div>
       </div>

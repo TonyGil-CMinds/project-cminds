@@ -5,7 +5,7 @@ import gsap from "gsap";
 import { Flip } from "gsap/Flip";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { PortfolioGallery } from "@/components/ui/portfolio-gallery";
-import { ACCESS_KINDS, LANG_FILTERS, NEEDS, RESOURCES, needOf, type AccessKind, type NeedId } from "../data";
+import { ACCESS_KINDS, CATEGORIES, LANG_FILTERS, LEVELS, RESOURCES, type AccessKind, type CategoryId, type Level } from "../data";
 import { IconExternal, IconSearch } from "./icons";
 
 gsap.registerPlugin(Flip, ScrollTrigger);
@@ -18,19 +18,19 @@ const normalize = (s: string) =>
 
 const INDEX = RESOURCES.map((r) => ({
   r,
-  need: needOf(r.code),
-  text: normalize(`${r.code} ${r.title} ${r.org} ${r.type} ${r.use} ${r.condition}`),
+  need: r.category,
+  text: normalize(`${r.code} ${r.title} ${r.org ?? ""} ${r.use} ${r.access ?? ""}`),
 }));
-const NEED_LABEL = new Map<string, string>(NEEDS.map((n) => [n.id, n.label]));
-const KIND_LABEL = new Map<string, string>(ACCESS_KINDS.map((k) => [k.id, k.label]));
+const NEED_LABEL = new Map<string, string>(CATEGORIES.map((n) => [n.id, n.label]));
 
 type LangId = (typeof LANG_FILTERS)[number]["id"];
 
 export default function ResourceLibrary() {
   const [query, setQuery] = useState("");
-  const [need, setNeed] = useState<NeedId | "all">("all");
+  const [need, setNeed] = useState<CategoryId | "all">("all");
   const [kinds, setKinds] = useState<AccessKind[]>([]);
   const [langs, setLangs] = useState<LangId[]>([]);
+  const [levels, setLevels] = useState<Level[]>([]);
   const [focusId, setFocusId] = useState<string | null>(null);
   const gridRef = useRef<HTMLUListElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
@@ -41,11 +41,12 @@ export default function ResourceLibrary() {
     return INDEX.filter(
       (e) =>
         (need === "all" || e.need === need) &&
-        (!kinds.length || kinds.includes(e.r.kind)) &&
+        (!kinds.length || (e.r.kind && kinds.includes(e.r.kind))) &&
         (!langs.length || langs.some((l) => LANG_FILTERS.find((f) => f.id === l)!.test.test(e.r.lang))) &&
+        (!levels.length || (e.r.level && levels.includes(e.r.level))) &&
         tokens.every((t) => e.text.includes(t)),
     );
-  }, [query, need, kinds, langs]);
+  }, [query, need, kinds, langs, levels]);
 
   // Captura posiciones antes de cada cambio de filtro para animarlas con Flip.
   const capture = () => {
@@ -75,9 +76,10 @@ export default function ResourceLibrary() {
     setNeed("all");
     setKinds([]);
     setLangs([]);
+    setLevels([]);
   };
 
-  // Enlaces #r01…#r66: limpia filtros para que la ficha exista y la resalta.
+  // Enlaces #r01, #r02…: limpia filtros para que la ficha exista y la resalta.
   useEffect(() => {
     const onHash = () => {
       const m = /^#(r\d{2})$/.exec(window.location.hash);
@@ -86,6 +88,7 @@ export default function ResourceLibrary() {
       setNeed("all");
       setKinds([]);
       setLangs([]);
+      setLevels([]);
       setFocusId(m[1]);
     };
     onHash();
@@ -106,28 +109,28 @@ export default function ResourceLibrary() {
     return () => cancelAnimationFrame(raf);
   }, [focusId]);
 
-  const needCount = (id: NeedId) => INDEX.filter((e) => e.need === id).length;
+  const needCount = (id: CategoryId) => INDEX.filter((e) => e.need === id).length;
 
   return (
     <div>
       <div className="tk-lib-gallery" data-reveal>
         <PortfolioGallery
-          title="Explora la biblioteca"
-          description="Siete necesidades, 66 fichas con acceso, primer paso y límite de interpretación. Elige una imagen para filtrar."
-          archiveButton={{ text: "Ver las 66 fichas", href: "#biblioteca-fichas" }}
-          images={NEEDS.map((n) => ({ src: n.image.src, alt: n.image.alt, title: n.label }))}
+          title="Explora la caja de herramientas"
+          description={`${CATEGORIES.length} categorías y ${RESOURCES.length} recursos, con acceso, idioma y nivel. Elige una imagen para filtrar.`}
+          archiveButton={{ text: `Ver los ${RESOURCES.length} recursos`, href: "#caja-recursos" }}
+          images={CATEGORIES.map((n) => ({ src: n.image.src, alt: n.image.alt, title: n.label }))}
           itemWidth={290}
           overlap={226}
           maxHeight={110}
           onImageClick={(i) => {
             capture();
-            setNeed(NEEDS[i].id);
+            setNeed(CATEGORIES[i].id);
             requestAnimationFrame(() => listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
           }}
         />
       </div>
 
-      <div ref={listRef} id="biblioteca-fichas" className="tk-lib">
+      <div ref={listRef} id="caja-recursos" className="tk-lib">
         <div className="tk-lib-bar">
           <div className="tk-lib-search">
             <IconSearch />
@@ -136,7 +139,7 @@ export default function ResourceLibrary() {
               type="search"
               value={query}
               placeholder="Buscar por herramienta, institución o tarea…"
-              aria-label="Buscar en la biblioteca"
+              aria-label="Buscar en la caja de herramientas"
               onChange={(e) => {
                 capture();
                 setQuery(e.target.value);
@@ -154,8 +157,8 @@ export default function ResourceLibrary() {
         </div>
 
         <div className="tk-facets">
-          <div className="tk-facet" role="group" aria-label="Filtrar por necesidad">
-            <span className="tk-facet-label">Necesidad</span>
+          <div className="tk-facet" role="group" aria-label="Filtrar por categoría">
+            <span className="tk-facet-label">Categoría</span>
             <button
               type="button"
               className="tk-pill"
@@ -167,7 +170,7 @@ export default function ResourceLibrary() {
             >
               Todas <small>{RESOURCES.length}</small>
             </button>
-            {NEEDS.map((n) => (
+            {CATEGORIES.map((n) => (
               <button
                 key={n.id}
                 type="button"
@@ -216,6 +219,24 @@ export default function ResourceLibrary() {
               </button>
             ))}
           </div>
+          <div className="tk-facet" role="group" aria-label="Filtrar por nivel">
+            <span className="tk-facet-label">Nivel</span>
+            {LEVELS.map((l) => (
+              <button
+                key={l.id}
+                type="button"
+                className="tk-pill"
+                aria-pressed={levels.includes(l.id)}
+                title={l.hint}
+                onClick={() => {
+                  capture();
+                  setLevels((ls) => toggle(ls, l.id));
+                }}
+              >
+                {l.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {results.length ? (
@@ -227,29 +248,40 @@ export default function ResourceLibrary() {
                   <span className="tk-res-need">{NEED_LABEL.get(n)}</span>
                 </div>
                 <h3 className="tk-res-title">{r.title}</h3>
-                <p className="tk-res-org">
-                  {r.org} · {r.type}
+                {r.org ? <p className="tk-res-org">{r.org}</p> : null}
+                <p className="tk-res-use">
+                  <strong>Para qué sirve.</strong> {r.use}.
                 </p>
-                <p className="tk-res-use">{r.use}</p>
-                <p className="tk-res-cond">
-                  <strong>Condición de uso.</strong> {r.condition}
-                </p>
+                {r.access ? (
+                  <p className="tk-res-cond">
+                    <strong>Acceso.</strong> {r.access}.
+                  </p>
+                ) : null}
                 <div className="tk-res-foot">
                   <div className="tk-res-badges">
-                    <span className={`tk-badge-tag${r.kind === "habilitar" ? " tk-badge-tag--habilitar" : ""}`}>
-                      {KIND_LABEL.get(r.kind)}
+                    <span className="tk-badge-tag" title="Idioma">
+                      {r.lang}
                     </span>
-                    <span className="tk-badge-tag">{r.lang}</span>
+                    {r.level ? (
+                      <span className="tk-badge-tag" title="Nivel">
+                        {r.level}
+                      </span>
+                    ) : null}
                   </div>
-                  {r.url ? (
+                  <span className="tk-res-links">
+                    {r.extra ? (
+                      <a className="tk-res-link" href={r.extra.url} target="_blank" rel="noopener noreferrer">
+                        {r.extra.label}
+                        <IconExternal />
+                        <span className="sr-only"> (se abre en una pestaña nueva)</span>
+                      </a>
+                    ) : null}
                     <a className="tk-res-link" href={r.url} target="_blank" rel="noopener noreferrer">
                       Abrir recurso
                       <IconExternal />
                       <span className="sr-only">: {r.title} (se abre en una pestaña nueva)</span>
                     </a>
-                  ) : (
-                    <span className="tk-res-pending">Enlace por habilitar</span>
-                  )}
+                  </span>
                 </div>
               </li>
             ))}

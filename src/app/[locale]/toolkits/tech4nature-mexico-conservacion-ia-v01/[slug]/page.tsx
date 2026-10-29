@@ -1,19 +1,16 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { toLocale, type Locale } from "@/i18n/config";
-import { ACTIONS, PAGES, PAGE_BY_SLUG, TEMPLATES, type ToolkitPage } from "../data";
+import { LEGACY_SLUGS, PAGES, PAGE_BY_SLUG, STAGES, TEMPLATES, toolkitHref, type ToolkitPage } from "../data";
 import {
-  ActionPage,
-  BibliotecaPage,
+  CajaPage,
   CasoPage,
-  ContextoPage,
-  DiagnosticoPage,
-  EjercicioPage,
-  GestionPage,
-  GlosarioPage,
+  FuentesPage,
   InsigniaPage,
-  NoventaPage,
   PlantillasPage,
+  PorQueImportaPage,
+  PreguntasPage,
+  StagePage,
   TemplatePage,
 } from "../_components/pages";
 import { JsonLd, pageJsonLd, pageMetadata } from "../seo";
@@ -21,39 +18,37 @@ import { JsonLd, pageJsonLd, pageMetadata } from "../seo";
 export const dynamicParams = false;
 
 export function generateStaticParams() {
-  return PAGES.filter((p) => p.slug).map((p) => ({ slug: p.slug }));
+  return [
+    ...PAGES.filter((p) => p.slug).map((p) => ({ slug: p.slug })),
+    // Capítulos de la versión 0.1: redirigen a la página que los sustituye.
+    ...Object.keys(LEGACY_SLUGS).map((slug) => ({ slug })),
+  ];
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const page = PAGE_BY_SLUG.get(slug);
-  return page ? pageMetadata(page) : {};
+  return page ? pageMetadata(page) : { robots: { index: false } };
 }
 
 function Content({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   switch (page.kind) {
-    case "contexto":
-      return <ContextoPage page={page} locale={locale} />;
+    case "por-que-importa":
+      return <PorQueImportaPage page={page} locale={locale} />;
     case "caso":
       return <CasoPage page={page} locale={locale} />;
-    case "gestion":
-      return <GestionPage page={page} locale={locale} />;
-    case "diagnostico":
-      return <DiagnosticoPage page={page} locale={locale} />;
-    case "accion":
-      return <ActionPage page={page} locale={locale} action={ACTIONS.find((a) => a.id === page.ref)!} />;
-    case "noventa-dias":
-      return <NoventaPage page={page} locale={locale} />;
-    case "ejercicio":
-      return <EjercicioPage page={page} locale={locale} />;
+    case "etapa":
+      return <StagePage page={page} locale={locale} stage={STAGES.find((s) => s.id === page.ref)!} />;
+    case "preguntas":
+      return <PreguntasPage page={page} locale={locale} />;
+    case "caja":
+      return <CajaPage page={page} locale={locale} />;
     case "plantillas":
       return <PlantillasPage page={page} locale={locale} />;
     case "plantilla":
       return <TemplatePage page={page} locale={locale} template={TEMPLATES.find((t) => t.id === page.ref)!} />;
-    case "biblioteca":
-      return <BibliotecaPage page={page} locale={locale} />;
-    case "glosario":
-      return <GlosarioPage page={page} locale={locale} />;
+    case "fuentes":
+      return <FuentesPage page={page} locale={locale} />;
     case "insignia":
       return <InsigniaPage page={page} locale={locale} />;
     default:
@@ -63,6 +58,7 @@ function Content({ page, locale }: { page: ToolkitPage; locale: Locale }) {
 
 export default async function ToolkitChapter({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
+  if (slug in LEGACY_SLUGS) permanentRedirect(toolkitHref(toLocale(locale), LEGACY_SLUGS[slug]));
   const page = PAGE_BY_SLUG.get(slug);
   if (!page || !page.slug) notFound();
   return (

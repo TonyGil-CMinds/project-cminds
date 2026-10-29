@@ -1,153 +1,124 @@
 "use client";
 
-import { READINESS, STORAGE_KEY } from "../data";
+import { QUESTIONS, STAGES, STORAGE_KEY, stageSlug } from "../data";
 import { downloadFile, toCsv } from "./download";
-import { IconDownload } from "./icons";
+import { PageLink } from "./RefLink";
+import { IconArrowRight, IconDownload } from "./icons";
 import { useLocalStore } from "./useLocalStore";
 
-type Status = "disponible" | "fortalecer" | "pendiente";
-type Entry = { status?: Status; owner?: string; date?: string };
-type Answers = Record<string, Entry>;
+type Answer = "si" | "no";
+type Answers = Record<string, Answer>;
 
-const KEY = `${STORAGE_KEY}:diagnostico`;
-const OPTIONS: { v: Status; label: string }[] = [
-  { v: "disponible", label: "Disponible" },
-  { v: "fortalecer", label: "Requiere fortalecimiento" },
-  { v: "pendiente", label: "Pendiente" },
-];
-const COLUMNS: { v: Status; title: string; empty: string }[] = [
-  { v: "pendiente", title: "Trabajo inicial", empty: "Ninguna condición marcada como pendiente." },
-  { v: "fortalecer", title: "Requiere fortalecimiento", empty: "Sin condiciones por fortalecer." },
-  { v: "disponible", title: "Disponible", empty: "Aún no hay condiciones confirmadas." },
+const KEY = `${STORAGE_KEY}:preguntas`;
+const OPTIONS: { v: Answer; label: string }[] = [
+  { v: "si", label: "Sí" },
+  { v: "no", label: "Todavía no" },
 ];
 
 function parse(raw: string | null): Answers {
   try {
     const parsed: unknown = raw ? JSON.parse(raw) : {};
-    return parsed && typeof parsed === "object" ? (parsed as Answers) : {};
+    if (!parsed || typeof parsed !== "object") return {};
+    return Object.fromEntries(
+      Object.entries(parsed as Record<string, unknown>).filter(([, v]) => v === "si" || v === "no"),
+    ) as Answers;
   } catch {
     return {};
   }
 }
 
 /**
- * Diagnóstico de preparación (T01): cada condición se registra como disponible,
- * por fortalecer o pendiente, con responsable y fecha. Deliberadamente no
- * calcula un puntaje agregado: las pendientes definen el trabajo inicial.
+ * Las diez preguntas rápidas: cada una se responde «sí» o «todavía no».
+ * Con la mayoría en «sí», el equipo está listo para arrancar; si no, las
+ * etapas 1 y 5 ayudan a resolver lo pendiente.
  */
 export default function ReadinessCheck() {
   const [answers, setAnswers] = useLocalStore(KEY, parse);
+  const id = (i: number) => `q${i + 1}`;
 
-  const update = (id: string, patch: Entry) => setAnswers((a) => ({ ...a, [id]: { ...a[id], ...patch } }));
+  const yes = QUESTIONS.items.filter((_, i) => answers[id(i)] === "si").length;
+  const answered = QUESTIONS.items.filter((_, i) => answers[id(i)]).length;
+  const total = QUESTIONS.items.length;
+  const ready = yes > total / 2;
 
   const exportCsv = () => {
-    const label = (s?: Status) => OPTIONS.find((o) => o.v === s)?.label ?? "Sin registrar";
     downloadFile(
-      "T01-diagnostico-de-preparacion.csv",
+      "diez-preguntas-rapidas.csv",
       toCsv([
-        ["Condición", "Evidencia mínima para comenzar", "Estado", "Responsable", "Fecha"],
-        ...READINESS.conditions.map((c) => [
-          c.title,
-          c.evidence,
-          label(answers[c.id]?.status),
-          answers[c.id]?.owner ?? "",
-          answers[c.id]?.date ?? "",
-        ]),
+        ["Pregunta", "Respuesta"],
+        ...QUESTIONS.items.map((q, i) => [q, answers[id(i)] === "si" ? "Sí" : answers[id(i)] === "no" ? "Todavía no" : "Sin responder"]),
       ]),
       "text/csv",
     );
   };
 
-  const recorded = READINESS.conditions.filter((c) => answers[c.id]?.status).length;
-
   return (
     <div>
-      <div className="tk-diag">
-        {READINESS.conditions.map((c) => {
-          const entry = answers[c.id] ?? {};
+      <ol className="tk-quiz">
+        {QUESTIONS.items.map((q, i) => {
+          const value = answers[id(i)];
           return (
-            <fieldset key={c.id} className="tk-diag-item" data-status={entry.status}>
-              <legend>{c.title}</legend>
-              <p className="tk-diag-evidence">{c.evidence}</p>
-              <div className="tk-diag-row">
+            <li key={q} className="tk-quiz-item" data-answer={value}>
+              <span className="tk-quiz-n" aria-hidden="true">
+                {i + 1}
+              </span>
+              <fieldset>
+                <legend>{q}</legend>
                 <div className="tk-seg">
                   {OPTIONS.map((o) => (
-                    <label key={o.v} data-v={o.v}>
+                    <label key={o.v} data-v={o.v === "si" ? "disponible" : "pendiente"}>
                       <input
                         type="radio"
-                        name={`diag-${c.id}`}
+                        name={`pregunta-${i + 1}`}
                         value={o.v}
-                        checked={entry.status === o.v}
-                        onChange={() => update(c.id, { status: o.v })}
+                        checked={value === o.v}
+                        onChange={() => setAnswers((a) => ({ ...a, [id(i)]: o.v }))}
                       />
                       {o.label}
                     </label>
                   ))}
                 </div>
-                <input
-                  className="tk-input"
-                  type="text"
-                  placeholder="Persona responsable"
-                  aria-label={`Responsable de ${c.title}`}
-                  value={entry.owner ?? ""}
-                  onChange={(e) => update(c.id, { owner: e.target.value })}
-                />
-                <input
-                  className="tk-input"
-                  type="date"
-                  aria-label={`Fecha para ${c.title}`}
-                  value={entry.date ?? ""}
-                  onChange={(e) => update(c.id, { date: e.target.value })}
-                />
-              </div>
-            </fieldset>
+              </fieldset>
+            </li>
           );
         })}
-      </div>
+      </ol>
 
-      <div className="tk-board" aria-live="polite">
-        {COLUMNS.map((col) => {
-          const items = READINESS.conditions.filter((c) => answers[c.id]?.status === col.v);
-          return (
-            <div key={col.v} className={`tk-board-col tk-board-col--${col.v}`}>
-              <h3>
-                {col.title}
-                <span>{items.length}</span>
-              </h3>
-              {items.length ? (
-                <ul>
-                  {items.map((c) => (
-                    <li key={c.id}>
-                      {c.title}
-                      {answers[c.id]?.owner || answers[c.id]?.date ? (
-                        <small>
-                          {[answers[c.id]?.owner, answers[c.id]?.date].filter(Boolean).join(" · ")}
-                        </small>
-                      ) : null}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="tk-board-empty">{col.empty}</p>
-              )}
-            </div>
-          );
-        })}
+      <div className="tk-quiz-result" aria-live="polite" data-ready={answered === total ? String(ready) : undefined}>
+        <p>
+          <strong>
+            {yes} de {total}
+          </strong>{" "}
+          respuestas en «sí».{" "}
+          {answered < total
+            ? `Te ${total - answered === 1 ? "falta" : "faltan"} ${total - answered} por responder.`
+            : ready
+              ? "Estás listo para arrancar."
+              : "Las etapas 1 y 5 te ayudarán a resolver lo pendiente."}
+        </p>
+        {answered === total && !ready ? (
+          <div className="tk-quiz-links">
+            {[STAGES[0], STAGES[4]].map((s) => (
+              <PageLink key={s.id} slug={stageSlug(s)} className="tk-ghost" data-ref={s.code}>
+                Etapa {s.n} · {s.title}
+                <IconArrowRight />
+              </PageLink>
+            ))}
+          </div>
+        ) : null}
       </div>
 
       <div className="tk-row-actions">
         <button type="button" className="tk-ghost" onClick={exportCsv}>
           <IconDownload />
-          Descargar diagnóstico (.csv)
+          Descargar respuestas (.csv)
         </button>
-        {recorded ? (
+        {answered ? (
           <button type="button" className="tk-link-btn" onClick={() => setAnswers({})}>
             Reiniciar
           </button>
         ) : null}
-        <span className="tk-saved">
-          {recorded} de {READINESS.conditions.length} condiciones registradas · se guarda en este navegador
-        </span>
+        <span className="tk-saved">Tus respuestas se guardan en este navegador.</span>
       </div>
     </div>
   );

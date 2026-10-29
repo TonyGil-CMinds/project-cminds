@@ -3,7 +3,7 @@
 import { useEffect, useRef, type CSSProperties } from "react";
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
-import { ACTIONS } from "../data";
+import { STAGES } from "../data";
 import { T4NBadge } from "./Badge";
 import { usePrefs } from "./Preferences";
 import { PageLink } from "./RefLink";
@@ -33,7 +33,7 @@ function Sparkle({ x, y, s }: { x: number; y: number; s: number }) {
 }
 
 /**
- * Aviso que aparece una sola vez, al revisar la última acción.
+ * Aviso que aparece una sola vez, al revisar la última etapa.
  * Coreografía: el modal emerge del desenfoque, la insignia entra girando en gris
  * con un candado, el candado tiembla y estalla, la insignia toma color con un
  * destello, ondas, partículas y halo, y el texto entra letra a letra.
@@ -202,7 +202,7 @@ export function CompletionDialog() {
           Completaste el toolkit
         </h2>
         <p>
-          Revisaste las {ACTIONS.length} acciones. Tu insignia de Tech4Nature México está lista para descargar y compartir.
+          Revisaste las {STAGES.length} etapas. Tu insignia de Tech4Nature México está lista para descargar y compartir.
         </p>
       </div>
 

@@ -1,33 +1,38 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ACTIONS, CASE, RESOURCES, STEPS, TEMPLATES } from "../data";
+import { CATEGORIES, RESOURCES, STAGES, TEMPLATES } from "../data";
 
 type Preview = { code: string; title: string; meta: string; text: string };
 
-const stripRefs = (s: string) => s.replace(/\s*\[[^\]]+\]/g, "");
-const clip = (s: string, n = 190) => (s.length > n ? `${s.slice(0, n).trimEnd()}…` : s);
+const CATEGORY_LABEL = new Map<string, string>(CATEGORIES.map((c) => [c.id, c.label]));
 
 const PREVIEWS = new Map<string, Preview>([
   ...RESOURCES.map((r): [string, Preview] => [
     r.code,
-    { code: r.code, title: r.title, meta: `${r.org} · ${r.type} · ${r.lang}`, text: clip(r.use) },
+    {
+      code: r.code,
+      title: r.title,
+      meta: [CATEGORY_LABEL.get(r.category), r.lang, r.level].filter(Boolean).join(" · "),
+      text: r.use,
+    },
   ]),
   ...TEMPLATES.map((t): [string, Preview] => [
     t.code,
-    { code: t.code, title: t.title, meta: "Plantilla editable", text: clip(t.intro) },
+    {
+      code: t.code,
+      title: `Plantilla ${t.n}. ${t.title}`,
+      meta: "Plantilla descargable",
+      text: t.fields.map((f) => f.label).join(" · "),
+    },
   ]),
-  ...ACTIONS.map((a): [string, Preview] => [
-    a.code,
-    { code: a.code, title: a.title, meta: `Paso ${a.step} · ${STEPS[a.step - 1].title}`, text: clip(stripRefs(a.result)) },
-  ]),
-  ...CASE.sources.map((s): [string, Preview] => [
+  ...STAGES.map((s): [string, Preview] => [
     s.code,
-    { code: s.code, title: s.title, meta: "Evidencia del caso Tech4Nature", text: s.detail },
+    { code: s.code, title: `Etapa ${s.n}. ${s.title}`, meta: s.question, text: `Al terminar tendrás: ${s.result}.` },
   ]),
 ]);
 
-/** Tarjeta flotante con el contenido de una referencia (A01, T01, R01, E01) al pasar el cursor o enfocarla. */
+/** Tarjeta flotante con el contenido de una referencia (E1, P1, R01) al pasar el cursor o enfocarla. */
 export default function RefPreview() {
   const [preview, setPreview] = useState<Preview | null>(null);
   const [pos, setPos] = useState<{ top: number; left: number; above: boolean }>({ top: 0, left: 0, above: false });
