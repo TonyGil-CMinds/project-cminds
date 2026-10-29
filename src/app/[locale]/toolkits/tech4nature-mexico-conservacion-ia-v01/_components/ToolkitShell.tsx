@@ -540,7 +540,7 @@ function BioScannerCard() {
         <div className="tk-promo-foot">
           <span className="tk-pulse" aria-hidden="true" />
           <span>
-            <strong>333,099</strong> archivos procesados en Dzilam a septiembre de 2026
+            <strong>333,087</strong> archivos procesados en Dzilam a octubre de 2026
           </span>
         </div>
       </div>

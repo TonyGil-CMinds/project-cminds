@@ -42,6 +42,10 @@ import ResourceLibrary from "./ResourceLibrary";
 import { TemplateDownloads, TemplateFolder, TemplateShelf } from "./TemplateLibrary";
 import { ActionDone, ActionFinish, CopyButton } from "./SmallIslands";
 import { BadgePanel } from "./Badge";
+import Achievements from "./Achievements";
+import Avatar from "./Avatar";
+import T4nMap from "./T4nMap";
+import { MAP_TEXT, T4N_HOME, TEAM_ALLIES, TEAM_CORE, TEAM_INTRO, TEAM_MORE, type TeamGroup } from "../t4n";
 import { ExternalLink, Rich, slugId } from "./rich";
 import { IconArrowRight, IconCalendar, IconCheckCircle, IconChevronLeft, IconExternal, IconPin } from "./icons";
 
@@ -226,7 +230,26 @@ function StageMap({ locale }: { locale: Locale }) {
 }
 
 // ---------------------------------------------------------------------------
-// Portada
+// Portada: Tech4Nature México
+
+function TeamStrip({ locale }: { locale: Locale }) {
+  const people = TEAM_CORE.flatMap((g) => g.people);
+  return (
+    <Link className="tk-teamstrip" href={toolkitHref(locale, "equipo")} data-reveal>
+      <span className="tk-teamstrip-faces" aria-hidden="true">
+        {people.map((p) => (
+          <Avatar key={p.name} name={p.name} photo={p.photo} size={52} />
+        ))}
+      </span>
+      <span className="tk-teamstrip-text">
+        <strong>Más de 80 personas</strong> de la comunidad de Dzilam, el Gobierno de Yucatán, la UICN, C Minds, universidades y aliados tecnológicos construyeron Tech4Nature México.
+        <span className="tk-next-cta">
+          Conoce al equipo <IconArrowRight />
+        </span>
+      </span>
+    </Link>
+  );
+}
 
 export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   return (
@@ -249,16 +272,16 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
             <IconCalendar />
             {TOOLKIT_DATE_LABEL}
           </span>
-          <span className="tk-chip">C Minds</span>
+          <span className="tk-chip">2022–2026</span>
         </div>
+        <p className="tk-hero-eyebrow tk-hero-eyebrow--top" data-hero>
+          {T4N_HOME.eyebrow}
+        </p>
         <h1 id="tk-page-title" className="tk-h1 tk-h1--hero">
-          Crea tu propio <span className="tk-grad">Tech4Nature</span>
+          <span className="tk-grad">Tech4Nature</span> México
         </h1>
         <p className="tk-hero-sub" data-hero>
-          {HERO.subtitle}
-        </p>
-        <p className="tk-hero-eyebrow" data-hero>
-          {HERO.eyebrow}
+          {T4N_HOME.subtitle}
         </p>
         <div className="tk-banner" data-hero>
           <Image className="tk-banner-img" src={IMAGES.hero.src} alt={IMAGES.hero.alt} fill priority sizes="(max-width: 1023px) 100vw, 780px" />
@@ -269,12 +292,160 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
                 <IconPin />
                 Reserva Estatal de Dzilam, Yucatán
               </span>
-              <span className="tk-chip">C Minds · SDS Yucatán · Grupo Chac Mool</span>
+              <span className="tk-chip">C Minds · SDS Yucatán · Grupo Chac Mool · UICN</span>
             </div>
           </div>
         </div>
       </header>
 
+      <section aria-labelledby="que-es">
+        <H2 id="que-es">Qué es Tech4Nature México</H2>
+        {CASE.intro.map((p, i) => (
+          <p key={i} data-reveal>
+            {p}
+          </p>
+        ))}
+      </section>
+
+      <section aria-labelledby="logros">
+        <H2 id="logros">Lo que hemos logrado</H2>
+        <p data-reveal>Toca cada tarjeta para ver el detalle: el acuerdo de ampliación, el listado de especies, BioScanner y las fotos de los jaguares.</p>
+        <Achievements locale={locale} />
+      </section>
+
+      <section aria-labelledby="donde-trabajamos">
+        <H2 id="donde-trabajamos">Dónde trabajamos</H2>
+        <p data-reveal>{MAP_TEXT.lead}</p>
+        <T4nMap />
+        <ul className="tk-mapfacts">
+          {MAP_TEXT.facts.map((f) => (
+            <li key={f.label} data-reveal>
+              <strong>{f.value}</strong>
+              <span>{f.label}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="tk-meta-line">{MAP_TEXT.note}</p>
+      </section>
+
+      <section aria-labelledby="linea-de-tiempo">
+        <H2 id="linea-de-tiempo">Cómo llegamos aquí</H2>
+        <ol className="tk-ninety">
+          {CASE.timeline.map((t) => (
+            <li key={t.range}>
+              <span className="tk-ninety-range">{t.range}</span>
+              <div className="tk-ninety-card">
+                <p>{t.text}</p>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <figure className="tk-quote" data-reveal>
+        <blockquote>
+          <p>“{CASE.story.quote}”</p>
+        </blockquote>
+        <figcaption>{CASE.story.author}</figcaption>
+        {CASE.story.paragraphs.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
+        <p className="tk-quote-closing">{CASE.story.closing}</p>
+      </figure>
+
+      <section aria-labelledby="personas">
+        <H2 id="personas">Las personas detrás</H2>
+        <TeamStrip locale={locale} />
+      </section>
+
+      <section aria-labelledby="crea-el-tuyo-cta" className="tk-invite" data-reveal>
+        <h2 id="crea-el-tuyo-cta" className="tk-invite-title" data-toc="Crea el tuyo">
+          Crea tu propio <span className="tk-grad">Tech4Nature</span>
+        </h2>
+        <p>{T4N_HOME.invite}</p>
+        <div className="tk-start">
+          <Link className="tk-cta" href={toolkitHref(locale, "crea-el-tuyo")}>
+            Empezar el toolkit
+            <IconArrowRight />
+          </Link>
+          <Link className="tk-ghost" href={toolkitHref(locale, stageSlug(STAGES[0]))}>
+            Ir a las cinco etapas
+          </Link>
+        </div>
+      </section>
+
+      <Pager page={page} locale={locale} />
+    </article>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Equipo
+
+function PeopleGrid({ group, big }: { group: TeamGroup; big?: boolean }) {
+  return (
+    <>
+      <ul className={`tk-people${big ? " tk-people--big" : ""}`}>
+        {group.people.map((p) => (
+          <li key={p.name} className="tk-person" data-reveal>
+            <Avatar name={p.name} photo={p.photo} size={big ? 96 : 64} />
+            <span className="tk-person-name">{p.name}</span>
+            <span className="tk-person-role">{p.role}</span>
+            {p.org ? <span className="tk-person-org">{p.org}</span> : null}
+          </li>
+        ))}
+      </ul>
+      {group.names?.map((n) => (
+        <p key={n.label} className="tk-people-names">
+          <strong>{n.label}:</strong> {n.list.join(", ")}.
+        </p>
+      ))}
+    </>
+  );
+}
+
+export function EquipoPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
+  return (
+    <PageFrame page={page} locale={locale} kicker="Equipo" lead={<p>{TEAM_INTRO}</p>}>
+      <H2>Primera fila</H2>
+      {TEAM_CORE.map((g) => (
+        <section key={g.id} aria-label={g.title}>
+          <h3 className="tk-h3">{g.title}</h3>
+          <PeopleGrid group={g} big />
+        </section>
+      ))}
+
+      <H2>Gobierno, comunidad y C Minds</H2>
+      {TEAM_MORE.map((g) => (
+        <section key={g.id} aria-label={g.title}>
+          <h3 className="tk-h3">{g.title}</h3>
+          {g.intro ? <p>{g.intro}</p> : null}
+          <PeopleGrid group={g} />
+        </section>
+      ))}
+
+      <H2>Aliados a lo largo del tiempo</H2>
+      {TEAM_ALLIES.map((g) => (
+        <section key={g.id} aria-label={g.title}>
+          <h3 className="tk-h3">{g.title}</h3>
+          {g.intro ? <p>{g.intro}</p> : null}
+          <PeopleGrid group={g} />
+        </section>
+      ))}
+      <p className="tk-meta-line">
+        ¿Formaste parte de Tech4Nature México y no apareces aquí, o quieres corregir tu nombre o tu rol? Escríbenos a través de la{" "}
+        <Link href={localePath(locale, "/aiforbiodiversity/techfornature")}>página de Tech4Nature México</Link>.
+      </p>
+    </PageFrame>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Crea el tuyo
+
+export function CreaPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
+  return (
+    <PageFrame page={page} locale={locale} kicker="Crea el tuyo" lead={<p>{HERO.subtitle}.</p>}>
       <section aria-labelledby="para-ti">
         <H2 id="para-ti">¿Este toolkit es para ti?</H2>
         {INTRO.paragraphs.map((p, i) => (
@@ -329,8 +500,7 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
         <StageMap locale={locale} />
       </section>
 
-      <Pager page={page} locale={locale} />
-    </article>
+    </PageFrame>
   );
 }
 
@@ -356,54 +526,6 @@ export function PorQueImportaPage({ page, locale }: { page: ToolkitPage; locale:
       <p className="tk-meta-line">
         Consulta las <Link href={toolkitHref(locale, "fuentes")}>fuentes de los datos</Link>.
       </p>
-    </PageFrame>
-  );
-}
-
-export function CasoPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
-  return (
-    <PageFrame page={page} locale={locale} kicker="El caso" lead={<p>{CASE.intro[0]}</p>}>
-      <p data-reveal>{CASE.intro[1]}</p>
-      <H2>Resultados</H2>
-      <ul className="tk-kpis tk-kpis--4">
-        {CASE.kpis.map((k) => (
-          <li key={k.label} className="tk-kpi" data-reveal>
-            {k.value === undefined ? (
-              <span className="tk-kpi-num">{k.text}</span>
-            ) : (
-              <span className="tk-kpi-num" data-count={k.value} data-prefix={k.prefix} data-suffix={k.suffix}>
-                {k.prefix}
-                {k.value.toLocaleString("es-MX")}
-                {k.suffix}
-              </span>
-            )}
-            <span className="tk-kpi-label">{k.label}</span>
-            {k.note ? <span className="tk-kpi-note">{k.note}</span> : null}
-          </li>
-        ))}
-      </ul>
-      <H2>Línea de tiempo</H2>
-      <ol className="tk-ninety">
-        {CASE.timeline.map((t) => (
-          <li key={t.range}>
-            <span className="tk-ninety-range">{t.range}</span>
-            <div className="tk-ninety-card">
-              <p>{t.text}</p>
-            </div>
-          </li>
-        ))}
-      </ol>
-      <figure className="tk-quote" data-reveal>
-        <blockquote>
-          <p>“{CASE.story.quote}”</p>
-        </blockquote>
-        <figcaption>{CASE.story.author}</figcaption>
-        {CASE.story.paragraphs.map((p, i) => (
-          <p key={i}>{p}</p>
-        ))}
-        <p className="tk-quote-closing">{CASE.story.closing}</p>
-      </figure>
-      <CaseCard locale={locale} />
     </PageFrame>
   );
 }

@@ -5,7 +5,8 @@ import { LEGACY_SLUGS, PAGES, PAGE_BY_SLUG, STAGES, TEMPLATES, toolkitHref, type
 import {
   BioculturalPage,
   CajaPage,
-  CasoPage,
+  CreaPage,
+  EquipoPage,
   FuentesPage,
   GlosarioPage,
   InsigniaPage,
@@ -39,8 +40,10 @@ function Content({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   switch (page.kind) {
     case "por-que-importa":
       return <PorQueImportaPage page={page} locale={locale} />;
-    case "caso":
-      return <CasoPage page={page} locale={locale} />;
+    case "equipo":
+      return <EquipoPage page={page} locale={locale} />;
+    case "crea":
+      return <CreaPage page={page} locale={locale} />;
     case "biocultural":
       return <BioculturalPage page={page} locale={locale} />;
     case "soberania":

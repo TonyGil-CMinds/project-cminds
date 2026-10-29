@@ -110,8 +110,8 @@ export const AUDIENCES: Audience[] = [
   {
     id: "aliados",
     title: "Aliado tecnológico o financiador",
-    short: "Tech4Nature México en una mirada, Etapa 3 y Etapa 5",
-    path: ["tech4nature-mexico", "E3", "E5"],
+    short: "Las personas detrás de Tech4Nature, Etapa 3 y Etapa 5",
+    path: ["equipo", "E3", "E5"],
   },
 ];
 
@@ -172,10 +172,10 @@ export const CASE = {
     "La pregunta de partida fue sencilla: ¿cómo usar la tecnología para conocer mejor la fauna de la reserva y apoyar las decisiones de quienes la cuidan? Para responderla, el equipo combinó cámaras trampa, monitoreo acústico y modelos de IA para detectar especies e identificar jaguares de forma individual. De ese trabajo nació BioScanner, la plataforma que hoy reúne esas capacidades para que otros equipos puedan usarlas.",
   ],
   kpis: [
-    { value: 147, label: "especies registradas en la fase 1, 40 de ellas en alguna categoría de riesgo" },
+    { value: 146, label: "especies registradas en la fase 1, 40 de ellas en alguna categoría de riesgo" },
     { text: "20+ / 60", label: "cámaras trampa / grabadoras acústicas desplegadas en la fase 1" },
     { value: 93, suffix: " %", label: "precisión del modelo en la detección de jaguar" },
-    { value: 333099, label: "archivos procesados en BioScanner a septiembre de 2026", note: "317,577 fotos y 15,522 videos" },
+    { value: 333087, label: "archivos procesados en BioScanner a octubre de 2026", note: "317,565 fotos y 15,522 videos" },
     { value: 16, label: "jaguares identificados de forma individual", note: "En proceso de verificación" },
     { value: 40, prefix: "~", suffix: " km", label: "entre dos registros del mismo jaguar, de Dzilam hacia Ría Lagartos" },
     { value: 104304, suffix: " ha", label: "superficie de la Reserva Estatal de Dzilam tras su ampliación", note: "Antes, 69,000 ha" },
@@ -184,7 +184,7 @@ export const CASE = {
   timeline: [
     {
       range: "2022–2024 · Fase 1",
-      text: "Instalación de cámaras trampa y dispositivos de monitoreo acústico con los líderes comunitarios, primeros modelos de IA para especies y jaguares, dos tableros de visualización y un programa piloto de formación local en gestión de proyectos de conservación con innovación.",
+      text: "Instalación de cámaras trampa y dispositivos de monitoreo acústico con los líderes comunitarios, primeros modelos de IA para especies y jaguares con la UPY y Rainforest Connection, dos tableros de visualización y un programa piloto de formación local. Resultado: 146 especies registradas en la reserva.",
     },
     {
       range: "2024",
@@ -196,7 +196,11 @@ export const CASE = {
     },
     {
       range: "2025–2026",
-      text: "BioScanner se consolida como plataforma, se construye el catálogo de jaguares, se estudia la conectividad con Ría Lagartos y se realizan autoevaluaciones para la Lista Verde de la UICN en Dzilam y Ría Lagartos.",
+      text: "BioScanner se consolida como plataforma, se construye el catálogo de jaguares, se estudia la conectividad con Ría Lagartos, se acompaña la actualización del programa de manejo y se realizan autoevaluaciones para la Lista Verde de la UICN en Dzilam y Ría Lagartos.",
+    },
+    {
+      range: "Octubre 2026",
+      text: "Lo aprendido se publica en este toolkit para que otros territorios de América Latina y el Caribe creen su propio Tech4Nature.",
     },
   ],
   story: {
@@ -337,7 +341,7 @@ export const STAGES: Stage[] = [
     dzilam: {
       title: "Lo que hicimos en Dzilam: BioScanner",
       paragraphs: [
-        "BioScanner es una plataforma desarrollada por C Minds en el marco de Tech4Nature México, incubada con la UICN y Huawei y construida sobre Huawei Cloud. Detecta y clasifica especies en fotos y videos, identifica jaguares de forma individual por el patrón de sus manchas y genera reportes. Su interfaz está disponible en español, inglés, portugués y maya. A septiembre de 2026 había procesado 333,099 archivos de la reserva.",
+        "BioScanner es una plataforma desarrollada por C Minds en el marco de Tech4Nature México, incubada con la UICN y Huawei y construida sobre Huawei Cloud. Detecta y clasifica especies en fotos y videos, identifica jaguares de forma individual por el patrón de sus manchas y genera reportes. Su interfaz está disponible en español, inglés, portugués y maya. A octubre de 2026 había procesado 333,087 fotos y videos de la reserva.",
         "BioScanner se diseñó para que equipos sin perfil técnico puedan usar IA. Se está construyendo en la dirección de que cada comunidad e institución decida sobre sus datos: quién los ve, qué se comparte y con quién.",
       ],
     },
@@ -1117,7 +1121,8 @@ const clip = (s: string, n = 158) => (s.length > n ? `${s.slice(0, n - 1).replac
 export type PageKind =
   | "inicio"
   | "por-que-importa"
-  | "caso"
+  | "equipo"
+  | "crea"
   | "biocultural"
   | "soberania"
   | "listaverde"
@@ -1145,7 +1150,8 @@ export type ToolkitPage = {
 };
 
 export const GROUPS = [
-  { id: "empezar", label: "Empezar" },
+  { id: "t4n", label: "Tech4Nature México" },
+  { id: "empezar", label: "Crea el tuyo" },
   { id: "etapas", label: "Las cinco etapas" },
   { id: "herramientas", label: "Herramientas" },
   { id: "plantillas", label: "Plantillas" },
@@ -1161,9 +1167,27 @@ export const PAGES: ToolkitPage[] = [
     kind: "inicio",
     title: HERO.title,
     label: "Inicio",
+    group: "t4n",
+    description:
+      "Tech4Nature México: comunidad, gobierno, ciencia e IA para conservar al jaguar en Yucatán. Logros, mapa, equipo y un toolkit con cinco etapas, plantillas y herramientas para crear el tuyo.",
+  },
+  {
+    slug: "equipo",
+    kind: "equipo",
+    title: "Las personas detrás de Tech4Nature México",
+    label: "Equipo",
+    group: "t4n",
+    description:
+      "Líderes comunitarios, Gobierno de Yucatán, UICN, C Minds, universidades y aliados tecnológicos que hicieron posible Tech4Nature México entre 2022 y 2026.",
+  },
+  {
+    slug: "crea-el-tuyo",
+    kind: "crea",
+    title: "Crea tu propio Tech4Nature",
+    label: "Cómo usar el toolkit",
     group: "empezar",
     description:
-      "Toolkit para co-diseñar, implementar y sostener proyectos de conservación con inteligencia artificial en América Latina y el Caribe: cinco etapas, plantillas y una caja de herramientas gratuitas.",
+      "Para quién es el toolkit, qué podrás hacer con él, cómo recorrerlo según tu rol y las cinco etapas para co-diseñar, implementar y sostener un proyecto de conservación con IA.",
   },
   {
     slug: "por-que-importa",
@@ -1173,15 +1197,6 @@ export const PAGES: ToolkitPage[] = [
     group: "empezar",
     description:
       "Datos de biodiversidad, jaguar, cámaras trampa y conectividad rural en América Latina y el Caribe, y qué significan para un proyecto de conservación con IA.",
-  },
-  {
-    slug: "tech4nature-mexico",
-    kind: "caso",
-    title: "Tech4Nature México en una mirada",
-    label: "Tech4Nature México en una mirada",
-    group: "empezar",
-    description:
-      "147 especies, 333,099 archivos en BioScanner y un jaguar registrado a 40 km: resultados, línea de tiempo y aprendizajes de Tech4Nature México en la Reserva Estatal de Dzilam.",
   },
   {
     slug: "monitoreo-biocultural",
@@ -1293,8 +1308,9 @@ export const PAGE_BY_SLUG = new Map(PAGES.map((p) => [p.slug, p]));
  * sustituye, para que los enlaces compartidos sigan funcionando.
  */
 export const LEGACY_SLUGS: Record<string, string> = {
+  "tech4nature-mexico": "",
   contexto: "por-que-importa",
-  caso: "tech4nature-mexico",
+  caso: "",
   gestion: stageSlug(STAGES[4]),
   diagnostico: "diez-preguntas",
   "a01-pregunta-y-teoria-de-cambio": stageSlug(STAGES[0]),

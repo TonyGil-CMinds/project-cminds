@@ -2083,3 +2083,178 @@ a.tk-stepmap-card { color: inherit; text-decoration: none; }
   .tk-table--form td { display: block; height: 44px; margin: 0 14px 12px; border-bottom: 1px dashed var(--tk-line-2); }
   .tk-quote { padding: 20px; }
 }
+
+/* ==========================================================================
+   Portada Tech4Nature México: logros con paneles laterales, mapa y equipo
+   ========================================================================== */
+
+.tk-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.tk-hero-eyebrow.tk-hero-eyebrow--top { margin: 0 0 10px !important; color: var(--tk-accent); font-weight: 600; }
+
+/* ---- Logros -------------------------------------------------------------- */
+.tk-wins { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 18px 0 30px; padding: 0; list-style: none; }
+.tk-win { display: flex; }
+.tk-win--wide { grid-column: span 2; }
+.tk-win-btn {
+  display: flex; flex-direction: column; gap: 8px; width: 100%; min-height: 168px; padding: 18px; text-align: left;
+  font: inherit; color: var(--tk-text); text-decoration: none; cursor: pointer;
+  border: 1px solid var(--tk-line); border-radius: var(--tk-radius); background: var(--tk-panel);
+  transition: border-color 0.2s var(--tk-ease), background 0.2s var(--tk-ease), transform 0.2s var(--tk-ease);
+}
+.tk-win-btn:hover, .tk-win-btn:focus-visible { border-color: rgba(var(--tk-lime-rgb), 0.55); background: var(--tk-panel-2); transform: translateY(-2px); }
+.tk-win-btn:focus-visible { outline: 2px solid var(--tk-accent); outline-offset: 2px; }
+.tk-win-btn--static { cursor: default; }
+.tk-win-btn--static:hover { transform: none; border-color: var(--tk-line); background: var(--tk-panel); }
+.tk-win--wide .tk-win-btn {
+  background: linear-gradient(135deg, rgba(var(--tk-lime-rgb), 0.16), rgba(var(--tk-sky-rgb), 0.06) 60%, transparent), var(--tk-panel);
+  border-color: rgba(var(--tk-lime-rgb), 0.4);
+}
+.tk-win-num { font-size: clamp(1.7rem, 2.8vw, 2.3rem); font-weight: 700; line-height: 1; letter-spacing: -0.03em; color: var(--tk-accent); font-variant-numeric: tabular-nums; }
+.tk-win--wide .tk-win-num { font-size: clamp(2.2rem, 4vw, 3.1rem); }
+.tk-win-label { font-size: 0.86rem; line-height: 1.45; color: var(--tk-text); }
+.tk-win-cta { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; color: var(--tk-accent); }
+.tk-win-cta svg { width: 14px; height: 14px; }
+
+/* ---- Panel lateral ------------------------------------------------------- */
+.tk-sheet {
+  position: fixed; inset: 0 0 0 auto; margin: 0; height: 100dvh; max-height: 100dvh; width: min(560px, 100vw); max-width: 100vw;
+  padding: 0; border: 0; border-left: 1px solid var(--tk-line-2); color: var(--tk-text); background: var(--tk-surface);
+  box-shadow: -30px 0 80px var(--tk-shadow); overflow: hidden;
+}
+.tk-sheet[open] { animation: tk-sheet-in 0.32s var(--tk-ease); }
+.tk-sheet::backdrop { background: rgba(0, 0, 0, 0.55); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
+@keyframes tk-sheet-in { from { transform: translateX(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+.tk-sheet-inner { display: flex; flex-direction: column; height: 100%; }
+.tk-sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 22px; border-bottom: 1px solid var(--tk-line); }
+.tk-sheet-head h2 { margin: 0; font-size: 1.2rem; line-height: 1.3; }
+.tk-sheet-close { width: 38px; height: 38px; flex: none; border-radius: 50%; border: 1px solid var(--tk-line-2); background: var(--tk-panel); color: var(--tk-text); font-size: 1.4rem; line-height: 1; cursor: pointer; }
+.tk-sheet-close:hover { border-color: var(--tk-accent); }
+.tk-sheet-body { flex: 1; overflow-y: auto; padding: 18px 22px 40px; overscroll-behavior: contain; }
+.tk-sheet-body > p { color: var(--tk-text-2); line-height: 1.6; }
+.tk-sheet-source { font-size: 0.78rem !important; color: var(--tk-dim) !important; }
+.tk-sheet-logo { display: block; height: 34px; width: auto; margin: 4px 0 12px; }
+html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg); }
+.tk-sheet-stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 14px 0 6px; padding: 0; list-style: none; }
+.tk-sheet-stats li { display: flex; flex-direction: column; gap: 4px; padding: 12px; border: 1px solid var(--tk-line); border-radius: 12px; background: var(--tk-panel); }
+.tk-sheet-stats strong { font-size: 1.35rem; color: var(--tk-accent); font-variant-numeric: tabular-nums; }
+.tk-sheet-stats span { font-size: 0.78rem; line-height: 1.4; color: var(--tk-text-2); }
+.tk-sheet-caps { display: grid; gap: 8px; margin: 0; }
+.tk-sheet-caps div { padding: 10px 12px; border-radius: 12px; background: var(--tk-panel); border: 1px solid var(--tk-line); }
+.tk-sheet-caps dt { font-weight: 700; font-size: 0.9rem; }
+.tk-sheet-caps dd { margin: 3px 0 0; font-size: 0.84rem; line-height: 1.5; color: var(--tk-text-2); }
+.tk-sheet-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+/* ---- Visor de fotos ------------------------------------------------------ */
+.tk-viewer { margin: 14px 0; }
+.tk-viewer-main { position: relative; margin: 0; border-radius: 14px; overflow: hidden; background: #000; }
+.tk-viewer-main img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: contain; }
+.tk-viewer-main figcaption { display: flex; justify-content: space-between; gap: 10px; padding: 8px 12px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.86); background: rgba(4, 3, 20, 0.92); }
+.tk-viewer-nav { position: absolute; top: calc(50% - 34px); width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(4, 3, 20, 0.6); color: #fff; font-size: 1.5rem; line-height: 1; cursor: pointer; }
+.tk-viewer-nav--prev { left: 10px; }
+.tk-viewer-nav--next { right: 10px; }
+.tk-viewer-thumbs { display: flex; gap: 6px; margin: 8px 0 0; padding: 0 0 4px; list-style: none; overflow-x: auto; }
+.tk-viewer-thumbs button { display: block; padding: 0; border: 2px solid transparent; border-radius: 8px; overflow: hidden; background: none; cursor: pointer; opacity: 0.65; }
+.tk-viewer-thumbs button[aria-current="true"] { border-color: var(--tk-accent); opacity: 1; }
+.tk-viewer-thumbs img { display: block; width: 80px; height: 45px; object-fit: cover; }
+
+/* ---- Especies ------------------------------------------------------------ */
+.tk-sp-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.tk-sp-tabs button { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; text-align: left; font: inherit; color: var(--tk-text); border: 1px solid var(--tk-line); border-radius: 12px; background: var(--tk-panel); cursor: pointer; }
+.tk-sp-tabs button[aria-selected="true"] { border-color: var(--tk-accent); background: rgba(var(--tk-lime-rgb), 0.1); }
+.tk-sp-tabs strong { font-size: 1.05rem; color: var(--tk-accent); }
+.tk-sp-tabs span { font-size: 0.76rem; color: var(--tk-text-2); }
+.tk-sp-note { padding: 12px 14px; margin-bottom: 14px; border-radius: 12px; border: 1px solid rgba(var(--tk-sky-rgb), 0.35); background: rgba(var(--tk-sky-rgb), 0.07); }
+.tk-sp-note strong { display: block; margin-bottom: 4px; font-size: 0.9rem; }
+.tk-sp-note p { margin: 6px 0 0; font-size: 0.82rem; line-height: 1.55; color: var(--tk-text-2); }
+.tk-sp-tools { display: grid; gap: 8px; }
+.tk-sp-search input { width: 100%; padding: 10px 12px; font: inherit; font-size: 0.9rem; color: var(--tk-text); border: 1px solid var(--tk-line-2); border-radius: 10px; background: var(--tk-input-bg); }
+.tk-sp-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.tk-sp-filters button { padding: 5px 10px; font: inherit; font-size: 0.78rem; color: var(--tk-text-2); border: 1px solid var(--tk-line-2); border-radius: 999px; background: none; cursor: pointer; }
+.tk-sp-filters button[aria-pressed="true"] { color: var(--tk-on-lime); background: var(--tk-lime); border-color: var(--tk-lime); }
+.tk-sp-count { margin: 12px 0 6px; font-size: 0.78rem; color: var(--tk-dim); }
+.tk-sp-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--tk-line); }
+.tk-sp-list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; padding: 10px 2px; border-bottom: 1px solid var(--tk-line); }
+.tk-sp-list li[data-flag] { opacity: 0.78; }
+.tk-sp-name { display: flex; flex-direction: column; min-width: 0; }
+.tk-sp-name strong { font-size: 0.9rem; }
+.tk-sp-name em { font-size: 0.8rem; color: var(--tk-text-2); }
+.tk-sp-name small { margin-top: 2px; font-size: 0.74rem; color: var(--tk-amber); }
+.tk-sp-meta { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 4px; }
+.tk-sp-badge { padding: 2px 7px; font-size: 0.7rem; font-weight: 600; border-radius: 999px; border: 1px solid var(--tk-line-2); color: var(--tk-text-2); white-space: nowrap; }
+.tk-sp-badge--uicn { color: var(--tk-danger); border-color: rgba(255, 138, 122, 0.45); }
+.tk-sp-badge--nom { color: var(--tk-amber); border-color: rgba(var(--tk-amber-rgb), 0.45); }
+.tk-sp-badge--warn { color: var(--tk-amber); border-color: rgba(var(--tk-amber-rgb), 0.6); }
+.tk-sp-badge--new { color: var(--tk-sky); border-color: rgba(var(--tk-sky-rgb), 0.5); }
+.tk-sp-ev, .tk-sp-class { font-size: 0.72rem; color: var(--tk-dim); white-space: nowrap; }
+
+/* ---- Ampliación ---------------------------------------------------------- */
+.tk-exp { margin: 4px 0 16px; }
+.tk-exp-bar { height: 16px; border-radius: 999px; background: linear-gradient(90deg, var(--tk-lime-hi), var(--tk-olive)); overflow: hidden; }
+.tk-exp-bar span { display: block; height: 100%; background: rgba(var(--tk-bg-rgb), 0.55); border-right: 2px solid var(--tk-bg); }
+.tk-exp-legend { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; font-size: 0.8rem; color: var(--tk-text-2); }
+.tk-exp-legend strong { display: block; font-size: 1.15rem; color: var(--tk-text); }
+.tk-exp-legend span:last-child { text-align: right; }
+.tk-exp-legend span:last-child strong { color: var(--tk-accent); }
+
+/* ---- Mapa ---------------------------------------------------------------- */
+.tk-map { margin: 16px 0 12px; border-radius: var(--tk-radius); overflow: hidden; border: 1px solid var(--tk-line); }
+.tk-map svg { display: block; width: 100%; height: auto; }
+.tk-map-sea { fill: rgba(var(--tk-sky-rgb), 0.1); }
+.tk-map-land { fill: rgba(var(--tk-fg-rgb), 0.07); stroke: rgba(var(--tk-fg-rgb), 0.35); stroke-width: 1; }
+.tk-map-arc { stroke: var(--tk-lime); stroke-width: 2.5; stroke-dasharray: 6 5; }
+.tk-map-km { fill: var(--tk-accent); font-size: 15px; font-weight: 700; }
+.tk-map-zone text { fill: var(--tk-text); font-size: 15px; font-weight: 700; }
+.tk-map-town circle { fill: var(--tk-lime); stroke: var(--tk-bg); stroke-width: 2; }
+.tk-map-town text { fill: var(--tk-text); font-size: 14px; }
+.tk-map-city circle { fill: var(--tk-dim); }
+.tk-map-city text { fill: var(--tk-text-2); font-size: 14px; }
+.tk-map-sea-label { fill: var(--tk-sky); font-size: 14px; font-style: italic; opacity: 0.85; }
+.tk-mapfacts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0 0 8px; padding: 0; list-style: none; }
+.tk-mapfacts li { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--tk-line); background: var(--tk-panel); }
+.tk-mapfacts strong { font-size: 1.25rem; color: var(--tk-accent); font-variant-numeric: tabular-nums; }
+.tk-mapfacts span { font-size: 0.8rem; line-height: 1.4; color: var(--tk-text-2); }
+
+/* ---- Equipo -------------------------------------------------------------- */
+.tk-avatar { display: inline-flex; flex: none; align-items: center; justify-content: center; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, rgba(var(--tk-lime-rgb), 0.3), rgba(var(--tk-sky-rgb), 0.25)); border: 2px solid var(--tk-bg); }
+.tk-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.tk-avatar-initials { font-weight: 700; font-size: 0.95rem; letter-spacing: 0.02em; color: var(--tk-text); }
+.tk-teamstrip { display: grid; gap: 14px; padding: 18px; color: var(--tk-text); text-decoration: none; border: 1px solid var(--tk-line); border-radius: var(--tk-radius); background: var(--tk-panel); transition: border-color 0.2s var(--tk-ease); }
+.tk-teamstrip:hover { border-color: rgba(var(--tk-lime-rgb), 0.55); }
+.tk-teamstrip-faces { display: flex; flex-wrap: wrap; }
+.tk-teamstrip-faces .tk-avatar { margin-right: -10px; }
+.tk-teamstrip-text { display: flex; flex-direction: column; gap: 8px; line-height: 1.55; color: var(--tk-text-2); }
+.tk-teamstrip-text strong { color: var(--tk-text); }
+.tk-people { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin: 10px 0 14px; padding: 0; list-style: none; }
+.tk-people--big { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+.tk-person { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; padding: 14px; border: 1px solid var(--tk-line); border-radius: 14px; background: var(--tk-panel); }
+.tk-person .tk-avatar { margin-bottom: 4px; border-color: rgba(var(--tk-lime-rgb), 0.35); }
+.tk-person-name { font-weight: 700; font-size: 0.95rem; line-height: 1.3; }
+.tk-person-role { font-size: 0.8rem; line-height: 1.45; color: var(--tk-text-2); }
+.tk-person-org { font-size: 0.74rem; color: var(--tk-accent); }
+.tk-people-names { font-size: 0.86rem; line-height: 1.6; color: var(--tk-text-2); }
+
+/* ---- Invitación ---------------------------------------------------------- */
+.tk-invite { margin: 40px 0 10px; padding: 26px; border-radius: 20px; border: 1px solid rgba(var(--tk-lime-rgb), 0.35); background: radial-gradient(120% 140% at 0% 0%, rgba(var(--tk-lime-rgb), 0.14), transparent 60%), var(--tk-panel); }
+.tk-invite-title { margin: 0 0 10px; font-size: clamp(1.5rem, 3vw, 2.1rem); line-height: 1.15; letter-spacing: -0.02em; }
+.tk-invite p { color: var(--tk-text-2); }
+
+@media (max-width: 1023px) {
+  .tk-wins { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tk-mapfacts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .tk-wins { grid-template-columns: minmax(0, 1fr); }
+  .tk-win--wide { grid-column: auto; }
+  .tk-win-btn { min-height: 0; }
+  .tk-sheet-head, .tk-sheet-body { padding-left: 16px; padding-right: 16px; }
+  .tk-people, .tk-people--big { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tk-invite { padding: 20px 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tk-sheet[open] { animation: none; }
+  .tk-win-btn:hover { transform: none; }
+}
+@media (max-width: 760px) {
+  .tk-map { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tk-map svg { min-width: 720px; }
+}

@@ -84,6 +84,6 @@ export function useToolkit(): ToolkitContextValue {
 
 export const SECTION_LABELS: Record<string, string> = {
   ...Object.fromEntries(STAGES.map((s) => [s.code, `Etapa ${s.n} · ${s.title}`])),
-  "tech4nature-mexico": "Tech4Nature México en una mirada",
+  equipo: "Las personas detrás de Tech4Nature México",
   "caja-de-herramientas": "Caja de herramientas",
 };
