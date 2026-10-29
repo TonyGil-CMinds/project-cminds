@@ -7,6 +7,7 @@ import {
   CASE,
   GLOSSARY,
   GLOSSARY_INTRO,
+  SOVEREIGNTY,
   GROUPS,
   HERO,
   IMAGES,
@@ -469,6 +470,84 @@ export function BioculturalPage({ page, locale }: { page: ToolkitPage; locale: L
 }
 
 // ---------------------------------------------------------------------------
+// Soberanía de datos
+
+export function SoberaniaPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
+  const e = SOVEREIGNTY.elsewhere;
+  return (
+    <PageFrame page={page} locale={locale} kicker="Gobernanza de datos" lead={<p>{SOVEREIGNTY.lead}</p>}>
+      <H2>La Cadena de Suministro con Soberanía de Datos</H2>
+      {SOVEREIGNTY.framework.map((p, i) => (
+        <p key={i} data-reveal>
+          {p}
+        </p>
+      ))}
+      <dl className="tk-glossary">
+        {SOVEREIGNTY.layers.map((l) => (
+          <div key={l.title} className="tk-term" data-reveal>
+            <dt>{l.title}</dt>
+            <dd>{l.text}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <H2>Los cinco protocolos</H2>
+      <ol className="tk-steps">
+        {SOVEREIGNTY.protocols.map((p, i) => (
+          <li key={p.code}>
+            <span className="tk-steps-n" aria-hidden="true">
+              {i + 1}
+            </span>
+            <p>
+              <strong>{p.title}.</strong> {p.text}
+            </p>
+          </li>
+        ))}
+      </ol>
+
+      <H2>Lo que hicimos en Dzilam</H2>
+      <div className="tk-result" data-reveal>
+        {SOVEREIGNTY.dzilam.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
+      </div>
+
+      <H2>Preguntas para poner sobre la mesa</H2>
+      <p data-reveal>{SOVEREIGNTY.questionsIntro}</p>
+      <ul className="tk-list">
+        {SOVEREIGNTY.questions.map((q) => (
+          <li key={q}>{q}</li>
+        ))}
+      </ul>
+
+      <CheckBox title="Aprendizaje" text={SOVEREIGNTY.learning} />
+
+      <H2>Herramientas para empezar</H2>
+      <ul className="tk-list tk-tools">
+        {SOVEREIGNTY.tools.map((t) => (
+          <li key={t}>
+            <Rich text={t} />
+          </li>
+        ))}
+      </ul>
+
+      <section className="tk-callout tk-callout--sky tk-elsewhere" aria-labelledby="otro-soberania" data-reveal>
+        <span className="tk-callout-label">En otro territorio</span>
+        <h2 id="otro-soberania" className="tk-elsewhere-title" data-toc={`En otro territorio: ${e.place}`}>
+          {e.place}
+        </h2>
+        {e.paragraphs.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
+        <p>
+          <ExternalLink href={e.link.url}>{e.link.label}</ExternalLink>
+        </p>
+      </section>
+    </PageFrame>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Etapas
 
 function BioScannerInline() {
@@ -526,6 +605,13 @@ export function StagePage({ page, locale, stage }: { page: ToolkitPage; locale: 
         <p className="tk-meta-line">
           Para diseñar el muestreo con el conocimiento del territorio, consulta{" "}
           <Link href={toolkitHref(locale, "monitoreo-biocultural")}>El territorio guía el monitoreo</Link>.
+        </p>
+      ) : null}
+
+      {stage.id === "e1" ? (
+        <p className="tk-meta-line">
+          Para acordar quién decide sobre los datos, consulta{" "}
+          <Link href={toolkitHref(locale, "soberania-de-datos")}>Soberanía de datos</Link>.
         </p>
       ) : null}
 

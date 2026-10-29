@@ -262,7 +262,8 @@ export const STAGES: Stage[] = [
     learning:
       "En Dzilam, la alineación de objetivos entre el gobierno estatal, la comunidad y C Minds desde el diseño permitió que los datos se integraran a un proceso público. Cuando la autoridad participa desde el principio, la evidencia llega a tiempo para la decisión.",
     tools: [
-      "[Principios CREA para la gobernanza de datos indígenas](https://www.gida-global.org/s/Principios-CREA.pdf) (versión en español de los principios CARE, GIDA).",
+      "[Cadena de Suministro con Soberanía de Datos](https://ecos.cminds.co/publicaciones/sovereign-data-supply-chain?reader=1) (Kinray Hub, NaturaTech LAC y Climate Collective), el marco que guía nuestros acuerdos de datos.",
+    "[Principios CREA para la gobernanza de datos indígenas](https://www.gida-global.org/s/Principios-CREA.pdf) (versión en español de los principios CARE, GIDA).",
       "[Buenas prácticas para generalizar datos de especies sensibles](https://docs.gbif.org/sensitive-species-best-practices/master/es/buenas-practicas-para-generalizar-datos-de-especies-sensibles-en-registros-biologicos.es.pdf) (GBIF, español).",
       "[Recomendación sobre la Ética de la Inteligencia Artificial](https://digitallibrary.un.org/record/4062376/files/1416674-ES.pdf) (UNESCO, español).",
       "[AI for Environment and Ecosystems Toolkit](https://www.unesco.org/ethics-ai/en/ai-environment-ecosystems-toolkit) (UNESCO, inglés), para equipos de gobierno.",
@@ -521,6 +522,93 @@ export const BIOCULTURAL = {
 };
 
 // ---------------------------------------------------------------------------
+// Soberanía de datos: la Cadena de Suministro con Soberanía de Datos
+
+export const SOVEREIGNTY_FRAMEWORK_URL = "https://ecos.cminds.co/publicaciones/sovereign-data-supply-chain?reader=1";
+
+export const SOVEREIGNTY = {
+  lead:
+    "Cada foto, sonido o registro de campo nace en un territorio y en el trabajo de las personas que lo cuidan. La soberanía de datos asegura que esas comunidades tengan autoridad sobre cómo se recolectan, guardan, usan y comparten sus datos, y que reciban los beneficios. Es una condición para replicar un proyecto como Tech4Nature México: con acuerdos claros sobre los datos, el proyecto gana confianza y continuidad.",
+  framework: [
+    "La guía que usamos es la Cadena de Suministro con Soberanía de Datos, un marco funcional y operativo de Kinray Hub, NaturaTech LAC y Climate Collective (versión 1.0, febrero de 2026, licencia CC BY 4.0). Su objetivo es que las comunidades pasen de ser sujetos pasivos de datos a ser Autoridades del Dominio de la Fuente, con capacidad real de decidir sobre sus activos bioculturales.",
+    "El marco se apoya en los principios CARE y FAIR, en el consentimiento libre, previo e informado, y en instrumentos como la Declaración de las Naciones Unidas sobre los Derechos de los Pueblos Indígenas, el Convenio 169 de la OIT, el Acuerdo de Escazú y el Protocolo de Nagoya.",
+  ],
+  layers: [
+    {
+      title: "Aguas arriba: autoridades del territorio",
+      text: "Pueblos indígenas, comunidades locales y sus consejos de gobierno. Son la fuente del dato y la autoridad que decide sobre él.",
+    },
+    {
+      title: "Aguas intermedias: intermediarios",
+      text: "Quienes custodian, procesan o etiquetan datos en nombre de una comunidad: organizaciones acompañantes, universidades y plataformas como BioScanner.",
+    },
+    {
+      title: "Aguas abajo: usuarios",
+      text: "Quienes usan los datos para decidir, investigar o desarrollar productos: agencias públicas, organizaciones de conservación, centros de investigación y mercados.",
+    },
+  ],
+  protocols: [
+    {
+      code: "P1",
+      title: "Establecer la Autoridad del Dominio de la Fuente",
+      text: "Identificar quién habla legítimamente por el territorio, distinguir entre pueblo indígena y comunidad local, y designar en asamblea a las personas que harán de puente con mandato escrito. Es la base de todo lo demás.",
+    },
+    {
+      code: "P2",
+      title: "Acordar un contrato centrado en el CLPI",
+      text: "Inventariar los tipos de datos y su sensibilidad, definir niveles de autorización y redactar el acuerdo en al menos dos lenguas, con veto ecológico y derecho a revocar el acceso.",
+    },
+    {
+      code: "P3",
+      title: "Garantizar la integridad biocultural y técnica",
+      text: "Fijar cómo se recolectan los datos, verificar su procedencia y su calidad, y marcar el conocimiento tradicional con etiquetas que indiquen sus condiciones de uso.",
+    },
+    {
+      code: "P4",
+      title: "Registrar los activos bioculturales",
+      text: "Documentar la relación entre datos, territorio y autoridad, asignar identificadores de procedencia y permitir análisis de datos sensibles sin entregar los datos originales.",
+    },
+    {
+      code: "P5",
+      title: "Activar la reciprocidad y la revocabilidad",
+      text: "Acordar cómo se distribuyen los beneficios, incluidos formación, coautoría y reconocimiento, cómo se suspende un acceso y cómo se resuelven los conflictos con primacía de la jurisdicción comunitaria.",
+    },
+  ],
+  dzilam: [
+    "En Dzilam, el acceso a la ubicación de los equipos y de los jaguares está reservado al gobierno del estado, C Minds, los líderes comunitarios y aliados autorizados, para proteger a la especie y mantener el control de la comunidad sobre la información de su territorio. BioScanner se está construyendo en la dirección de que cada comunidad e institución decida quién ve sus datos, qué se comparte y con quién.",
+    "La experiencia también abrió preguntas que todavía conversamos con las instituciones y la comunidad, y que conviene poner sobre la mesa desde el inicio de cualquier proyecto.",
+  ],
+  questionsIntro:
+    "Muchas áreas protegidas tienen una administración pública, mientras que quienes monitorean, conservan y lideran en el día a día son las comunidades. En esos casos, estas preguntas merecen una conversación abierta entre la autoridad, la comunidad y los aliados antes de instalar el primer equipo.",
+  questions: [
+    "¿Quién es la autoridad del dominio de la fuente cuando la reserva la administra el gobierno y los datos los genera la comunidad: la autoridad, la comunidad o ambas, y con qué reglas?",
+    "¿Cómo se equilibra la transparencia y el acceso a la información pública con la protección de saberes, senderos y ubicaciones sensibles?",
+    "¿Quién autoriza nuevos usos de los datos, como investigación, entrenamiento de modelos de IA o mecanismos de financiamiento?",
+    "¿Dónde se guardan los datos y quién responde por ellos cuando cambia el gobierno o termina un proyecto?",
+    "¿Cómo se reconoce y retribuye a quienes generan los datos cuando estos sustentan decisiones públicas, informes o nuevos recursos?",
+    "¿Puede la comunidad revocar un acceso o retirar un dato, y con qué procedimiento?",
+    "¿Se trata de un pueblo indígena, de una comunidad local o de ambos, y qué derechos y procesos de consulta aplican en cada caso?",
+  ],
+  learning:
+    "La soberanía de datos se construye con acuerdos explícitos desde el diseño. Cuando la autoridad pública y la comunidad responden juntas estas preguntas, el monitoreo gana legitimidad, continuidad y la confianza necesaria para escalar.",
+  tools: [
+    "[Cadena de Suministro con Soberanía de Datos, marco V1.0](https://ecos.cminds.co/publicaciones/sovereign-data-supply-chain?reader=1) (Kinray Hub, NaturaTech LAC y Climate Collective, 2026). DOI 10.5281/zenodo.18675313.",
+    "[Principios CREA para la gobernanza de datos indígenas](https://www.gida-global.org/s/Principios-CREA.pdf) (GIDA, español).",
+    "[Etiquetas de Conocimiento Tradicional](https://localcontexts.org/es/etiquetas/etiquetas-ct/) (Local Contexts, español), para indicar condiciones de uso del conocimiento tradicional en entornos digitales.",
+    "[Buenas prácticas para generalizar datos de especies sensibles](https://docs.gbif.org/sensitive-species-best-practices/master/es/buenas-practicas-para-generalizar-datos-de-especies-sensibles-en-registros-biologicos.es.pdf) (GBIF, español).",
+    "Plantilla 2 de este toolkit: acuerdo de datos. [P2]",
+  ],
+  elsewhere: {
+    place: "El marco en práctica",
+    paragraphs: [
+      "Desde abril de 2026, Fundación Pachamama y la comunidad achuar de Sharamentsa ponen a prueba el marco dentro de la Estrategia Biocultural del Jaguar. Con el Protocolo 1, la asamblea comunitaria otorga mandatos y delega en personas de la comunidad la autoridad para decidir sobre los datos.",
+      "Otros pilotos lo aplican en contextos distintos, como Seaflower WISE con la comunidad raizal del Caribe colombiano, sobre datos de pesca artesanal y cartografía marina. Los aprendizajes de los pilotos alimentan la siguiente versión del marco.",
+    ],
+    link: { label: "Leer el marco en ECOS (NaturaTech LAC)", url: "https://ecos.cminds.co/publicaciones/sovereign-data-supply-chain?reader=1" },
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Glosario
 
 export type GlossaryTerm = { term: string; def: string };
@@ -536,6 +624,9 @@ export const GLOSSARY: { group: string; terms: GlossaryTerm[] }[] = [
       { term: "Conocimiento tradicional y local", def: "Saberes que las comunidades construyen y transmiten sobre su territorio: rutas de fauna, temporadas, nombres de especies, usos y prácticas de cuidado. Pertenece a quienes lo comparten." },
       { term: "Consentimiento libre, previo e informado (CLPI)", def: "Derecho de los pueblos indígenas y comunidades locales a decidir, con información completa, sin presión y antes de que comience, sobre una actividad que afecta su territorio, incluidos el monitoreo y el uso de sus datos." },
       { term: "Soberanía de datos", def: "Capacidad de una comunidad o institución de decidir cómo se recolectan, guardan, usan y comparten los datos sobre su territorio y su gente." },
+      { term: "Cadena de suministro con soberanía de datos", def: "Marco de Kinray Hub, NaturaTech LAC y Climate Collective que organiza el recorrido de los datos, desde el territorio que los genera hasta quienes los usan, en cinco protocolos que dan a las comunidades autoridad sobre sus datos." },
+      { term: "Autoridad del dominio de la fuente", def: "Persona o institución que habla legítimamente por el territorio donde se generan los datos y que decide sobre su uso. Se reconoce con mandato de asamblea." },
+      { term: "Revocabilidad", def: "Derecho de la comunidad a suspender un acceso o retirar sus datos de un uso acordado, mediante un procedimiento definido en el acuerdo." },
       { term: "Principios CARE (CREA)", def: "Principios para la gobernanza de datos indígenas: beneficio colectivo, autoridad para controlar, responsabilidad y ética. Complementan los principios FAIR de datos abiertos." },
       { term: "Especie sensible", def: "Especie cuya ubicación exacta, si se publica, puede facilitar su caza, captura o perturbación. Sus registros se generalizan o se protegen." },
     ],
@@ -703,6 +794,8 @@ const RAW_RESOURCES: RawResource[] = [
   { category: "jaguar", title: "Estrategia Biocultural del Jaguar", url: "https://www.naturatech.org/en/minga-estrategia", org: "Alianza Cuencas Sagradas, Fundación Pachamama y NaturaTech LAC", use: "Monitoreo del jaguar con conocimiento tradicional en territorio achuar, Ecuador", lang: "ES, EN" },
   { category: "jaguar", title: "Directrices UICN de coexistencia", url: "https://doi.org/10.2305/CFRX2122", org: "UICN", use: "Atender conflictos entre personas y fauna", lang: "ES" },
   // Datos, ética y comunidad
+  { category: "datos", title: "Cadena de Suministro con Soberanía de Datos", url: "https://ecos.cminds.co/publicaciones/sovereign-data-supply-chain?reader=1", org: "Kinray Hub, NaturaTech LAC y Climate Collective", use: "Marco y protocolos para que las comunidades gobiernen sus datos", lang: "ES, EN" },
+  { category: "datos", title: "Etiquetas de Conocimiento Tradicional (Local Contexts)", url: "https://localcontexts.org/es/etiquetas/etiquetas-ct/", org: "Local Contexts", use: "Indicar condiciones de uso del conocimiento tradicional en entornos digitales", lang: "ES, EN" },
   { category: "datos", title: "Principios CREA (CARE)", url: "https://www.gida-global.org/s/Principios-CREA.pdf", org: "GIDA", use: "Gobernanza de datos de pueblos indígenas", lang: "ES" },
   { category: "datos", title: "Datos de especies sensibles (GBIF)", url: "https://docs.gbif.org/sensitive-species-best-practices/master/es/buenas-practicas-para-generalizar-datos-de-especies-sensibles-en-registros-biologicos.es.pdf", org: "GBIF", use: "Decidir qué ubicaciones publicar", lang: "ES" },
   { category: "datos", title: "Recomendación sobre la Ética de la IA (UNESCO)", url: "https://digitallibrary.un.org/record/4062376/files/1416674-ES.pdf", org: "UNESCO", use: "Principios para un uso responsable de la IA", lang: "ES" },
@@ -772,11 +865,13 @@ export const TEMPLATES: Template[] = [
     stage: "E1",
     layout: "form",
     fields: [
+      { label: "¿Quién es la autoridad del dominio de la fuente?", hint: "quién habla por el territorio y con qué mandato" },
       { label: "¿Quién es responsable de los datos?" },
       { label: "¿Quién puede ver los datos originales?" },
       { label: "¿Qué se puede publicar y con qué nivel de detalle?" },
       { label: "¿Qué información se protege?", hint: "ubicaciones de especies sensibles, rostros, conocimientos tradicionales" },
       { label: "¿Quién autoriza nuevos usos?" },
+      { label: "¿Cómo se revoca un acceso?" },
       { label: "¿Cómo se reconoce a la comunidad en publicaciones y beneficios?" },
       { label: "¿Dónde se guardan las copias de respaldo?" },
       { label: "Firmas y fecha" },
@@ -852,6 +947,7 @@ export const SOURCES = [
   "UICN (2025). [Phase two of Tech4Nature jaguar protection project launched in Mexico](https://iucn.org/news/202504/phase-two-tech4nature-jaguar-protection-project-launched-mexico).",
   "Gobierno del Estado de Yucatán (2024). [Acuerdo 76/2024, Diario Oficial](https://www.yucatan.gob.mx/docs/diario_oficial/diarios/2024/2024-09-23_2.pdf).",
   "C Minds (2026). Informe técnico final de Tech4Nature México y estudio de conectividad Dzilam–Ría Lagartos (documentos internos).",
+  "Kinray Hub, NaturaTech LAC y Climate Collective (2026). Cadena de Suministro con Soberanía de Datos: marco funcional y operativo V1.0. DOI 10.5281/zenodo.18675313. CC BY 4.0. [Leer en ECOS](https://ecos.cminds.co/publicaciones/sovereign-data-supply-chain?reader=1).",
   "NaturaTech LAC (2025). Informe de aprendizajes: Estrategia Biocultural del Jaguar, con Fundación Pachamama y Alianza Cuencas Sagradas (datos a mayo de 2025). [Estrategia Biocultural del Jaguar](https://www.naturatech.org/en/minga-estrategia).",
 ];
 
@@ -877,6 +973,7 @@ export type PageKind =
   | "por-que-importa"
   | "caso"
   | "biocultural"
+  | "soberania"
   | "etapa"
   | "preguntas"
   | "caja"
@@ -947,6 +1044,15 @@ export const PAGES: ToolkitPage[] = [
     group: "empezar",
     description:
       "Cómo el conocimiento local de pasos de fauna, senderos, cacería y especies orienta el muestreo y la interpretación del monitoreo de biodiversidad, con los casos de Dzilam y de la Estrategia Biocultural del Jaguar en Ecuador.",
+  },
+  {
+    slug: "soberania-de-datos",
+    kind: "soberania",
+    title: "Soberanía de datos",
+    label: "Soberanía de datos",
+    group: "empezar",
+    description:
+      "La Cadena de Suministro con Soberanía de Datos y sus cinco protocolos para que las comunidades tengan autoridad sobre sus datos, con preguntas abiertas para áreas de administración pública donde la comunidad monitorea y conserva.",
   },
   ...STAGES.map(
     (s): ToolkitPage => ({

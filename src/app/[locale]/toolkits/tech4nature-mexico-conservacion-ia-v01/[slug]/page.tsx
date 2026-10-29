@@ -12,6 +12,7 @@ import {
   PlantillasPage,
   PorQueImportaPage,
   PreguntasPage,
+  SoberaniaPage,
   StagePage,
   TemplatePage,
 } from "../_components/pages";
@@ -41,6 +42,8 @@ function Content({ page, locale }: { page: ToolkitPage; locale: Locale }) {
       return <CasoPage page={page} locale={locale} />;
     case "biocultural":
       return <BioculturalPage page={page} locale={locale} />;
+    case "soberania":
+      return <SoberaniaPage page={page} locale={locale} />;
     case "etapa":
       return <StagePage page={page} locale={locale} stage={STAGES.find((s) => s.id === page.ref)!} />;
     case "preguntas":
