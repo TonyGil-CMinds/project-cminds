@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale } from "@/i18n/useLocale";
-import { GLOSSARY, GROUPS, NEEDS, PAGES, RESOURCES, needOf, toolkitHref } from "../data";
+import { CATEGORIES, GROUPS, PAGES, RESOURCES, toolkitHref } from "../data";
 import { IconSearch } from "./icons";
 
 type Entry = { key: string; slug: string; hash?: string; group: string; code?: string; title: string; hint: string; haystack: string };
@@ -15,32 +15,32 @@ const normalize = (s: string) =>
     .replace(/[̀-ͯ]/g, "");
 
 const GROUP_LABEL = new Map(GROUPS.map((g) => [g.id, g.label]));
+const CATEGORY_LABEL = new Map<string, string>(CATEGORIES.map((c) => [c.id, c.label]));
 
 function buildIndex(): Entry[] {
   const entries: Omit<Entry, "haystack">[] = [
     ...PAGES.map((p) => ({
       key: `p-${p.slug}`,
       slug: p.slug,
-      group: p.kind === "accion" ? "Acciones" : p.kind === "plantilla" ? "Plantillas" : "Páginas",
+      group: p.kind === "etapa" ? "Etapas" : p.kind === "plantilla" ? "Plantillas" : "Páginas",
       code: p.code,
       title: p.kind === "inicio" ? "Inicio del toolkit" : p.title,
       hint: GROUP_LABEL.get(p.group) ?? "",
     })),
     ...RESOURCES.map((r) => ({
       key: r.id,
-      slug: "biblioteca",
+      slug: "caja-de-herramientas",
       hash: r.id,
       group: "Recursos",
       code: r.code,
       title: r.title,
-      hint: `${r.org} · ${NEEDS.find((n) => n.id === needOf(r.code))?.label ?? ""}`,
+      hint: `${r.use} · ${CATEGORY_LABEL.get(r.category) ?? ""}`,
     })),
-    ...GLOSSARY.map((g, i) => ({ key: `g-${i + 1}`, slug: "glosario", hash: `g-${i + 1}`, group: "Glosario", title: g.term, hint: g.def })),
   ];
   return entries.map((e) => ({ ...e, haystack: normalize(`${e.code ?? ""} ${e.title} ${e.hint}`) }));
 }
 
-const GROUP_ORDER = ["Páginas", "Acciones", "Plantillas", "Recursos", "Glosario"];
+const GROUP_ORDER = ["Páginas", "Etapas", "Plantillas", "Recursos"];
 const INDEX = buildIndex();
 
 export default function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -56,7 +56,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
     const tokens = normalize(query).split(/\s+/).filter(Boolean);
     const matched = tokens.length
       ? INDEX.filter((e) => tokens.every((t) => e.haystack.includes(t)))
-      : INDEX.filter((e) => e.group === "Páginas" || e.group === "Acciones");
+      : INDEX.filter((e) => e.group === "Páginas" || e.group === "Etapas");
     return matched
       .sort((a, b) => GROUP_ORDER.indexOf(a.group) - GROUP_ORDER.indexOf(b.group))
       .slice(0, 40)
@@ -125,7 +125,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
             setCursor(0);
           }}
           onKeyDown={onKeyDown}
-          placeholder="Busca una acción, plantilla, herramienta o término…"
+          placeholder="Busca una etapa, plantilla o herramienta…"
           aria-label="Buscar"
           role="combobox"
           aria-expanded="true"

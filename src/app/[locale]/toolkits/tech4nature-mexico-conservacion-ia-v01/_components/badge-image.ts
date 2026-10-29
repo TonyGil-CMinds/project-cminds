@@ -1,6 +1,6 @@
 "use client";
 
-import { ACTIONS, IMAGES, TOOLKIT_VERSION } from "../data";
+import { IMAGES, STAGES, TOOLKIT_VERSION } from "../data";
 
 export type BadgeFormat = "wide" | "square";
 
@@ -95,10 +95,10 @@ function medallion(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: num
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
   ctx.font = `700 ${Math.round(r * 0.5)}px ${font}`;
-  ctx.fillText(`${ACTIONS.length}/${ACTIONS.length}`, cx, cy + r * 0.12);
+  ctx.fillText(`${STAGES.length}/${STAGES.length}`, cx, cy + r * 0.12);
   ctx.font = `700 ${Math.round(r * 0.13)}px ${font}`;
   if ("letterSpacing" in ctx) ctx.letterSpacing = "3px";
-  ctx.fillText("ACCIONES", cx, cy + r * 0.36);
+  ctx.fillText("ETAPAS", cx, cy + r * 0.36);
   if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
   ctx.textAlign = "left";
 }
@@ -138,8 +138,8 @@ export async function renderBadge(format: BadgeFormat, name: string): Promise<Bl
   ctx.stroke();
 
   const date = new Intl.DateTimeFormat("es-MX", { day: "numeric", month: "long", year: "numeric" }).format(new Date());
-  const recipient = name.trim() ? `Otorgada a ${name.trim()}` : `${ACTIONS.length} de ${ACTIONS.length} acciones revisadas`;
-  const title = "Toolkit de conservación con inteligencia artificial en México";
+  const recipient = name.trim() ? `Otorgada a ${name.trim()}` : `${STAGES.length} de ${STAGES.length} etapas revisadas`;
+  const title = "Crea tu propio Tech4Nature";
   const eyebrow = "INSIGNIA DE FINALIZACIÓN";
   const meta = `Tech4Nature México · C Minds · ${date}`;
 

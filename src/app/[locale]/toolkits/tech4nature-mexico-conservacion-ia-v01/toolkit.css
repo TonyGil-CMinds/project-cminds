@@ -2021,3 +2021,65 @@ html[data-tk-theme="light"] .tk-dialog { --tk-dialog-bg: #ffffff; box-shadow: 0 
     animation-duration: 0.01ms !important;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Versión 0.2: etapas, caso, preguntas rápidas y plantillas de una página */
+
+.tk-hero-eyebrow { max-width: 640px; margin: -16px 0 28px !important; font-size: 0.9rem; color: var(--tk-dim); }
+
+.tk-ext { color: var(--tk-accent); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.tk-ext:hover { text-decoration-thickness: 2px; }
+
+a.tk-stepmap-card { color: inherit; text-decoration: none; }
+.tk-stepmap-question { margin: 0 !important; font-size: 0.86rem !important; line-height: 1.45; color: var(--tk-text-2); }
+
+.tk-kpis--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.tk-kpi-note { margin-top: auto; font-size: 0.76rem; color: var(--tk-dim); }
+
+.tk-quote { margin: 28px 0; padding: 24px 26px; border-radius: var(--tk-radius); border: 1px solid var(--tk-line); background: radial-gradient(90% 70% at 100% 0%, rgba(var(--tk-sky-rgb), 0.1), transparent 60%), var(--tk-panel); }
+.tk-quote blockquote { margin: 0 0 6px; }
+.tk-quote blockquote p { margin: 0 !important; font-size: clamp(1.3rem, 2.4vw, 1.7rem); font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; color: var(--tk-text) !important; }
+.tk-quote figcaption { margin-bottom: 14px; font-size: 0.82rem; font-weight: 700; color: var(--tk-accent); }
+.tk-quote > p { font-size: 0.94rem; }
+.tk-quote-closing { margin-bottom: 0 !important; padding-top: 12px; border-top: 1px solid var(--tk-line); font-weight: 700; color: var(--tk-text) !important; }
+
+.tk-result p + p { margin-top: 10px !important; }
+
+.tk-tools li { padding-bottom: 12px; }
+
+.tk-elsewhere { margin-top: 32px; }
+.tk-elsewhere-title { margin: 2px 0 8px; font-size: 1.1rem; font-weight: 700; line-height: 1.3; color: var(--tk-text); }
+
+.tk-quiz { display: grid; gap: 10px; margin: 14px 0 16px; padding: 0; list-style: none; }
+.tk-quiz-item { display: flex; align-items: flex-start; gap: 14px; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--tk-line); background: var(--tk-panel); transition: border-color 0.25s; }
+.tk-quiz-item[data-answer="si"] { border-color: rgba(var(--tk-lime-rgb), 0.6); }
+.tk-quiz-item[data-answer="no"] { border-color: rgba(var(--tk-amber-rgb), 0.55); }
+.tk-quiz-n { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--tk-line-2); font-size: 0.8rem; font-weight: 700; color: var(--tk-accent); }
+.tk-quiz-item fieldset { flex: 1; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.tk-quiz-item legend { float: left; max-width: 520px; padding: 0; font-size: 0.96rem; font-weight: 600; line-height: 1.4; color: var(--tk-text); }
+.tk-seg label:has(input:checked)[data-v="pendiente"] { background: #f2c46b; color: #3a2a06; }
+.tk-quiz-result { margin: 0 0 14px; padding: 16px 18px; border-radius: 14px; border: 1px solid var(--tk-line-2); background: var(--tk-panel-2); }
+.tk-quiz-result[data-ready="true"] { border-color: rgba(var(--tk-lime-rgb), 0.6); }
+.tk-quiz-result p { margin: 0 !important; }
+.tk-quiz-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+
+.tk-table--form th { width: 46%; font-size: 0.88rem; letter-spacing: 0; vertical-align: top; background: rgba(var(--tk-lime-rgb), 0.06); border-bottom: 1px solid var(--tk-line); }
+.tk-table--form tr:last-child th { border-bottom: 0; }
+.tk-table--form th small { font-weight: 400; color: var(--tk-dim); }
+.tk-table--form td { min-width: 160px; }
+.tk-table--log td { height: 38px; }
+
+.tk-res-links { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; gap: 12px; }
+.tk-sources-list li { overflow-wrap: anywhere; }
+
+@media (max-width: 1023px) {
+  .tk-kpis--4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .tk-stepmap--stages { grid-template-columns: minmax(0, 1fr); }
+  .tk-quiz-item legend { float: none; }
+  .tk-table--form tr { padding: 0; }
+  .tk-table--form th { display: block; width: auto; border-bottom: 0; }
+  .tk-table--form td { display: block; height: 44px; margin: 0 14px 12px; border-bottom: 1px dashed var(--tk-line-2); }
+  .tk-quote { padding: 20px; }
+}

@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useState } from "react";
 import { AwardBadge } from "@/components/ui/award-badge";
-import { ACTIONS, IMAGES, actionSlug, toolkitHref } from "../data";
+import { IMAGES, STAGES, stageSlug, toolkitHref } from "../data";
 import { useToolkit } from "./ToolkitState";
 import { PageLink } from "./RefLink";
 import { renderBadge, type BadgeFormat } from "./badge-image";
@@ -44,7 +44,7 @@ export function T4NBadge({ width, locked = false }: { width?: number; locked?: b
 }
 
 const POST =
-  "Completé las 12 acciones del Toolkit para iniciativas de conservación con inteligencia artificial en México, de Tech4Nature México y C Minds: monitoreo de biodiversidad, soberanía de datos y decisiones territoriales. #Tech4Nature #ConservaciónConIA #Biodiversidad";
+  "Completé las cinco etapas del toolkit Crea tu propio Tech4Nature, de Tech4Nature México y C Minds: acordar con el territorio, salir a campo, analizar con IA, leer el paisaje y decidir y sostener. #Tech4Nature #ConservaciónConIA #Biodiversidad";
 
 /** Descarga y publicación de la insignia. */
 export function BadgeShare() {
@@ -165,7 +165,7 @@ export function BadgeShare() {
 /** Contenido de la página de insignia: bloqueada con el avance, o desbloqueada para descargar. */
 export function BadgePanel() {
   const { complete, done, markCelebrated } = useToolkit();
-  const pending = ACTIONS.filter((a) => !done.includes(a.id));
+  const pending = STAGES.filter((s) => !done.includes(s.id));
 
   useEffect(() => {
     if (complete) markCelebrated();
@@ -179,19 +179,19 @@ export function BadgePanel() {
         </div>
         <p className="tk-badge-status">
           <strong>
-            {done.length} de {ACTIONS.length}
+            {done.length} de {STAGES.length}
           </strong>{" "}
-          acciones revisadas. Marca cada acción como revisada para desbloquear tu insignia.
+          etapas revisadas. Marca cada etapa como revisada para desbloquear tu insignia.
         </p>
-        <div className="tk-meter" role="progressbar" aria-valuemin={0} aria-valuemax={ACTIONS.length} aria-valuenow={done.length} aria-label="Acciones revisadas">
-          <span style={{ width: `${(done.length / ACTIONS.length) * 100}%` }} />
+        <div className="tk-meter" role="progressbar" aria-valuemin={0} aria-valuemax={STAGES.length} aria-valuenow={done.length} aria-label="Etapas revisadas">
+          <span style={{ width: `${(done.length / STAGES.length) * 100}%` }} />
         </div>
         <ul className="tk-pending">
           {pending.map((a) => (
             <li key={a.id}>
-              <PageLink slug={actionSlug(a)} data-ref={a.code}>
+              <PageLink slug={stageSlug(a)} data-ref={a.code}>
                 <span className="tk-side-code">{a.code}</span>
-                {a.short}
+                Etapa {a.n} · {a.short}
                 <IconArrowRight />
               </PageLink>
             </li>
@@ -207,7 +207,7 @@ export function BadgePanel() {
         <T4NBadge />
       </div>
       <p className="tk-badge-status">
-        <strong>¡Lo lograste!</strong> Revisaste las {ACTIONS.length} acciones del toolkit. Descarga tu insignia y compártela.
+        <strong>¡Lo lograste!</strong> Revisaste las {STAGES.length} etapas del toolkit. Descarga tu insignia y compártela.
       </p>
       <BadgeShare />
     </div>

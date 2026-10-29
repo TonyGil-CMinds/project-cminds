@@ -3,45 +3,43 @@ import Image from "next/image";
 import Link from "next/link";
 import { localePath, type Locale } from "@/i18n/config";
 import {
-  ACTIONS,
   CASE,
-  CONTEXT,
-  EXERCISE,
-  GLOSSARY,
-  GLOSSARY_NOTE,
-  GOVERNANCE,
   GROUPS,
   HERO,
   IMAGES,
-  LIBRARY,
-  NINETY_DAYS,
+  INTRO,
+  LIVING_NOTE,
   PAGES,
-  PURPOSE,
-  READINESS,
-  STATS,
-  STEPS,
+  QUESTIONS,
+  RESOURCES,
+  SOURCES,
+  STAGES,
   TEMPLATES,
+  TEMPLATES_INTRO,
+  TOOLBOX,
+  TOOLKIT_DATE_LABEL,
   TOOLKIT_PATH,
   TOOLKIT_VERSION,
-  actionSlug,
+  WHY,
+  stageSlug,
+  templateSlug,
   toolkitHref,
-  type Action,
+  type Stage,
   type Template,
   type ToolkitPage,
 } from "../data";
 import RouteSelector from "./RouteSelector";
 import ReadinessCheck from "./ReadinessCheck";
-import EffortLab from "./EffortLab";
 import ResourceLibrary from "./ResourceLibrary";
 import { TemplateDownloads, TemplateFolder, TemplateShelf } from "./TemplateLibrary";
 import { ActionDone, ActionFinish, CopyButton } from "./SmallIslands";
 import { BadgePanel } from "./Badge";
-import { BlockView, DataTable, Ref, Refs, Rich, slugId } from "./rich";
+import { ExternalLink, Rich, slugId } from "./rich";
 import { IconArrowRight, IconCalendar, IconCheckCircle, IconChevronLeft, IconExternal, IconPin } from "./icons";
 
 const GROUP_LABEL = new Map(GROUPS.map((g) => [g.id, g.label]));
 
-export const CITATION = `C Minds (2026). Toolkit para iniciativas de conservación con inteligencia artificial en México. Aprendizajes de Tech4Nature México 2022–2026. Versión de trabajo ${TOOLKIT_VERSION}. https://www.cminds.co/es${TOOLKIT_PATH}`;
+export const CITATION = `C Minds (2026). ${HERO.title}. ${HERO.subtitle}. Versión ${TOOLKIT_VERSION}. https://www.cminds.co/es${TOOLKIT_PATH}`;
 
 // ---------------------------------------------------------------------------
 // Piezas comunes
@@ -141,10 +139,7 @@ export function Pager({ page, locale }: { page: ToolkitPage; locale: Locale }) {
           <small>
             <IconChevronLeft /> Anterior
           </small>
-          <span>
-            {prev.code ? `${prev.code} · ` : ""}
-            {prev.label}
-          </span>
+          <span>{prev.label}</span>
         </Link>
       ) : (
         count
@@ -155,10 +150,7 @@ export function Pager({ page, locale }: { page: ToolkitPage; locale: Locale }) {
           <small>
             Siguiente <IconArrowRight />
           </small>
-          <span>
-            {next.code ? `${next.code} · ` : ""}
-            {next.label}
-          </span>
+          <span>{next.label}</span>
         </Link>
       ) : (
         count
@@ -203,6 +195,28 @@ function CaseCard({ locale }: { locale: Locale }) {
   );
 }
 
+/** Tabla de las cinco etapas: pregunta que responde y lo que tendrás al terminar. */
+function StageMap({ locale }: { locale: Locale }) {
+  return (
+    <ol className="tk-stepmap tk-stepmap--stages">
+      {STAGES.map((s) => (
+        <li key={s.id} data-reveal>
+          <Link className="tk-stepmap-card" href={toolkitHref(locale, stageSlug(s))} data-ref={s.code}>
+            <span className="tk-stepmap-n" aria-hidden="true">
+              {s.n}
+            </span>
+            <h3 className="tk-stepmap-title">{s.title}</h3>
+            <p className="tk-stepmap-question">{s.question}</p>
+            <p className="tk-stepmap-product">
+              <strong>Al terminar tendrás:</strong> {s.result}
+            </p>
+          </Link>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Portada
 
@@ -222,18 +236,21 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
           </ol>
         </nav>
         <div className="tk-hero-chips" data-hero>
-          <span className="tk-chip tk-chip--lime">Versión de trabajo {TOOLKIT_VERSION}</span>
+          <span className="tk-chip tk-chip--lime">Versión {TOOLKIT_VERSION}</span>
           <span className="tk-chip">
             <IconCalendar />
-            Octubre de 2026
+            {TOOLKIT_DATE_LABEL}
           </span>
-          <span className="tk-chip">{HERO.eyebrow}</span>
+          <span className="tk-chip">C Minds</span>
         </div>
         <h1 id="tk-page-title" className="tk-h1 tk-h1--hero">
-          Toolkit para iniciativas de conservación con <span className="tk-grad">inteligencia artificial</span> en México
+          Crea tu propio <span className="tk-grad">Tech4Nature</span>
         </h1>
         <p className="tk-hero-sub" data-hero>
           {HERO.subtitle}
+        </p>
+        <p className="tk-hero-eyebrow" data-hero>
+          {HERO.eyebrow}
         </p>
         <div className="tk-banner" data-hero>
           <Image className="tk-banner-img" src={IMAGES.hero.src} alt={IMAGES.hero.alt} fill priority sizes="(max-width: 1023px) 100vw, 780px" />
@@ -242,7 +259,7 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
             <div className="tk-banner-meta">
               <span className="tk-chip">
                 <IconPin />
-                Costa norte de Yucatán
+                Reserva Estatal de Dzilam, Yucatán
               </span>
               <span className="tk-chip">C Minds · SDS Yucatán · Grupo Chac Mool</span>
             </div>
@@ -250,30 +267,29 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
         </div>
       </header>
 
-      <section aria-labelledby="ruta">
-        <H2 id="ruta">Comienza por la ruta que corresponde a tu responsabilidad</H2>
-        <RouteSelector />
-        <div className="tk-start" data-reveal>
-          <Link className="tk-cta" href={toolkitHref(locale, "contexto")}>
-            Empezar el recorrido
-            <IconArrowRight />
-          </Link>
-          <Link className="tk-ghost" href={toolkitHref(locale, actionSlug(ACTIONS[0]))}>
-            Ir a las 12 acciones
-          </Link>
-          <span>{PAGES.length} páginas · lectura por capítulos</span>
-        </div>
-      </section>
-
-      <section aria-labelledby="proposito">
-        <H2 id="proposito">Propósito</H2>
-        {PURPOSE.paragraphs.map((p, i) => (
+      <section aria-labelledby="para-ti">
+        <H2 id="para-ti">¿Este toolkit es para ti?</H2>
+        {INTRO.paragraphs.map((p, i) => (
           <p key={i} data-reveal>
-            <Rich text={p} />
+            {p}
           </p>
         ))}
+        <h3 className="tk-h3">Con este toolkit podrás</h3>
+        <ul className="tk-outputs">
+          {INTRO.outcomes.map((o, i) => (
+            <li key={o} className="tk-output" data-reveal>
+              <span className="tk-output-n">{i + 1}</span>
+              <span>{o}</span>
+            </li>
+          ))}
+        </ul>
         <div className="tk-stats" data-reveal>
-          {STATS.map((s) => (
+          {[
+            { value: STAGES.length, label: "etapas" },
+            { value: QUESTIONS.items.length, label: "preguntas rápidas" },
+            { value: TEMPLATES.length, label: "plantillas" },
+            { value: RESOURCES.length, label: "herramientas y recursos" },
+          ].map((s) => (
             <div key={s.label} className="tk-stat">
               <span className="tk-stat-num" data-count={s.value}>
                 {s.value}
@@ -282,80 +298,27 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
             </div>
           ))}
         </div>
-        <div className="tk-callout" data-reveal>
-          <span className="tk-callout-label">La unidad de trabajo</span>
-          <p>{PURPOSE.unit}</p>
-        </div>
-        <h3 className="tk-h3">Qué se puede producir con esta guía</h3>
-        <ul className="tk-outputs">
-          {PURPOSE.outputs.map((o, i) => (
-            <li key={o} className="tk-output" data-reveal>
-              <span className="tk-output-n">{i + 1}</span>
-              <span>{o}</span>
-            </li>
-          ))}
-        </ul>
-        <p data-reveal>
-          <Rich text={PURPOSE.reference} />
-        </p>
       </section>
 
-      <section aria-labelledby="como-usar">
-        <H2 id="como-usar">Cómo utilizar el toolkit</H2>
-        <p data-reveal>
-          Puedes entrar a una acción específica si ya dispones de los requisitos previos, manteniendo vinculados el diseño
-          ecológico, los acuerdos de gobernanza y la continuidad operativa.
-        </p>
-        <ol className="tk-stepmap">
-          {STEPS.map((s) => (
-            <li key={s.id} data-reveal>
-              <div className="tk-stepmap-card">
-                <span className="tk-stepmap-n" aria-hidden="true">
-                  {s.n}
-                </span>
-                <h3 className="tk-stepmap-title">{s.title}</h3>
-                <div className="tk-stepmap-actions">
-                  {ACTIONS.filter((a) => a.step === s.n).map((a) => (
-                    <Link key={a.id} href={toolkitHref(locale, actionSlug(a))} data-ref={a.code}>
-                      <span className="tk-side-code">{a.code}</span>
-                      {a.short}
-                    </Link>
-                  ))}
-                </div>
-                <p className="tk-stepmap-product">
-                  <strong>Producto:</strong> {s.product}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
-        <h3 className="tk-h3">Cómo leer los códigos</h3>
-        <div className="tk-legend" data-reveal>
-          <div>
-            <span className="tk-ref tk-ref--a">A</span>
-            Una acción, con su propia página.
-          </div>
-          <div>
-            <span className="tk-ref tk-ref--t">T</span>
-            Una plantilla descargable.
-          </div>
-          <div>
-            <span className="tk-ref tk-ref--r">R</span>
-            Un recurso de la biblioteca.
-          </div>
-          <div>
-            <span className="tk-ref tk-ref--e">E</span>
-            Evidencia documental del caso.
-          </div>
+      <section aria-labelledby="como-recorrerlo">
+        <H2 id="como-recorrerlo">Cómo recorrerlo</H2>
+        <p data-reveal>{INTRO.howTo}</p>
+        <RouteSelector />
+        <div className="tk-start" data-reveal>
+          <Link className="tk-cta" href={toolkitHref(locale, "por-que-importa")}>
+            Empezar el recorrido
+            <IconArrowRight />
+          </Link>
+          <Link className="tk-ghost" href={toolkitHref(locale, stageSlug(STAGES[0]))}>
+            Ir a las cinco etapas
+          </Link>
+          <span>{PAGES.length} páginas · lectura por capítulos</span>
         </div>
-        <div className="tk-callout tk-callout--sky" data-reveal>
-          <span className="tk-callout-label">Acompañamiento especializado</span>
-          <p>
-            Las plantillas son propuestas de trabajo de este toolkit y no instrumentos oficiales de certificación. Una
-            interfaz accesible permite comenzar; las estimaciones de poblaciones, la validación de modelos y los
-            procedimientos de política pública requieren acompañamiento especializado.
-          </p>
-        </div>
+      </section>
+
+      <section aria-labelledby="cinco-etapas">
+        <H2 id="cinco-etapas">Las cinco etapas</H2>
+        <StageMap locale={locale} />
       </section>
 
       <Pager page={page} locale={locale} />
@@ -366,48 +329,38 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
 // ---------------------------------------------------------------------------
 // Empezar
 
-export function ContextoPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
+export function PorQueImportaPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   return (
-    <PageFrame page={page} locale={locale} lead={<p>{CONTEXT.intro[0]}</p>}>
-      <p data-reveal>{CONTEXT.intro[1]}</p>
-      <H2>Datos que orientan el diseño</H2>
+    <PageFrame page={page} locale={locale} lead={<p>{WHY.intro}</p>}>
+      <H2>Datos y qué significan para tu proyecto</H2>
       <div className="tk-facts">
-        {CONTEXT.cards.map((c) => (
+        {WHY.facts.map((c) => (
           <div key={c.figure} className="tk-fact" data-reveal>
             <span className="tk-fact-figure">{c.figure}</span>
-            <p className="tk-fact-label">{c.label}</p>
-            <p className="tk-fact-text">
-              <Rich text={c.fact} />
-            </p>
+            <p className="tk-fact-text">{c.fact}</p>
             <div className="tk-fact-imp">
-              <strong>Implicación</strong>
-              <p>{c.implication}</p>
-              <p className="tk-fact-note">{c.note}</p>
+              <strong>Qué significa para tu proyecto</strong>
+              <p>{c.meaning}</p>
             </div>
           </div>
         ))}
       </div>
-      <H2>Integrar la biodiversidad en la toma de decisiones</H2>
-      {CONTEXT.mainstreaming.map((p, i) => (
-        <p key={i} data-reveal>
-          <Rich text={p} />
-        </p>
-      ))}
+      <p className="tk-meta-line">
+        Consulta las <Link href={toolkitHref(locale, "fuentes")}>fuentes de los datos</Link>.
+      </p>
     </PageFrame>
   );
 }
 
 export function CasoPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   return (
-    <PageFrame page={page} locale={locale} kicker="Caso de aplicación" lead={<p>{CASE.intro[0]}</p>}>
-      <p data-reveal>
-        <Rich text={CASE.intro[1]} />
-      </p>
-      <H2>Lo que documentó la iniciativa</H2>
-      <ul className="tk-kpis">
+    <PageFrame page={page} locale={locale} kicker="El caso" lead={<p>{CASE.intro[0]}</p>}>
+      <p data-reveal>{CASE.intro[1]}</p>
+      <H2>Resultados</H2>
+      <ul className="tk-kpis tk-kpis--4">
         {CASE.kpis.map((k) => (
           <li key={k.label} className="tk-kpi" data-reveal>
-            {"text" in k && k.text ? (
+            {k.value === undefined ? (
               <span className="tk-kpi-num">{k.text}</span>
             ) : (
               <span className="tk-kpi-num" data-count={k.value} data-prefix={k.prefix} data-suffix={k.suffix}>
@@ -417,107 +370,47 @@ export function CasoPage({ page, locale }: { page: ToolkitPage; locale: Locale }
               </span>
             )}
             <span className="tk-kpi-label">{k.label}</span>
-            <details>
-              <summary>Aprendizaje transferible</summary>
-              <p>
-                <Rich text={k.evidence} />
-              </p>
-              <p>{k.learning}</p>
-            </details>
+            {k.note ? <span className="tk-kpi-note">{k.note}</span> : null}
           </li>
         ))}
       </ul>
-      <H2 id="fuentes-caso">Fuentes del caso</H2>
-      <div className="tk-sources">
-        {CASE.sources.map((s) => (
-          <div key={s.code} className="tk-source" data-reveal>
-            <span className="tk-ref tk-ref--e">{s.code}</span>
-            <strong>{s.title}</strong>
-            {s.detail}
-          </div>
+      <H2>Línea de tiempo</H2>
+      <ol className="tk-ninety">
+        {CASE.timeline.map((t) => (
+          <li key={t.range}>
+            <span className="tk-ninety-range">{t.range}</span>
+            <div className="tk-ninety-card">
+              <p>{t.text}</p>
+            </div>
+          </li>
         ))}
-      </div>
+      </ol>
+      <figure className="tk-quote" data-reveal>
+        <blockquote>
+          <p>“{CASE.story.quote}”</p>
+        </blockquote>
+        <figcaption>{CASE.story.author}</figcaption>
+        {CASE.story.paragraphs.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
+        <p className="tk-quote-closing">{CASE.story.closing}</p>
+      </figure>
       <CaseCard locale={locale} />
     </PageFrame>
   );
 }
 
-export function GestionPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
-  return (
-    <PageFrame page={page} locale={locale} lead={<p><Rich text={GOVERNANCE.intro} /></p>}>
-      <div className="tk-bigfig" data-reveal>
-        <span className="tk-bigfig-num">
-          <span data-count={104304}>104,304</span> <small>ha</small>
-        </span>
-        <p>
-          Superficie de la Reserva Estatal de Dzilam tras el <strong>Acuerdo 76 de 2024</strong>. La decisión corresponde al
-          Gobierno de Yucatán; la superficie designada no equivale a la superficie muestreada. <Ref code="R65" />
-        </p>
-      </div>
-      <H2>Un resultado de política pública con fundamento verificable</H2>
-      {GOVERNANCE.policy.map((p, i) => (
-        <p key={i} data-reveal>
-          <Rich text={p} />
-        </p>
-      ))}
-      <ol className="tk-chain" aria-label="Cadena documental">
-        {GOVERNANCE.chain.map((step, i) => (
-          <li key={step}>
-            <span className="tk-chain-dot" aria-hidden="true">
-              {i + 1}
-            </span>
-            {step}
-          </li>
-        ))}
-      </ol>
-      <H2>Coordinación y conocimiento social</H2>
-      {GOVERNANCE.coordination.map((p, i) => (
-        <p key={i} data-reveal>
-          <Rich text={p} />
-        </p>
-      ))}
-      <H2>Aplicación en otro territorio</H2>
-      <ul className="tk-list" data-reveal>
-        {GOVERNANCE.apply.map((li) => (
-          <li key={li}>{li}</li>
-        ))}
-      </ul>
-    </PageFrame>
-  );
-}
-
-export function DiagnosticoPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
-  return (
-    <PageFrame page={page} locale={locale} kicker="Diagnóstico de preparación" lead={<p>{READINESS.intro}</p>}>
-      <H2>Las ocho condiciones</H2>
-      <ReadinessCheck />
-      <H2>Elegir una escala viable</H2>
-      {READINESS.scale.map((p, i) => (
-        <p key={i} data-reveal>
-          {p}
-        </p>
-      ))}
-      <div className="tk-callout" data-reveal>
-        <span className="tk-callout-label">Producto</span>
-        <p>
-          <Rich text={READINESS.product} />
-        </p>
-      </div>
-    </PageFrame>
-  );
-}
-
 // ---------------------------------------------------------------------------
-// Acciones
+// Etapas
 
 function BioScannerInline() {
   return (
     <aside className="tk-inline-promo" aria-label="BioScanner">
       <Image src={IMAGES.bioscanner.src} alt={IMAGES.bioscanner.alt} width={482} height={298} sizes="180px" />
       <div>
-        <span className="tk-eyebrow">Plataforma de Tech4Nature</span>
-        <p className="tk-promo-title">Prueba el recorrido con un lote pequeño</p>
-        <p>Revisión humana, colaboración con permisos e identidades de jaguar en una interfaz en español.</p>
+        <span className="tk-eyebrow">Plataforma de Tech4Nature México</span>
+        <p className="tk-promo-title">Empieza con un lote pequeño</p>
+        <p>Acceso con cuenta, actualmente en etapa de acceso anticipado. Interfaz en español, inglés, portugués y maya.</p>
         <div className="tk-inline-promo-actions">
           <a className="tk-cta" href="https://app.bioscanner.io" target="_blank" rel="noopener noreferrer">
             Entrar a BioScanner
@@ -529,39 +422,48 @@ function BioScannerInline() {
   );
 }
 
-export function ActionPage({ page, locale, action }: { page: ToolkitPage; locale: Locale; action: Action }) {
-  const step = STEPS[action.step - 1];
-  const index = ACTIONS.indexOf(action);
+export function StagePage({ page, locale, stage }: { page: ToolkitPage; locale: Locale; stage: Stage }) {
   const nextPage = PAGES[PAGES.findIndex((p) => p.slug === page.slug) + 1];
+  const label = `Etapa ${stage.n}`;
   return (
     <PageFrame
       page={page}
       locale={locale}
-      kicker={`Paso ${step.n} · ${step.title}`}
-      aside={<ActionDone id={action.id} code={action.code} />}
+      kicker={`Etapa ${stage.n} de ${STAGES.length}`}
+      lead={
+        <p>
+          <strong>Para qué sirve.</strong> {stage.purpose}
+        </p>
+      }
+      aside={<ActionDone id={stage.id} code={stage.code} label={label} />}
     >
       <div className="tk-stepstrip" data-hero>
         <span className="tk-stepstrip-media">
-          <img src={step.image.src} alt="" loading="lazy" decoding="async" width={120} height={90} />
+          <img src={stage.image.src} alt="" loading="lazy" decoding="async" width={120} height={90} />
         </span>
         <span>
-          <small>
-            Acción {index + 1} de {ACTIONS.length} · Paso {step.n} de {STEPS.length}
-          </small>
-          <strong>Producto del paso:</strong> {step.product}
+          <small>{stage.question}</small>
+          <strong>Al terminar tendrás:</strong> {stage.result}
         </span>
       </div>
 
-      <div className="tk-result" data-hero>
-        <span className="tk-callout-label">Resultado esperado</span>
-        <p>
-          <Rich text={action.result} />
-        </p>
+      <H2>{stage.dzilam.title}</H2>
+      <div className="tk-result" data-reveal>
+        {stage.dzilam.paragraphs.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
       </div>
 
-      <H2>{action.procedureTitle}</H2>
+      {stage.id === "e3" ? (
+        <figure className="tk-figure">
+          <Image src={IMAGES.jaguar.src} alt={IMAGES.jaguar.alt} width={487} height={322} sizes="(max-width: 760px) 100vw, 720px" />
+          <figcaption>BioScanner identifica jaguares de forma individual por el patrón de sus manchas.</figcaption>
+        </figure>
+      ) : null}
+
+      <H2>Pasos clave</H2>
       <ol className="tk-steps">
-        {action.procedure.map((p, i) => (
+        {stage.steps.map((p, i) => (
           <li key={i}>
             <span className="tk-steps-n" aria-hidden="true">
               {i + 1}
@@ -573,99 +475,58 @@ export function ActionPage({ page, locale, action }: { page: ToolkitPage; locale
         ))}
       </ol>
 
-      {action.id === "a05" ? <BioScannerInline /> : null}
-      {action.id === "a06" ? (
-        <figure className="tk-figure">
-          <Image src={IMAGES.jaguar.src} alt={IMAGES.jaguar.alt} width={487} height={322} sizes="(max-width: 760px) 100vw, 720px" />
-          <figcaption>
-            Las rosetas permiten comparar individuos; la calidad de imagen y el flanco visible condicionan cada coincidencia.
-          </figcaption>
-        </figure>
-      ) : null}
+      <CheckBox title="Aprendizaje" text={stage.learning} />
 
-      {action.blocks.map((b) => (
-        <BlockView key={b.title} block={b} level={2} />
-      ))}
+      <H2>Herramientas para empezar</H2>
+      <ul className="tk-list tk-tools">
+        {stage.tools.map((t) => (
+          <li key={t}>
+            <Rich text={t} />
+          </li>
+        ))}
+      </ul>
+      {stage.id === "e3" ? <BioScannerInline /> : null}
+      <p className="tk-meta-line">
+        Más opciones, filtrables por idioma, acceso y nivel, en la{" "}
+        <Link href={toolkitHref(locale, "caja-de-herramientas")}>caja de herramientas</Link>.
+      </p>
 
-      <CheckBox title="Comprobación" text={action.check} />
+      <section className="tk-callout tk-callout--sky tk-elsewhere" aria-labelledby={`otro-${stage.id}`} data-reveal>
+        <span className="tk-callout-label">En otro territorio</span>
+        <h2 id={`otro-${stage.id}`} className="tk-elsewhere-title" data-toc={`En otro territorio: ${stage.elsewhere.place}`}>
+          {stage.elsewhere.place.charAt(0).toUpperCase() + stage.elsewhere.place.slice(1)}
+        </h2>
+        <p>{stage.elsewhere.text}</p>
+        <p>
+          <ExternalLink href={stage.elsewhere.link.url}>{stage.elsewhere.link.label}</ExternalLink>
+        </p>
+      </section>
 
-      <H2>Plantillas y recursos</H2>
-      <div className="tk-action-foot">
-        <div>
-          <span>Plantillas</span>
-          <Refs codes={action.templates} />
-        </div>
-        <div>
-          <span>Recursos</span>
-          <Refs codes={action.resources} />
-        </div>
-      </div>
-
-      <ActionFinish id={action.id} code={action.code} nextSlug={nextPage?.slug} nextLabel={nextPage?.label} />
+      <ActionFinish id={stage.id} code={stage.code} label={label} nextSlug={nextPage?.slug} nextLabel={nextPage?.label} />
     </PageFrame>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Práctica
+// Herramientas
 
-export function NoventaPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
+export function PreguntasPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   return (
-    <PageFrame page={page} locale={locale} lead={<p>{NINETY_DAYS.intro}</p>}>
-      <H2>Secuencia orientativa</H2>
-      <ol className="tk-ninety">
-        {NINETY_DAYS.periods.map((p) => (
-          <li key={p.range}>
-            <span className="tk-ninety-range">{p.range}</span>
-            <div className="tk-ninety-card">
-              <p>{p.work}</p>
-              <small>
-                <strong>Producto comprobable:</strong> <Rich text={p.product} />
-              </small>
-            </div>
-          </li>
-        ))}
-      </ol>
-      <H2>Tres combinaciones de herramientas</H2>
-      <div className="tk-combos">
-        {NINETY_DAYS.combos.map((c) => (
-          <div key={c.title} className="tk-combo" data-reveal>
-            <h3>{c.title}</h3>
-            <p>{c.text}</p>
-            <Refs codes={c.tools} />
-          </div>
-        ))}
-      </div>
-      <p data-reveal>
-        <Rich text={NINETY_DAYS.closing} />
-      </p>
+    <PageFrame page={page} locale={locale} lead={<p>{QUESTIONS.intro}</p>}>
+      <ReadinessCheck />
     </PageFrame>
   );
 }
 
-export function EjercicioPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
+export function CajaPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   return (
-    <PageFrame page={page} locale={locale} kicker="Ejercicio" lead={<p>{EXERCISE.situation}</p>}>
-      <div className="tk-callout tk-callout--amber" data-reveal>
-        <span className="tk-callout-label">Cifras ficticias</span>
-        <p>{EXERCISE.intro}</p>
-      </div>
-      <H2>Datos de las dos campañas</H2>
-      <DataTable table={EXERCISE.table} />
-      <H2>Laboratorio de cálculo</H2>
-      <EffortLab />
-      <H2>Cómo trabajar el caso</H2>
-      <ul className="tk-list">
-        {EXERCISE.howTo.map((li) => (
-          <li key={li}>
-            <Rich text={li} />
-          </li>
-        ))}
-      </ul>
-      <div className="tk-callout" data-reveal>
-        <span className="tk-callout-label">Resultado esperado del ejercicio</span>
-        <p>{EXERCISE.outcome}</p>
-      </div>
+    <PageFrame page={page} locale={locale} lead={<p>{TOOLBOX.intro}</p>}>
+      <ResourceLibrary />
+      <p className="tk-meta-line">
+        La inclusión de una herramienta no supone un aval institucional. Si encuentras un enlace roto o una herramienta
+        nueva, escríbenos a través de la{" "}
+        <Link href={localePath(locale, "/aiforbiodiversity/techfornature")}>página de Tech4Nature México</Link>.
+      </p>
     </PageFrame>
   );
 }
@@ -680,86 +541,128 @@ export function PlantillasPage({ page, locale }: { page: ToolkitPage; locale: Lo
       locale={locale}
       lead={
         <p>
-          Cada plantilla se descarga como hoja de trabajo (.csv, con columnas para respuesta, responsable y fecha) o como texto
-          (.md) para duplicar en tu editor. Abre una carpeta para ver sus campos; el menú ··· la abre o la descarga.
+          {TEMPLATES_INTRO} Descarga cada una como hoja de trabajo (.csv) o como texto (.md) para duplicar en tu editor. Abre
+          una carpeta para ver sus campos; el menú ··· la abre o la descarga.
         </p>
       }
     >
       <TemplateShelf />
-      <p className="tk-meta-line">Son propuestas de trabajo de este toolkit y no instrumentos oficiales de certificación.</p>
     </PageFrame>
+  );
+}
+
+/** Vista de la plantilla: una fila por campo, o un registro con sus columnas. */
+function TemplateSheet({ template }: { template: Template }) {
+  if (template.layout === "log") {
+    return (
+      <div className="tk-table-wrap">
+        <table className="tk-table tk-table--log">
+          <thead>
+            <tr>
+              {template.fields.map((f) => (
+                <th key={f.label} scope="col">
+                  {f.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {[0, 1, 2].map((r) => (
+              <tr key={r}>
+                {template.fields.map((f) => (
+                  <td key={f.label} data-label={f.label}>
+                    &nbsp;
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  }
+  return (
+    <div className="tk-table-wrap">
+      <table className="tk-table tk-table--form">
+        <tbody>
+          {template.fields.map((f) => (
+            <tr key={f.label}>
+              <th scope="row">
+                {f.label}
+                {f.hint ? <small> ({f.hint})</small> : null}
+              </th>
+              <td aria-label="Respuesta">&nbsp;</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 
 export function TemplatePage({ page, locale, template }: { page: ToolkitPage; locale: Locale; template: Template }) {
   const index = TEMPLATES.indexOf(template);
+  const stage = STAGES.find((s) => s.code === template.stage)!;
   return (
     <PageFrame
       page={page}
       locale={locale}
       kicker="Plantilla"
-      lead={<p>{template.intro}</p>}
+      lead={<p>{TEMPLATES_INTRO}</p>}
       aside={<TemplateFolder template={template} index={index} width={230} />}
     >
       <div className="tk-template-bar" data-hero>
         <TemplateDownloads id={template.id} />
         <div className="tk-viewer-links">
-          <span>Acción asociada:</span>
-          <Refs codes={template.actions} />
-          {template.resources.length ? (
-            <>
-              <span>Recursos:</span>
-              <Refs codes={template.resources} />
-            </>
-          ) : null}
+          <span>Se usa en:</span>
+          <Link href={toolkitHref(locale, stageSlug(stage))} data-ref={stage.code}>
+            Etapa {stage.n} · {stage.title}
+          </Link>
         </div>
       </div>
-      <H2>Campos</H2>
-      <DataTable table={template.table} />
-      {template.sections.map((s) => (
-        <BlockView key={s.title} block={s} level={2} />
-      ))}
-      <CheckBox title="Control de salida" text={template.control} />
+      <H2>{template.layout === "log" ? "Columnas" : "Campos"}</H2>
+      <TemplateSheet template={template} />
+      <p className="tk-meta-line">
+        Otras plantillas:{" "}
+        {TEMPLATES.filter((t) => t.id !== template.id).map((t, i, list) => (
+          <span key={t.id}>
+            <Link href={toolkitHref(locale, templateSlug(t))} data-ref={t.code}>
+              {t.title}
+            </Link>
+            {i < list.length - 1 ? " · " : ""}
+          </span>
+        ))}
+      </p>
     </PageFrame>
   );
 }
 
 // ---------------------------------------------------------------------------
-// Recursos y cierre
+// Cierre
 
-export function BibliotecaPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
+export function FuentesPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   return (
-    <PageFrame page={page} locale={locale} kicker="Biblioteca" lead={<p>{LIBRARY.intro}</p>}>
-      <ResourceLibrary />
-      <H2>Cómo elegir</H2>
-      <p data-reveal>{LIBRARY.howTo}</p>
-      <p data-reveal>
-        ES identifica recursos disponibles en español; EN en inglés y PT en portugués. «Multilingüe» puede referirse a la
-        interfaz o a parte de la documentación, según el recurso.
-      </p>
-      <H2>Alcance de la selección</H2>
-      <div className="tk-callout tk-callout--amber" data-reveal>
-        <p>{LIBRARY.scope}</p>
-        <p>
-          <Ref code="R03" /> identifica el repositorio actual de BioScanner como recurso por habilitar. Los recursos externos
-          no deben confundirse con componentes de la plataforma.
-        </p>
-      </div>
-    </PageFrame>
-  );
-}
-
-export function GlosarioPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
-  return (
-    <PageFrame page={page} locale={locale} kicker="Glosario" lead={<p>{GLOSSARY_NOTE}</p>}>
-      <dl className="tk-glossary">
-        {GLOSSARY.map((g, i) => (
-          <div key={g.term} id={`g-${i + 1}`} className="tk-term" data-reveal>
-            <dt>{g.term}</dt>
-            <dd>{g.def}</dd>
-          </div>
+    <PageFrame page={page} locale={locale} kicker="Cierre">
+      <ul className="tk-list tk-sources-list">
+        {SOURCES.map((s) => (
+          <li key={s}>
+            <Rich text={s} />
+          </li>
         ))}
-      </dl>
+      </ul>
+      <div className="tk-callout" data-reveal>
+        <span className="tk-callout-label">Documento vivo</span>
+        <p>{LIVING_NOTE}</p>
+      </div>
+      <H2>Cómo citar</H2>
+      <div className="tk-cite-box" data-reveal>
+        <p>{CITATION}</p>
+        <CopyButton text={CITATION} label="Copiar cita" />
+      </div>
+      <p className="tk-meta-line">
+        Las herramientas de cada etapa están reunidas en la{" "}
+        <Link href={toolkitHref(locale, "caja-de-herramientas")}>caja de herramientas</Link>.
+      </p>
     </PageFrame>
   );
 }
@@ -770,17 +673,12 @@ export function InsigniaPage({ page, locale }: { page: ToolkitPage; locale: Loca
       page={page}
       locale={locale}
       kicker="Cierre"
-      lead={<p>Revisa las {ACTIONS.length} acciones para desbloquear la insignia de Tech4Nature México. Puedes descargarla y publicarla en tus redes.</p>}
+      lead={<p>Revisa las {STAGES.length} etapas para desbloquear la insignia del toolkit. Puedes descargarla y publicarla en tus redes.</p>}
     >
       <BadgePanel />
-      <H2>Cómo citar</H2>
-      <div className="tk-cite-box" data-reveal>
-        <p>{CITATION}</p>
-        <CopyButton text={CITATION} label="Copiar cita" />
-      </div>
       <CaseCard locale={locale} />
       <p className="tk-meta-line">
-        Versión de trabajo {TOOLKIT_VERSION} · Octubre de 2026 · Revisión editorial de enlaces: 27 de octubre de 2026.
+        Versión {TOOLKIT_VERSION} · {TOOLKIT_DATE_LABEL} · Información de acceso revisada en octubre de 2026.
       </p>
     </PageFrame>
   );

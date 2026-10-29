@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
-import { ACTIONS, AUDIENCES, STORAGE_KEY, targetOf, type Audience } from "../data";
+import { AUDIENCES, STAGES, STORAGE_KEY, targetOf, type Audience } from "../data";
 import { useLocalStore } from "./useLocalStore";
 
 type Persisted = { route: string | null; done: string[]; celebrated: boolean };
@@ -15,7 +15,7 @@ type ToolkitContextValue = {
   isDone: (id: string) => boolean;
   /** Si la página (por slug) forma parte de la ruta elegida. */
   inRoute: (slug: string) => boolean;
-  /** Las 12 acciones están revisadas: la insignia está desbloqueada. */
+  /** Las cinco etapas están revisadas: la insignia está desbloqueada. */
   complete: boolean;
   /** El aviso de insignia ya se mostró. */
   celebrated: boolean;
@@ -24,7 +24,7 @@ type ToolkitContextValue = {
 
 const ToolkitContext = createContext<ToolkitContextValue | null>(null);
 
-const ACTION_IDS = new Set(ACTIONS.map((a) => a.id));
+const STAGE_IDS = new Set(STAGES.map((s) => s.id));
 
 /** Valida lo guardado: datos ajenos o de otra versión se descartan. */
 function parse(raw: string | null): Persisted {
@@ -32,7 +32,7 @@ function parse(raw: string | null): Persisted {
     const parsed = (raw ? JSON.parse(raw) : {}) as Partial<Persisted>;
     return {
       route: typeof parsed.route === "string" ? parsed.route : null,
-      done: Array.isArray(parsed.done) ? parsed.done.filter((d) => typeof d === "string" && ACTION_IDS.has(d)) : [],
+      done: Array.isArray(parsed.done) ? parsed.done.filter((d) => typeof d === "string" && STAGE_IDS.has(d)) : [],
       celebrated: parsed.celebrated === true,
     };
   } catch {
@@ -67,7 +67,7 @@ export function ToolkitProvider({ children }: { children: ReactNode }) {
       setDone,
       isDone: (id) => state.done.includes(id),
       inRoute: (slug) => slugs.has(slug),
-      complete: state.done.length === ACTIONS.length,
+      complete: state.done.length === STAGES.length,
       celebrated: state.celebrated,
       markCelebrated,
     };
@@ -83,7 +83,7 @@ export function useToolkit(): ToolkitContextValue {
 }
 
 export const SECTION_LABELS: Record<string, string> = {
-  contexto: "Contexto",
-  caso: "Caso Tech4Nature",
-  biblioteca: "Biblioteca",
+  ...Object.fromEntries(STAGES.map((s) => [s.code, `Etapa ${s.n} · ${s.title}`])),
+  "tech4nature-mexico": "Tech4Nature México en una mirada",
+  "caja-de-herramientas": "Caja de herramientas",
 };
