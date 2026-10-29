@@ -351,7 +351,7 @@ export const STAGES: Stage[] = [
     learning:
       "La IA hizo posible trabajar con un archivo de más de 300,000 medios, y la revisión experta le dio confianza a los resultados. La participación de estudiantes en el desarrollo y la revisión de modelos formó además nuevas capacidades en la región.",
     tools: [
-      "[BioScanner](https://app.bioscanner.io) (C Minds). Acceso con cuenta, actualmente en etapa de acceso anticipado. Presentación en [bioscanner.io/es](https://bioscanner.io/es).",
+      "[BioScanner](https://app.bioscanner.io) (C Minds). Acceso con cuenta, actualmente en etapa de acceso anticipado.",
       "[Repositorio público de Tech4Nature México en GitHub](https://github.com/aiforclimate/tech4naturemexico), con el cuaderno del modelo de identificación de jaguares.",
       "[Wildlife Insights](https://www.wildlifeinsights.org) (Google y aliados), plataforma en la nube gratuita para la mayoría de organizaciones de la región.",
       "[AddaxAI](https://github.com/PetervanLunteren/AddaxAI), programa de escritorio gratuito que usa MegaDetector sin programar y funciona sin internet.",
