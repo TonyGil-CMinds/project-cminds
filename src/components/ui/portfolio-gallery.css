@@ -1,0 +1,198 @@
+/* Portfolio Gallery — plain-CSS port of the Tailwind original.
+   Theme it through the custom properties on .pg-section. */
+
+.pg-section {
+  --pg-bg: rgba(255, 255, 255, 0.025);
+  --pg-border: rgba(255, 255, 255, 0.09);
+  --pg-fg: #ffffff;
+  --pg-fg-dim: rgba(255, 255, 255, 0.62);
+  --pg-btn-bg: #ffffff;
+  --pg-btn-fg: #040314;
+  position: relative;
+  padding: 2rem 0;
+}
+
+.pg-card {
+  position: relative;
+  max-width: 80rem;
+  margin: 0 auto;
+  background: var(--pg-bg);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--pg-border);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.pg-header {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 3.5rem 2rem 2rem;
+}
+
+.pg-title {
+  margin: 0 0 1rem;
+  font-size: clamp(1.9rem, 4vw, 3rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.025em;
+  color: var(--pg-fg);
+  text-wrap: balance;
+}
+
+.pg-description {
+  max-width: 34rem;
+  margin: 0 auto 1.75rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--pg-fg-dim);
+  text-wrap: pretty;
+}
+
+.pg-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 4rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  background: var(--pg-btn-bg);
+  color: var(--pg-btn-fg);
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+.pg-button:hover { opacity: 0.9; }
+.pg-button:focus-visible { outline: 2px solid var(--pg-fg); outline-offset: 3px; }
+
+.pg-button-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.2s ease;
+}
+.pg-button:hover .pg-button-icon { transform: translateX(4px); }
+
+/* ---- Desktop: overlapping 3D fan ---------------------------------------- */
+
+.pg-desktop {
+  display: none;
+  position: relative;
+  overflow: hidden;
+  height: 400px;
+  margin-bottom: -200px;
+}
+
+.pg-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 10rem 0 2rem;
+}
+.pg-item {
+  all: unset;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+/* After .pg-item: its `all: unset` would otherwise wipe the overlap. */
+.pg-item + .pg-item { margin-left: calc(var(--pg-overlap, 320px) * -1); }
+.pg-item:focus-visible .pg-frame { outline: 2px solid var(--pg-fg); outline-offset: 3px; }
+
+.pg-frame {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  background: #0b0a1f;
+  box-shadow:
+    rgba(0, 0, 0, 0.01) 0.796192px 0 0.796192px 0,
+    rgba(0, 0, 0, 0.03) 2.41451px 0 2.41451px 0,
+    rgba(0, 0, 0, 0.08) 6.38265px 0 6.38265px 0,
+    rgba(0, 0, 0, 0.25) 20px 0 20px 0;
+  transition: transform 0.3s ease;
+}
+.pg-item:hover .pg-frame,
+.pg-mobile-item:hover .pg-frame { transform: scale(1.05); }
+
+.pg-img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: left top;
+}
+
+.pg-caption {
+  position: absolute;
+  left: 0.6rem;
+  right: 0.6rem;
+  bottom: 0.6rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: 0.4rem;
+  background: rgba(4, 3, 20, 0.66);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- Mobile: marquee ------------------------------------------------------ */
+
+.pg-mobile {
+  display: block;
+  position: relative;
+  padding-bottom: 2rem;
+}
+
+.pg-marquee {
+  --pg-duration: 40s;
+  --pg-gap: 1rem;
+  display: flex;
+  gap: var(--pg-gap);
+  overflow: hidden;
+  padding: 0.5rem;
+}
+
+.pg-marquee-track {
+  display: flex;
+  flex-shrink: 0;
+  justify-content: space-around;
+  gap: var(--pg-gap);
+  animation: pg-marquee var(--pg-duration) linear infinite;
+}
+.pg-marquee--pause:hover .pg-marquee-track { animation-play-state: paused; }
+
+.pg-mobile-item {
+  all: unset;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.pg-frame--mobile { width: 16rem; }
+
+@keyframes pg-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(calc(-100% - var(--pg-gap))); }
+}
+
+@media (min-width: 768px) {
+  .pg-desktop { display: block; }
+  .pg-mobile { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pg-marquee-track { animation: none; }
+  .pg-marquee { overflow-x: auto; }
+}

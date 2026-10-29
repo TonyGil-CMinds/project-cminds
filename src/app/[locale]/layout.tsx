@@ -131,7 +131,8 @@ export default async function LocaleLayout({
   if (!isLocale(locale)) notFound();
 
   return (
-    <html lang={LOCALE_TAGS[locale]} className={`${satoshi.variable} h-full antialiased`}>
+    // suppressHydrationWarning: the toolkit sets data-tk-* display preferences on <html> before hydrating.
+    <html lang={LOCALE_TAGS[locale]} className={`${satoshi.variable} h-full antialiased`} suppressHydrationWarning>
       <body className={`${satoshi.className} min-h-full flex flex-col`}>
         <SubscribeModalProvider>
           <MobileMenu />

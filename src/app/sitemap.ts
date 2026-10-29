@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { LOCALES } from "@/i18n/config";
+import { PAGES as T4N_TOOLKIT_PAGES, toolkitHref } from "@/app/[locale]/toolkits/tech4nature-mexico-conservacion-ia-v01/data";
 
 const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -26,6 +27,9 @@ const ROUTES: Array<{ path: string; priority: number; changeFrequency: MetadataR
   { path: "/privacy", priority: 0.3, changeFrequency: "yearly" },
   { path: "/ethics", priority: 0.3, changeFrequency: "yearly" },
 ];
+
+// Every chapter of the toolkit is its own page.
+const TOOLKITS = T4N_TOOLKIT_PAGES.map((p) => toolkitHref("es", p.slug).replace(/^\/es/, ""));
 
 /** hreflang alternates for one app-relative path. */
 function alternates(path: string) {
@@ -62,6 +66,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }))
   );
 
+  // Toolkits exist only in Spanish; /es is their canonical URL.
+  const toolkitEntries: MetadataRoute.Sitemap = TOOLKITS.map((path) => ({
+    url: `${SITE_URL}/es${path}`,
+    lastModified: now,
+    changeFrequency: "monthly",
+    priority: 0.7,
+  }));
+
   const posts = await fetchPosts();
   const postEntries = posts
     .filter((p) => p.slug && LOCALES.includes(p.language as (typeof LOCALES)[number]))
@@ -73,5 +85,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     }));
 
-  return [...staticEntries, ...postEntries];
+  return [...staticEntries, ...toolkitEntries, ...postEntries];
 }
