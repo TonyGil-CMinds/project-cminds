@@ -3,7 +3,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { localePath, type Locale } from "@/i18n/config";
 import {
+  BIOCULTURAL,
   CASE,
+  GLOSSARY,
+  GLOSSARY_INTRO,
   GROUPS,
   HERO,
   IMAGES,
@@ -401,6 +404,71 @@ export function CasoPage({ page, locale }: { page: ToolkitPage; locale: Locale }
 }
 
 // ---------------------------------------------------------------------------
+// Monitoreo biocultural
+
+export function BioculturalPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
+  const e = BIOCULTURAL.elsewhere;
+  return (
+    <PageFrame page={page} locale={locale} kicker="Enfoque biocultural" lead={<p>{BIOCULTURAL.lead}</p>}>
+      <H2>Qué aporta el conocimiento del territorio</H2>
+      <dl className="tk-glossary">
+        {BIOCULTURAL.contributions.map((c) => (
+          <div key={c.title} className="tk-term" data-reveal>
+            <dt>{c.title}</dt>
+            <dd>{c.text}</dd>
+          </div>
+        ))}
+      </dl>
+
+      <H2>Lo que hicimos en Dzilam</H2>
+      <div className="tk-result" data-reveal>
+        {BIOCULTURAL.dzilam.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
+      </div>
+
+      <H2>Cómo integrarlo al muestreo</H2>
+      <ol className="tk-steps">
+        {BIOCULTURAL.steps.map((p, i) => (
+          <li key={i}>
+            <span className="tk-steps-n" aria-hidden="true">
+              {i + 1}
+            </span>
+            <p>
+              <Rich text={p} />
+            </p>
+          </li>
+        ))}
+      </ol>
+
+      <CheckBox title="Aprendizaje" text={BIOCULTURAL.learning} />
+
+      <H2>Herramientas para empezar</H2>
+      <ul className="tk-list tk-tools">
+        {BIOCULTURAL.tools.map((t) => (
+          <li key={t}>
+            <Rich text={t} />
+          </li>
+        ))}
+      </ul>
+
+      <section className="tk-callout tk-callout--sky tk-elsewhere" aria-labelledby="otro-biocultural" data-reveal>
+        <span className="tk-callout-label">En otro territorio</span>
+        <h2 id="otro-biocultural" className="tk-elsewhere-title" data-toc={`En otro territorio: ${e.place}`}>
+          {e.place}
+        </h2>
+        {e.paragraphs.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
+        <p>
+          <ExternalLink href={e.link.url}>{e.link.label}</ExternalLink>
+        </p>
+      </section>
+    </PageFrame>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Etapas
 
 function BioScannerInline() {
@@ -453,6 +521,13 @@ export function StagePage({ page, locale, stage }: { page: ToolkitPage; locale: 
           <p key={i}>{p}</p>
         ))}
       </div>
+
+      {stage.id === "e2" ? (
+        <p className="tk-meta-line">
+          Para diseñar el muestreo con el conocimiento del territorio, consulta{" "}
+          <Link href={toolkitHref(locale, "monitoreo-biocultural")}>El territorio guía el monitoreo</Link>.
+        </p>
+      ) : null}
 
       {stage.id === "e3" ? (
         <figure className="tk-figure">
@@ -527,6 +602,31 @@ export function CajaPage({ page, locale }: { page: ToolkitPage; locale: Locale }
         nueva, escríbenos a través de la{" "}
         <Link href={localePath(locale, "/aiforbiodiversity/techfornature")}>página de Tech4Nature México</Link>.
       </p>
+      <p className="tk-meta-line">
+        ¿Dudas con algún término? Consulta el <Link href={toolkitHref(locale, "glosario")}>glosario</Link>.
+      </p>
+    </PageFrame>
+  );
+}
+
+export function GlosarioPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
+  return (
+    <PageFrame page={page} locale={locale} lead={<p>{GLOSSARY_INTRO}</p>}>
+      {GLOSSARY.map((g) => (
+        <section key={g.group} aria-label={g.group}>
+          <H2>{g.group}</H2>
+          <dl className="tk-glossary">
+            {g.terms.map((t) => (
+              <div key={t.term} id={slugId(t.term)} className="tk-term">
+                <dt>{t.term}</dt>
+                <dd>
+                  <Rich text={t.def} />
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      ))}
     </PageFrame>
   );
 }

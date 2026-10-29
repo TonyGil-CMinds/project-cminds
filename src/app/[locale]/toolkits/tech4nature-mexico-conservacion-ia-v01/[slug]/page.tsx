@@ -3,9 +3,11 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { toLocale, type Locale } from "@/i18n/config";
 import { LEGACY_SLUGS, PAGES, PAGE_BY_SLUG, STAGES, TEMPLATES, toolkitHref, type ToolkitPage } from "../data";
 import {
+  BioculturalPage,
   CajaPage,
   CasoPage,
   FuentesPage,
+  GlosarioPage,
   InsigniaPage,
   PlantillasPage,
   PorQueImportaPage,
@@ -37,12 +39,16 @@ function Content({ page, locale }: { page: ToolkitPage; locale: Locale }) {
       return <PorQueImportaPage page={page} locale={locale} />;
     case "caso":
       return <CasoPage page={page} locale={locale} />;
+    case "biocultural":
+      return <BioculturalPage page={page} locale={locale} />;
     case "etapa":
       return <StagePage page={page} locale={locale} stage={STAGES.find((s) => s.id === page.ref)!} />;
     case "preguntas":
       return <PreguntasPage page={page} locale={locale} />;
     case "caja":
       return <CajaPage page={page} locale={locale} />;
+    case "glosario":
+      return <GlosarioPage page={page} locale={locale} />;
     case "plantillas":
       return <PlantillasPage page={page} locale={locale} />;
     case "plantilla":

@@ -39,7 +39,7 @@ const BIOSCANNER_APP = "https://app.bioscanner.io";
 const TOP_LINKS: { label: string; slug: string; match: (p: ToolkitPage) => boolean }[] = [
   { label: "Inicio", slug: "", match: (p) => p.kind === "inicio" },
   { label: "Etapas", slug: targetOf("E1").slug, match: (p) => p.kind === "etapa" },
-  { label: "Herramientas", slug: "caja-de-herramientas", match: (p) => p.kind === "caja" },
+  { label: "Herramientas", slug: "caja-de-herramientas", match: (p) => p.kind === "caja" || p.kind === "glosario" },
   { label: "Plantillas", slug: "plantillas", match: (p) => p.group === "plantillas" },
 ];
 

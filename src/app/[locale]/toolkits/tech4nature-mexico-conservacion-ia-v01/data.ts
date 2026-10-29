@@ -67,7 +67,7 @@ export const INTRO = {
   outcomes: [
     "Definir una pregunta de conservación que alguien necesita responder para tomar una decisión.",
     "Acordar con la comunidad y las instituciones quién decide sobre los datos y cómo se comparten.",
-    "Instalar y operar cámaras trampa y dispositivos de monitoreo acústico con manuales en español.",
+    "Ubicar cámaras trampa y dispositivos acústicos con el conocimiento local de senderos y pasos de fauna, con manuales en español.",
     "Usar BioScanner y otras herramientas gratuitas de IA para revisar miles de imágenes en días.",
     "Analizar cambios de cobertura con QGIS, Google Earth Engine y MapBiomas México.",
     "Llevar la evidencia a planes de manejo, procesos de política pública y estrategias de financiamiento.",
@@ -255,7 +255,7 @@ export const STAGES: Stage[] = [
       "Escribe tu pregunta en una frase y nombra la decisión que ayudará a tomar. Por ejemplo: “¿El jaguar usa la zona entre dos reservas?” para informar un corredor biológico.",
       "Identifica a la institución o comunidad que tomará esa decisión e invítala desde el inicio.",
       "Reúne a quienes conocen el territorio, a quienes pueden revisar el diseño científico y a quienes darán soporte técnico.",
-      "Acuerda por escrito quién es dueño de los datos, quién puede verlos, qué se publica y qué se protege. Las ubicaciones de especies sensibles se protegen siempre.",
+      "Con el consentimiento libre, previo e informado de la comunidad, acuerda por escrito quién es dueño de los datos, quién puede verlos, qué se publica y qué se protege. Las ubicaciones de especies sensibles se protegen siempre.",
       "Define cómo se reconocerá y remunerará el trabajo de las personas de la comunidad.",
       "Agenda desde ahora una reunión para devolver resultados al territorio.",
     ],
@@ -296,7 +296,7 @@ export const STAGES: Stage[] = [
     },
     steps: [
       "Elige el método según tu pregunta: cámaras trampa para mamíferos y jaguar; grabadoras acústicas para aves, anfibios y murciélagos; ambos para un inventario amplio.",
-      "Diseña la ubicación de las estaciones con apoyo de alguien con formación en ecología y con quienes conocen los senderos de la fauna.",
+      "Diseña la ubicación de las estaciones con quienes conocen los senderos, pasos de fauna, aguadas y zonas de cacería, y con apoyo de alguien con formación en ecología. Registra esos saberes en la plantilla 5. [P5]",
       "Para identificar jaguares de forma individual, instala cámaras en pares, una frente a otra, para fotografiar ambos costados del animal.",
       "Registra cada despliegue: código de estación, coordenadas, fechas de instalación y retiro, altura, configuración y fallas. Usa la plantilla 3. [P3]",
       "Guarda siempre los archivos originales y haz una copia de respaldo antes de procesar.",
@@ -456,6 +456,129 @@ export const STAGES: Stage[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Monitoreo biocultural: el conocimiento del territorio guía el muestreo
+
+export const BIOCULTURAL = {
+  lead:
+    "Quienes viven en un territorio saben por dónde cruzan los animales, dónde beben, en qué temporada se mueven y cómo se llaman en su lengua. En un monitoreo biocultural, ese conocimiento define dónde se coloca cada cámara, qué se registra y cómo se interpretan los resultados. La tecnología amplía lo que la comunidad ya observa, y la comunidad le da sentido a lo que la tecnología registra.",
+  contributions: [
+    {
+      title: "Pasos y senderos de fauna",
+      text: "Brechas, veredas, bordes de aguada y cruces de camino por donde los animales pasan con frecuencia. Son los mejores sitios para una cámara.",
+    },
+    {
+      title: "Agua, alimento y refugio",
+      text: "Aguadas, cenotes, árboles en fruto, salados y madrigueras que concentran fauna según la temporada.",
+    },
+    {
+      title: "Cacería y presión",
+      text: "Zonas, temporadas y especies de cacería, pesca y extracción. Ayudan a entender por qué un sitio tiene menos registros y dónde conviene vigilar.",
+    },
+    {
+      title: "Nombres y categorías propias",
+      text: "Cómo se nombra y clasifica cada especie en la lengua local. Sirven para validar identificaciones y devolver resultados en el idioma de la comunidad.",
+    },
+    {
+      title: "Temporadas y comportamiento",
+      text: "Cuándo se reproducen, se desplazan o cambian de zona las especies, y cómo responden a lluvias, quemas o inundaciones.",
+    },
+    {
+      title: "Historias de encuentros",
+      text: "Avistamientos, ataques al ganado y relatos de las personas mayores que muestran dónde estaba la fauna antes y qué ha cambiado.",
+    },
+  ],
+  dzilam: [
+    "En Dzilam, los líderes comunitarios del Grupo Chac Mool eligieron y caracterizaron los sitios de monitoreo: sabían por dónde cruzaba el jaguar y dónde un equipo podía resistir las inundaciones. Algunos, como Juan Castillo, conocieron el monte desde la caza y la ganadería, y hoy usan esa experiencia para cuidarlo. También participan en el trabajo de campo mensual, mantienen el equipo y ayudan a validar los registros de especies.",
+    "Ese conocimiento guía también la interpretación: un registro en un paso conocido o un encuentro de jaguar con ganado se leen junto con quienes viven el territorio. Con comunidades y ganaderos se probó un protocolo para responder a esos encuentros, y la IA se diseñó para complementar el conocimiento local.",
+  ],
+  steps: [
+    "Antes de instalar equipo, presenta el proyecto en asamblea y obtén el consentimiento libre, previo e informado de la comunidad para el monitoreo y el uso de los datos.",
+    "Haz recorridos guiados y un mapeo participativo con personas mayores, cazadores, mujeres y jóvenes para ubicar pasos de fauna, aguadas, zonas de cacería y sitios sagrados. Registra lo compartido en la plantilla 5. [P5]",
+    "Combina esos sitios con un diseño sistemático: estaciones a distancias comparables, en distintos hábitats y con el mismo esfuerzo de muestreo, para que los resultados se puedan comparar.",
+    "Incluye en los formularios de campo lo que la comunidad observa: rastros, cacería, pesca y encuentros con fauna, además de los registros de las cámaras.",
+    "Revisa los resultados con la comunidad usando los nombres locales de las especies, y decidan en conjunto si se reubican cámaras o se suman sitios.",
+    "Acuerda qué conocimiento es público y cuál se protege. Senderos, lugares sagrados, sitios de cacería y ubicaciones de especies sensibles se comparten solo con autorización. [P2]",
+  ],
+  learning:
+    "El muestreo funciona mejor cuando combina dos fuentes: el conocimiento local, que señala dónde está la fauna, y un diseño sistemático, que permite comparar sitios y temporadas. Juntos producen datos confiables que la comunidad reconoce como propios.",
+  tools: [
+    "[Principios CREA para la gobernanza de datos indígenas](https://www.gida-global.org/s/Principios-CREA.pdf) (GIDA, español).",
+    "[BIOCOMUNI v2.0 Fauna](https://desarrollo.fmcn.org/wp-content/uploads/2025/06/BIOCOMUNI_v2.0_Fauna.pdf) (FMCN y CONAFOR), protocolo de monitoreo comunitario con formatos imprimibles.",
+    "[Buenas prácticas para generalizar datos de especies sensibles](https://docs.gbif.org/sensitive-species-best-practices/master/es/buenas-practicas-para-generalizar-datos-de-especies-sensibles-en-registros-biologicos.es.pdf) (GBIF, español).",
+    "[Directrices de la UICN sobre conflictos y coexistencia entre humanos y vida silvestre](https://doi.org/10.2305/CFRX2122) (2024, español).",
+    "[KoboToolbox](https://www.kobotoolbox.org) y [SMART](https://smartconservationtools.org), para registrar observaciones comunitarias sin conexión.",
+    "Plantilla 5 de este toolkit: mapa de saberes del territorio. [P5]",
+  ],
+  elsewhere: {
+    place: "Estrategia Biocultural del Jaguar, Amazonía ecuatoriana",
+    paragraphs: [
+      "La comunidad achuar de Sharamentsa monitorea su territorio desde 2021 con el acompañamiento de Fundación Pachamama. La Estrategia Biocultural del Jaguar, liderada por la Alianza Cuencas Sagradas y Fundación Pachamama junto con la comunidad, y acompañada por NaturaTech LAC (BID Lab y C Minds) y Regen Network, extendió el modelo a las comunidades de Wayusentsa, Tsekuntsa, Shuinmamus y Kapawi.",
+      "El sistema integra cámaras trampa, análisis con IA, formularios digitales y el conocimiento tradicional sobre el comportamiento del jaguar, de modo que cada fuente valida a la otra. Los formularios registran también la cacería, la pesca y el aprovechamiento de recursos, y las especies conservan su nombre en la lengua propia. La comunidad decide qué información se comparte: senderos, lugares sagrados y ubicación de recursos se custodian bajo acuerdos con Fundación Pachamama.",
+      "Hasta mayo de 2025, la estrategia contaba con 21 monitores comunitarios capacitados, 33,700 ha bajo monitoreo y 58 especies registradas con cámaras trampa, entre ellas 14 registros de jaguar. Los Créditos Bioculturales del Jaguar canalizan recursos hacia las prioridades que define la comunidad.",
+    ],
+    link: { label: "Ver la Estrategia Biocultural del Jaguar (NaturaTech LAC)", url: "https://www.naturatech.org/en/minga-estrategia" },
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Glosario
+
+export type GlossaryTerm = { term: string; def: string };
+
+export const GLOSSARY_INTRO =
+  "Términos que aparecen en el toolkit y en las herramientas recomendadas, explicados en pocas palabras.";
+
+export const GLOSSARY: { group: string; terms: GlossaryTerm[] }[] = [
+  {
+    group: "Territorio y gobernanza de datos",
+    terms: [
+      { term: "Biocultural", def: "Relación entre la diversidad biológica y la diversidad cultural de un territorio: especies, paisajes, lenguas, prácticas y saberes que se sostienen mutuamente." },
+      { term: "Conocimiento tradicional y local", def: "Saberes que las comunidades construyen y transmiten sobre su territorio: rutas de fauna, temporadas, nombres de especies, usos y prácticas de cuidado. Pertenece a quienes lo comparten." },
+      { term: "Consentimiento libre, previo e informado (CLPI)", def: "Derecho de los pueblos indígenas y comunidades locales a decidir, con información completa, sin presión y antes de que comience, sobre una actividad que afecta su territorio, incluidos el monitoreo y el uso de sus datos." },
+      { term: "Soberanía de datos", def: "Capacidad de una comunidad o institución de decidir cómo se recolectan, guardan, usan y comparten los datos sobre su territorio y su gente." },
+      { term: "Principios CARE (CREA)", def: "Principios para la gobernanza de datos indígenas: beneficio colectivo, autoridad para controlar, responsabilidad y ética. Complementan los principios FAIR de datos abiertos." },
+      { term: "Especie sensible", def: "Especie cuya ubicación exacta, si se publica, puede facilitar su caza, captura o perturbación. Sus registros se generalizan o se protegen." },
+    ],
+  },
+  {
+    group: "Trabajo de campo",
+    terms: [
+      { term: "Cámara trampa", def: "Cámara que se activa con el movimiento o el calor de un animal y registra fotos o video de día y de noche." },
+      { term: "Estación de muestreo", def: "Punto donde se instala una cámara o un par de cámaras enfrentadas. Los pares fotografían ambos costados de un animal para identificarlo." },
+      { term: "Paso de fauna", def: "Lugar por donde los animales cruzan con frecuencia: senderos, brechas, bordes de aguada o cruces de camino. Suele identificarse con el conocimiento local." },
+      { term: "Despliegue", def: "Periodo en que una cámara o grabadora funciona en una estación, desde su instalación hasta su retiro." },
+      { term: "Esfuerzo de muestreo", def: "Tiempo total que los equipos estuvieron activos, por ejemplo en días-cámara. Permite comparar sitios y temporadas de forma justa." },
+      { term: "Monitoreo acústico pasivo", def: "Registro automático de los sonidos del ambiente con grabadoras autónomas para identificar aves, anfibios, murciélagos y otros grupos." },
+    ],
+  },
+  {
+    group: "Análisis con IA",
+    terms: [
+      { term: "Detección", def: "Paso en que un modelo de IA indica si una imagen contiene un animal, una persona o un vehículo, o si está vacía." },
+      { term: "Clasificación", def: "Paso en que un modelo propone la especie presente en una imagen o un sonido, con un nivel de confianza." },
+      { term: "Identificación individual", def: "Reconocimiento de un animal concreto por marcas únicas, como el patrón de rosetas del jaguar." },
+      { term: "Validación humana", def: "Revisión de cada resultado de la IA por una persona que conoce las especies, antes de usarlo." },
+      { term: "Evento independiente", def: "Conjunto de registros de una misma especie en una estación que se cuenta como una sola visita, según un intervalo de tiempo acordado, por ejemplo 30 minutos." },
+      { term: "Metadatos", def: "Información que acompaña a cada archivo: estación, fecha, hora, equipo y configuración. Hacen posible usar el registro en un análisis." },
+      { term: "Camtrap DP", def: "Formato estándar abierto para intercambiar datos de cámaras trampa entre plataformas y publicarlos en GBIF." },
+    ],
+  },
+  {
+    group: "Paisaje y gestión",
+    terms: [
+      { term: "Especie paraguas", def: "Especie con necesidades de hábitat tan amplias que protegerla protege también a muchas otras. El jaguar es un ejemplo." },
+      { term: "Recaptura espacial", def: "Registro de un mismo individuo en dos o más sitios distintos. Aporta evidencia sobre su movimiento y el uso del paisaje." },
+      { term: "Conectividad ecológica", def: "Grado en que el paisaje permite el movimiento de especies y procesos ecológicos entre áreas de hábitat." },
+      { term: "Corredor biológico", def: "Franja de territorio que mantiene o restaura la conexión entre áreas de hábitat para que la fauna pueda desplazarse." },
+      { term: "Cobertura y uso de suelo", def: "Descripción de lo que hay sobre el terreno, como selva, manglar, pastizal, agua o zona urbana, y de cómo lo usan las personas." },
+      { term: "Percepción remota", def: "Estudio del territorio con imágenes tomadas por satélites, aviones o drones." },
+      { term: "OMEC", def: "Otra medida eficaz de conservación basada en áreas: zona fuera de las áreas protegidas formales que conserva la biodiversidad de forma duradera, según los criterios del Convenio sobre la Diversidad Biológica." },
+      { term: "Lista Verde de la UICN", def: "Estándar global que reconoce áreas protegidas y conservadas con buena gobernanza, buen diseño, manejo eficaz y resultados de conservación. La autoevaluación GL-SAT es un primer paso para prepararse." },
+    ],
+  },
+];
+
+// ---------------------------------------------------------------------------
 // Antes de empezar: diez preguntas rápidas
 
 export const QUESTIONS = {
@@ -577,6 +700,7 @@ const RAW_RESOURCES: RawResource[] = [
   { category: "jaguar", title: "Iniciativa para la Conservación del Jaguar", url: "https://www.cms.int/sites/default/files/011_jaguar-work-programme_s%20%283%29.pdf", org: "CITES y CMS", use: "Prioridades regionales de conservación", lang: "ES" },
   { category: "jaguar", title: "Hoja de ruta Jaguar 2030", url: "https://panthera.org/sites/default/files/Panthera_Jaguar2030Roadmap_ENG_0.pdf", use: "Paisajes prioritarios y corredores en 14 países", lang: "EN" },
   { category: "jaguar", title: "Programa de jaguar de Panthera", url: "https://www.panthera.org/jaguar", org: "Panthera", use: "Investigación y Corredor del Jaguar", lang: "EN" },
+  { category: "jaguar", title: "Estrategia Biocultural del Jaguar", url: "https://www.naturatech.org/en/minga-estrategia", org: "Alianza Cuencas Sagradas, Fundación Pachamama y NaturaTech LAC", use: "Monitoreo del jaguar con conocimiento tradicional en territorio achuar, Ecuador", lang: "ES, EN" },
   { category: "jaguar", title: "Directrices UICN de coexistencia", url: "https://doi.org/10.2305/CFRX2122", org: "UICN", use: "Atender conflictos entre personas y fauna", lang: "ES" },
   // Datos, ética y comunidad
   { category: "datos", title: "Principios CREA (CARE)", url: "https://www.gida-global.org/s/Principios-CREA.pdf", org: "GIDA", use: "Gobernanza de datos de pueblos indígenas", lang: "ES" },
@@ -695,6 +819,24 @@ export const TEMPLATES: Template[] = [
       { label: "Contacto" },
     ],
   },
+  {
+    id: "p5",
+    code: "P5",
+    n: 5,
+    title: "Mapa de saberes del territorio",
+    short: "Mapa de saberes",
+    stage: "E2",
+    layout: "log",
+    fields: [
+      { label: "Lugar o referencia", hint: "nombre local; coordenadas solo si se acuerda" },
+      { label: "Qué se sabe", hint: "paso de fauna, aguada, cacería, especie" },
+      { label: "Especie y nombre local" },
+      { label: "Temporada" },
+      { label: "Quién lo comparte" },
+      { label: "Nivel de cuidado", hint: "público, equipo o solo comunidad" },
+      { label: "Uso acordado" },
+    ],
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -710,6 +852,7 @@ export const SOURCES = [
   "UICN (2025). [Phase two of Tech4Nature jaguar protection project launched in Mexico](https://iucn.org/news/202504/phase-two-tech4nature-jaguar-protection-project-launched-mexico).",
   "Gobierno del Estado de Yucatán (2024). [Acuerdo 76/2024, Diario Oficial](https://www.yucatan.gob.mx/docs/diario_oficial/diarios/2024/2024-09-23_2.pdf).",
   "C Minds (2026). Informe técnico final de Tech4Nature México y estudio de conectividad Dzilam–Ría Lagartos (documentos internos).",
+  "NaturaTech LAC (2025). Informe de aprendizajes: Estrategia Biocultural del Jaguar, con Fundación Pachamama y Alianza Cuencas Sagradas (datos a mayo de 2025). [Estrategia Biocultural del Jaguar](https://www.naturatech.org/en/minga-estrategia).",
 ];
 
 export const LIVING_NOTE =
@@ -733,9 +876,11 @@ export type PageKind =
   | "inicio"
   | "por-que-importa"
   | "caso"
+  | "biocultural"
   | "etapa"
   | "preguntas"
   | "caja"
+  | "glosario"
   | "plantillas"
   | "plantilla"
   | "fuentes"
@@ -794,6 +939,15 @@ export const PAGES: ToolkitPage[] = [
     description:
       "147 especies, 333,099 archivos en BioScanner y un jaguar registrado a 40 km: resultados, línea de tiempo y aprendizajes de Tech4Nature México en la Reserva Estatal de Dzilam.",
   },
+  {
+    slug: "monitoreo-biocultural",
+    kind: "biocultural",
+    title: "El territorio guía el monitoreo",
+    label: "Monitoreo biocultural",
+    group: "empezar",
+    description:
+      "Cómo el conocimiento local de pasos de fauna, senderos, cacería y especies orienta el muestreo y la interpretación del monitoreo de biodiversidad, con los casos de Dzilam y de la Estrategia Biocultural del Jaguar en Ecuador.",
+  },
   ...STAGES.map(
     (s): ToolkitPage => ({
       slug: stageSlug(s),
@@ -824,13 +978,21 @@ export const PAGES: ToolkitPage[] = [
     description: `${RESOURCES.length} recursos gratuitos y en español para cámaras trampa, acústica, trabajo de campo, mapas, jaguar y gobernanza de datos, filtrables por categoría, idioma, acceso y nivel.`,
   },
   {
+    slug: "glosario",
+    kind: "glosario",
+    title: "Glosario",
+    label: "Glosario",
+    group: "herramientas",
+    description: `${GLOSSARY.reduce((n, g) => n + g.terms.length, 0)} términos del toolkit explicados en pocas palabras: conocimiento biocultural y gobernanza de datos, trabajo de campo, análisis con IA, paisaje y gestión.`,
+  },
+  {
     slug: "plantillas",
     kind: "plantillas",
     title: "Plantillas",
     label: "Todas las plantillas",
     group: "plantillas",
     description:
-      "Cuatro plantillas de una página para descargar: ficha de arranque, acuerdo de datos, registro de estación de cámara trampa y hallazgo en una página.",
+      "Cinco plantillas de una página para descargar: ficha de arranque, acuerdo de datos, registro de estación de cámara trampa, hallazgo en una página y mapa de saberes del territorio.",
   },
   ...TEMPLATES.map(
     (t): ToolkitPage => ({
@@ -898,7 +1060,6 @@ export const LEGACY_SLUGS: Record<string, string> = {
   "t09-presupuesto-y-escenarios": "plantillas",
   "t10-tablero-de-aprendizaje": "plantillas",
   biblioteca: "caja-de-herramientas",
-  glosario: "",
 };
 
 /** Ruta de una página del toolkit, con locale y ancla opcional. */
