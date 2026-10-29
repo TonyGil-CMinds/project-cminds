@@ -432,7 +432,7 @@ export const STAGES: Stage[] = [
       "Identifica el calendario de la decisión (revisión del plan de manejo, presupuesto anual, consulta pública) y prepara la evidencia para ese momento.",
       "Resume tus hallazgos en una página por audiencia: qué observaste, qué propones y qué falta saber. Usa la plantilla 4. [P4]",
       "Devuelve los resultados al territorio en una sesión presencial y en el idioma de la comunidad.",
-      "Usa el Estándar de la Lista Verde de la UICN como guía para ordenar la evidencia de gestión, aunque no busques la certificación.",
+      "Usa el Estándar de la Lista Verde de la UICN como guía para ordenar la evidencia de gestión, aunque no busques la certificación. Empieza con la hoja de trabajo de la plantilla 6. [P6]",
       "Presupuesta la continuidad con al menos dos años de horizonte: salarios del equipo local, reposición de equipo, almacenamiento y revisión de datos.",
       "Publica lo aprendido en formatos que otros puedan reutilizar, como una solución en PANORAMA o un conjunto de datos en GBIF.",
     ],
@@ -609,6 +609,116 @@ export const SOVEREIGNTY = {
 };
 
 // ---------------------------------------------------------------------------
+// Lista Verde de la UICN: el estándar que guía el trabajo en el área protegida
+
+const GL_FILES = "/platforms/aiforbiodiversity/initiative-tech4nature/toolkit";
+export const GL_MANUAL_URL = `${GL_FILES}/manual-camino-hacia-la-lista-verde.pdf`;
+export const GL_WORKSHEET_URL = `${GL_FILES}/hoja-de-trabajo-lista-verde-uicn.xlsx`;
+
+export const GREEN_LIST = {
+  lead:
+    "La Lista Verde de Áreas Protegidas y Conservadas de la UICN es el estándar global que reconoce a las áreas con buena gobernanza, diseño y planificación sólidos, manejo efectivo y resultados de conservación demostrables. Usarla como guía desde el inicio ordena el trabajo del área protegida y convierte la evidencia del monitoreo en avances de gestión que otros pueden reconocer.",
+  components: [
+    {
+      title: "1. Buena gobernanza",
+      text: "Legitimidad y voz; transparencia y rendición de cuentas; vitalidad de la gobernanza y capacidad de respuesta adaptativa.",
+    },
+    {
+      title: "2. Diseño y planificación sólidos",
+      text: "Identificar y comprender los valores del sitio; diseñar para su conservación a largo plazo; comprender las amenazas y el contexto social y económico.",
+    },
+    {
+      title: "3. Manejo efectivo",
+      text: "Estrategia de gestión a largo plazo; manejo de condiciones ecológicas, amenazas, acceso y uso de recursos; cumplimiento de leyes; medición del éxito.",
+    },
+    {
+      title: "4. Resultados de conservación",
+      text: "Demostrar la conservación de los principales valores naturales, de los servicios ecosistémicos asociados y de los valores culturales.",
+    },
+  ],
+  componentsNote:
+    "En total son 17 criterios, cada uno con indicadores que se demuestran con evidencias documentales.",
+  phases: [
+    {
+      title: "Preparación",
+      text: "El área revisa su situación con la herramienta de autoevaluación GL-SAT, organiza evidencias y define acciones de mejora. Puede repetirla tantas veces como necesite.",
+    },
+    {
+      title: "Aplicación",
+      text: "El área se compromete de forma voluntaria con un registro en COMPASS, la plataforma de la UICN para el proceso, y presenta evidencias iniciales de cinco indicadores.",
+    },
+    {
+      title: "Candidatura",
+      text: "El área aporta evidencias de todos los indicadores y atiende las brechas. Incluye una consulta a partes interesadas y una visita de campo del Grupo de Evaluación de Expertos (EAGL). Puede durar meses o años, con un máximo de cinco.",
+    },
+    {
+      title: "Lista Verde",
+      text: "La UICN otorga el certificado, válido por cinco años. A partir de ahí, el trabajo se centra en mantener y mejorar el estatus.",
+    },
+  ],
+  glsat: [
+    "GL-SAT (Green List Self-Assessment Tool) es la herramienta en línea de la UICN para que los equipos de las áreas protegidas revisen su situación frente al Estándar. Se presentó con su fase piloto en el Congreso Mundial de la Naturaleza de la UICN en octubre de 2025.",
+    "La plataforma pide información de referencia del área, como el nombre oficial, el identificador en la Base de Datos Mundial de Áreas Protegidas (WDPA) y la categoría de manejo de la UICN, y guía la autoevaluación de 54 indicadores. Al terminar genera un reporte por componente y criterio con fortalezas y áreas de oportunidad, que sirve como línea base. La autoevaluación es una herramienta de aprendizaje; la certificación se obtiene en el proceso formal en COMPASS.",
+  ],
+  dzilam: [
+    "Con acompañamiento técnico de Tech4Nature México, los equipos de la Reserva Estatal de Dzilam y de la Reserva de la Biosfera Ría Lagartos construyeron sus hojas de trabajo, mapearon y organizaron sus evidencias, y completaron su autoevaluación en GL-SAT en septiembre de 2026. Cada reserva cuenta hoy con una línea base y una ruta de acciones de mejora, y los aprendizajes se compartieron en un intercambio de experiencias que también incluyó a la Reserva Biocultural del Puuc.",
+    "La experiencia quedó documentada en el Manual «Camino hacia la Lista Verde» y en una hoja de trabajo que cualquier área protegida puede descargar y adaptar. El monitoreo con BioScanner, el inventario de especies, el estudio de conectividad y las entrevistas para el programa de manejo aportan evidencia directa a los criterios 2.1, 2.2, 3.1 y 3.7.",
+  ],
+  steps: [
+    "Arma tu hoja de trabajo: lista cada componente, criterio e indicador del Estándar y anota qué documentos o registros podrían demostrarlo. Usa la hoja de trabajo descargable o la plantilla 6. [P6]",
+    "Mapea y organiza tus documentos: decretos, programas de manejo, actas, informes de monitoreo y convenios. Prioriza los de los últimos cinco años y guárdalos en carpetas por componente, con nombres claros como 2024_Informe_Monitoreo_Biodiversidad.pdf.",
+    "Regístrate en GL-SAT con el nombre oficial del área, su identificador WDPA y su categoría de manejo, y responde los indicadores con base en las evidencias organizadas.",
+    "Analiza las brechas y distingue las de documentación de las que requieren fortalecer la gestión. Prioriza según los objetivos de conservación y las capacidades del equipo.",
+    "Define acciones de mejora vinculadas a cada indicador, con responsable, plazo, recursos y evidencia esperada, y repite la autoevaluación conforme avances.",
+    "Cuando el área esté lista, revisa los lineamientos vigentes de la UICN e inicia la aplicación formal en COMPASS.",
+  ],
+  learning:
+    "Muchas brechas son de documentación: el equipo ya realiza el trabajo, pero falta registrarlo. Ordenar la evidencia desde el inicio hace visible la gestión, preserva la memoria institucional entre administraciones y conecta el monitoreo de biodiversidad con resultados que la UICN reconoce.",
+  tools: [
+    `[Manual «Camino hacia la Lista Verde»](https://www.cminds.co${GL_FILES}/manual-camino-hacia-la-lista-verde.pdf) (Tech4Nature México, 2026, PDF), guía en cuatro etapas: hojas de trabajo, organización documental, GL-SAT y análisis de brechas.`,
+    `[Hoja de trabajo de la Lista Verde](https://www.cminds.co${GL_FILES}/hoja-de-trabajo-lista-verde-uicn.xlsx) (Tech4Nature México, 2026, Excel), con indicadores, tipos de evidencia y un listado de documentos de referencia.`,
+    "[Herramienta de autoevaluación GL-SAT](https://glsat.iucngreenlist.org/) (UICN), plataforma en línea con registro.",
+    "[Estándar de la Lista Verde, versión 1.1](https://www.iucn.org/sites/default/files/2024-03/estandar-lista-verde-version-1.1.pdf) (UICN, español).",
+    "[Componentes y criterios del Estándar](https://iucngreenlist.org/es/estandar/components-criteria/) (UICN, español).",
+    "[Cómo funciona la Lista Verde](https://iucngreenlist.org/how-does-it-work/) (UICN), fases del proceso.",
+    "[Manual del usuario de la Lista Verde, versión 1.2](https://iucngreenlist.org/wp-content/uploads/2020/04/IUCN-Green-List-User-Manual-Version-1.2.pdf) (UICN, 2019, inglés).",
+    "[COMPASS, la plataforma de la Lista Verde](https://iucn.org/news/protected-areas/202103/iucn-green-lists-compass-platform-gets-a-new-look-and-feel) (UICN).",
+  ],
+  elsewhere: {
+    place: "Áreas marinas del Triángulo de Coral",
+    text: "En Islas Salomón, Papúa Nueva Guinea, Filipinas, Indonesia y Malasia, comunidades, gestores de áreas marinas protegidas y gobiernos avanzan hacia la Lista Verde con autoevaluaciones participativas y GL-SAT. Nueve de las doce áreas piloto nominadas avanzaron en su autoevaluación, y los seis países de la región recomendaron reconocer GL-SAT como herramienta complementaria para evaluar la eficacia de su sistema regional de áreas marinas protegidas.",
+    link: {
+      label: "Ver caso (UICN, 2026)",
+      url: "https://iucn.org/blog/202606/communities-and-marine-protected-areas-advance-iucn-green-list-progress-across-coral",
+    },
+  },
+};
+
+/** Conexión de cada etapa con los criterios de la Lista Verde. */
+export const STAGE_GREEN_LIST: Record<string, { criteria: string; text: string }> = {
+  e1: {
+    criteria: "Criterios 1.1, 1.2 y 1.3 (buena gobernanza)",
+    text: "Los acuerdos con la comunidad y la autoridad, las actas de asamblea y el acuerdo de datos son evidencia de legitimidad, voz, transparencia y rendición de cuentas.",
+  },
+  e2: {
+    criteria: "Criterios 2.1, 2.3 y 2.4 (diseño y planificación)",
+    text: "El inventario de especies, el registro de amenazas y el conocimiento local sobre usos del territorio muestran que el área identifica y comprende sus valores, amenazas y contexto social.",
+  },
+  e3: {
+    criteria: "Criterios 2.1 y 3.7 (valores del sitio y medición del éxito)",
+    text: "Los registros validados en BioScanner y sus reportes documentan especies clave y permiten medir cambios a lo largo del tiempo.",
+  },
+  e4: {
+    criteria: "Criterios 2.2 y 3.4 (diseño a largo plazo y manejo de amenazas)",
+    text: "Los mapas de cobertura y los estudios de conectividad sustentan el diseño del área a largo plazo y la atención a sus amenazas.",
+  },
+  e5: {
+    criteria: "Criterios 3.1, 3.7 y componente 4 (manejo y resultados)",
+    text: "La integración de la evidencia al programa de manejo y los reportes de seguimiento demuestran una estrategia de largo plazo y resultados de conservación.",
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Glosario
 
 export type GlossaryTerm = { term: string; def: string };
@@ -665,6 +775,10 @@ export const GLOSSARY: { group: string; terms: GlossaryTerm[] }[] = [
       { term: "Percepción remota", def: "Estudio del territorio con imágenes tomadas por satélites, aviones o drones." },
       { term: "OMEC", def: "Otra medida eficaz de conservación basada en áreas: zona fuera de las áreas protegidas formales que conserva la biodiversidad de forma duradera, según los criterios del Convenio sobre la Diversidad Biológica." },
       { term: "Lista Verde de la UICN", def: "Estándar global que reconoce áreas protegidas y conservadas con buena gobernanza, buen diseño, manejo eficaz y resultados de conservación. La autoevaluación GL-SAT es un primer paso para prepararse." },
+      { term: "GL-SAT", def: "Herramienta en línea de la UICN para que el equipo de un área protegida evalúe su situación frente al Estándar de la Lista Verde, identifique brechas y defina acciones de mejora. Es una herramienta de aprendizaje y no otorga certificación." },
+      { term: "COMPASS", def: "Plataforma en línea de la UICN donde las áreas registran su compromiso, cargan evidencias y siguen el proceso formal hacia la certificación de la Lista Verde." },
+      { term: "EAGL", def: "Grupo de Evaluación de Expertos de la Lista Verde. Revisa las evidencias de cada área candidata, realiza una visita de campo y recomienda o no su certificación." },
+      { term: "WDPA", def: "Base de Datos Mundial de Áreas Protegidas, de la UICN y el PNUMA. Cada área tiene un identificador único que se usa, por ejemplo, para registrarse en GL-SAT." },
     ],
   },
 ];
@@ -699,6 +813,7 @@ export const CATEGORIES = [
   { id: "mapas", label: "Mapas y paisaje", image: IMAGES.earth },
   { id: "jaguar", label: "Jaguar", image: IMAGES.jaguar },
   { id: "datos", label: "Datos, ética y comunidad", image: IMAGES.people },
+  { id: "listaverde", label: "Lista Verde de la UICN", image: IMAGES.mistyForest },
 ] as const;
 
 export type CategoryId = (typeof CATEGORIES)[number]["id"];
@@ -800,9 +915,18 @@ const RAW_RESOURCES: RawResource[] = [
   { category: "datos", title: "Datos de especies sensibles (GBIF)", url: "https://docs.gbif.org/sensitive-species-best-practices/master/es/buenas-practicas-para-generalizar-datos-de-especies-sensibles-en-registros-biologicos.es.pdf", org: "GBIF", use: "Decidir qué ubicaciones publicar", lang: "ES" },
   { category: "datos", title: "Recomendación sobre la Ética de la IA (UNESCO)", url: "https://digitallibrary.un.org/record/4062376/files/1416674-ES.pdf", org: "UNESCO", use: "Principios para un uso responsable de la IA", lang: "ES" },
   { category: "datos", title: "AI for Environment and Ecosystems Toolkit (UNESCO)", url: "https://www.unesco.org/ethics-ai/en/ai-environment-ecosystems-toolkit", org: "UNESCO", use: "Políticas públicas de IA y ambiente", lang: "EN" },
-  { category: "datos", title: "Estándar de la Lista Verde (UICN)", url: "https://www.iucn.org/sites/default/files/2024-03/estandar-lista-verde-version-1.1.pdf", org: "UICN", use: "Evaluar gobernanza y gestión de áreas protegidas", lang: "ES" },
+  { category: "listaverde", title: "Estándar de la Lista Verde, versión 1.1", url: "https://www.iucn.org/sites/default/files/2024-03/estandar-lista-verde-version-1.1.pdf", org: "UICN", use: "Conocer los componentes, criterios e indicadores del Estándar", access: "PDF gratuito", kind: "gratuito", lang: "ES", level: "Básico" },
   { category: "datos", title: "WILDLABS", url: "https://wildlabs.net/es", use: "Comunidad global de tecnología para la conservación, con grupo de América Latina", lang: "ES, EN" },
   { category: "datos", title: "PANORAMA", url: "https://panorama.solutions/es", use: "Consultar y publicar soluciones replicables", lang: "ES, EN" },
+  // Lista Verde de la UICN
+  { category: "listaverde", title: "Manual «Camino hacia la Lista Verde»", url: `${GL_FILES}/manual-camino-hacia-la-lista-verde.pdf`, org: "Tech4Nature México", use: "Guía paso a paso para preparar un área protegida y hacer su autoevaluación", access: "PDF gratuito", kind: "gratuito", lang: "ES", level: "Básico" },
+  { category: "listaverde", title: "Hoja de trabajo de la Lista Verde", url: `${GL_FILES}/hoja-de-trabajo-lista-verde-uicn.xlsx`, org: "Tech4Nature México", use: "Ordenar indicadores, evidencias y documentos de referencia del área", access: "Excel gratuito", kind: "gratuito", lang: "ES", level: "Básico" },
+  { category: "listaverde", title: "GL-SAT, herramienta de autoevaluación", url: "https://glsat.iucngreenlist.org/", org: "UICN", use: "Autoevaluar el área frente al Estándar y obtener una línea base", access: "Cuenta gratuita", kind: "cuenta", lang: "Multilingüe", level: "Intermedio" },
+  { category: "listaverde", title: "Componentes y criterios del Estándar", url: "https://iucngreenlist.org/es/estandar/components-criteria/", org: "UICN", use: "Consultar los 4 componentes y 17 criterios en línea", access: "Gratuito", kind: "gratuito", lang: "ES", level: "Básico" },
+  { category: "listaverde", title: "Cómo funciona la Lista Verde", url: "https://iucngreenlist.org/how-does-it-work/", org: "UICN", use: "Conocer las fases: preparación, aplicación, candidatura y certificación", access: "Gratuito", kind: "gratuito", lang: "EN", level: "Básico" },
+  { category: "listaverde", title: "Manual del usuario de la Lista Verde, versión 1.2", url: "https://iucngreenlist.org/wp-content/uploads/2020/04/IUCN-Green-List-User-Manual-Version-1.2.pdf", org: "UICN", use: "Procedimientos detallados del proceso de certificación", access: "PDF gratuito", kind: "gratuito", lang: "EN", level: "Intermedio" },
+  { category: "listaverde", title: "COMPASS, la plataforma de la Lista Verde", url: "https://iucn.org/news/protected-areas/202103/iucn-green-lists-compass-platform-gets-a-new-look-and-feel", org: "UICN", use: "Conocer la plataforma del proceso formal de certificación", access: "Gratuito", kind: "gratuito", lang: "EN", level: "Básico" },
+  { category: "listaverde", title: "GL-SAT y sus pilotos (Congreso Mundial de la Naturaleza 2025)", url: "https://iucncongress2025.org/programme/green-list-self-assessment-tool-and-pilots", org: "UICN", use: "Presentación de la herramienta y de sus primeros pilotos", access: "Gratuito", kind: "gratuito", lang: "EN", level: "Básico" },
 ];
 
 export const RESOURCES: Resource[] = RAW_RESOURCES.map((r, i) => {
@@ -932,6 +1056,24 @@ export const TEMPLATES: Template[] = [
       { label: "Uso acordado" },
     ],
   },
+  {
+    id: "p6",
+    code: "P6",
+    n: 6,
+    title: "Hoja de trabajo de la Lista Verde",
+    short: "Hoja de trabajo Lista Verde",
+    stage: "E5",
+    layout: "log",
+    fields: [
+      { label: "Componente", hint: "gobernanza, diseño, manejo o resultados" },
+      { label: "Criterio e indicador", hint: "por ejemplo 2.1.1" },
+      { label: "Qué pide el indicador" },
+      { label: "Tipo de evidencia", hint: "decreto, acta, informe, base de datos" },
+      { label: "Documento y ubicación", hint: "nombre del archivo y carpeta" },
+      { label: "Estado", hint: "completo, parcial o falta" },
+      { label: "Próximo paso y responsable" },
+    ],
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -948,6 +1090,10 @@ export const SOURCES = [
   "Gobierno del Estado de Yucatán (2024). [Acuerdo 76/2024, Diario Oficial](https://www.yucatan.gob.mx/docs/diario_oficial/diarios/2024/2024-09-23_2.pdf).",
   "C Minds (2026). Informe técnico final de Tech4Nature México y estudio de conectividad Dzilam–Ría Lagartos (documentos internos).",
   "Kinray Hub, NaturaTech LAC y Climate Collective (2026). Cadena de Suministro con Soberanía de Datos: marco funcional y operativo V1.0. DOI 10.5281/zenodo.18675313. CC BY 4.0. [Leer en ECOS](https://ecos.cminds.co/publicaciones/sovereign-data-supply-chain?reader=1).",
+  "UICN. [Cómo funciona la Lista Verde](https://iucngreenlist.org/how-does-it-work/) y [Estándar de la Lista Verde, versión 1.1](https://www.iucn.org/sites/default/files/2024-03/estandar-lista-verde-version-1.1.pdf).",
+  "UICN (2025). [Green List Self-Assessment Tool and pilots](https://iucncongress2025.org/programme/green-list-self-assessment-tool-and-pilots), Congreso Mundial de la Naturaleza.",
+  "UICN (2026). [Communities and marine protected areas advance IUCN Green List progress across the Coral Triangle](https://iucn.org/blog/202606/communities-and-marine-protected-areas-advance-iucn-green-list-progress-across-coral).",
+  "Tech4Nature México (2026). [Manual «Camino hacia la Lista Verde»](https://www.cminds.co/platforms/aiforbiodiversity/initiative-tech4nature/toolkit/manual-camino-hacia-la-lista-verde.pdf) y hoja de trabajo de la Lista Verde.",
   "NaturaTech LAC (2025). Informe de aprendizajes: Estrategia Biocultural del Jaguar, con Fundación Pachamama y Alianza Cuencas Sagradas (datos a mayo de 2025). [Estrategia Biocultural del Jaguar](https://www.naturatech.org/en/minga-estrategia).",
 ];
 
@@ -974,6 +1120,7 @@ export type PageKind =
   | "caso"
   | "biocultural"
   | "soberania"
+  | "listaverde"
   | "etapa"
   | "preguntas"
   | "caja"
@@ -1054,6 +1201,15 @@ export const PAGES: ToolkitPage[] = [
     description:
       "La Cadena de Suministro con Soberanía de Datos y sus cinco protocolos para que las comunidades tengan autoridad sobre sus datos, con preguntas abiertas para áreas de administración pública donde la comunidad monitorea y conserva.",
   },
+  {
+    slug: "lista-verde-uicn",
+    kind: "listaverde",
+    title: "Lista Verde de la UICN",
+    label: "Lista Verde de la UICN",
+    group: "empezar",
+    description:
+      "Cómo usar el Estándar de la Lista Verde de la UICN para guiar el trabajo de un área protegida: componentes, fases, autoevaluación GL-SAT y COMPASS, con el manual y la hoja de trabajo de Tech4Nature México.",
+  },
   ...STAGES.map(
     (s): ToolkitPage => ({
       slug: stageSlug(s),
@@ -1081,7 +1237,7 @@ export const PAGES: ToolkitPage[] = [
     title: "Caja de herramientas",
     label: "Caja de herramientas",
     group: "herramientas",
-    description: `${RESOURCES.length} recursos gratuitos y en español para cámaras trampa, acústica, trabajo de campo, mapas, jaguar y gobernanza de datos, filtrables por categoría, idioma, acceso y nivel.`,
+    description: `${RESOURCES.length} recursos gratuitos y en español para cámaras trampa, acústica, trabajo de campo, mapas, jaguar, gobernanza de datos y Lista Verde de la UICN, filtrables por categoría, idioma, acceso y nivel.`,
   },
   {
     slug: "glosario",
@@ -1098,7 +1254,7 @@ export const PAGES: ToolkitPage[] = [
     label: "Todas las plantillas",
     group: "plantillas",
     description:
-      "Cinco plantillas de una página para descargar: ficha de arranque, acuerdo de datos, registro de estación de cámara trampa, hallazgo en una página y mapa de saberes del territorio.",
+      "Seis plantillas de una página para descargar: ficha de arranque, acuerdo de datos, registro de estación de cámara trampa, hallazgo en una página, mapa de saberes del territorio y hoja de trabajo de la Lista Verde de la UICN.",
   },
   ...TEMPLATES.map(
     (t): ToolkitPage => ({
@@ -1150,7 +1306,7 @@ export const LEGACY_SLUGS: Record<string, string> = {
   "a07-analisis-ecologico": stageSlug(STAGES[2]),
   "a08-cartografia-accesible": stageSlug(STAGES[3]),
   "a09-analisis-en-earth-engine": stageSlug(STAGES[3]),
-  "a10-gestion-y-lista-verde": stageSlug(STAGES[4]),
+  "a10-gestion-y-lista-verde": "lista-verde-uicn",
   "a11-financiamiento-y-operacion": stageSlug(STAGES[4]),
   "a12-capacidades-y-adopcion": stageSlug(STAGES[4]),
   "noventa-dias": "",

@@ -9,6 +9,7 @@ import {
   FuentesPage,
   GlosarioPage,
   InsigniaPage,
+  ListaVerdePage,
   PlantillasPage,
   PorQueImportaPage,
   PreguntasPage,
@@ -44,6 +45,8 @@ function Content({ page, locale }: { page: ToolkitPage; locale: Locale }) {
       return <BioculturalPage page={page} locale={locale} />;
     case "soberania":
       return <SoberaniaPage page={page} locale={locale} />;
+    case "listaverde":
+      return <ListaVerdePage page={page} locale={locale} />;
     case "etapa":
       return <StagePage page={page} locale={locale} stage={STAGES.find((s) => s.id === page.ref)!} />;
     case "preguntas":

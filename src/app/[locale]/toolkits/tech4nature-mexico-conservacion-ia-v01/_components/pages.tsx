@@ -7,6 +7,10 @@ import {
   CASE,
   GLOSSARY,
   GLOSSARY_INTRO,
+  GL_MANUAL_URL,
+  GL_WORKSHEET_URL,
+  GREEN_LIST,
+  STAGE_GREEN_LIST,
   SOVEREIGNTY,
   GROUPS,
   HERO,
@@ -548,6 +552,115 @@ export function SoberaniaPage({ page, locale }: { page: ToolkitPage; locale: Loc
 }
 
 // ---------------------------------------------------------------------------
+// Lista Verde de la UICN
+
+export function ListaVerdePage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
+  const e = GREEN_LIST.elsewhere;
+  return (
+    <PageFrame page={page} locale={locale} kicker="Estándar de gestión" lead={<p>{GREEN_LIST.lead}</p>}>
+      <H2>El Estándar en breve</H2>
+      <dl className="tk-glossary">
+        {GREEN_LIST.components.map((c) => (
+          <div key={c.title} className="tk-term" data-reveal>
+            <dt>{c.title}</dt>
+            <dd>{c.text}</dd>
+          </div>
+        ))}
+      </dl>
+      <p className="tk-meta-line">{GREEN_LIST.componentsNote}</p>
+
+      <H2>El camino hacia la Lista Verde</H2>
+      <ol className="tk-steps">
+        {GREEN_LIST.phases.map((p, i) => (
+          <li key={p.title}>
+            <span className="tk-steps-n" aria-hidden="true">
+              {i + 1}
+            </span>
+            <p>
+              <strong>{p.title}.</strong> {p.text}
+            </p>
+          </li>
+        ))}
+      </ol>
+
+      <H2>GL-SAT y COMPASS</H2>
+      {GREEN_LIST.glsat.map((p, i) => (
+        <p key={i} data-reveal>
+          {p}
+        </p>
+      ))}
+
+      <H2>Lo que hicimos en Dzilam y Ría Lagartos</H2>
+      <div className="tk-result" data-reveal>
+        {GREEN_LIST.dzilam.map((p, i) => (
+          <p key={i}>{p}</p>
+        ))}
+      </div>
+      <div className="tk-inline-promo-actions">
+        <a className="tk-cta" href={GL_MANUAL_URL} target="_blank" rel="noopener noreferrer">
+          Descargar el manual (PDF)
+          <IconExternal />
+        </a>{" "}
+        <a className="tk-cta" href={GL_WORKSHEET_URL} download>
+          Descargar la hoja de trabajo (Excel)
+        </a>
+      </div>
+
+      <H2>Cómo preparar tu área protegida</H2>
+      <ol className="tk-steps">
+        {GREEN_LIST.steps.map((p, i) => (
+          <li key={i}>
+            <span className="tk-steps-n" aria-hidden="true">
+              {i + 1}
+            </span>
+            <p>
+              <Rich text={p} />
+            </p>
+          </li>
+        ))}
+      </ol>
+
+      <CheckBox title="Aprendizaje" text={GREEN_LIST.learning} />
+
+      <H2>Cómo se conecta con las cinco etapas</H2>
+      <ul className="tk-list">
+        {STAGES.map((s) => {
+          const g = STAGE_GREEN_LIST[s.id];
+          return g ? (
+            <li key={s.id}>
+              <Link href={toolkitHref(locale, stageSlug(s))}>
+                Etapa {s.n}. {s.title}
+              </Link>
+              : {g.criteria}.
+            </li>
+          ) : null;
+        })}
+      </ul>
+
+      <H2>Herramientas para empezar</H2>
+      <ul className="tk-list tk-tools">
+        {GREEN_LIST.tools.map((t) => (
+          <li key={t}>
+            <Rich text={t} />
+          </li>
+        ))}
+      </ul>
+
+      <section className="tk-callout tk-callout--sky tk-elsewhere" aria-labelledby="otro-listaverde" data-reveal>
+        <span className="tk-callout-label">En otro territorio</span>
+        <h2 id="otro-listaverde" className="tk-elsewhere-title" data-toc={`En otro territorio: ${e.place}`}>
+          {e.place}
+        </h2>
+        <p>{e.text}</p>
+        <p>
+          <ExternalLink href={e.link.url}>{e.link.label}</ExternalLink>
+        </p>
+      </section>
+    </PageFrame>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Etapas
 
 function BioScannerInline() {
@@ -647,6 +760,15 @@ export function StagePage({ page, locale, stage }: { page: ToolkitPage; locale: 
         ))}
       </ul>
       {stage.id === "e3" ? <BioScannerInline /> : null}
+      {STAGE_GREEN_LIST[stage.id] ? (
+        <section className="tk-callout tk-callout--amber" aria-label="Conexión con la Lista Verde" data-reveal>
+          <span className="tk-callout-label">Conexión con la Lista Verde</span>
+          <p>
+            <strong>{STAGE_GREEN_LIST[stage.id].criteria}.</strong> {STAGE_GREEN_LIST[stage.id].text}{" "}
+            <Link href={toolkitHref(locale, "lista-verde-uicn")}>Ver cómo prepararte para la Lista Verde</Link>.
+          </p>
+        </section>
+      ) : null}
       <p className="tk-meta-line">
         Más opciones, filtrables por idioma, acceso y nivel, en la{" "}
         <Link href={toolkitHref(locale, "caja-de-herramientas")}>caja de herramientas</Link>.
