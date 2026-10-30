@@ -2312,3 +2312,13 @@ html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg
 .tk-video-meta { margin: 0; font-size: 0.78rem; color: var(--tk-dim); }
 @media (max-width: 1023px) { .tk-videos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .tk-videos { grid-template-columns: minmax(0, 1fr); } }
+/* Protagonistas en formato compacto */
+.tk-spot { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.tk-spot-card { flex-direction: row; align-items: center; gap: 12px; padding: 10px; }
+.tk-spot-photo { width: 64px; height: 64px; flex: none; aspect-ratio: auto; border-radius: 50%; }
+.tk-spot-body { padding: 0; gap: 2px; }
+.tk-spot-body strong { font-size: 0.9rem; line-height: 1.25; }
+.tk-spot-role { font-size: 0.72rem; line-height: 1.35; }
+.tk-spot + .tk-teamstrip { margin-top: 12px; }
+@media (max-width: 1023px) { .tk-spot { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .tk-spot { grid-template-columns: minmax(0, 1fr); } .tk-spot-card { flex-direction: row; } .tk-spot-photo { width: 56px; height: 56px; } }

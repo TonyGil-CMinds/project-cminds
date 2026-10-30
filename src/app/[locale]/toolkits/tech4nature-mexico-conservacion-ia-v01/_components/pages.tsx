@@ -343,12 +343,6 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
         ))}
       </section>
 
-      <section aria-labelledby="quienes">
-        <H2 id="quienes">Quienes lo hacen posible</H2>
-        <p data-reveal>{SPOTLIGHT_INTRO}</p>
-        <Spotlight />
-      </section>
-
       <section aria-labelledby="logros">
         <H2 id="logros">Lo que hemos logrado</H2>
         <p data-reveal>Toca cada tarjeta para ver el detalle: el acuerdo de ampliación, el listado de especies, BioScanner y las fotos de los jaguares.</p>
@@ -368,25 +362,6 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
           ))}
         </ul>
         <p className="tk-meta-line">{MAP_TEXT.note}</p>
-      </section>
-
-      <section aria-labelledby="en-imagenes">
-        <H2 id="en-imagenes">El proyecto en imágenes</H2>
-        {GALLERY.map((g) => (
-          <section key={g.id} aria-labelledby={`galeria-${g.id}`} className="tk-gallery-block">
-            <h3 id={`galeria-${g.id}`} className="tk-h3">
-              {g.title}
-            </h3>
-            <p data-reveal>{g.text}</p>
-            <PhotoGrid photos={g.photos} label={g.title} />
-          </section>
-        ))}
-      </section>
-
-      <section aria-labelledby="videos">
-        <H2 id="videos">Tech4Nature México en video</H2>
-        <p data-reveal>{VIDEOS_INTRO}</p>
-        <VideoList videos={VIDEOS} />
       </section>
 
       <section aria-labelledby="linea-de-tiempo">
@@ -414,9 +389,29 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
         <p className="tk-quote-closing">{CASE.story.closing}</p>
       </figure>
 
-      <section aria-labelledby="personas">
-        <H2 id="personas">Las personas detrás</H2>
+      <section aria-labelledby="quienes">
+        <H2 id="quienes">Quienes lo hacen posible</H2>
+        <p data-reveal>{SPOTLIGHT_INTRO}</p>
+        <Spotlight />
         <TeamStrip locale={locale} />
+      </section>
+      <section aria-labelledby="en-imagenes">
+        <H2 id="en-imagenes">El proyecto en imágenes</H2>
+        {GALLERY.map((g) => (
+          <section key={g.id} aria-labelledby={`galeria-${g.id}`} className="tk-gallery-block">
+            <h3 id={`galeria-${g.id}`} className="tk-h3">
+              {g.title}
+            </h3>
+            <p data-reveal>{g.text}</p>
+            <PhotoGrid photos={g.photos} label={g.title} />
+          </section>
+        ))}
+      </section>
+
+      <section aria-labelledby="videos">
+        <H2 id="videos">Tech4Nature México en video</H2>
+        <p data-reveal>{VIDEOS_INTRO}</p>
+        <VideoList videos={VIDEOS} />
       </section>
 
       <section aria-labelledby="crea-el-tuyo-cta" className="tk-invite" data-reveal>

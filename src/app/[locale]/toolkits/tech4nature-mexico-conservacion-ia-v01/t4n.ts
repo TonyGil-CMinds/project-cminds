@@ -551,6 +551,7 @@ export const GALLERY: { id: string; title: string; text: string; photos: Gallery
       { src: C("darwin-senala"), alt: "Darwin Sosa señala hacia el monte", caption: "Darwin Sosa muestra por dónde pasa la fauna" },
       { src: C("manglar"), alt: "Monitor sonriente de pie sobre las raíces del manglar", caption: "En el manglar" },
       { src: C("equipo-camioneta"), alt: "Equipo de Tech4Nature México en la batea de una camioneta", caption: "Monitores y equipo antes de salir a campo" },
+      { src: C("cruce-humedal"), alt: "Equipo caminando por un humedal inundado", caption: "Rumbo al humedal en temporada de lluvias" },
     ],
   },
   {
@@ -561,7 +562,6 @@ export const GALLERY: { id: string; title: string; text: string; photos: Gallery
       { src: C("taller-bs"), alt: "Monitor sonriente en un taller de BioScanner con laptops", caption: "Taller de BioScanner" },
       { src: C("taller-bs-e"), alt: "Participantes chocan las manos al final de un taller", caption: "Cierre de un taller" },
       { src: C("taller-bs-b"), alt: "Dos participantes revisan resultados en una laptop", caption: "Revisando detecciones" },
-      { src: C("taller-bs-c"), alt: "Participantes conversan durante el taller", caption: "Aprender juntos" },
       { src: C("taller-bs-d"), alt: "Facilitador explica frente a un grupo con laptops", caption: "Sesión de práctica" },
       { src: C("taller-bs-f"), alt: "Participante recibe un kit al terminar el taller", caption: "Entrega de kits" },
     ],
@@ -576,7 +576,6 @@ export const GALLERY: { id: string; title: string; text: string; photos: Gallery
       { src: C("festival-premios"), alt: "Monitores reciben reconocimientos de madera con huellas de jaguar", caption: "Reconocimiento a los monitores" },
       { src: C("festival-publico"), alt: "Público del festival con un micrófono", caption: "La comunidad pregunta y comparte" },
       { src: C("festival-benja"), alt: "Benjamín Campos sonríe frente a una computadora", caption: "Benja Campos muestra los registros" },
-      { src: C("festival-charla"), alt: "Charla sobre especies en riesgo en el festival", caption: "Charla sobre especies en riesgo" },
     ],
   },
   {
@@ -588,6 +587,7 @@ export const GALLERY: { id: string; title: string; text: string; photos: Gallery
       { src: C("taller-jovenes"), alt: "Jóvenes y adultos en círculo durante un taller bajo una palapa", caption: "Taller sobre áreas protegidas" },
       { src: C("capacitacion-acustica"), alt: "Monitores aprenden a usar una grabadora acústica", caption: "Capacitación con grabadoras acústicas" },
       { src: C("salida-upy"), alt: "Estudiantes de la UPY escuchan a un guía en campo", caption: "Salida de campo con estudiantes de la UPY" },
+      { src: C("festival-familias"), alt: "Familias participan en actividades del Festival del Jaguar", caption: "Familias en el Festival del Jaguar" },
     ],
   },
 ];
