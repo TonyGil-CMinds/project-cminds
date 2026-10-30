@@ -380,6 +380,11 @@ export const MAP_TEXT = {
     { value: "12,024", label: "días-cámara de monitoreo, de 2022 a 2026" },
     { value: "~40 km", label: "entre dos registros del mismo jaguar, hacia Ría Lagartos" },
   ],
+  googleEmbed:
+    "https://www.google.com/maps?q=Reserva%20Estatal%20de%20Dzilam%2C%20Dzilam%20de%20Bravo%2C%20Yucat%C3%A1n&ll=21.4616374,-88.6608063&z=11&t=k&output=embed",
+  googleUrl:
+    "https://www.google.com/maps/place/97608+Reserva+Estatal+de+Dzilam+de+Bravo,+Yucatan,+Mexico/@21.4616374,-88.6608063,48060m/data=!3m1!1e3!4m6!3m5!1s0x8f53956fb63c5145:0x257bef41330fb623!8m2!3d21.5027274!4d-88.4908506!16s%2Fg%2F1wyc5d26",
+  googleCaption: "Vista satelital de la Reserva Estatal de Dzilam en Google Maps. Explora la costa, el manglar y la selva que cuida el proyecto.",
   note: "Mapa esquemático. Por seguridad de la fauna no mostramos la ubicación de las cámaras; los límites oficiales de la reserva están en el Acuerdo 76/2024.",
 };
 

@@ -353,6 +353,21 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
         <H2 id="donde-trabajamos">Dónde trabajamos</H2>
         <p data-reveal>{MAP_TEXT.lead}</p>
         <T4nMap />
+        <figure className="tk-gmap" data-reveal>
+          <iframe
+            src={MAP_TEXT.googleEmbed}
+            title="Mapa satelital de la Reserva Estatal de Dzilam en Google Maps"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
+          <figcaption>
+            {MAP_TEXT.googleCaption}{" "}
+            <a href={MAP_TEXT.googleUrl} target="_blank" rel="noopener noreferrer">
+              Abrir en Google Maps
+            </a>
+          </figcaption>
+        </figure>
         <ul className="tk-mapfacts">
           {MAP_TEXT.facts.map((f) => (
             <li key={f.label} data-reveal>
