@@ -742,3 +742,124 @@ export const VIDEOS: Video[] = [
   { id: "bbjwulJHNN0", title: "How AI Is Helping Save Jaguars Across Latin America (Interview with Tech4Nature Mexico)", channel: "Paris Peace Forum" },
   { id: "TilMnT73Oh4", title: "Tech4Nature México: evento de lanzamiento", channel: "Huawei Latinoamérica", start: 2173 },
 ];
+
+// ---------------------------------------------------------------------------
+// Socios
+
+const L = (file: string) => `/platforms/aiforbiodiversity/initiative-tech4nature/${file}`;
+
+export type Partner = { name: string; logo: string; height?: number };
+
+export const PARTNERS: { title: string; partners: Partner[] }[] = [
+  {
+    title: "Liderado por",
+    partners: [
+      { name: "C Minds", logo: L("ledby-cminds-1.svg") },
+      { name: "AI for Climate and Biodiversity", logo: L("ledby-aiforclimate-2.svg") },
+      { name: "Grupo de Monitoreo Chac Mool", logo: L("partner-chacmool.png"), height: 64 },
+      { name: "Gobierno del Estado de Yucatán, Secretaría de Desarrollo Sustentable", logo: L("ledby-sds-3.svg") },
+    ],
+  },
+  {
+    title: "Con el apoyo de",
+    partners: [
+      { name: "UICN", logo: L("supportedby-iucn-1.svg") },
+      { name: "Huawei", logo: L("supportedby-huawei-3.svg") },
+      { name: "Tech4All", logo: L("supportedby-tech4all-4.svg") },
+      { name: "Lista Verde de la UICN", logo: L("supportedby-greenlist-2.svg") },
+    ],
+  },
+  {
+    title: "Con las contribuciones estratégicas de",
+    partners: [
+      { name: "Pronatura Península de Yucatán", logo: L("partner-pronatura.png"), height: 60 },
+      { name: "Fundación Pachamama", logo: L("partner-pachamama.png") },
+      { name: "Universidad Politécnica de Yucatán", logo: L("innovationpartner-upy.svg") },
+    ],
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Aprendizajes, recomendaciones y principios
+
+export const FINDINGS = {
+  intro:
+    "Además de los resultados, cuatro años de trabajo dejaron conocimiento que sirve a cualquier territorio. Lo reunimos aquí en tres niveles: lo que descubrimos sobre la reserva, lo que aprendimos al hacerlo y los principios que guían un proyecto como este.",
+  science: [
+    {
+      title: "Más vegetación, más especies",
+      text: "La riqueza de especies se correlacionó positivamente con la cobertura forestal: en los sitios con mayor proporción de selva baja se registraron más especies. Conservar y reconectar la vegetación es conservar biodiversidad.",
+    },
+    {
+      title: "Los paisajes sonoros cambian",
+      text: "Los paisajes sonoros de Dzilam varían con la temporada y el tipo de hábitat. Por eso conviene monitorear todo el año y en distintos ambientes: selva, manglar, petén y pastizal.",
+    },
+    {
+      title: "El sonido revela lo que no se ve",
+      text: "Especies difíciles de observar, como el tinamú canelo, fueron de las más detectadas por las grabadoras. Combinar cámaras trampa y monitoreo acústico amplía lo que un equipo puede registrar.",
+    },
+  ],
+  lessons: [
+    {
+      title: "El territorio marca el ritmo",
+      text: "Desplegar monitoreo en zonas de difícil acceso es más complejo de lo que se planea en una oficina: lluvias, inundaciones, caminos y equipos que fallan.",
+      rec: "Diseña el muestreo con quienes conocen el monte y adopta el monitoreo biocultural como principio, junto con un diseño científico que permita comparar sitios.",
+      href: "monitoreo-biocultural",
+      link: "Monitoreo biocultural",
+    },
+    {
+      title: "La gobernanza de datos va primero",
+      text: "Decidir quién es dueño de los datos, quién los ve y qué se protege evita conflictos y construye confianza.",
+      rec: "Acuerda las reglas de los datos antes de instalar el primer equipo, con consentimiento libre, previo e informado.",
+      href: "soberania-de-datos",
+      link: "Soberanía de datos",
+    },
+    {
+      title: "Lo que se construye con los usuarios se usa",
+      text: "BioScanner funciona porque se diseñó con monitores, guardaparques y la autoridad, probando cada versión en campo.",
+      rec: "Incluye a quienes usarán la herramienta desde el diseño y prueba con ellos en ciclos cortos.",
+    },
+    {
+      title: "El gobierno, desde el inicio",
+      text: "La SDS participó desde el diseño, y eso permitió que la evidencia llegara a decisiones como la ampliación de la reserva.",
+      rec: "Invita a la autoridad que tomará la decisión desde el primer día, para que adopte los resultados y los traduzca a política pública.",
+    },
+    {
+      title: "La alfabetización digital es parte del proyecto",
+      text: "Usar celulares, formularios y plataformas requiere tiempo de aprendizaje y acompañamiento en la comunidad.",
+      rec: "Presupuesta capacitación continua, materiales en el idioma local y personas de apoyo cercanas.",
+    },
+    {
+      title: "Más datos no siempre es mejor información",
+      text: "Cientos de miles de fotos solo se vuelven útiles cuando se organizan, se validan y responden una pregunta.",
+      rec: "Empieza por la pregunta y la decisión, y define qué datos necesitas para responderla.",
+    },
+    {
+      title: "La continuidad se financia",
+      text: "Equipos, baterías, almacenamiento y el trabajo del equipo local tienen costos que siguen después del proyecto.",
+      rec: "Diseña desde el inicio mecanismos de financiamiento de largo plazo y vincula el monitoreo a instrumentos como la Lista Verde o esquemas de permanencia.",
+      href: "lista-verde-uicn",
+      link: "Lista Verde de la UICN",
+    },
+    {
+      title: "Articular gobiernos es un trabajo en sí mismo",
+      text: "Coordinar niveles de gobierno, administraciones que cambian y reservas vecinas es uno de los mayores retos.",
+      rec: "Documenta acuerdos, nombra enlaces en cada institución y deja la memoria del proyecto por escrito.",
+    },
+    {
+      title: "Compartir datos requiere confianza",
+      text: "El intercambio de información entre instituciones se construye paso a paso y lleva tiempo.",
+      rec: "Empieza con acuerdos pequeños y concretos, muestra el valor de compartir y amplía el intercambio conforme crece la confianza.",
+    },
+  ],
+  principles: [
+    { title: "El territorio guía la tecnología", text: "El conocimiento local define dónde, cómo y para qué se monitorea; la IA amplía lo que la comunidad ya observa." },
+    { title: "La decisión define los datos", text: "Cada dato responde a una pregunta que alguien necesita contestar para decidir." },
+    { title: "Los datos se gobiernan antes de recolectarse", text: "Acuerdos claros sobre propiedad, acceso y uso hacen posible la confianza y el intercambio." },
+    { title: "La continuidad se diseña desde el primer día", text: "Capacidades locales, instituciones comprometidas y financiamiento sostienen el monitoreo en el tiempo." },
+  ],
+  report: {
+    label: "Leer el reporte de la fase 1: aprendizajes y recomendaciones",
+    url: "https://docs.google.com/document/d/12OQ36ia6frIHRFIOJWm4dyT5uFbb8vHfJBcyQWP_CqY/edit",
+  },
+};

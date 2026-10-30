@@ -311,6 +311,8 @@ export const STAGES: Stage[] = [
       "[Manual de fototrampeo para estudio de fauna silvestre: el jaguar en México como estudio de caso](https://simec.conanp.gob.mx/Publicaciones2020/Publicaciones%20CONANP/Parte%203/Manuales/2013%20Manual%20fototrampeo%20jaguar.pdf) (Chávez y colaboradores, 2013).",
       "[Manual de fototrampeo: herramienta de investigación para la conservación de la biodiversidad en Colombia](http://hdl.handle.net/20.500.11761/31415) (Instituto Humboldt y Panthera, 2012).",
       "[BIOCOMUNI v2.0 Fauna](https://desarrollo.fmcn.org/wp-content/uploads/2025/06/BIOCOMUNI_v2.0_Fauna.pdf) (FMCN y CONAFOR), protocolo de monitoreo comunitario con formatos imprimibles.",
+      "[Protocolo de monitoreo con cámaras trampa](https://forestgeo.si.edu/sites/default/files/teamterrestrialvertebrate-pt-en-3.1.pdf) (TEAM Network, 2011, inglés): diseño científico con una cámara cada 2 km² y campañas de 30 días.",
+      "[Introducción al monitoreo ambiental comunitario](https://transformativepathways.net/wp-content/uploads/2024/07/JA-591-Introduction-to-community-based-environmental-monitoring-ICCS-ES-v2-FINAL.pdf) (Forest Peoples Programme, español): diseño del monitoreo con la comunidad, de las prioridades a la difusión.",
       "[Buenas prácticas para gestionar y publicar datos de cámaras trampa](https://docs.gbif.org/camera-trap-guide/es/) (GBIF, 2026, español).",
       "[Manual de configuración de AudioMoth](https://www.protocols.io/view/manual-de-configuraci-n-audiomoth-1-2-0-gu-a-de-8-cmvju64n.pdf) (Ciencia Ciudadana Perú, español), grabadora abierta de bajo costo.",
       "[KoboToolbox](https://www.kobotoolbox.org), formularios de campo gratuitos que funcionan sin conexión.",
@@ -510,6 +512,8 @@ export const BIOCULTURAL = {
     "[Buenas prácticas para generalizar datos de especies sensibles](https://docs.gbif.org/sensitive-species-best-practices/master/es/buenas-practicas-para-generalizar-datos-de-especies-sensibles-en-registros-biologicos.es.pdf) (GBIF, español).",
     "[Directrices de la UICN sobre conflictos y coexistencia entre humanos y vida silvestre](https://doi.org/10.2305/CFRX2122) (2024, español).",
     "[KoboToolbox](https://www.kobotoolbox.org) y [SMART](https://smartconservationtools.org), para registrar observaciones comunitarias sin conexión.",
+    "[Introducción al monitoreo ambiental comunitario](https://transformativepathways.net/wp-content/uploads/2024/07/JA-591-Introduction-to-community-based-environmental-monitoring-ICCS-ES-v2-FINAL.pdf) (Forest Peoples Programme, español), guía para diseñar el monitoreo con la comunidad.",
+    "[Protocolo de monitoreo con cámaras trampa](https://forestgeo.si.edu/sites/default/files/teamterrestrialvertebrate-pt-en-3.1.pdf) (TEAM Network, inglés), para el diseño científico del muestreo.",
     "Plantilla 5 de este toolkit: mapa de saberes del territorio. [P5]",
   ],
   elsewhere: {
@@ -929,6 +933,10 @@ const RAW_RESOURCES: RawResource[] = [
   { category: "listaverde", title: "Manual del usuario de la Lista Verde, versión 1.2", url: "https://iucngreenlist.org/wp-content/uploads/2020/04/IUCN-Green-List-User-Manual-Version-1.2.pdf", org: "UICN", use: "Procedimientos detallados del proceso de certificación", access: "PDF gratuito", kind: "gratuito", lang: "EN", level: "Intermedio" },
   { category: "listaverde", title: "COMPASS, la plataforma de la Lista Verde", url: "https://iucn.org/news/protected-areas/202103/iucn-green-lists-compass-platform-gets-a-new-look-and-feel", org: "UICN", use: "Conocer la plataforma del proceso formal de certificación", access: "Gratuito", kind: "gratuito", lang: "EN", level: "Básico" },
   { category: "listaverde", title: "GL-SAT y sus pilotos (Congreso Mundial de la Naturaleza 2025)", url: "https://iucncongress2025.org/programme/green-list-self-assessment-tool-and-pilots", org: "UICN", use: "Presentación de la herramienta y de sus primeros pilotos", access: "Gratuito", kind: "gratuito", lang: "EN", level: "Básico" },
+  // Diseño de muestreo: científico y biocultural
+  { category: "campo", title: "Protocolo de monitoreo con cámaras trampa (TEAM Network)", url: "https://forestgeo.si.edu/sites/default/files/teamterrestrialvertebrate-pt-en-3.1.pdf", org: "Conservation International", use: "Diseño científico de muestreo: número de cámaras, distancia entre estaciones y duración", access: "PDF gratuito", kind: "gratuito", lang: "EN", level: "Intermedio" },
+  { category: "campo", title: "Introducción al monitoreo ambiental comunitario", url: "https://transformativepathways.net/wp-content/uploads/2024/07/JA-591-Introduction-to-community-based-environmental-monitoring-ICCS-ES-v2-FINAL.pdf", org: "Forest Peoples Programme y Caminos de Transformación", use: "Guía paso a paso para que comunidades diseñen su monitoreo combinando saberes tradicionales y científicos", access: "PDF gratuito", kind: "gratuito", lang: "ES", level: "Básico" },
+  { category: "camaras", title: "Field techniques: camera trapping", url: "https://www.rgs.org/media/rfpfoyht/fieldtechniquescameratrapping.pdf", org: "Royal Geographical Society", use: "Introducción práctica al fototrampeo: colocación, configuración y errores comunes", access: "PDF gratuito", kind: "gratuito", lang: "EN", level: "Básico" },
 ];
 
 export const RESOURCES: Resource[] = RAW_RESOURCES.map((r, i) => {

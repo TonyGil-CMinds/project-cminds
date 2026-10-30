@@ -49,6 +49,8 @@ import PhotoGrid from "./PhotoGrid";
 import VideoList from "./VideoList";
 import {
   CAMERA_TRAP,
+  FINDINGS,
+  PARTNERS,
   GALLERY,
   PAGE_PHOTOS,
   MAP_TEXT,
@@ -343,10 +345,75 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
         ))}
       </section>
 
+      <section aria-labelledby="socios" className="tk-partners" data-reveal>
+        <H2 id="socios">Socios</H2>
+        {PARTNERS.map((g) => (
+          <div key={g.title} className="tk-partners-group">
+            <p className="tk-partners-title">{g.title}</p>
+            <ul>
+              {g.partners.map((p) => (
+                <li key={p.name}>
+                  <img src={p.logo} alt={p.name} title={p.name} loading="lazy" decoding="async" style={p.height ? { height: p.height } : undefined} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+
       <section aria-labelledby="logros">
         <H2 id="logros">Lo que hemos logrado</H2>
         <p data-reveal>Toca cada tarjeta para ver el detalle: el acuerdo de ampliación, el listado de especies, BioScanner y las fotos de los jaguares.</p>
         <Achievements locale={locale} />
+      </section>
+
+      <section aria-labelledby="aprendizajes">
+        <H2 id="aprendizajes">Lo que aprendimos</H2>
+        <p data-reveal>{FINDINGS.intro}</p>
+        <h3 className="tk-h3">Lo que descubrimos sobre la reserva</h3>
+        <dl className="tk-glossary">
+          {FINDINGS.science.map((s) => (
+            <div key={s.title} className="tk-term" data-reveal>
+              <dt>{s.title}</dt>
+              <dd>{s.text}</dd>
+            </div>
+          ))}
+        </dl>
+        <h3 className="tk-h3">Aprendizajes y recomendaciones</h3>
+        <ul className="tk-lessons">
+          {FINDINGS.lessons.map((l, i) => (
+            <li key={l.title} className="tk-lesson" data-reveal>
+              <span className="tk-lesson-n" aria-hidden="true">
+                {i + 1}
+              </span>
+              <div>
+                <strong>{l.title}</strong>
+                <p>{l.text}</p>
+                <p className="tk-lesson-rec">
+                  <span>Recomendación:</span> {l.rec}
+                  {l.href ? (
+                    <>
+                      {" "}
+                      <Link href={toolkitHref(locale, l.href)}>{l.link}</Link>
+                    </>
+                  ) : null}
+                </p>
+              </div>
+            </li>
+          ))}
+        </ul>
+        <h3 className="tk-h3">Principios para crear tu propio Tech4Nature</h3>
+        <ol className="tk-principles">
+          {FINDINGS.principles.map((p) => (
+            <li key={p.title} data-reveal>
+              <strong>{p.title}</strong>
+              <span>{p.text}</span>
+            </li>
+          ))}
+        </ol>
+        <p className="tk-meta-line">
+          <ExternalLink href={FINDINGS.report.url}>{FINDINGS.report.label}</ExternalLink>
+        </p>
       </section>
 
       <section aria-labelledby="donde-trabajamos">
