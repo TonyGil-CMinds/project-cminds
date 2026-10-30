@@ -41,7 +41,7 @@ export const IMAGES = {
   mistyForest: { src: `${T4N}/toolkit/campo/humedal.jpg`, alt: "Humedal con tule y manglar en la costa norte de Yucatán" },
   pineLight: { src: `${T4N}/toolkit/campo/festival-grupo.jpg`, alt: "Asistentes al primer Festival del Jaguar Chac Mool en Dzilam de Bravo" },
   turtle: { src: `${T4N}/toolkit/campo/atardecer.jpg`, alt: "Atardecer sobre la selva de Dzilam" },
-} as const;
+} satisfies Record<string, Img>;
 
 export type Img = { src: string; alt: string };
 
@@ -870,7 +870,9 @@ export const QUESTIONS = {
 // ---------------------------------------------------------------------------
 // Caja de herramientas
 
-export const CATEGORIES = [
+export type CategoryId = "t4n" | "camaras" | "campo" | "mapas" | "jaguar" | "datos" | "listaverde";
+
+export const CATEGORIES: { id: CategoryId; label: string; image: Img }[] = [
   { id: "t4n", label: "Tech4Nature México y BioScanner", image: IMAGES.platform },
   { id: "camaras", label: "Cámaras trampa y acústica", image: IMAGES.feline },
   { id: "campo", label: "Trabajo de campo", image: IMAGES.forestPath },
@@ -878,9 +880,7 @@ export const CATEGORIES = [
   { id: "jaguar", label: "Jaguar", image: IMAGES.jaguar },
   { id: "datos", label: "Datos, ética y comunidad", image: IMAGES.people },
   { id: "listaverde", label: "Lista Verde de la UICN", image: IMAGES.mistyForest },
-] as const;
-
-export type CategoryId = (typeof CATEGORIES)[number]["id"];
+];
 
 export type AccessKind = "gratuito" | "cuenta" | "costo";
 
@@ -890,19 +890,20 @@ export const ACCESS_KINDS: { id: AccessKind; label: string }[] = [
   { id: "costo", label: "Con costo" },
 ];
 
-export const LANG_FILTERS = [
+export const LANG_FILTERS: { id: "ES" | "EN" | "MULTI"; label: string; test: RegExp }[] = [
   { id: "ES", label: "Español", test: /\bES\b/ },
   { id: "EN", label: "Inglés", test: /\bEN\b/ },
   { id: "MULTI", label: "Multilingüe", test: /multiling|PT|maya/i },
-] as const;
+];
 
-export const LEVELS = [
+export type Level = "Básico" | "Intermedio" | "Avanzado";
+
+/** `id` coincide con el nivel de cada recurso; `label` es lo que se muestra. */
+export const LEVELS: { id: Level; label: string; hint: string }[] = [
   { id: "Básico", label: "Básico", hint: "sin programar" },
   { id: "Intermedio", label: "Intermedio", hint: "requiere práctica o formación" },
   { id: "Avanzado", label: "Avanzado", hint: "requiere programación o especialistas" },
-] as const;
-
-export type Level = (typeof LEVELS)[number]["id"];
+];
 
 export type Resource = {
   id: string;
@@ -1243,8 +1244,11 @@ export const GROUPS: { id: string; label: string; section?: string }[] = [
   { id: "cierre", label: "Fuentes", section: "Toolkit de replicabilidad" },
 ];
 
-export const stageSlug = (s: Stage) => `etapa-${s.n}-${slugify(s.short)}`;
-export const templateSlug = (t: Template) => `plantilla-${t.n}-${slugify(t.short)}`;
+/** Los slugs vienen del español y son los mismos en todos los idiomas. */
+const STAGE_SLUGS: Record<string, string> = Object.fromEntries(STAGES.map((s) => [s.id, `etapa-${s.n}-${slugify(s.short)}`]));
+const TEMPLATE_SLUGS: Record<string, string> = Object.fromEntries(TEMPLATES.map((t) => [t.id, `plantilla-${t.n}-${slugify(t.short)}`]));
+export const stageSlug = (s: { id: string }) => STAGE_SLUGS[s.id];
+export const templateSlug = (t: { id: string }) => TEMPLATE_SLUGS[t.id];
 
 export const PAGES: ToolkitPage[] = [
   {

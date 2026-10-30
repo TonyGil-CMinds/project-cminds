@@ -1,7 +1,10 @@
 "use client";
 
 import { createContext, useCallback, useContext, useMemo, type ReactNode } from "react";
-import { AUDIENCES, STAGES, STORAGE_KEY, targetOf, type Audience } from "../data";
+import type { Locale } from "@/i18n/config";
+import { STAGES, STORAGE_KEY, targetOf, type Audience } from "../data";
+import { getContent } from "../content";
+import { useContent } from "./i18n";
 import { useLocalStore } from "./useLocalStore";
 
 type Persisted = { route: string | null; done: string[]; celebrated: boolean };
@@ -42,6 +45,7 @@ function parse(raw: string | null): Persisted {
 
 export function ToolkitProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useLocalStore(STORAGE_KEY, parse);
+  const { AUDIENCES } = useContent();
 
   const setRoute = useCallback((id: string | null) => setState((s) => ({ ...s, route: id })), [setState]);
   const setDone = useCallback(
@@ -71,7 +75,7 @@ export function ToolkitProvider({ children }: { children: ReactNode }) {
       celebrated: state.celebrated,
       markCelebrated,
     };
-  }, [state, setRoute, toggleDone, setDone, markCelebrated]);
+  }, [state, setRoute, toggleDone, setDone, markCelebrated, AUDIENCES]);
 
   return <ToolkitContext.Provider value={value}>{children}</ToolkitContext.Provider>;
 }
@@ -82,8 +86,17 @@ export function useToolkit(): ToolkitContextValue {
   return ctx;
 }
 
-export const SECTION_LABELS: Record<string, string> = {
-  ...Object.fromEntries(STAGES.map((s) => [s.code, `Etapa ${s.n} · ${s.title}`])),
-  equipo: "Las personas detrás de Tech4Nature México",
-  "caja-de-herramientas": "Caja de herramientas",
-};
+const SECTION_TEXT = {
+  es: { stage: "Etapa", equipo: "Las personas detrás de Tech4Nature México", caja: "Caja de herramientas" },
+  en: { stage: "Stage", equipo: "The people behind Tech4Nature Mexico", caja: "Toolbox" },
+} satisfies Record<Locale, Record<string, string>>;
+
+/** Nombres de las secciones que aparecen en las rutas por público, en el idioma dado. */
+export function sectionLabels(locale: Locale): Record<string, string> {
+  const t = SECTION_TEXT[locale];
+  return {
+    ...Object.fromEntries(getContent(locale).STAGES.map((s) => [s.code, `${t.stage} ${s.n} · ${s.title}`])),
+    equipo: t.equipo,
+    "caja-de-herramientas": t.caja,
+  };
+}

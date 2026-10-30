@@ -2,11 +2,47 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useLocale } from "@/i18n/useLocale";
-import { CATEGORIES, GROUPS, PAGES, RESOURCES, toolkitHref } from "../data";
+import type { Locale } from "@/i18n/config";
+import { toolkitHref } from "../data";
+import type { Content } from "../content";
+import { useContent, useLocale } from "./i18n";
 import { IconSearch } from "./icons";
 
-type Entry = { key: string; slug: string; hash?: string; group: string; code?: string; title: string; hint: string; haystack: string };
+type GroupKey = "pages" | "stages" | "templates" | "resources";
+type Entry = { key: string; slug: string; hash?: string; group: GroupKey; code?: string; title: string; hint: string; haystack: string };
+
+const L = {
+  es: {
+    pages: "Páginas",
+    stages: "Etapas",
+    templates: "Plantillas",
+    resources: "Recursos",
+    home: "Inicio del toolkit",
+    dialog: "Buscar en el toolkit",
+    placeholder: "Busca una etapa, plantilla o herramienta…",
+    search: "Buscar",
+    results: "Resultados",
+    empty: (q: string) => `Sin resultados para «${q}».`,
+    move: "↑ ↓ para moverte",
+    open: "↵ para abrir",
+    close: "Esc para cerrar",
+  },
+  en: {
+    pages: "Pages",
+    stages: "Stages",
+    templates: "Templates",
+    resources: "Resources",
+    home: "Toolkit home",
+    dialog: "Search the toolkit",
+    placeholder: "Search for a stage, template or tool…",
+    search: "Search",
+    results: "Results",
+    empty: (q: string) => `No results for “${q}”.`,
+    move: "↑ ↓ to move",
+    open: "↵ to open",
+    close: "Esc to close",
+  },
+} satisfies Record<Locale, Record<string, string | ((q: string) => string)>>;
 
 const normalize = (s: string) =>
   s
@@ -14,24 +50,23 @@ const normalize = (s: string) =>
     .normalize("NFD")
     .replace(/[̀-ͯ]/g, "");
 
-const GROUP_LABEL = new Map(GROUPS.map((g) => [g.id, g.label]));
-const CATEGORY_LABEL = new Map<string, string>(CATEGORIES.map((c) => [c.id, c.label]));
-
-function buildIndex(): Entry[] {
+function buildIndex(locale: Locale, { CATEGORIES, GROUPS, PAGES, RESOURCES }: Content): Entry[] {
+  const GROUP_LABEL = new Map(GROUPS.map((g) => [g.id, g.label]));
+  const CATEGORY_LABEL = new Map<string, string>(CATEGORIES.map((c) => [c.id, c.label]));
   const entries: Omit<Entry, "haystack">[] = [
     ...PAGES.map((p) => ({
       key: `p-${p.slug}`,
       slug: p.slug,
-      group: p.kind === "etapa" ? "Etapas" : p.kind === "plantilla" ? "Plantillas" : "Páginas",
+      group: (p.kind === "etapa" ? "stages" : p.kind === "plantilla" ? "templates" : "pages") as GroupKey,
       code: p.code,
-      title: p.kind === "inicio" ? "Inicio del toolkit" : p.title,
+      title: p.kind === "inicio" ? L[locale].home : p.title,
       hint: GROUP_LABEL.get(p.group) ?? "",
     })),
     ...RESOURCES.map((r) => ({
       key: r.id,
       slug: "caja-de-herramientas",
       hash: r.id,
-      group: "Recursos",
+      group: "resources" as GroupKey,
       code: r.code,
       title: r.title,
       hint: `${r.use} · ${CATEGORY_LABEL.get(r.category) ?? ""}`,
@@ -40,8 +75,7 @@ function buildIndex(): Entry[] {
   return entries.map((e) => ({ ...e, haystack: normalize(`${e.code ?? ""} ${e.title} ${e.hint}`) }));
 }
 
-const GROUP_ORDER = ["Páginas", "Etapas", "Plantillas", "Recursos"];
-const INDEX = buildIndex();
+const GROUP_ORDER: GroupKey[] = ["pages", "stages", "templates", "resources"];
 
 export default function CommandPalette({ open, onClose }: { open: boolean; onClose: () => void }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -51,17 +85,20 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
   const [cursor, setCursor] = useState(0);
   const router = useRouter();
   const locale = useLocale();
+  const content = useContent();
+  const l = L[locale];
+  const index = useMemo(() => buildIndex(locale, content), [locale, content]);
 
   const results = useMemo(() => {
     const tokens = normalize(query).split(/\s+/).filter(Boolean);
     const matched = tokens.length
-      ? INDEX.filter((e) => tokens.every((t) => e.haystack.includes(t)))
-      : INDEX.filter((e) => e.group === "Páginas" || e.group === "Etapas");
+      ? index.filter((e) => tokens.every((t) => e.haystack.includes(t)))
+      : index.filter((e) => e.group === "pages" || e.group === "stages");
     return matched
       .sort((a, b) => GROUP_ORDER.indexOf(a.group) - GROUP_ORDER.indexOf(b.group))
       .slice(0, 40)
       .map((e, i, all) => ({ ...e, header: i === 0 || all[i - 1].group !== e.group }));
-  }, [query]);
+  }, [query, index]);
 
   // La búsqueda empieza vacía cada vez que se abre.
   const close = () => {
@@ -108,7 +145,7 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
     <dialog
       ref={dialogRef}
       className="tk-palette"
-      aria-label="Buscar en el toolkit"
+      aria-label={l.dialog}
       onClose={close}
       onClick={(e) => {
         if (e.target === dialogRef.current) close();
@@ -125,8 +162,8 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
             setCursor(0);
           }}
           onKeyDown={onKeyDown}
-          placeholder="Busca una etapa, plantilla o herramienta…"
-          aria-label="Buscar"
+          placeholder={l.placeholder}
+          aria-label={l.search}
           role="combobox"
           aria-expanded="true"
           aria-controls="tk-palette-list"
@@ -136,13 +173,13 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
         <kbd className="tk-kbd">Esc</kbd>
       </div>
       {results.length ? (
-        <ul ref={listRef} id="tk-palette-list" className="tk-palette-list" role="listbox" aria-label="Resultados">
+        <ul ref={listRef} id="tk-palette-list" className="tk-palette-list" role="listbox" aria-label={l.results}>
           {results.map((entry, i) => {
             return (
               <li key={entry.key} role="presentation">
                 {entry.header ? (
                   <div className="tk-palette-group" aria-hidden="true">
-                    {entry.group}
+                    {l[entry.group]}
                   </div>
                 ) : null}
                 <div
@@ -165,12 +202,12 @@ export default function CommandPalette({ open, onClose }: { open: boolean; onClo
           })}
         </ul>
       ) : (
-        <p className="tk-palette-empty">Sin resultados para «{query}».</p>
+        <p className="tk-palette-empty">{l.empty(query)}</p>
       )}
       <div className="tk-palette-foot" aria-hidden="true">
-        <span>↑ ↓ para moverte</span>
-        <span>↵ para abrir</span>
-        <span>Esc para cerrar</span>
+        <span>{l.move}</span>
+        <span>{l.open}</span>
+        <span>{l.close}</span>
       </div>
     </dialog>
   );

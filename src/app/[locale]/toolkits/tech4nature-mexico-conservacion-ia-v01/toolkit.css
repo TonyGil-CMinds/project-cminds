@@ -2464,3 +2464,12 @@ html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg
 .tk-lesson details[open] summary svg { transform: rotate(180deg); }
 .tk-lesson details > p { margin: 10px 0 0 40px !important; }
 .tk-lesson:hover { border-color: rgba(var(--tk-lime-rgb), 0.45); }
+
+/* en: el selector EN | ES sigue visible en teléfonos; el título cede espacio. */
+@media (max-width: 760px) {
+  .tk-root .lang-switch { display: inline-flex; margin-left: 0; padding: 2px; }
+  .tk-root .lang-switch__opt { padding: 5px 6px; }
+  .tk-top-brand,
+  .tk-top-title { overflow: hidden; }
+  .tk-top-title > span:first-child { overflow: hidden; text-overflow: ellipsis; }
+}

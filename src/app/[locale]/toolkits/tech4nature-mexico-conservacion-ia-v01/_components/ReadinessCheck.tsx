@@ -1,6 +1,8 @@
 "use client";
 
-import { QUESTIONS, STAGES, STORAGE_KEY, stageSlug } from "../data";
+import type { Locale } from "@/i18n/config";
+import { STORAGE_KEY, stageSlug } from "../data";
+import { useContent, useLocale } from "./i18n";
 import { downloadFile, toCsv } from "./download";
 import { PageLink } from "./RefLink";
 import { IconArrowRight, IconDownload } from "./icons";
@@ -10,10 +12,44 @@ type Answer = "si" | "no";
 type Answers = Record<string, Answer>;
 
 const KEY = `${STORAGE_KEY}:preguntas`;
-const OPTIONS: { v: Answer; label: string }[] = [
-  { v: "si", label: "Sí" },
-  { v: "no", label: "Todavía no" },
-];
+const OPTIONS: Answer[] = ["si", "no"];
+
+const L = {
+  es: {
+    si: "Sí",
+    no: "Todavía no",
+    none: "Sin responder",
+    file: "diez-preguntas-rapidas.csv",
+    question: "Pregunta",
+    answer: "Respuesta",
+    yesOf: (yes: number, total: number) => `${yes} de ${total}`,
+    yesAnswers: "respuestas en «sí».",
+    left: (n: number) => `Te ${n === 1 ? "falta" : "faltan"} ${n} por responder.`,
+    ready: "Estás listo para arrancar.",
+    notReady: "Las etapas 1 y 5 te ayudarán a resolver lo pendiente.",
+    stage: "Etapa",
+    download: "Descargar respuestas (.csv)",
+    reset: "Reiniciar",
+    saved: "Tus respuestas se guardan en este navegador.",
+  },
+  en: {
+    si: "Yes",
+    no: "Not yet",
+    none: "Unanswered",
+    file: "ten-quick-questions.csv",
+    question: "Question",
+    answer: "Answer",
+    yesOf: (yes: number, total: number) => `${yes} of ${total}`,
+    yesAnswers: "answers are “yes.”",
+    left: (n: number) => `${n} still to answer.`,
+    ready: "You are ready to get started.",
+    notReady: "Stages 1 and 5 will help you work through what is pending.",
+    stage: "Stage",
+    download: "Download answers (.csv)",
+    reset: "Reset",
+    saved: "Your answers are saved in this browser.",
+  },
+} satisfies Record<Locale, Record<string, string | ((...args: never[]) => string)>>;
 
 function parse(raw: string | null): Answers {
   try {
@@ -34,6 +70,8 @@ function parse(raw: string | null): Answers {
  */
 export default function ReadinessCheck() {
   const [answers, setAnswers] = useLocalStore(KEY, parse);
+  const { QUESTIONS, STAGES } = useContent();
+  const l = L[useLocale()];
   const id = (i: number) => `q${i + 1}`;
 
   const yes = QUESTIONS.items.filter((_, i) => answers[id(i)] === "si").length;
@@ -43,10 +81,10 @@ export default function ReadinessCheck() {
 
   const exportCsv = () => {
     downloadFile(
-      "diez-preguntas-rapidas.csv",
+      l.file,
       toCsv([
-        ["Pregunta", "Respuesta"],
-        ...QUESTIONS.items.map((q, i) => [q, answers[id(i)] === "si" ? "Sí" : answers[id(i)] === "no" ? "Todavía no" : "Sin responder"]),
+        [l.question, l.answer],
+        ...QUESTIONS.items.map((q, i) => [q, answers[id(i)] === "si" ? l.si : answers[id(i)] === "no" ? l.no : l.none]),
       ]),
       "text/csv",
     );
@@ -65,16 +103,16 @@ export default function ReadinessCheck() {
               <fieldset>
                 <legend>{q}</legend>
                 <div className="tk-seg">
-                  {OPTIONS.map((o) => (
-                    <label key={o.v} data-v={o.v === "si" ? "disponible" : "pendiente"}>
+                  {OPTIONS.map((v) => (
+                    <label key={v} data-v={v === "si" ? "disponible" : "pendiente"}>
                       <input
                         type="radio"
                         name={`pregunta-${i + 1}`}
-                        value={o.v}
-                        checked={value === o.v}
-                        onChange={() => setAnswers((a) => ({ ...a, [id(i)]: o.v }))}
+                        value={v}
+                        checked={value === v}
+                        onChange={() => setAnswers((a) => ({ ...a, [id(i)]: v }))}
                       />
-                      {o.label}
+                      {l[v]}
                     </label>
                   ))}
                 </div>
@@ -86,21 +124,14 @@ export default function ReadinessCheck() {
 
       <div className="tk-quiz-result" aria-live="polite" data-ready={answered === total ? String(ready) : undefined}>
         <p>
-          <strong>
-            {yes} de {total}
-          </strong>{" "}
-          respuestas en «sí».{" "}
-          {answered < total
-            ? `Te ${total - answered === 1 ? "falta" : "faltan"} ${total - answered} por responder.`
-            : ready
-              ? "Estás listo para arrancar."
-              : "Las etapas 1 y 5 te ayudarán a resolver lo pendiente."}
+          <strong>{l.yesOf(yes, total)}</strong> {l.yesAnswers}{" "}
+          {answered < total ? l.left(total - answered) : ready ? l.ready : l.notReady}
         </p>
         {answered === total && !ready ? (
           <div className="tk-quiz-links">
             {[STAGES[0], STAGES[4]].map((s) => (
               <PageLink key={s.id} slug={stageSlug(s)} className="tk-ghost" data-ref={s.code}>
-                Etapa {s.n} · {s.title}
+                {l.stage} {s.n} · {s.title}
                 <IconArrowRight />
               </PageLink>
             ))}
@@ -111,14 +142,14 @@ export default function ReadinessCheck() {
       <div className="tk-row-actions">
         <button type="button" className="tk-ghost" onClick={exportCsv}>
           <IconDownload />
-          Descargar respuestas (.csv)
+          {l.download}
         </button>
         {answered ? (
           <button type="button" className="tk-link-btn" onClick={() => setAnswers({})}>
-            Reiniciar
+            {l.reset}
           </button>
         ) : null}
-        <span className="tk-saved">Tus respuestas se guardan en este navegador.</span>
+        <span className="tk-saved">{l.saved}</span>
       </div>
     </div>
   );

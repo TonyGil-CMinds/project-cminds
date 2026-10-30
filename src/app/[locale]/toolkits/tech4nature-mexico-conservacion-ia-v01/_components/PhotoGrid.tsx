@@ -1,10 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { Locale } from "@/i18n/config";
 import type { GalleryPhoto } from "../t4n";
+import { useLocale } from "./i18n";
+
+const L = {
+  es: { enlarge: "Ampliar foto", close: "Cerrar", prev: "Foto anterior", next: "Foto siguiente" },
+  en: { enlarge: "Enlarge photo", close: "Close", prev: "Previous photo", next: "Next photo" },
+} satisfies Record<Locale, Record<string, string>>;
 
 /** Mosaico de fotos con visor a pantalla completa. */
 export default function PhotoGrid({ photos, label, variant = "mosaic" }: { photos: GalleryPhoto[]; label: string; variant?: "mosaic" | "pair" | "trio" }) {
+  const l = L[useLocale()];
   const [open, setOpen] = useState<number | null>(null);
   const ref = useRef<HTMLDialogElement>(null);
 
@@ -31,7 +39,7 @@ export default function PhotoGrid({ photos, label, variant = "mosaic" }: { photo
       <ul className={`tk-photos tk-photos--${variant}`} aria-label={label}>
         {photos.map((ph, i) => (
           <li key={ph.src} data-reveal>
-            <button type="button" onClick={() => setOpen(i)} aria-label={`Ampliar foto: ${ph.caption ?? ph.alt}`}>
+            <button type="button" onClick={() => setOpen(i)} aria-label={`${l.enlarge}: ${ph.caption ?? ph.alt}`}>
               <img src={ph.src} alt={ph.alt} loading="lazy" decoding="async" width={1500} height={1000} />
               {ph.caption ? <span className="tk-photos-cap">{ph.caption}</span> : null}
             </button>
@@ -48,15 +56,15 @@ export default function PhotoGrid({ photos, label, variant = "mosaic" }: { photo
                 {(open ?? 0) + 1} / {photos.length}
               </span>
             </figcaption>
-            <button type="button" className="tk-lightbox-close" aria-label="Cerrar" onClick={() => setOpen(null)}>
+            <button type="button" className="tk-lightbox-close" aria-label={l.close} onClick={() => setOpen(null)}>
               ×
             </button>
             {photos.length > 1 ? (
               <>
-                <button type="button" className="tk-viewer-nav tk-viewer-nav--prev" aria-label="Foto anterior" onClick={() => setOpen(((open ?? 0) - 1 + photos.length) % photos.length)}>
+                <button type="button" className="tk-viewer-nav tk-viewer-nav--prev" aria-label={l.prev} onClick={() => setOpen(((open ?? 0) - 1 + photos.length) % photos.length)}>
                   ‹
                 </button>
-                <button type="button" className="tk-viewer-nav tk-viewer-nav--next" aria-label="Foto siguiente" onClick={() => setOpen(((open ?? 0) + 1) % photos.length)}>
+                <button type="button" className="tk-viewer-nav tk-viewer-nav--next" aria-label={l.next} onClick={() => setOpen(((open ?? 0) + 1) % photos.length)}>
                   ›
                 </button>
               </>

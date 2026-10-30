@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
 import { toLocale, type Locale } from "@/i18n/config";
-import { LEGACY_SLUGS, PAGES, PAGE_BY_SLUG, STAGES, TEMPLATES, toolkitHref, type ToolkitPage } from "../data";
+import { LEGACY_SLUGS, PAGES, toolkitHref, type ToolkitPage } from "../data";
+import { getContent } from "../content";
 import {
   BioculturalPage,
   CajaPage,
@@ -30,13 +31,15 @@ export function generateStaticParams() {
   ];
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
-  const { slug } = await params;
-  const page = PAGE_BY_SLUG.get(slug);
-  return page ? pageMetadata(page) : { robots: { index: false } };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { slug, locale: raw } = await params;
+  const locale = toLocale(raw);
+  const page = getContent(locale).PAGE_BY_SLUG.get(slug);
+  return page ? pageMetadata(page, locale) : { robots: { index: false } };
 }
 
 function Content({ page, locale }: { page: ToolkitPage; locale: Locale }) {
+  const { STAGES, TEMPLATES } = getContent(locale);
   switch (page.kind) {
     case "por-que-importa":
       return <PorQueImportaPage page={page} locale={locale} />;
@@ -74,11 +77,11 @@ function Content({ page, locale }: { page: ToolkitPage; locale: Locale }) {
 export default async function ToolkitChapter({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
   if (slug in LEGACY_SLUGS) permanentRedirect(toolkitHref(toLocale(locale), LEGACY_SLUGS[slug]));
-  const page = PAGE_BY_SLUG.get(slug);
+  const page = getContent(toLocale(locale)).PAGE_BY_SLUG.get(slug);
   if (!page || !page.slug) notFound();
   return (
     <>
-      <JsonLd data={pageJsonLd(page)} />
+      <JsonLd data={pageJsonLd(page, toLocale(locale))} />
       <Content page={page} locale={toLocale(locale)} />
     </>
   );

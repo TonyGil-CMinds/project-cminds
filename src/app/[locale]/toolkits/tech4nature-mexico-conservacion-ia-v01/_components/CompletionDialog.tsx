@@ -3,7 +3,8 @@
 import { useEffect, useRef, type CSSProperties } from "react";
 import gsap from "gsap";
 import { SplitText } from "gsap/SplitText";
-import { STAGES } from "../data";
+import type { Locale } from "@/i18n/config";
+import { useContent, useLocale } from "./i18n";
 import { T4NBadge } from "./Badge";
 import { usePrefs } from "./Preferences";
 import { PageLink } from "./RefLink";
@@ -11,6 +12,23 @@ import { useToolkit } from "./ToolkitState";
 import { IconArrowRight, IconLock } from "./icons";
 
 gsap.registerPlugin(SplitText);
+
+const L = {
+  es: {
+    eyebrow: "Insignia desbloqueada",
+    title: "Completaste el toolkit",
+    text: (n: number) => `Revisaste las ${n} etapas. Tu insignia de Tech4Nature México está lista para descargar y compartir.`,
+    cta: "Descargar y compartir",
+    later: "Ahora no",
+  },
+  en: {
+    eyebrow: "Badge unlocked",
+    title: "You completed the toolkit",
+    text: (n: number) => `You reviewed all ${n} stages. Your Tech4Nature Mexico badge is ready to download and share.`,
+    cta: "Download and share",
+    later: "Not now",
+  },
+} satisfies Record<Locale, Record<string, string | ((n: number) => string)>>;
 
 const BURST_COLORS = ["#e5ff0d", "#cbe86b", "#5ec1f3", "#b9a6ff", "#f2c46b", "#ffffff"];
 const BURST = 34;
@@ -42,6 +60,8 @@ function Sparkle({ x, y, s }: { x: number; y: number; s: number }) {
 export function CompletionDialog() {
   const { complete, celebrated, markCelebrated } = useToolkit();
   const { reducedMotion } = usePrefs();
+  const { STAGES } = useContent();
+  const l = L[useLocale()];
   const ref = useRef<HTMLDialogElement>(null);
   const open = complete && !celebrated;
 
@@ -196,23 +216,21 @@ export function CompletionDialog() {
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M12 0c.7 6.6 5.4 11.3 12 12-6.6.7-11.3 5.4-12 12-.7-6.6-5.4-11.3-12-12C6.6 11.3 11.3 6.6 12 0z" />
           </svg>
-          Insignia desbloqueada
+          {l.eyebrow}
         </span>
         <h2 id="tk-celebrate-title" className="tk-cel-title">
-          Completaste el toolkit
+          {l.title}
         </h2>
-        <p>
-          Revisaste las {STAGES.length} etapas. Tu insignia de Tech4Nature México está lista para descargar y compartir.
-        </p>
+        <p>{l.text(STAGES.length)}</p>
       </div>
 
       <div className="tk-cel-actions">
         <PageLink slug="insignia" className="tk-cta tk-cta--shine" onClick={markCelebrated}>
-          Descargar y compartir
+          {l.cta}
           <IconArrowRight />
         </PageLink>
         <button type="button" className="tk-ghost" onClick={dismiss}>
-          Ahora no
+          {l.later}
         </button>
       </div>
     </dialog>

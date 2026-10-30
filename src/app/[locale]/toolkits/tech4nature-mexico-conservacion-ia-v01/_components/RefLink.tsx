@@ -2,10 +2,14 @@
 
 import type { AnchorHTMLAttributes, ReactNode } from "react";
 import Link from "next/link";
-import { useLocale } from "@/i18n/useLocale";
+import type { Locale } from "@/i18n/config";
 import { targetOf, toolkitHref } from "../data";
+import { useLocale } from "./i18n";
 
-const KIND_LABEL: Record<string, string> = { E: "Etapa", P: "Plantilla", R: "Recurso" };
+const KIND_LABEL: Record<Locale, Record<string, string>> = {
+  es: { E: "Etapa", P: "Plantilla", R: "Recurso" },
+  en: { E: "Stage", P: "Template", R: "Resource" },
+};
 /** Clase de color de cada tipo de referencia. */
 const KIND_CLASS: Record<string, string> = { E: "a", P: "t", R: "r" };
 
@@ -19,11 +23,18 @@ export function Ref({ code }: { code: string }) {
       className={`tk-ref tk-ref--${KIND_CLASS[kind] ?? "r"}`}
       href={toolkitHref(locale, slug, hash)}
       data-ref={code}
-      aria-label={`${KIND_LABEL[kind]} ${code.slice(1).replace(/^0/, "")}`}
+      aria-label={`${KIND_LABEL[locale][kind]} ${code.slice(1).replace(/^0/, "")}`}
     >
       {code}
     </Link>
   );
+}
+
+const NEW_TAB: Record<Locale, string> = { es: " (se abre en una pestaña nueva)", en: " (opens in a new tab)" };
+
+/** Aviso para lectores de pantalla de que el enlace abre una pestaña nueva. */
+export function NewTabNote() {
+  return <span className="sr-only">{NEW_TAB[useLocale()]}</span>;
 }
 
 /** Enlace a una página del toolkit por slug. */

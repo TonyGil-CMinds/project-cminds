@@ -1,14 +1,37 @@
 "use client";
 
-import { IMAGES, STAGES, TOOLKIT_VERSION } from "../data";
+import type { Locale } from "@/i18n/config";
+import { getContent } from "../content";
+import { TOOLKIT_VERSION } from "../data";
+
+const L = {
+  es: {
+    stages: "ETAPAS",
+    awarded: (name: string) => `Otorgada a ${name}`,
+    reviewed: (n: number) => `${n} de ${n} etapas revisadas`,
+    title: "Toolkit de replicabilidad",
+    eyebrow: "INSIGNIA DE FINALIZACIÓN",
+    org: "Tech4Nature México",
+    date: "es-MX",
+  },
+  en: {
+    stages: "STAGES",
+    awarded: (name: string) => `Awarded to ${name}`,
+    reviewed: (n: number) => `${n} of ${n} stages reviewed`,
+    title: "Replication toolkit",
+    eyebrow: "COMPLETION BADGE",
+    org: "Tech4Nature Mexico",
+    date: "en-US",
+  },
+} satisfies Record<Locale, Record<string, string | ((v: never) => string)>>;
 
 export type BadgeFormat = "wide" | "square";
 
 const SIZES: Record<BadgeFormat, [number, number]> = { wide: [1200, 630], square: [1080, 1080] };
 
 /** El logotipo de Tech4Nature es de un solo color; se tiñe antes de dibujarlo en el lienzo. */
-async function loadLogo(color: string): Promise<HTMLImageElement> {
-  const svg = await (await fetch(IMAGES.logo.src)).text();
+async function loadLogo(color: string, src: string): Promise<HTMLImageElement> {
+  const svg = await (await fetch(src)).text();
   const url = URL.createObjectURL(new Blob([svg.replace(/#101511/gi, color)], { type: "image/svg+xml" }));
   try {
     const img = new Image();
@@ -58,7 +81,7 @@ function hexPattern(ctx: CanvasRenderingContext2D, w: number, h: number) {
   ctx.restore();
 }
 
-function medallion(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, font: string) {
+function medallion(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, font: string, count: number, label: string) {
   // Anillo holográfico
   const ring =
     "createConicGradient" in ctx
@@ -95,16 +118,18 @@ function medallion(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: num
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
   ctx.font = `700 ${Math.round(r * 0.5)}px ${font}`;
-  ctx.fillText(`${STAGES.length}/${STAGES.length}`, cx, cy + r * 0.12);
+  ctx.fillText(`${count}/${count}`, cx, cy + r * 0.12);
   ctx.font = `700 ${Math.round(r * 0.13)}px ${font}`;
   if ("letterSpacing" in ctx) ctx.letterSpacing = "3px";
-  ctx.fillText("ETAPAS", cx, cy + r * 0.36);
+  ctx.fillText(label, cx, cy + r * 0.36);
   if ("letterSpacing" in ctx) ctx.letterSpacing = "0px";
   ctx.textAlign = "left";
 }
 
 /** Genera la imagen de la insignia para descargar o compartir. */
-export async function renderBadge(format: BadgeFormat, name: string): Promise<Blob> {
+export async function renderBadge(format: BadgeFormat, name: string, locale: Locale): Promise<Blob> {
+  const { IMAGES, STAGES } = getContent(locale);
+  const l = L[locale];
   const [W, H] = SIZES[format];
   const canvas = document.createElement("canvas");
   canvas.width = W;
@@ -115,7 +140,7 @@ export async function renderBadge(format: BadgeFormat, name: string): Promise<Bl
   const root = document.querySelector(".tk-root");
   const font = root ? getComputedStyle(root).fontFamily : "system-ui, sans-serif";
   await document.fonts?.ready;
-  const logo = await loadLogo("#ffffff");
+  const logo = await loadLogo("#ffffff", IMAGES.logo.src);
 
   // Fondo
   ctx.fillStyle = "#040314";
@@ -137,11 +162,11 @@ export async function renderBadge(format: BadgeFormat, name: string): Promise<Bl
   ctx.roundRect(24, 24, W - 48, H - 48, 28);
   ctx.stroke();
 
-  const date = new Intl.DateTimeFormat("es-MX", { day: "numeric", month: "long", year: "numeric" }).format(new Date());
-  const recipient = name.trim() ? `Otorgada a ${name.trim()}` : `${STAGES.length} de ${STAGES.length} etapas revisadas`;
-  const title = "Toolkit de replicabilidad";
-  const eyebrow = "INSIGNIA DE FINALIZACIÓN";
-  const meta = `Tech4Nature México · C Minds · ${date}`;
+  const date = new Intl.DateTimeFormat(l.date, { day: "numeric", month: "long", year: "numeric" }).format(new Date());
+  const recipient = name.trim() ? l.awarded(name.trim()) : l.reviewed(STAGES.length);
+  const title = l.title;
+  const eyebrow = l.eyebrow;
+  const meta = `${l.org} · C Minds · ${date}`;
 
   if (format === "wide") {
     const lw = 200;
@@ -162,12 +187,12 @@ export async function renderBadge(format: BadgeFormat, name: string): Promise<Bl
     ctx.font = `500 21px ${font}`;
     ctx.fillStyle = "#8b929b";
     ctx.fillText(`${meta} · v${TOOLKIT_VERSION}`, 72, 562);
-    medallion(ctx, 960, 315, 170, font);
+    medallion(ctx, 960, 315, 170, font, STAGES.length, l.stages);
   } else {
     const lw = 250;
     const lh = (lw * logo.naturalHeight) / logo.naturalWidth || lw * 0.67;
     ctx.drawImage(logo, (W - lw) / 2, 80, lw, lh);
-    medallion(ctx, W / 2, 470, 190, font);
+    medallion(ctx, W / 2, 470, 190, font, STAGES.length, l.stages);
     ctx.textAlign = "center";
     ctx.fillStyle = "#cbe86b";
     ctx.font = `700 24px ${font}`;

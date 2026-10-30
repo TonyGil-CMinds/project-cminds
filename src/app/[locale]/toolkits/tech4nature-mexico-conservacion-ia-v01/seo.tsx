@@ -1,15 +1,7 @@
 import type { Metadata } from "next";
-import {
-  AUDIENCES,
-  HERO,
-  IMAGES,
-  PAGES,
-  STAGES,
-  TEMPLATES,
-  TOOLKIT_VERSION,
-  toolkitHref,
-  type ToolkitPage,
-} from "./data";
+import type { Locale } from "@/i18n/config";
+import { IMAGES, TOOLKIT_VERSION, toolkitHref, type ToolkitPage } from "./data";
+import { getContent } from "./content";
 
 export const SITE_URL = (
   process.env.NEXT_PUBLIC_SITE_URL ??
@@ -19,52 +11,64 @@ export const SITE_URL = (
 const OG_IMAGE = IMAGES.hero.src;
 const stripRefs = (s: string) => s.replace(/\s*\[(?:R\d{2}|[EP]\d)(?:,\s*(?:R\d{2}|[EP]\d))*\]/g, "");
 
-/** El contenido solo existe en español: /en y /es declaran /es como canónica. */
-export function pageMetadata(page: ToolkitPage): Metadata {
-  const canonical = toolkitHref("es", page.slug);
-  const title = page.kind === "inicio" ? "Tech4Nature México — Toolkit de replicabilidad para la conservación con IA" : `${page.title} · Tech4Nature México`;
+const META = {
+  es: {
+    home: "Tech4Nature México — Toolkit de replicabilidad para la conservación con IA",
+    suffix: "Tech4Nature México",
+    keywords: ["toolkit de conservación", "inteligencia artificial para la biodiversidad", "América Latina y el Caribe", "monitoreo de biodiversidad", "fototrampeo", "jaguar", "BioScanner", "Tech4Nature México", "C Minds"],
+    og: "es_MX",
+  },
+  en: {
+    home: "Tech4Nature Mexico — Replication toolkit for AI-powered conservation",
+    suffix: "Tech4Nature Mexico",
+    keywords: ["conservation toolkit", "artificial intelligence for biodiversity", "Latin America and the Caribbean", "biodiversity monitoring", "camera trapping", "jaguar", "BioScanner", "Tech4Nature Mexico", "C Minds"],
+    og: "en_US",
+  },
+};
+
+/** Cada idioma es su propia canónica y declara la otra como alternativa. */
+export function pageMetadata(page: ToolkitPage, locale: Locale): Metadata {
+  const m = META[locale];
+  const canonical = toolkitHref(locale, page.slug);
+  const title = page.kind === "inicio" ? m.home : `${page.title} · ${m.suffix}`;
+  const hero = getContent(locale).IMAGES.hero;
   return {
     title,
     description: page.description,
-    keywords: [
-      "toolkit de conservación",
-      "inteligencia artificial para la biodiversidad",
-      "América Latina y el Caribe",
-      "monitoreo de biodiversidad",
-      "fototrampeo",
-      "jaguar",
-      "BioScanner",
-      "Tech4Nature México",
-      "C Minds",
-    ],
+    keywords: m.keywords,
     authors: [{ name: "C Minds", url: "https://www.cminds.co" }],
-    alternates: { canonical, languages: { es: canonical, "x-default": canonical } },
+    alternates: {
+      canonical,
+      languages: { es: toolkitHref("es", page.slug), en: toolkitHref("en", page.slug), "x-default": toolkitHref("es", page.slug) },
+    },
     openGraph: {
       type: "article",
       title,
       description: page.description,
       url: canonical,
       siteName: "C Minds",
-      locale: "es_MX",
+      locale: m.og,
       publishedTime: "2026-10-27",
-      modifiedTime: "2026-10-28",
+      modifiedTime: "2026-10-30",
       section: "AI for Biodiversity",
-      images: [{ url: OG_IMAGE, width: 1238, height: 793, type: "image/png", alt: IMAGES.hero.alt }],
+      images: [{ url: OG_IMAGE, width: 1238, height: 793, type: "image/png", alt: hero.alt }],
     },
-    twitter: { card: "summary_large_image", title, description: page.description, images: [{ url: OG_IMAGE, alt: IMAGES.hero.alt }] },
+    twitter: { card: "summary_large_image", title, description: page.description, images: [{ url: OG_IMAGE, alt: hero.alt }] },
   };
 }
 
 /** Datos estructurados de cada página: página web, migas y el tipo de contenido que muestra. */
-export function pageJsonLd(page: ToolkitPage) {
-  const url = `${SITE_URL}${toolkitHref("es", page.slug)}`;
-  const home = `${SITE_URL}${toolkitHref("es", "")}`;
+export function pageJsonLd(page: ToolkitPage, locale: Locale) {
+  const { AUDIENCES, HERO, PAGES, STAGES, TEMPLATES } = getContent(locale);
+  const en = locale === "en";
+  const url = `${SITE_URL}${toolkitHref(locale, page.slug)}`;
+  const home = `${SITE_URL}${toolkitHref(locale, "")}`;
   const org = { "@type": "Organization", "@id": `${SITE_URL}/#organization`, name: "C Minds", url: SITE_URL };
 
   const crumbs = [
-    { name: "AI for Biodiversity", item: `${SITE_URL}/es/aiforbiodiversity` },
-    { name: "Tech4Nature México", item: `${SITE_URL}/es/aiforbiodiversity/techfornature` },
-    { name: "Tech4Nature México", item: home },
+    { name: "AI for Biodiversity", item: `${SITE_URL}/${locale}/aiforbiodiversity` },
+    { name: en ? "Tech4Nature Mexico" : "Tech4Nature México", item: `${SITE_URL}/${locale}/aiforbiodiversity/techfornature` },
+    { name: "Toolkit", item: home },
     ...(page.kind === "inicio" ? [] : [{ name: page.label, item: url }]),
   ];
 
@@ -75,7 +79,7 @@ export function pageJsonLd(page: ToolkitPage) {
       url,
       name: page.title,
       description: page.description,
-      inLanguage: "es",
+      inLanguage: locale,
       isPartOf: { "@id": `${home}#toolkit` },
       breadcrumb: { "@id": `${url}#breadcrumb` },
       primaryImageOfPage: `${SITE_URL}${OG_IMAGE}`,
@@ -94,21 +98,23 @@ export function pageJsonLd(page: ToolkitPage) {
       name: HERO.title,
       description: HERO.subtitle,
       url: home,
-      inLanguage: "es",
+      inLanguage: locale,
       version: TOOLKIT_VERSION,
       datePublished: "2026-10-27",
       image: `${SITE_URL}${OG_IMAGE}`,
-      learningResourceType: ["Guía", "Plantilla", "Lista de verificación"],
+      learningResourceType: en ? ["Guide", "Template", "Checklist"] : ["Guía", "Plantilla", "Lista de verificación"],
       audience: AUDIENCES.map((a) => ({ "@type": "Audience", audienceType: a.title })),
-      about: ["Conservación de la biodiversidad", "Inteligencia artificial", "Monitoreo con cámaras trampa", "Jaguar", "Gobernanza de datos"],
-      spatialCoverage: { "@type": "Place", name: "América Latina y el Caribe" },
+      about: en
+        ? ["Biodiversity conservation", "Artificial intelligence", "Camera trap monitoring", "Jaguar", "Data governance"]
+        : ["Conservación de la biodiversidad", "Inteligencia artificial", "Monitoreo con cámaras trampa", "Jaguar", "Gobernanza de datos"],
+      spatialCoverage: { "@type": "Place", name: en ? "Latin America and the Caribbean" : "América Latina y el Caribe" },
       author: org,
       publisher: org,
       teaches: STAGES.map((s) => s.title),
       hasPart: PAGES.filter((p) => p.kind !== "inicio").map((p) => ({
         "@type": "WebPage",
         name: p.title,
-        url: `${SITE_URL}${toolkitHref("es", p.slug)}`,
+        url: `${SITE_URL}${toolkitHref(locale, p.slug)}`,
       })),
     });
   }
@@ -118,9 +124,9 @@ export function pageJsonLd(page: ToolkitPage) {
     graph.push({
       "@type": "HowTo",
       "@id": `${url}#howto`,
-      name: `Etapa ${st.n}. ${st.title}`,
+      name: `${en ? "Stage" : "Etapa"} ${st.n}. ${st.title}`,
       description: st.purpose,
-      inLanguage: "es",
+      inLanguage: locale,
       isPartOf: { "@id": `${home}#toolkit` },
       step: st.steps.map((text, i) => ({ "@type": "HowToStep", position: i + 1, text: stripRefs(text) })),
     });
@@ -131,9 +137,9 @@ export function pageJsonLd(page: ToolkitPage) {
     graph.push({
       "@type": "CreativeWork",
       "@id": `${url}#plantilla`,
-      name: `Plantilla ${t.n}. ${t.title}`,
+      name: `${en ? "Template" : "Plantilla"} ${t.n}. ${t.title}`,
       description: page.description,
-      inLanguage: "es",
+      inLanguage: locale,
       encodingFormat: ["text/csv", "text/markdown"],
       isPartOf: { "@id": `${home}#toolkit` },
       author: org,

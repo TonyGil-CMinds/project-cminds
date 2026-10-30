@@ -1,6 +1,6 @@
 import { Fragment, type ReactNode } from "react";
 import { slugify, type Table } from "../data";
-import { Ref } from "./RefLink";
+import { NewTabNote, Ref } from "./RefLink";
 
 /** Id estable para un encabezado, usado por el índice "En esta página". */
 export const slugId = (title: string) => slugify(title).slice(0, 60);
@@ -30,7 +30,7 @@ export function ExternalLink({ href, children }: { href: string; children: React
   return (
     <a className="tk-ext" href={href} target="_blank" rel="noopener noreferrer">
       {children}
-      <span className="sr-only"> (se abre en una pestaña nueva)</span>
+      <NewTabNote />
     </a>
   );
 }

@@ -1,21 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
 import SiteFooter from "@/components/SiteFooter";
-import { localePath, type Locale } from "@/i18n/config";
+import { LOCALES, LOCALE_LABELS, localePath, swapLocale, type Locale } from "@/i18n/config";
 import {
-  GROUPS,
-  IMAGES,
-  PAGES,
-  PAGE_BY_SLUG,
-  STAGES,
   TOOLKIT_SLUG,
   TOOLKIT_VERSION,
   targetOf,
@@ -28,6 +22,7 @@ import { A11yMenu, FocusReader, SpeechPlayer } from "./Accessibility";
 import { stop as stopSpeech } from "./speech";
 import { CompletionDialog } from "./CompletionDialog";
 import CommandPalette from "./CommandPalette";
+import { LocaleProvider, useContent, useLocale } from "./i18n";
 import RefPreview from "./RefPreview";
 import { useClientValue } from "./useLocalStore";
 import { IconArrowRight, IconCheck, IconChevronDown, IconClose, IconExternal, IconMenu, IconSearch } from "./icons";
@@ -36,15 +31,100 @@ gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
 
 const BIOSCANNER_APP = "https://app.bioscanner.io";
 
-const TOP_LINKS: { label: string; slug: string; match: (p: ToolkitPage) => boolean }[] = [
-  { label: "Inicio", slug: "", match: (p) => p.kind === "inicio" },
-  { label: "Etapas", slug: targetOf("E1").slug, match: (p) => p.kind === "etapa" },
-  { label: "Herramientas", slug: "caja-de-herramientas", match: (p) => p.kind === "caja" || p.kind === "glosario" },
-  { label: "Plantillas", slug: "plantillas", match: (p) => p.group === "plantillas" },
-];
+const L = {
+  es: {
+    home: "Inicio",
+    stages: "Etapas",
+    tools: "Herramientas",
+    templates: "Plantillas",
+    skip: "Saltar al contenido",
+    openIndex: "Abrir índice del toolkit",
+    sections: "Secciones del toolkit",
+    searchAria: "Buscar en el toolkit",
+    search: "Buscar",
+    bioscannerAria: "Entrar a BioScanner (se abre en una pestaña nueva)",
+    bioscanner: "Entrar a BioScanner",
+    indexAria: "Índice del toolkit",
+    index: "Índice",
+    closeIndex: "Cerrar índice",
+    rail: "Avance y recursos",
+    reviewedOf: (done: number, total: number) => `${done} de ${total} revisadas`,
+    route: "ruta",
+    reviewed: "(revisada)",
+    stagesReviewed: (done: number, total: number) => `${done} de ${total} etapas revisadas`,
+    progress: "Tu avance",
+    routeOf: (title: string) => `Ruta: ${title}`,
+    unlocked: "Insignia desbloqueada.",
+    unlockHint: "Al completarlas desbloqueas tu insignia.",
+    badge: "Insignia Tech4Nature",
+    share: "Descargar y compartir",
+    nextInRoute: "Siguiente en tu ruta",
+    stage: "Etapa",
+    personalize: "Personaliza el recorrido",
+    pickRoute: "Elige una ruta por público",
+    onThisPage: "En esta página",
+    promoTitle: "Valida tus datos con BioScanner",
+    promoText:
+      "Detecta y clasifica especies, identifica jaguares por el patrón de sus manchas y genera reportes. Interfaz en español, inglés, portugués y maya.",
+    processed: "archivos procesados en Dzilam a octubre de 2026",
+    language: "Cambiar de idioma",
+    langNames: { es: "Español", en: "Inglés" } as Record<Locale, string>,
+  },
+  en: {
+    home: "Home",
+    stages: "Stages",
+    tools: "Tools",
+    templates: "Templates",
+    skip: "Skip to content",
+    openIndex: "Open toolkit index",
+    sections: "Toolkit sections",
+    searchAria: "Search the toolkit",
+    search: "Search",
+    bioscannerAria: "Go to BioScanner (opens in a new tab)",
+    bioscanner: "Go to BioScanner",
+    indexAria: "Toolkit index",
+    index: "Index",
+    closeIndex: "Close index",
+    rail: "Progress and resources",
+    reviewedOf: (done: number, total: number) => `${done} of ${total} reviewed`,
+    route: "route",
+    reviewed: "(reviewed)",
+    stagesReviewed: (done: number, total: number) => `${done} of ${total} stages reviewed`,
+    progress: "Your progress",
+    routeOf: (title: string) => `Route: ${title}`,
+    unlocked: "Badge unlocked.",
+    unlockHint: "Complete them all to unlock your badge.",
+    badge: "Tech4Nature badge",
+    share: "Download and share",
+    nextInRoute: "Next on your route",
+    stage: "Stage",
+    personalize: "Personalize your path",
+    pickRoute: "Choose a route by audience",
+    onThisPage: "On this page",
+    promoTitle: "Validate your data with BioScanner",
+    promoText:
+      "Detect and classify species, identify individual jaguars by their spot patterns and generate reports. Interface in Spanish, English, Portuguese and Maya.",
+    processed: "files processed in Dzilam as of October 2026",
+    language: "Switch language",
+    langNames: { es: "Spanish", en: "English" } as Record<Locale, string>,
+  },
+};
+
+const NUMBER_LOCALE: Record<Locale, string> = { es: "es-MX", en: "en-US" };
+
+function topLinks(locale: Locale): { label: string; slug: string; match: (p: ToolkitPage) => boolean }[] {
+  const l = L[locale];
+  return [
+    { label: l.home, slug: "", match: (p) => p.kind === "inicio" },
+    { label: l.stages, slug: targetOf("E1").slug, match: (p) => p.kind === "etapa" },
+    { label: l.tools, slug: "caja-de-herramientas", match: (p) => p.kind === "caja" || p.kind === "glosario" },
+    { label: l.templates, slug: "plantillas", match: (p) => p.group === "plantillas" },
+  ];
+}
 
 /** Slug de la página actual dentro del toolkit ("" en la portada). */
 function useCurrentPage(): ToolkitPage {
+  const { PAGES, PAGE_BY_SLUG } = useContent();
   const pathname = usePathname();
   const rest = pathname.split(`/${TOOLKIT_SLUG}`)[1] ?? "";
   const slug = rest.replace(/^\//, "").split(/[/?#]/)[0] ?? "";
@@ -53,11 +133,13 @@ function useCurrentPage(): ToolkitPage {
 
 export default function ToolkitShell({ locale, children }: { locale: Locale; children: ReactNode }) {
   return (
-    <PrefsProvider>
-      <ToolkitProvider>
-        <Shell locale={locale}>{children}</Shell>
-      </ToolkitProvider>
-    </PrefsProvider>
+    <LocaleProvider locale={locale}>
+      <PrefsProvider>
+        <ToolkitProvider>
+          <Shell locale={locale}>{children}</Shell>
+        </ToolkitProvider>
+      </PrefsProvider>
+    </LocaleProvider>
   );
 }
 
@@ -70,6 +152,8 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const modKey = useClientValue(() => (/Mac|iPhone|iPad/.test(navigator.userAgent) ? "⌘" : "Ctrl"), "Ctrl");
   const href = (slug: string, hash?: string) => toolkitHref(locale, slug, hash);
+  const { IMAGES } = useContent();
+  const l = L[locale];
 
   // Cambiar de página detiene la lectura en voz alta.
   useEffect(() => {
@@ -174,7 +258,7 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
         onEnter: (batch) => gsap.to(batch, { autoAlpha: 1, y: 0, duration: 0.7, stagger: 0.06, ease: "power3.out", overwrite: true }),
       });
 
-      const fmt = new Intl.NumberFormat("es-MX");
+      const fmt = new Intl.NumberFormat(NUMBER_LOCALE[locale]);
       gsap.utils.toArray<HTMLElement>("[data-count]").forEach((el) => {
         const target = Number(el.dataset.count);
         const prefix = el.dataset.prefix ?? "";
@@ -211,21 +295,21 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
       // Las imágenes cargan después: recalcula posiciones.
       gsap.delayedCall(0.8, () => ScrollTrigger.refresh());
     },
-    { scope: rootRef, dependencies: [page.slug, reducedMotion], revertOnUpdate: true },
+    { scope: rootRef, dependencies: [page.slug, reducedMotion, locale], revertOnUpdate: true },
   );
 
   return (
     <>
-      <div ref={rootRef} className="tk-root" lang="es">
+      <div ref={rootRef} className="tk-root" lang={locale}>
         <a href="#contenido" className="tk-skip">
-          Saltar al contenido
+          {l.skip}
         </a>
 
         <header className="tk-top">
           <button
             type="button"
             className="tk-icon-btn"
-            aria-label="Abrir índice del toolkit"
+            aria-label={l.openIndex}
             aria-expanded={navOpen}
             aria-controls="tk-sidebar"
             onClick={() => setNavOpen(true)}
@@ -243,30 +327,30 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
             </Link>
           </div>
 
-          <nav className="tk-top-nav" aria-label="Secciones del toolkit">
-            {TOP_LINKS.map((l) => (
-              <Link key={l.label} href={href(l.slug)} aria-current={l.match(page) ? "page" : undefined}>
-                {l.label}
+          <nav className="tk-top-nav" aria-label={l.sections}>
+            {topLinks(locale).map((t) => (
+              <Link key={t.slug} href={href(t.slug)} aria-current={t.match(page) ? "page" : undefined}>
+                {t.label}
               </Link>
             ))}
           </nav>
 
           <div className="tk-top-actions">
-            <button type="button" className="tk-search-btn" onClick={() => setSearchOpen(true)} aria-label="Buscar en el toolkit">
+            <button type="button" className="tk-search-btn" onClick={() => setSearchOpen(true)} aria-label={l.searchAria}>
               <IconSearch />
-              <span className="tk-search-label">Buscar</span>
+              <span className="tk-search-label">{l.search}</span>
               <kbd className="tk-kbd">{modKey} K</kbd>
             </button>
+            <LangSwitch locale={locale} />
             <A11yMenu />
-            <LanguageSwitcher />
             <a
               className="tk-cta tk-cta--top"
               href={BIOSCANNER_APP}
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Entrar a BioScanner (se abre en una pestaña nueva)"
+              aria-label={l.bioscannerAria}
             >
-              <span className="tk-top-cta-label">Entrar a BioScanner</span>
+              <span className="tk-top-cta-label">{l.bioscanner}</span>
               <IconExternal />
             </a>
           </div>
@@ -274,10 +358,10 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
         </header>
 
         <div className="tk-layout">
-          <aside id="tk-sidebar" ref={sidebarRef} className="tk-sidebar" data-open={navOpen || undefined} aria-label="Índice del toolkit">
+          <aside id="tk-sidebar" ref={sidebarRef} className="tk-sidebar" data-open={navOpen || undefined} aria-label={l.indexAria}>
             <div className="tk-side-head">
-              <strong>Índice</strong>
-              <button type="button" className="tk-icon-btn" aria-label="Cerrar índice" onClick={() => setNavOpen(false)}>
+              <strong>{l.index}</strong>
+              <button type="button" className="tk-icon-btn" aria-label={l.closeIndex} onClick={() => setNavOpen(false)}>
                 <IconClose />
               </button>
             </div>
@@ -286,19 +370,13 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
           </aside>
 
           <main id="contenido" className="tk-main" tabIndex={-1}>
-            {locale === "en" ? (
-              <p className="tk-notice" lang="en">
-                This toolkit is currently available in Spanish only. Your browser can translate the page; templates and
-                resource links work the same way.
-              </p>
-            ) : null}
             {children}
           </main>
 
-          <aside className="tk-rail" aria-label="Avance y recursos">
+          <aside className="tk-rail" aria-label={l.rail}>
             <ProgressSummary locale={locale} />
             <PageToc slug={page.slug} />
-            <BioScannerCard />
+            <BioScannerCard locale={locale} />
           </aside>
         </div>
 
@@ -318,6 +396,8 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
 
 function Sidebar({ page, locale, onNavigate }: { page: ToolkitPage; locale: Locale; onNavigate: () => void }) {
   const { inRoute, isDone, route } = useToolkit();
+  const { GROUPS, PAGES } = useContent();
+  const l = L[locale];
   // Abierto por defecto solo el capítulo de la página actual; el usuario puede abrir o cerrar los demás.
   const [overrides, setOverrides] = useState<Record<string, boolean>>({});
 
@@ -345,7 +425,7 @@ function Sidebar({ page, locale, onNavigate }: { page: ToolkitPage; locale: Loca
             >
               <span>{group.label}</span>
               {actions.length ? (
-                <span className="tk-side-count" aria-label={`${doneCount} de ${actions.length} revisadas`}>
+                <span className="tk-side-count" aria-label={l.reviewedOf(doneCount, actions.length)}>
                   {doneCount}/{actions.length}
                 </span>
               ) : null}
@@ -362,11 +442,11 @@ function Sidebar({ page, locale, onNavigate }: { page: ToolkitPage; locale: Loca
                   >
                     {p.code ? <span className="tk-side-code">{p.code}</span> : null}
                     <span className="tk-side-label">{p.label}</span>
-                    {route && inRoute(p.slug) ? <span className="tk-side-badge">ruta</span> : null}
+                    {route && inRoute(p.slug) ? <span className="tk-side-badge">{l.route}</span> : null}
                     {p.kind === "etapa" && p.ref && isDone(p.ref) ? (
                       <>
                         <IconCheck className="tk-side-check" />
-                        <span className="sr-only">(revisada)</span>
+                        <span className="sr-only">{l.reviewed}</span>
                       </>
                     ) : null}
                   </Link>
@@ -380,11 +460,11 @@ function Sidebar({ page, locale, onNavigate }: { page: ToolkitPage; locale: Loca
   );
 }
 
-function ProgressRing({ value, total }: { value: number; total: number }) {
+function ProgressRing({ value, total, label }: { value: number; total: number; label: string }) {
   const r = 22;
   const c = 2 * Math.PI * r;
   return (
-    <svg className="tk-ring" viewBox="0 0 54 54" role="img" aria-label={`${value} de ${total} etapas revisadas`}>
+    <svg className="tk-ring" viewBox="0 0 54 54" role="img" aria-label={label}>
       <circle className="tk-ring-track" cx="27" cy="27" r={r} />
       <circle
         className="tk-ring-fill"
@@ -404,6 +484,8 @@ function ProgressRing({ value, total }: { value: number; total: number }) {
 
 function ProgressSummary({ compact = false, locale }: { compact?: boolean; locale: Locale }) {
   const { done, route, isDone, complete } = useToolkit();
+  const { STAGES } = useContent();
+  const l = L[locale];
   const total = STAGES.length;
   const count = done.length;
   const next = route?.path.find((key) => /^E\d$/.test(key) && !isDone(key.toLowerCase()));
@@ -412,10 +494,10 @@ function ProgressSummary({ compact = false, locale }: { compact?: boolean; local
   if (compact) {
     return (
       <div className="tk-side-progress">
-        <ProgressRing value={count} total={total} />
+        <ProgressRing value={count} total={total} label={l.stagesReviewed(count, total)} />
         <div>
-          <strong>Tu avance</strong>
-          <span>{route ? `Ruta: ${route.title}` : `${count} de ${total} etapas revisadas`}</span>
+          <strong>{l.progress}</strong>
+          <span>{route ? l.routeOf(route.title) : l.stagesReviewed(count, total)}</span>
         </div>
       </div>
     );
@@ -424,35 +506,35 @@ function ProgressSummary({ compact = false, locale }: { compact?: boolean; local
   return (
     <div className="tk-card tk-progress-card">
       <div className="tk-progress-row">
-        <ProgressRing value={count} total={total} />
+        <ProgressRing value={count} total={total} label={l.stagesReviewed(count, total)} />
         <div>
-          <p className="tk-progress-title">Tu avance</p>
+          <p className="tk-progress-title">{l.progress}</p>
           <p className="tk-progress-sub">
-            {count} de {total} etapas revisadas. {complete ? "Insignia desbloqueada." : "Al completarlas desbloqueas tu insignia."}
+            {l.stagesReviewed(count, total)}. {complete ? l.unlocked : l.unlockHint}
           </p>
         </div>
       </div>
       {complete ? (
         <Link className="tk-progress-next" href={toolkitHref(locale, "insignia")}>
           <span>
-            <small>Insignia Tech4Nature</small>
-            Descargar y compartir
+            <small>{l.badge}</small>
+            {l.share}
           </span>
           <IconArrowRight />
         </Link>
       ) : nextAction ? (
         <Link className="tk-progress-next" href={toolkitHref(locale, targetOf(nextAction.code).slug)}>
           <span>
-            <small>Siguiente en tu ruta</small>
-            Etapa {nextAction.n} · {nextAction.short}
+            <small>{l.nextInRoute}</small>
+            {l.stage} {nextAction.n} · {nextAction.short}
           </span>
           <IconArrowRight />
         </Link>
       ) : (
         <Link className="tk-progress-next" href={toolkitHref(locale, "")}>
           <span>
-            <small>Personaliza el recorrido</small>
-            Elige una ruta por público
+            <small>{l.personalize}</small>
+            {l.pickRoute}
           </span>
           <IconArrowRight />
         </Link>
@@ -463,6 +545,8 @@ function ProgressSummary({ compact = false, locale }: { compact?: boolean; local
 
 /** Índice de la página actual, construido a partir de sus encabezados. */
 function PageToc({ slug }: { slug: string }) {
+  const locale = useLocale();
+  const l = L[locale];
   const [items, setItems] = useState<{ id: string; text: string }[]>([]);
   const [active, setActive] = useState<string | null>(null);
 
@@ -472,7 +556,7 @@ function PageToc({ slug }: { slug: string }) {
       setItems(hs.map((h) => ({ id: h.id, text: h.dataset.toc ?? h.textContent ?? "" })));
     });
     return () => cancelAnimationFrame(raf);
-  }, [slug]);
+  }, [slug, locale]);
 
   useEffect(() => {
     if (!items.length) return;
@@ -499,8 +583,8 @@ function PageToc({ slug }: { slug: string }) {
 
   if (items.length < 2) return null;
   return (
-    <nav className="tk-toc" aria-label="En esta página">
-      <p className="tk-toc-title">En esta página</p>
+    <nav className="tk-toc" aria-label={l.onThisPage}>
+      <p className="tk-toc-title">{l.onThisPage}</p>
       <ol>
         {items.map((item, i) => (
           <li key={item.id}>
@@ -526,30 +610,66 @@ function PageToc({ slug }: { slug: string }) {
   );
 }
 
-function BioScannerCard() {
+function BioScannerCard({ locale }: { locale: Locale }) {
+  const { IMAGES } = useContent();
+  const l = L[locale];
   return (
     <div className="tk-card tk-promo">
       <div className="tk-promo-media">
         <img src={IMAGES.platform.src} alt={IMAGES.platform.alt} width={482} height={319} loading="lazy" decoding="async" />
       </div>
       <div className="tk-promo-body">
-        <span className="tk-eyebrow">Tech4Nature México</span>
-        <p className="tk-promo-title">Valida tus datos con BioScanner</p>
-        <p className="tk-promo-text">
-          Detecta y clasifica especies, identifica jaguares por el patrón de sus manchas y genera reportes. Interfaz en
-          español, inglés, portugués y maya.
-        </p>
+        <span className="tk-eyebrow">{locale === "en" ? "Tech4Nature Mexico" : "Tech4Nature México"}</span>
+        <p className="tk-promo-title">{l.promoTitle}</p>
+        <p className="tk-promo-text">{l.promoText}</p>
         <a className="tk-cta tk-cta--block" href={BIOSCANNER_APP} target="_blank" rel="noopener noreferrer">
-          Entrar a BioScanner
+          {l.bioscanner}
           <IconExternal />
         </a>
         <div className="tk-promo-foot">
           <span className="tk-pulse" aria-hidden="true" />
           <span>
-            <strong>333,087</strong> archivos procesados en Dzilam a octubre de 2026
+            <strong>333,087</strong> {l.processed}
           </span>
         </div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * Selector EN | ES del toolkit: cambia solo el segmento de idioma de la URL y
+ * conserva la página (mismo slug), la consulta y el ancla actuales.
+ */
+function LangSwitch({ locale }: { locale: Locale }) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const l = L[locale];
+  const go = useCallback(
+    (next: Locale) => {
+      if (next === locale) return;
+      // Igual que el selector del sitio: recuerda la elección para la redirección de "/".
+      document.cookie = `NEXT_LOCALE=${next}; path=/; max-age=31536000; samesite=lax`;
+      stopSpeech();
+      router.push(`${swapLocale(pathname, next)}${window.location.search}${window.location.hash}`);
+    },
+    [locale, pathname, router],
+  );
+  return (
+    <div className="lang-switch" role="group" aria-label={l.language}>
+      {LOCALES.map((code) => (
+        <button
+          key={code}
+          type="button"
+          className={`lang-switch__opt ${code === locale ? "is-active" : ""}`}
+          onClick={() => go(code)}
+          aria-current={code === locale ? "true" : undefined}
+          lang={code}
+          title={l.langNames[code]}
+        >
+          {LOCALE_LABELS[code]}
+        </button>
+      ))}
     </div>
   );
 }

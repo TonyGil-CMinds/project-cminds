@@ -1,39 +1,58 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { CATEGORIES, RESOURCES, STAGES, TEMPLATES } from "../data";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { Locale } from "@/i18n/config";
+import { getContent } from "../content";
+import { useLocale } from "./i18n";
 
 type Preview = { code: string; title: string; meta: string; text: string };
 
-const CATEGORY_LABEL = new Map<string, string>(CATEGORIES.map((c) => [c.id, c.label]));
+const L = {
+  es: { template: "Plantilla", downloadable: "Plantilla descargable", stage: "Etapa", result: "Al terminar tendrás" },
+  en: { template: "Template", downloadable: "Downloadable template", stage: "Stage", result: "By the end you will have" },
+} satisfies Record<Locale, Record<string, string>>;
 
-const PREVIEWS = new Map<string, Preview>([
-  ...RESOURCES.map((r): [string, Preview] => [
-    r.code,
-    {
-      code: r.code,
-      title: r.title,
-      meta: [CATEGORY_LABEL.get(r.category), r.lang, r.level].filter(Boolean).join(" · "),
-      text: r.use,
-    },
-  ]),
-  ...TEMPLATES.map((t): [string, Preview] => [
-    t.code,
-    {
-      code: t.code,
-      title: `Plantilla ${t.n}. ${t.title}`,
-      meta: "Plantilla descargable",
-      text: t.fields.map((f) => f.label).join(" · "),
-    },
-  ]),
-  ...STAGES.map((s): [string, Preview] => [
-    s.code,
-    { code: s.code, title: `Etapa ${s.n}. ${s.title}`, meta: s.question, text: `Al terminar tendrás: ${s.result}.` },
-  ]),
-]);
+const CACHE = new Map<Locale, Map<string, Preview>>();
+
+function previewsFor(locale: Locale): Map<string, Preview> {
+  const cached = CACHE.get(locale);
+  if (cached) return cached;
+  const { CATEGORIES, LEVELS, RESOURCES, STAGES, TEMPLATES } = getContent(locale);
+  const l = L[locale];
+  const CATEGORY_LABEL = new Map<string, string>(CATEGORIES.map((c) => [c.id, c.label]));
+  const LEVEL_LABEL = new Map<string, string>(LEVELS.map((v) => [v.id, v.label]));
+  const map = new Map<string, Preview>([
+    ...RESOURCES.map((r): [string, Preview] => [
+      r.code,
+      {
+        code: r.code,
+        title: r.title,
+        meta: [CATEGORY_LABEL.get(r.category), r.lang, r.level && (LEVEL_LABEL.get(r.level) ?? r.level)].filter(Boolean).join(" · "),
+        text: r.use,
+      },
+    ]),
+    ...TEMPLATES.map((t): [string, Preview] => [
+      t.code,
+      {
+        code: t.code,
+        title: `${l.template} ${t.n}. ${t.title}`,
+        meta: l.downloadable,
+        text: t.fields.map((f) => f.label).join(" · "),
+      },
+    ]),
+    ...STAGES.map((s): [string, Preview] => [
+      s.code,
+      { code: s.code, title: `${l.stage} ${s.n}. ${s.title}`, meta: s.question, text: `${l.result}: ${s.result}.` },
+    ]),
+  ]);
+  CACHE.set(locale, map);
+  return map;
+}
 
 /** Tarjeta flotante con el contenido de una referencia (E1, P1, R01) al pasar el cursor o enfocarla. */
 export default function RefPreview() {
+  const locale = useLocale();
+  const PREVIEWS = useMemo(() => previewsFor(locale), [locale]);
   const [preview, setPreview] = useState<Preview | null>(null);
   const [pos, setPos] = useState<{ top: number; left: number; above: boolean }>({ top: 0, left: 0, above: false });
   const timer = useRef(0);
@@ -87,7 +106,7 @@ export default function RefPreview() {
       document.removeEventListener("focusout", hide);
       window.removeEventListener("scroll", hide);
     };
-  }, []);
+  }, [PREVIEWS]);
 
   return (
     <div

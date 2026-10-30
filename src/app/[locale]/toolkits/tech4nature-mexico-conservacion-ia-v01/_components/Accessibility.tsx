@@ -1,13 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore } from "react";
+import type { Locale } from "@/i18n/config";
+import { useLocale } from "./i18n";
 import { usePrefs, type FontSize, type ThemePref } from "./Preferences";
 import {
   describe,
   getServerSpeechState,
   getServerVoices,
-  getSpanishVoices,
   getSpeechState,
+  getVoices,
   pause,
   readPage,
   resume,
@@ -31,17 +33,101 @@ import {
   IconSun,
 } from "./icons";
 
-const THEMES: { v: ThemePref; label: string; Icon: typeof IconSun }[] = [
-  { v: "dark", label: "Oscuro", Icon: IconMoon },
-  { v: "light", label: "Claro", Icon: IconSun },
-  { v: "system", label: "Sistema", Icon: IconMonitor },
+const L = {
+  es: {
+    dark: "Oscuro",
+    light: "Claro",
+    system: "Sistema",
+    sm: "Texto pequeño",
+    md: "Texto normal",
+    lg: "Texto grande",
+    xl: "Texto muy grande",
+    focusOn:
+      "Lectura al enfocar activada. Toca o navega con Tab para escuchar cada elemento. Para desactivarla, pulsa Alt, Mayúsculas y L.",
+    focusOff: "Lectura al enfocar desactivada.",
+    prefs: "Preferencias de accesibilidad",
+    a11y: "Accesibilidad",
+    closePrefs: "Cerrar preferencias",
+    theme: "Tema",
+    textSize: "Tamaño del texto",
+    spacing: "Espaciado de lectura",
+    spacingHint: "Más espacio entre líneas y letras.",
+    underline: "Subrayar enlaces",
+    reduceMotion: "Reducir animaciones",
+    voiceGroup: "Voz",
+    readPage: "Leer esta página en voz alta",
+    stopReading: "Detener lectura",
+    rate: "Velocidad",
+    voice: "Voz en español",
+    auto: "Automática",
+    readOnFocus: "Leer al enfocar o tocar",
+    readOnFocusHint: "Anuncia cada elemento y su función, como TalkBack o VoiceOver. Atajo: Alt + Mayús + L.",
+    noSpeech: "Tu navegador no ofrece síntesis de voz. Puedes usar el lector de pantalla de tu sistema.",
+    reset: "Restablecer preferencias",
+    player: "Lectura en voz alta",
+    paused: "En pausa",
+    reading: "Leyendo",
+    of: "de",
+    prev: "Bloque anterior",
+    resume: "Reanudar",
+    pause: "Pausar",
+    next: "Bloque siguiente",
+    chip: "Leer al enfocar: activado",
+    turnOff: "Desactivar",
+  },
+  en: {
+    dark: "Dark",
+    light: "Light",
+    system: "System",
+    sm: "Small text",
+    md: "Normal text",
+    lg: "Large text",
+    xl: "Extra-large text",
+    focusOn: "Read on focus is on. Tap or press Tab to hear each element. To turn it off, press Alt, Shift and L.",
+    focusOff: "Read on focus is off.",
+    prefs: "Accessibility preferences",
+    a11y: "Accessibility",
+    closePrefs: "Close preferences",
+    theme: "Theme",
+    textSize: "Text size",
+    spacing: "Reading spacing",
+    spacingHint: "More space between lines and letters.",
+    underline: "Underline links",
+    reduceMotion: "Reduce motion",
+    voiceGroup: "Voice",
+    readPage: "Read this page aloud",
+    stopReading: "Stop reading",
+    rate: "Speed",
+    voice: "English voice",
+    auto: "Automatic",
+    readOnFocus: "Read on focus or tap",
+    readOnFocusHint: "Announces each element and what it does, like TalkBack or VoiceOver. Shortcut: Alt + Shift + L.",
+    noSpeech: "Your browser does not offer speech synthesis. You can use your system's screen reader.",
+    reset: "Reset preferences",
+    player: "Read aloud",
+    paused: "Paused",
+    reading: "Reading",
+    of: "of",
+    prev: "Previous block",
+    resume: "Resume",
+    pause: "Pause",
+    next: "Next block",
+    chip: "Read on focus: on",
+    turnOff: "Turn off",
+  },
+} satisfies Record<Locale, Record<string, string>>;
+
+const THEMES: { v: ThemePref; Icon: typeof IconSun }[] = [
+  { v: "dark", Icon: IconMoon },
+  { v: "light", Icon: IconSun },
+  { v: "system", Icon: IconMonitor },
 ];
 
-const SIZES: { v: FontSize; label: string; name: string }[] = [
-  { v: "sm", label: "A−", name: "Texto pequeño" },
-  { v: "md", label: "A", name: "Texto normal" },
-  { v: "lg", label: "A+", name: "Texto grande" },
-  { v: "xl", label: "A++", name: "Texto muy grande" },
+const SIZES: { v: FontSize; label: string }[] = [
+  { v: "sm", label: "A−" },
+  { v: "md", label: "A" },
+  { v: "lg", label: "A+" },
+  { v: "xl", label: "A++" },
 ];
 
 function Switch({ checked, onChange, label, hint }: { checked: boolean; onChange: (v: boolean) => void; label: string; hint?: string }) {
@@ -69,18 +155,14 @@ function article(): HTMLElement | null {
 function useReadOnFocusToggle() {
   const { prefs, setPref } = usePrefs();
   const { rate, voice } = prefs;
+  const locale = useLocale();
   return useCallback(
     (next: boolean) => {
       setPref("readOnFocus", next);
       stop();
-      say(
-        next
-          ? "Lectura al enfocar activada. Toca o navega con Tab para escuchar cada elemento. Para desactivarla, pulsa Alt, Mayúsculas y L."
-          : "Lectura al enfocar desactivada.",
-        { rate, voice },
-      );
+      say(next ? L[locale].focusOn : L[locale].focusOff, { rate, voice, locale });
     },
-    [setPref, rate, voice],
+    [setPref, rate, voice, locale],
   );
 }
 
@@ -88,10 +170,13 @@ function useReadOnFocusToggle() {
 export function A11yMenu() {
   const { prefs, setPref, reset } = usePrefs();
   const toggleReadOnFocus = useReadOnFocusToggle();
+  const locale = useLocale();
+  const l = L[locale];
   const [open, setOpen] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  const voices = useSyncExternalStore(subscribeVoices, getSpanishVoices, getServerVoices);
+  const getLocaleVoices = useCallback(() => getVoices(locale), [locale]);
+  const voices = useSyncExternalStore(subscribeVoices, getLocaleVoices, getServerVoices);
   const supported = useClientValue(speechSupported, false);
   const speech = useSyncExternalStore(subscribeSpeech, getSpeechState, getServerSpeechState);
 
@@ -122,7 +207,7 @@ export function A11yMenu() {
         ref={triggerRef}
         type="button"
         className="tk-icon-btn tk-icon-btn--always"
-        aria-label="Preferencias de accesibilidad"
+        aria-label={l.prefs}
         aria-expanded={open}
         aria-controls="tk-a11y-panel"
         onClick={() => setOpen((o) => !o)}
@@ -135,35 +220,35 @@ export function A11yMenu() {
         id="tk-a11y-panel"
         className="tk-a11y-panel"
         role="dialog"
-        aria-label="Preferencias de accesibilidad"
+        aria-label={l.prefs}
         hidden={!open}
       >
         <div className="tk-a11y-head">
-          <strong>Accesibilidad</strong>
-          <button type="button" className="tk-icon-btn tk-icon-btn--always" aria-label="Cerrar preferencias" onClick={() => setOpen(false)}>
+          <strong>{l.a11y}</strong>
+          <button type="button" className="tk-icon-btn tk-icon-btn--always" aria-label={l.closePrefs} onClick={() => setOpen(false)}>
             <IconClose />
           </button>
         </div>
 
         <fieldset className="tk-a11y-group">
-          <legend>Tema</legend>
+          <legend>{l.theme}</legend>
           <div className="tk-seg tk-seg--full">
-            {THEMES.map(({ v, label, Icon }) => (
+            {THEMES.map(({ v, Icon }) => (
               <label key={v} data-v="on">
                 <input type="radio" name="tk-theme" checked={prefs.theme === v} onChange={() => setPref("theme", v)} />
                 <Icon aria-hidden="true" />
-                {label}
+                {l[v]}
               </label>
             ))}
           </div>
         </fieldset>
 
         <fieldset className="tk-a11y-group">
-          <legend>Tamaño del texto</legend>
+          <legend>{l.textSize}</legend>
           <div className="tk-seg tk-seg--full">
-            {SIZES.map(({ v, label, name }) => (
-              <label key={v} data-v="on" title={name}>
-                <input type="radio" name="tk-fs" aria-label={name} checked={prefs.fontSize === v} onChange={() => setPref("fontSize", v)} />
+            {SIZES.map(({ v, label }) => (
+              <label key={v} data-v="on" title={l[v]}>
+                <input type="radio" name="tk-fs" aria-label={l[v]} checked={prefs.fontSize === v} onChange={() => setPref("fontSize", v)} />
                 <span aria-hidden="true" className={`tk-fs-sample tk-fs-sample--${v}`}>
                   {label}
                 </span>
@@ -173,13 +258,13 @@ export function A11yMenu() {
         </fieldset>
 
         <div className="tk-a11y-group">
-          <Switch checked={prefs.spacing} onChange={(v) => setPref("spacing", v)} label="Espaciado de lectura" hint="Más espacio entre líneas y letras." />
-          <Switch checked={prefs.underline} onChange={(v) => setPref("underline", v)} label="Subrayar enlaces" />
-          <Switch checked={prefs.reduceMotion} onChange={(v) => setPref("reduceMotion", v)} label="Reducir animaciones" />
+          <Switch checked={prefs.spacing} onChange={(v) => setPref("spacing", v)} label={l.spacing} hint={l.spacingHint} />
+          <Switch checked={prefs.underline} onChange={(v) => setPref("underline", v)} label={l.underline} />
+          <Switch checked={prefs.reduceMotion} onChange={(v) => setPref("reduceMotion", v)} label={l.reduceMotion} />
         </div>
 
         <div className="tk-a11y-group">
-          <span className="tk-a11y-legend">Voz</span>
+          <span className="tk-a11y-legend">{l.voiceGroup}</span>
           {supported ? (
             <>
               <button
@@ -188,17 +273,17 @@ export function A11yMenu() {
                 onClick={() => {
                   const root = article();
                   if (!root) return;
-                  if (speech.status === "idle") readPage(root, { rate: prefs.rate, voice: prefs.voice });
+                  if (speech.status === "idle") readPage(root, { rate: prefs.rate, voice: prefs.voice, locale });
                   else stop();
                   setOpen(false);
                 }}
               >
                 {speech.status === "idle" ? <IconPlay /> : <IconStop />}
-                {speech.status === "idle" ? "Leer esta página en voz alta" : "Detener lectura"}
+                {speech.status === "idle" ? l.readPage : l.stopReading}
               </button>
               <label className="tk-a11y-field">
                 <span>
-                  Velocidad <output>{prefs.rate.toFixed(1)}×</output>
+                  {l.rate} <output>{prefs.rate.toFixed(1)}×</output>
                 </span>
                 <input
                   type="range"
@@ -211,9 +296,9 @@ export function A11yMenu() {
               </label>
               {voices.length ? (
                 <label className="tk-a11y-field">
-                  <span>Voz en español</span>
+                  <span>{l.voice}</span>
                   <select className="tk-input" value={prefs.voice ?? ""} onChange={(e) => setPref("voice", e.target.value || null)}>
-                    <option value="">Automática</option>
+                    <option value="">{l.auto}</option>
                     {voices.map((v) => (
                       <option key={v.name} value={v.name}>
                         {v.name} ({v.lang})
@@ -225,17 +310,17 @@ export function A11yMenu() {
               <Switch
                 checked={prefs.readOnFocus}
                 onChange={toggleReadOnFocus}
-                label="Leer al enfocar o tocar"
-                hint="Anuncia cada elemento y su función, como TalkBack o VoiceOver. Atajo: Alt + Mayús + L."
+                label={l.readOnFocus}
+                hint={l.readOnFocusHint}
               />
             </>
           ) : (
-            <p className="tk-a11y-note">Tu navegador no ofrece síntesis de voz. Puedes usar el lector de pantalla de tu sistema.</p>
+            <p className="tk-a11y-note">{l.noSpeech}</p>
           )}
         </div>
 
         <button type="button" className="tk-link-btn" onClick={reset}>
-          Restablecer preferencias
+          {l.reset}
         </button>
       </div>
     </div>
@@ -245,33 +330,34 @@ export function A11yMenu() {
 /** Controles flotantes mientras se lee en voz alta. */
 export function SpeechPlayer() {
   const speech = useSyncExternalStore(subscribeSpeech, getSpeechState, getServerSpeechState);
+  const l = L[useLocale()];
   if (speech.status === "idle") return null;
   return (
-    <div className="tk-player" role="region" aria-label="Lectura en voz alta">
+    <div className="tk-player" role="region" aria-label={l.player}>
       <span className="tk-player-wave" aria-hidden="true" data-paused={speech.status === "paused" || undefined}>
         <i />
         <i />
         <i />
       </span>
       <span className="tk-player-text">
-        {speech.status === "paused" ? "En pausa" : "Leyendo"} · {Math.min(speech.index + 1, speech.total)} de {speech.total}
+        {speech.status === "paused" ? l.paused : l.reading} · {Math.min(speech.index + 1, speech.total)} {l.of} {speech.total}
       </span>
-      <button type="button" aria-label="Bloque anterior" onClick={() => skip(-1)}>
+      <button type="button" aria-label={l.prev} onClick={() => skip(-1)}>
         <IconSkip style={{ transform: "scaleX(-1)" }} />
       </button>
       {speech.status === "paused" ? (
-        <button type="button" aria-label="Reanudar" onClick={resume}>
+        <button type="button" aria-label={l.resume} onClick={resume}>
           <IconPlay />
         </button>
       ) : (
-        <button type="button" aria-label="Pausar" onClick={pause}>
+        <button type="button" aria-label={l.pause} onClick={pause}>
           <IconPause />
         </button>
       )}
-      <button type="button" aria-label="Bloque siguiente" onClick={() => skip(1)}>
+      <button type="button" aria-label={l.next} onClick={() => skip(1)}>
         <IconSkip />
       </button>
-      <button type="button" aria-label="Detener lectura" onClick={stop}>
+      <button type="button" aria-label={l.stopReading} onClick={stop}>
         <IconStop />
       </button>
     </div>
@@ -289,6 +375,8 @@ export function FocusReader() {
   const { prefs } = usePrefs();
   const toggle = useReadOnFocusToggle();
   const supported = useClientValue(speechSupported, false);
+  const locale = useLocale();
+  const l = L[locale];
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -305,11 +393,11 @@ export function FocusReader() {
 
   useEffect(() => {
     if (!prefs.readOnFocus || !speechSupported()) return;
-    const opts = { rate: prefs.rate, voice: prefs.voice };
+    const opts = { rate: prefs.rate, voice: prefs.voice, locale };
     const onFocus = (e: FocusEvent) => {
       const el = e.target as HTMLElement | null;
       if (!el || !el.closest(".tk-root") || el.classList.contains("tk-main")) return;
-      say(describe(el), opts);
+      say(describe(el, locale), opts);
     };
     const onClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
@@ -319,7 +407,7 @@ export function FocusReader() {
       document.querySelectorAll(".tk-speaking").forEach((n) => n.classList.remove("tk-speaking"));
       block.classList.add("tk-speaking");
       window.setTimeout(() => block.classList.remove("tk-speaking"), 2500);
-      say(describe(block), opts);
+      say(describe(block, locale), opts);
     };
     document.addEventListener("focusin", onFocus);
     document.addEventListener("click", onClick);
@@ -327,7 +415,7 @@ export function FocusReader() {
       document.removeEventListener("focusin", onFocus);
       document.removeEventListener("click", onClick);
     };
-  }, [prefs.readOnFocus, prefs.rate, prefs.voice]);
+  }, [prefs.readOnFocus, prefs.rate, prefs.voice, locale]);
 
   if (!prefs.readOnFocus || !supported) return null;
   return (
@@ -337,9 +425,9 @@ export function FocusReader() {
         <i />
         <i />
       </span>
-      <span>Leer al enfocar: activado</span>
+      <span>{l.chip}</span>
       <button type="button" onClick={() => toggle(false)} aria-keyshortcuts="Alt+Shift+L">
-        Desactivar
+        {l.turnOff}
       </button>
     </div>
   );
