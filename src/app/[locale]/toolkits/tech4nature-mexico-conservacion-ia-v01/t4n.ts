@@ -425,7 +425,7 @@ export const TEAM_CORE: TeamGroup[] = [
     title: "UICN",
     people: [
       { name: "James McBreen", role: "Gerente de programa de Tecnología e Innovación. Supervisión del proyecto", photo: wix("0fecb2_b25958664415423c86cabb2ca37d3086~mv2.jpg") },
-      { name: "Úrsula Parrilla", role: "Directora regional para México, América Central y el Caribe", photo: "https://civicrm.iucn.org/sites/civicrm.iucn.org/files/civicrm/custom/ursulaparrilla2_0_4414a7b65bdb449009377ab396ccb6e8.jpg" },
+      { name: "Úrsula Parrilla", role: "Directora regional para México, América Central y el Caribe" },
     ],
   },
 ];
