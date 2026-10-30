@@ -404,6 +404,7 @@ export const TEAM_CORE: TeamGroup[] = [
       { name: "Ángel Escalante", role: "Líder de desarrollo tecnológico de BioScanner", photo: "/team/Angel Escalante.png" },
       { name: "Xiomara Vázquez", role: "Líder de marca y experiencia de BioScanner", photo: "/team/Xiomy Vazquez.png" },
       { name: "Daniela Pérez", role: "Consultora de programas de conservación: campo, KoboToolbox y coordinación", photo: `${T4N_FILES}/equipo/p-daniela.jpg` },
+      { name: "Bryan Ruiz", role: "Líder de experiencia creativa", photo: "/team/Bryan Ruiz.png" },
     ],
   },
   {
@@ -423,9 +424,8 @@ export const TEAM_CORE: TeamGroup[] = [
     id: "uicn",
     title: "UICN",
     people: [
-      { name: "Nadine Seleem", role: "Líder del proyecto y asesora de la Lista Verde", photo: wix("0fecb2_bf58ceb888144f6685a3f0d352f363fd~mv2.jpg") },
-      { name: "James Hardcastle", role: "Jefe de Áreas Protegidas y Conservadas. Asesor de la Lista Verde", photo: wix("0fecb2_c38079e498514637aa21ed16cb145b94~mv2.jpg") },
       { name: "James McBreen", role: "Gerente de programa de Tecnología e Innovación. Supervisión del proyecto", photo: wix("0fecb2_b25958664415423c86cabb2ca37d3086~mv2.jpg") },
+      { name: "Úrsula Parrilla", role: "Directora regional para México, América Central y el Caribe", photo: "https://civicrm.iucn.org/sites/civicrm.iucn.org/files/civicrm/custom/ursulaparrilla2_0_4414a7b65bdb449009377ab396ccb6e8.jpg" },
     ],
   },
 ];
@@ -436,37 +436,20 @@ export const TEAM_MORE: TeamGroup[] = [
     title: "Gobierno de Yucatán",
     intro: "La Secretaría de Desarrollo Sustentable (SDS) co-lideró el proyecto desde el diseño y el trabajo de campo.",
     people: [
-      { name: "Alejandro Pacheco", role: "Líder operativo. Jefe del Departamento de Conservación Ambiental", org: "SDS", photo: wix("0fecb2_525ff66e48664df1866066b370387a84~mv2.jpeg") },
-      { name: "Esteban Ramírez", role: "Coordinación operativa", org: "SDS", photo: wix("0fecb2_8d9d8de4ab7a4b53b9221a025bc73314~mv2.jpeg") },
-      { name: "Kay Vilchis", role: "Operaciones de campo", org: "SDS", photo: wix("0fecb2_91ae30dabbef4a9f98772afd23cacb21~mv2.jpeg") },
-      { name: "Robert Ramírez", role: "Operaciones de campo", org: "SDS", photo: wix("0fecb2_2644977f9ce94ee3968c69aab835d53e~mv2.jpeg") },
-      { name: "Diana Pérez", role: "Seguimiento institucional, fase 2", org: "SDS" },
-      { name: "Marielle Ávila", role: "Enlace de relaciones internacionales", org: "Gobierno de Yucatán" },
-    ],
-    names: [
-      { label: "También en la SDS", list: ["Sayda Rodríguez", "Allam Tzab", "Valentina Vanegas", "Luis Roberto Pérez", "Asis Alcocer"] },
+      { name: "Neyra Silva Rosado", role: "Secretaria de Desarrollo Sustentable", org: "SDS" },
     ],
   },
   {
     id: "comunidad",
     title: "Comunidad de Dzilam",
     people: [
-      { name: "Javier Nadal", role: "Guardaparque y líder comunitario", org: "Reserva Estatal de Dzilam", photo: wix("0fecb2_39858f848de24a5b928e3d45872a69ce~mv2.jpeg") },
+      { name: "Javier Nadal", role: "Exguardaparque y líder comunitario", org: "Reserva Estatal de Dzilam", photo: wix("0fecb2_39858f848de24a5b928e3d45872a69ce~mv2.jpeg") },
     ],
       },
-  {
-    id: "uicn-mas",
-    title: "UICN",
-    people: [
-      { name: "Úrsula Parrilla", role: "Directora de la Oficina Regional para México, América Central y el Caribe", org: "UICN" },
-      { name: "Johary Rakoto", role: "Gestión financiera del programa", org: "UICN" },
-    ],
-  },
   {
     id: "c-minds-mas",
     title: "C Minds a lo largo del proyecto",
     people: [
-      { name: "Bryan Ruiz", role: "Líder de experiencia creativa", org: "C Minds", photo: "/team/Bryan Ruiz.png" },
       { name: "Enrique Portillo", role: "Administración y finanzas", org: "C Minds", photo: "/team/Enrique Portillo.png" },
       { name: "Ana Sofía Schmidt", role: "Comunicación y redes", org: "C Minds" },
       { name: "Nicte Cabañas", role: "Asistente de proyectos, fase 1", org: "C Minds" },
@@ -479,15 +462,26 @@ export const TEAM_MORE: TeamGroup[] = [
 
 export const TEAM_ALLIES: TeamGroup[] = [
   {
+    id: "ex-sds",
+    title: "Secretaría de Desarrollo Sustentable (SDS), fases 1 y 2",
+    intro: "Integrantes de la SDS que co-lideraron el diseño y el trabajo de campo del proyecto.",
+    people: [
+      { name: "Alejandro Pacheco", role: "Líder operativo. Exjefe del Departamento de Conservación Ambiental", org: "Ex-SDS", photo: wix("0fecb2_525ff66e48664df1866066b370387a84~mv2.jpeg") },
+      { name: "Esteban Ramírez", role: "Coordinación operativa", org: "Ex-SDS", photo: wix("0fecb2_8d9d8de4ab7a4b53b9221a025bc73314~mv2.jpeg") },
+      { name: "Kay Vilchis", role: "Operaciones de campo", org: "Ex-SDS", photo: wix("0fecb2_91ae30dabbef4a9f98772afd23cacb21~mv2.jpeg") },
+    ],
+    names: [
+      { label: "También en la SDS", list: ["Sayda Rodríguez", "Allam Tzab", "Valentina Vanegas", "Luis Roberto Pérez", "Asis Alcocer"] },
+    ],
+  },
+  {
     id: "upy",
     title: "Universidad Politécnica de Yucatán (UPY)",
     intro: "Desarrolló con el proyecto los primeros modelos de reconocimiento de imágenes y formó a estudiantes en ingeniería de datos y sistemas embebidos.",
     people: [
       { name: "Mario Campos Soberanis", role: "Supervisión del algoritmo de imagen; después, modelos de BioScanner con Neuraan", org: "UPY · Neuraan", photo: wix("0fecb2_e4a97697c8fa42528a0bb03e624ec7f4~mv2.jpeg") },
       { name: "Diego Campos Sobrino", role: "Ingeniería de datos", org: "UPY", photo: wix("0fecb2_c9203c7671ce4936b395ca61e2cdf874~mv2.jpg") },
-      { name: "Alberto López", role: "Coordinación del proyecto", org: "UPY", photo: wix("0fecb2_c518fa9dea15473082071718a9a3d3f8~mv2.jpg") },
       { name: "Sharleen Morales", role: "Vinculación con estudiantes", org: "UPY", photo: wix("0fecb2_134c66f9aaa54ed29ed521cdf16ffd8d~mv2.jpg") },
-      { name: "Alfredo Ulibarri", role: "Rector. Supervisión general", org: "UPY", photo: wix("0fecb2_bed97cb3a444415ebb4b0d61a2782427~mv2.webp") },
       { name: "José Augusto Canul", role: "Equipo del algoritmo de imagen", org: "Ingeniero de datos", photo: wix("de03fd_b051b384c84449f09345e9aacdb9d597~mv2.jpg") },
     ],
     names: [
@@ -500,15 +494,15 @@ export const TEAM_ALLIES: TeamGroup[] = [
   },
   {
     id: "rfcx",
-    title: "Rainforest Connection (RFCx)",
-    intro: "Lideró el monitoreo acústico: grabadoras, análisis en Arbimon y modelos para reconocer especies por su sonido.",
+    title: "Rainforest Connection (RFCx), fase 1",
+    intro: "Equipo que lideró el monitoreo acústico de la fase 1: grabadoras, análisis en Arbimon y modelos para reconocer especies por su sonido.",
     people: [
-      { name: "Brooke Livesay", role: "Análisis acústico. Jefa de proyecto", org: "RFCx", photo: wix("0fecb2_26eb7ffa3f7c449793c890ab692e1c4c~mv2.jpg") },
-      { name: "Mahreen Qazi", role: "Análisis acústico. Estrategia y operaciones", org: "RFCx", photo: wix("0fecb2_927d67e474c54cdca495e8b2abc6d5bc~mv2.jpg") },
-      { name: "Chrissy Durkin", role: "Desarrollo de proyectos", org: "RFCx" },
-      { name: "Marconi Campos-Cerqueira", role: "Ciencia acústica", org: "RFCx" },
+      { name: "Brooke Livesay", role: "Análisis acústico. Jefa de proyecto", org: "Ex-RFCx", photo: wix("0fecb2_26eb7ffa3f7c449793c890ab692e1c4c~mv2.jpg") },
+      { name: "Mahreen Qazi", role: "Análisis acústico. Estrategia y operaciones", org: "Ex-RFCx", photo: wix("0fecb2_927d67e474c54cdca495e8b2abc6d5bc~mv2.jpg") },
+      { name: "Chrissy Durkin", role: "Desarrollo de proyectos", org: "Ex-RFCx" },
+      { name: "Marconi Campos-Cerqueira", role: "Ciencia acústica", org: "Ex-RFCx" },
     ],
-    names: [{ label: "Equipo científico", list: ["Kris Harmon", "Gabriel Leite", "Tomaz Melo", "Nelson Buainain", "José Wagner Ribeiro", "Carly Batist", "Lola Abed"] }],
+    names: [{ label: "Equipo científico (ex-RFCx)", list: ["Kris Harmon", "Gabriel Leite", "Tomaz Melo", "Nelson Buainain", "José Wagner Ribeiro", "Carly Batist", "Lola Abed"] }],
   },
   {
     id: "huawei",
@@ -516,10 +510,9 @@ export const TEAM_ALLIES: TeamGroup[] = [
     intro: "Aliado de la iniciativa global Tech4Nature con la UICN, a través de su programa Tech4All.",
     people: [
       { name: "Samira Herrera", role: "Relaciones públicas y comunicación", org: "Huawei México", photo: wix("de03fd_e6489ec7dd0942c2bdcd5f9610e50459~mv2.jpg") },
-      { name: "Sira Lin", role: "Coordinación del proyecto", org: "Huawei México", photo: wix("0fecb2_fe116709e5be474e953cae28829f5525~mv2.jpg") },
-      { name: "Armando Guauxochitl", role: "Estrategia y marketing", org: "Huawei Latam" },
-      { name: "Joaquín Saldaña", role: "Estrategia de comunicación, fase 1", org: "Huawei Latam", photo: wix("0fecb2_f9790ac781274bcd919add96a6cf7d04~mv2.jpg") },
-      { name: "Adolfo Yin", role: "Relaciones públicas", org: "Huawei México" },
+      { name: "Armando Guauxochitl", role: "Director de estrategia y marketing", org: "Huawei Latam", photo: wix("0fecb2_f9790ac781274bcd919add96a6cf7d04~mv2.jpg") },
+      { name: "Sira Lin", role: "Coordinación del proyecto", org: "Ex-Huawei México", photo: wix("0fecb2_fe116709e5be474e953cae28829f5525~mv2.jpg") },
+      { name: "Joaquín Saldaña", role: "Estrategia de comunicación, fase 1. En memoria", org: "Ex-Huawei Latam" },
     ],
     names: [{ label: "También en Huawei", list: ["Leon Du", "Zeng Ming", "Eric Chendalong", "Zhang Jing"] }],
   },
@@ -529,9 +522,8 @@ export const TEAM_ALLIES: TeamGroup[] = [
     people: [
       { name: "Anuar Hernández", role: "Asesoría en identificación de jaguares y trabajo de campo", org: "Pronatura Península de Yucatán" },
       { name: "Adrián Hernández", role: "Estudio de conectividad entre Dzilam y Ría Lagartos", org: "Consultor" },
-      { name: "Mauricio Rosas", role: "Modelos de reconocimiento individual en BioScanner", org: "Neuraan" },
-      { name: "Francisco Javier Camas Tec", role: "Consultoría técnica", org: "Consultor" },
-      { name: "Gabriel Islas Peraza", role: "Consultoría técnica", org: "Consultor" },
+      { name: "Joel Koupermann", role: "Uso de BioScanner en la Estrategia Biocultural del Jaguar, Ecuador", org: "Fundación Pachamama" },
+      { name: "Daning Montaño", role: "Uso de BioScanner en la Estrategia Biocultural del Jaguar, Ecuador", org: "Fundación Pachamama" },
       { name: "Jorge Osorno", role: "Video y registro audiovisual", org: "Independiente" },
     ],
   },
@@ -643,11 +635,6 @@ export const SPOTLIGHT: Spotlight[] = [
     name: "Toshio Yokoyama",
     role: "Liderazgo de operaciones de campo y política pública",
     photo: E("p-toshio"),
-  },
-  {
-    name: "Daniela Pérez",
-    role: "Consultora de programas de conservación, C Minds",
-    photo: E("p-daniela"),
   },
   {
     name: "Regina Cervera",
