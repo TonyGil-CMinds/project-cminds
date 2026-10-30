@@ -385,7 +385,7 @@ export const MAP_TEXT = {
   googleUrl:
     "https://www.google.com/maps/place/97608+Reserva+Estatal+de+Dzilam+de+Bravo,+Yucatan,+Mexico/@21.4616374,-88.6608063,48060m/data=!3m1!1e3!4m6!3m5!1s0x8f53956fb63c5145:0x257bef41330fb623!8m2!3d21.5027274!4d-88.4908506!16s%2Fg%2F1wyc5d26",
   googleCaption: "Vista satelital de la Reserva Estatal de Dzilam en Google Maps. Explora la costa, el manglar y la selva que cuida el proyecto.",
-  note: "Mapa esquemático. Por seguridad de la fauna no mostramos la ubicación de las cámaras; los límites oficiales de la reserva están en el Acuerdo 76/2024.",
+  note: "Por seguridad de la fauna no mostramos la ubicación de las cámaras. Los límites oficiales de la reserva están en el Acuerdo 76/2024.",
 };
 
 // ---------------------------------------------------------------------------
@@ -756,7 +756,7 @@ export const PARTNERS: { title: string; partners: Partner[] }[] = [
     partners: [
       { name: "C Minds", logo: L("ledby-cminds-1.svg") },
       { name: "AI for Climate and Biodiversity", logo: L("ledby-aiforclimate-2.svg") },
-      { name: "Grupo de Monitoreo Chac Mool", logo: L("partner-chacmool.png"), height: 64 },
+      { name: "Grupo de Monitoreo Chac Mool", logo: L("partner-chacmool-w.png"), height: 64 },
       { name: "Gobierno del Estado de Yucatán, Secretaría de Desarrollo Sustentable", logo: L("ledby-sds-3.svg") },
     ],
   },
@@ -772,8 +772,8 @@ export const PARTNERS: { title: string; partners: Partner[] }[] = [
   {
     title: "Con las contribuciones estratégicas de",
     partners: [
-      { name: "Pronatura Península de Yucatán", logo: L("partner-pronatura.png"), height: 60 },
-      { name: "Fundación Pachamama", logo: L("partner-pachamama.png") },
+      { name: "Pronatura Península de Yucatán", logo: L("partner-pronatura-w.png"), height: 60 },
+      { name: "Fundación Pachamama", logo: L("partner-pachamama-w.png") },
       { name: "Universidad Politécnica de Yucatán", logo: L("innovationpartner-upy.svg") },
     ],
   },
@@ -859,7 +859,30 @@ export const FINDINGS = {
     { title: "La continuidad se diseña desde el primer día", text: "Capacidades locales, instituciones comprometidas y financiamiento sostienen el monitoreo en el tiempo." },
   ],
   report: {
-    label: "Leer el reporte de la fase 1: aprendizajes y recomendaciones",
-    url: "https://docs.google.com/document/d/12OQ36ia6frIHRFIOJWm4dyT5uFbb8vHfJBcyQWP_CqY/edit",
+    eyebrow: "Reporte público · Fase 1",
+    title: "Uso ético de sistemas de IA para la protección de la biodiversidad: el caso de Tech4Nature México",
+    text: "Metodología, resultados, aprendizajes y recomendaciones de la primera fase del proyecto, incluido el uso responsable de la IA.",
+    label: "Leer el reporte (PDF)",
+    url: "https://b51f2df9-b416-4320-ac2c-b010b75f6691.filesusr.com/ugd/0fecb2_1520b2af718e4c9984e4c3d7f73f3405.pdf",
   },
 };
+
+// ---------------------------------------------------------------------------
+// Videos propios de la zona
+
+export const LOCAL_VIDEOS = [
+  {
+    src: `${T4N_FILES}/video/festival-jaguar.mp4`,
+    poster: `${T4N_FILES}/video/festival-jaguar.jpg`,
+    title: "Dónde está Dzilam de Bravo",
+    caption: "Del continente a la costa norte de Yucatán: así se llega a la reserva y al Festival del Jaguar.",
+    loop: false,
+  },
+  {
+    src: `${T4N_FILES}/video/dzilam-dron.mp4`,
+    poster: `${T4N_FILES}/video/dzilam-dron.jpg`,
+    title: "La selva de Dzilam desde el aire",
+    caption: "Tomas de dron de la selva baja y los caminos por donde el equipo llega a las estaciones de monitoreo.",
+    loop: true,
+  },
+];

@@ -2348,3 +2348,28 @@ html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg
 @media (max-width: 1023px) { .tk-principles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 760px) { .tk-lessons { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 560px) { .tk-principles { grid-template-columns: minmax(0, 1fr); } .tk-partners { padding: 18px 16px 6px; } .tk-partners img { height: 38px; max-width: 180px; } .tk-partners ul { gap: 14px 22px; } }
+/* Socios en fondo oscuro con logos en blanco */
+.tk-partners { background: radial-gradient(120% 140% at 0% 0%, #2a4a45, #18302e 60%, #122624); color: #fff; }
+.tk-partners .tk-h2 { color: #fff; }
+.tk-partners .tk-anchor { color: var(--tk-lime); }
+.tk-partners-title { color: rgba(255, 255, 255, 0.72) !important; text-align: center; }
+.tk-partners ul { justify-content: center; }
+.tk-partners img[src$=".svg"] { filter: brightness(0) invert(1); }
+/* Hallazgos en una fila */
+.tk-glossary--3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+@media (max-width: 760px) { .tk-glossary--3 { grid-template-columns: minmax(0, 1fr) !important; } }
+/* Reporte destacado */
+.tk-report { display: flex; gap: 18px; align-items: center; margin: 18px 0 8px; padding: 22px 24px; color: var(--tk-text); text-decoration: none; border-radius: 18px; border: 1px solid rgba(var(--tk-lime-rgb), 0.5); background: linear-gradient(135deg, rgba(var(--tk-lime-rgb), 0.16), rgba(var(--tk-sky-rgb), 0.06) 70%), var(--tk-panel); transition: transform 0.2s var(--tk-ease); }
+.tk-report:hover { transform: translateY(-2px); }
+.tk-report-icon { flex: none; display: grid; place-items: center; width: 72px; height: 88px; border-radius: 10px; font-weight: 800; letter-spacing: 0.05em; color: var(--tk-on-lime); background: var(--tk-lime); }
+.tk-report-body { display: flex; flex-direction: column; gap: 6px; }
+.tk-report-body strong { font-size: 1.2rem; line-height: 1.3; }
+.tk-report-body > span:not(.tk-eyebrow):not(.tk-next-cta) { font-size: 0.9rem; color: var(--tk-text-2); }
+@media (max-width: 560px) { .tk-report { flex-direction: column; align-items: flex-start; } }
+/* Videos de la zona */
+.tk-localvids { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 4px 0 14px; }
+.tk-localvid { margin: 0; }
+.tk-localvid video { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; background: #000; object-fit: cover; }
+.tk-localvid figcaption { margin-top: 6px; font-size: 0.82rem; line-height: 1.45; color: var(--tk-text-2); }
+.tk-localvid figcaption strong { color: var(--tk-text); }
+@media (max-width: 760px) { .tk-localvids { grid-template-columns: minmax(0, 1fr); } }

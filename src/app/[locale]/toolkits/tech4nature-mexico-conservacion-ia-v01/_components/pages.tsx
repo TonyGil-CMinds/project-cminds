@@ -44,12 +44,12 @@ import { ActionDone, ActionFinish, CopyButton } from "./SmallIslands";
 import { BadgePanel } from "./Badge";
 import Achievements from "./Achievements";
 import Avatar from "./Avatar";
-import T4nMap from "./T4nMap";
 import PhotoGrid from "./PhotoGrid";
 import VideoList from "./VideoList";
 import {
   CAMERA_TRAP,
   FINDINGS,
+  LOCAL_VIDEOS,
   PARTNERS,
   GALLERY,
   PAGE_PHOTOS,
@@ -371,7 +371,7 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
         <H2 id="aprendizajes">Lo que aprendimos</H2>
         <p data-reveal>{FINDINGS.intro}</p>
         <h3 className="tk-h3">Lo que descubrimos sobre la reserva</h3>
-        <dl className="tk-glossary">
+        <dl className="tk-glossary tk-glossary--3">
           {FINDINGS.science.map((s) => (
             <div key={s.title} className="tk-term" data-reveal>
               <dt>{s.title}</dt>
@@ -411,15 +411,22 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
             </li>
           ))}
         </ol>
-        <p className="tk-meta-line">
-          <ExternalLink href={FINDINGS.report.url}>{FINDINGS.report.label}</ExternalLink>
-        </p>
+        <a className="tk-report" href={FINDINGS.report.url} target="_blank" rel="noopener noreferrer" data-reveal>
+          <span className="tk-report-icon" aria-hidden="true">PDF</span>
+          <span className="tk-report-body">
+            <span className="tk-eyebrow">{FINDINGS.report.eyebrow}</span>
+            <strong>{FINDINGS.report.title}</strong>
+            <span>{FINDINGS.report.text}</span>
+            <span className="tk-next-cta">
+              {FINDINGS.report.label} <IconExternal />
+            </span>
+          </span>
+        </a>
       </section>
 
       <section aria-labelledby="donde-trabajamos">
         <H2 id="donde-trabajamos">Dónde trabajamos</H2>
         <p data-reveal>{MAP_TEXT.lead}</p>
-        <T4nMap />
         <figure className="tk-gmap" data-reveal>
           <iframe
             src={MAP_TEXT.googleEmbed}
@@ -435,6 +442,24 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
             </a>
           </figcaption>
         </figure>
+        <div className="tk-localvids">
+          {LOCAL_VIDEOS.map((v) => (
+            <figure key={v.src} className="tk-localvid" data-reveal>
+              <video
+                src={v.src}
+                poster={v.poster}
+                controls
+                playsInline
+                preload="none"
+                muted={v.loop}
+                loop={v.loop}
+              />
+              <figcaption>
+                <strong>{v.title}</strong> {v.caption}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
         <ul className="tk-mapfacts">
           {MAP_TEXT.facts.map((f) => (
             <li key={f.label} data-reveal>
