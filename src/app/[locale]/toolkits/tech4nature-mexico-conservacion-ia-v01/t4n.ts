@@ -400,7 +400,7 @@ export const TEAM_CORE: TeamGroup[] = [
     title: "C Minds",
     people: [
       { name: "Constanza Gómez-Mont", role: "Fundadora y presidenta de C Minds. Líder del proyecto", photo: "/core/constanzaGM.png" },
-      { name: "Regina Cervera", role: "Codirectora de programas de innovación para la naturaleza. Coordinación del proyecto", photo: `${T4N_FILES}/equipo/p-regina.jpg` },
+      { name: "Regina Cervera", role: "Directora de programas de innovación para la naturaleza. Coordinación del proyecto", photo: `${T4N_FILES}/equipo/p-regina.jpg` },
       { name: "Ángel Escalante", role: "Líder de desarrollo tecnológico de BioScanner", photo: "/team/Angel Escalante.png" },
       { name: "Xiomara Vázquez", role: "Líder de marca y experiencia de BioScanner", photo: "/team/Xiomy Vazquez.png" },
       { name: "Daniela Pérez", role: "Consultora de programas de conservación: campo, KoboToolbox y coordinación", photo: `${T4N_FILES}/equipo/p-daniela.jpg` },
@@ -416,7 +416,7 @@ export const TEAM_CORE: TeamGroup[] = [
       { name: "Efraín Uicab", role: "Monitor", photo: `${T4N_FILES}/equipo/p-efrain.jpg` },
       { name: "Mateo Ordóñez", role: "Monitor", photo: `${T4N_FILES}/equipo/p-mateo.jpg` },
       { name: "Josué Argáez", role: "Monitor", photo: `${T4N_FILES}/equipo/p-josue.jpg` },
-      { name: "Toshio Yokoyama", role: "Liderazgo de operaciones de campo y política. Antes, director de Conservación en la SDS", photo: wix("0fecb2_bf6afc144c474ecbab6a298d5792b1fe~mv2.jpg") },
+      { name: "Toshio Yokoyama", role: "Liderazgo de operaciones de campo y política. Antes, director de Conservación en la SDS", photo: `${T4N_FILES}/equipo/p-toshio.jpg` },
     ],
   },
   {
@@ -606,74 +606,56 @@ export const GALLERY: { id: string; title: string; text: string; photos: Gallery
 export type Spotlight = { name: string; role: string; photo: string; quote?: string; source?: string };
 
 export const SPOTLIGHT_INTRO =
-  "Tech4Nature México existe porque hay personas que conocen el monte, lo cuidan y decidieron demostrar lo que sabían. Estas son algunas de sus voces.";
+  "Tech4Nature México existe porque hay personas que conocen el monte, lo cuidan y decidieron demostrar lo que sabían. Estas son algunas de ellas.";
 
 export const SPOTLIGHT: Spotlight[] = [
   {
     name: "Benjamín «Benja» Campos",
     role: "Monitor fundador, Grupo de Monitoreo Chac Mool",
     photo: E("p-benja"),
-    quote: "Juanito, Mateo, Efra y yo sabíamos que este lugar tenía mucha biodiversidad, pero no podíamos mostrárselo al mundo. Gracias a la tecnología, hoy podemos.",
-    source: "Episodio 1, El monte que nos ve",
   },
   {
     name: "Juan Castillo",
     role: "Monitor fundador, Grupo de Monitoreo Chac Mool",
     photo: E("p-juan"),
-    quote: "Podemos capturar un jaguar, o incluso un pecarí de labios blancos.",
-    source: "Episodio 1, El monte que nos ve",
   },
   {
     name: "Darwin Sosa",
     role: "Monitor fundador, Grupo de Monitoreo Chac Mool",
     photo: E("p-darwin"),
-    quote: "Todos sabemos que el jaguar es una especie paraguas. Si el jaguar desaparece, la Selva Maya desaparece.",
-    source: "Episodio 2, Te juro que todavía hay jaguares",
   },
   {
     name: "Efraín Uicab",
     role: "Monitor, Grupo de Monitoreo Chac Mool",
     photo: E("p-efrain"),
-    quote: "Buscamos rastros que nos muestren por dónde se mueven los animales y, cuando identificamos esos sitios, colocamos cámaras trampa.",
-    source: "Episodio 1, El monte que nos ve",
   },
   {
     name: "Mateo Ordóñez",
     role: "Monitor, Grupo de Monitoreo Chac Mool",
     photo: E("p-mateo"),
-    quote: "Nadie cree que hay jaguares por aquí. Pero ahora que estamos en la reserva, la gente empieza a entender.",
-    source: "Episodio 2, Te juro que todavía hay jaguares",
   },
   {
     name: "Josué Argáez",
     role: "Monitor, Grupo de Monitoreo Chac Mool",
     photo: E("p-josue"),
-    quote: "Cada vez que entramos al monte es algo nuevo para nosotros.",
-    source: "Episodio 1, El monte que nos ve",
   },
   {
     name: "Toshio Yokoyama",
     role: "Liderazgo de operaciones de campo y política pública",
-    photo: wix("0fecb2_bf6afc144c474ecbab6a298d5792b1fe~mv2.jpg"),
+    photo: E("p-toshio"),
   },
   {
     name: "Daniela Pérez",
     role: "Consultora de programas de conservación, C Minds",
     photo: E("p-daniela"),
-    quote: "Hemos instalado varias cámaras trampa en esta zona, una comunidad ganadera donde la ganadería es parte de la vida local.",
-    source: "Episodio 1, El monte que nos ve",
   },
   {
     name: "Regina Cervera",
-    role: "Codirectora de programas de innovación para la naturaleza, C Minds",
+    role: "Directora de programas de innovación para la naturaleza, C Minds",
     photo: E("p-regina"),
-    quote: "Estamos en Dzilam de Bravo, en el primer Festival del Jaguar, para acercar cada vez más la reserva y el jaguar a la gente.",
-    source: "Episodio 5, El Festival Chac Mool",
   },
 ];
 
-export const SPOTLIGHT_NOTE =
-  "Citas traducidas de los subtítulos de la serie de video Tech4Nature México (2026).";
 
 // ---------------------------------------------------------------------------
 // ¿Qué es una cámara trampa?
@@ -683,8 +665,8 @@ export const CAMERA_TRAP = {
     "Una cámara trampa es una cámara resistente al agua que se sujeta a un árbol o un poste y se dispara sola cuando detecta el calor y el movimiento de un animal. Toma fotos o videos de día y, con luz infrarroja, también de noche, sin que nadie esté presente. Así registra animales que casi nunca se dejan ver.",
   photos: [
     { src: C("juan-camara-trampa"), alt: "Juan Castillo junto a una cámara trampa instalada en un árbol de la selva", caption: "Una cámara trampa a la altura del paso de los animales" },
-    { src: C("instalacion-camara"), alt: "Monitor configurando una cámara trampa sujeta a un árbol", caption: "Configuración en campo: fecha, hora y modo de disparo" },
-    { src: C("daniela-camara"), alt: "Daniela Pérez revisa una cámara trampa en la selva", caption: "Revisión de baterías y tarjeta de memoria" },
+    { src: C("toshio-camara-trampa"), alt: "Toshio Yokoyama sujeta una cámara trampa a un árbol en la selva", caption: "Toshio Yokoyama instala una cámara trampa" },
+    { src: C("mateo-baterias"), alt: "Mateo Ordóñez cambia las baterías de una cámara trampa", caption: "Mateo Ordóñez cambia baterías y tarjeta de memoria" },
   ] as GalleryPhoto[],
   how: [
     { title: "Sensor", text: "Detecta la diferencia de calor de un animal en movimiento y activa la cámara en menos de un segundo." },
@@ -750,3 +732,21 @@ export const PAGE_PHOTOS: Record<string, GalleryPhoto[]> = {
     { src: C("equipo-campo"), alt: "Monitores conversan en campo", caption: "Gestión compartida entre comunidad y autoridad" },
   ],
 };
+
+// ---------------------------------------------------------------------------
+// Videos
+
+export type Video = { id: string; title: string; channel: string; start?: number };
+
+export const VIDEOS_INTRO =
+  "Tech4Nature México también se ha contado en video: desde el lanzamiento en 2022 hasta los primeros registros del jaguar, el camino a la fase 2 y el uso de la IA para acelerar el fototrampeo.";
+
+export const VIDEOS: Video[] = [
+  { id: "4cKLMpL_des", title: "Tech4Nature México", channel: "C Minds" },
+  { id: "RqBuHwRkdKM", title: "El escurridizo jaguar ha sido captado con Tech4Nature México", channel: "Huawei Latinoamérica" },
+  { id: "H_06ybOH_Co", title: "Tech4Nature México: creando un corredor biológico de los jaguares", channel: "Huawei Latinoamérica" },
+  { id: "9UAdhdnhdLw", title: "De días a minutos: así está cambiando la IA el fototrampeo en México", channel: "C Minds" },
+  { id: "w0x76cR111o", title: "The road to Tech4Nature Mexico's Phase 2", channel: "C Minds", start: 10 },
+  { id: "bbjwulJHNN0", title: "How AI Is Helping Save Jaguars Across Latin America (Interview with Tech4Nature Mexico)", channel: "Paris Peace Forum" },
+  { id: "TilMnT73Oh4", title: "Tech4Nature México: evento de lanzamiento", channel: "Huawei Latinoamérica", start: 2173 },
+];

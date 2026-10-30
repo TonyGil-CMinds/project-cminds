@@ -46,6 +46,7 @@ import Achievements from "./Achievements";
 import Avatar from "./Avatar";
 import T4nMap from "./T4nMap";
 import PhotoGrid from "./PhotoGrid";
+import VideoList from "./VideoList";
 import {
   CAMERA_TRAP,
   GALLERY,
@@ -53,7 +54,8 @@ import {
   MAP_TEXT,
   SPOTLIGHT,
   SPOTLIGHT_INTRO,
-  SPOTLIGHT_NOTE,
+  VIDEOS,
+  VIDEOS_INTRO,
   STAGE_PHOTOS,
   T4N_HOME,
   TEAM_ALLIES,
@@ -277,12 +279,10 @@ function Spotlight() {
             <div className="tk-spot-body">
               <strong>{s.name}</strong>
               <span className="tk-spot-role">{s.role}</span>
-              {s.quote ? <blockquote>“{s.quote}”</blockquote> : null}
             </div>
           </li>
         ))}
       </ul>
-      <p className="tk-meta-line">{SPOTLIGHT_NOTE}</p>
     </>
   );
 }
@@ -383,6 +383,12 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
         ))}
       </section>
 
+      <section aria-labelledby="videos">
+        <H2 id="videos">Tech4Nature México en video</H2>
+        <p data-reveal>{VIDEOS_INTRO}</p>
+        <VideoList videos={VIDEOS} />
+      </section>
+
       <section aria-labelledby="linea-de-tiempo">
         <H2 id="linea-de-tiempo">Cómo llegamos aquí</H2>
         <ol className="tk-ninety">
@@ -462,7 +468,7 @@ function PeopleGrid({ group, big }: { group: TeamGroup; big?: boolean }) {
 export function EquipoPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   return (
     <PageFrame page={page} locale={locale} kicker="Equipo" lead={<p>{TEAM_INTRO}</p>}>
-      <H2>Sus voces</H2>
+      <H2>Quienes lo hacen posible</H2>
       <Spotlight />
       <H2>Primera fila</H2>
       {TEAM_CORE.map((g) => (

@@ -2302,3 +2302,13 @@ html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg
 }
 .tk-photos--trio { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 300px; }
 @media (max-width: 560px) { .tk-photos--trio { grid-template-columns: minmax(0, 1fr); grid-auto-rows: 260px; } }
+.tk-videos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0 24px; padding: 0; list-style: none; }
+.tk-video-frame { position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: #000; }
+.tk-video-frame iframe, .tk-video-frame button { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; padding: 0; cursor: pointer; background: #000; }
+.tk-video-frame img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: opacity 0.2s; }
+.tk-video-frame button:hover img { opacity: 1; }
+.tk-video-play { position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px; display: grid; place-items: center; border-radius: 50%; font-size: 1.2rem; color: var(--tk-on-lime); background: var(--tk-lime); }
+.tk-video-title { margin: 8px 0 2px; font-size: 0.9rem; font-weight: 700; line-height: 1.35; }
+.tk-video-meta { margin: 0; font-size: 0.78rem; color: var(--tk-dim); }
+@media (max-width: 1023px) { .tk-videos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .tk-videos { grid-template-columns: minmax(0, 1fr); } }
