@@ -21,10 +21,8 @@ export const TOOLKIT_DATE_LABEL = "Octubre de 2026";
 export const STORAGE_KEY = "tk-t4n-v02";
 
 const T4N = "/platforms/aiforbiodiversity/initiative-tech4nature";
-const unsplash = (id: string, w = 1200) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=70`;
 
-/** Imágenes de referencia: activos locales del proyecto y placeholders públicos de Unsplash. */
+/** Imágenes del proyecto: fotos de campo, talleres y la serie de video de Tech4Nature México. */
 export const IMAGES = {
   hero: { src: `${T4N}/tech4nature-hero.png`, alt: "Equipo de campo de Tech4Nature México caminando por la selva de Yucatán" },
   jaguar: { src: `${T4N}/theimpact-jaguar.png`, alt: "Jaguar descansando en la copa de un árbol" },
@@ -33,16 +31,16 @@ export const IMAGES = {
   bioscanner: { src: `${T4N}/bioscanner.png`, alt: "Logotipo de BioScanner" },
   logo: { src: `${T4N}/logo-tech4nature.svg`, alt: "Tech4Nature México" },
   afbLogo: { src: "/platforms/aiforbiodiversity/logo-aiforclimate.svg", alt: "AI for Climate & Biodiversity" },
-  people: { src: unsplash("1522202176988-66273c2fd55f"), alt: "Personas colaborando alrededor de una mesa con computadoras" },
-  forestPath: { src: unsplash("1441974231531-c6227db76b6e"), alt: "Sendero en un bosque iluminado por el sol" },
-  kingfisher: { src: unsplash("1444464666168-49d633b86797"), alt: "Martín pescador posado en una rama" },
-  earth: { src: unsplash("1446776811953-b23d57bd21aa"), alt: "La Tierra vista desde la órbita, con nubes sobre el océano" },
-  feline: { src: unsplash("1456926631375-92c8ce872def"), alt: "Felino manchado descansando sobre un tronco" },
-  dashboard: { src: unsplash("1551288049-bebda4e38f71"), alt: "Panel de análisis de datos en una pantalla" },
-  map: { src: unsplash("1524661135-423995f22d0b"), alt: "Mapa mundial impreso" },
-  mistyForest: { src: unsplash("1542273917363-3b1817f69a2d"), alt: "Bosque cubierto de niebla" },
-  pineLight: { src: unsplash("1425913397330-cf8af2ff40a1"), alt: "Luz entre los troncos de un bosque" },
-  turtle: { src: unsplash("1437622368342-7a3d73a34c8f"), alt: "Tortuga marina nadando en aguas abiertas" },
+  people: { src: `${T4N}/toolkit/campo/taller-comunidad.jpg`, alt: "Monitores, familias y equipo de Tech4Nature México reunidos en una palapa de Dzilam de Bravo" },
+  forestPath: { src: `${T4N}/toolkit/campo/caminata.jpg`, alt: "Equipo de campo caminando por la selva de la Reserva Estatal de Dzilam" },
+  kingfisher: { src: `${T4N}/toolkit/campo/capacitacion-acustica.jpg`, alt: "Monitores comunitarios revisando una grabadora acústica en el humedal" },
+  earth: { src: `${T4N}/toolkit/campo/agua-b.jpg`, alt: "Monitores cruzando un humedal inundado en la reserva" },
+  feline: { src: `${T4N}/toolkit/campo/juan-camara-trampa.jpg`, alt: "Juan Castillo junto a una cámara trampa instalada en un árbol" },
+  dashboard: { src: `${T4N}/toolkit/campo/taller-bs.jpg`, alt: "Taller de BioScanner con monitores y equipos de áreas protegidas" },
+  map: { src: `${T4N}/toolkit/campo/equipo-camioneta.jpg`, alt: "Equipo de Tech4Nature México en la batea de una camioneta antes de salir a campo" },
+  mistyForest: { src: `${T4N}/toolkit/campo/humedal.jpg`, alt: "Humedal con tule y manglar en la costa norte de Yucatán" },
+  pineLight: { src: `${T4N}/toolkit/campo/festival-grupo.jpg`, alt: "Asistentes al primer Festival del Jaguar Chac Mool en Dzilam de Bravo" },
+  turtle: { src: `${T4N}/toolkit/campo/atardecer.jpg`, alt: "Atardecer sobre la selva de Dzilam" },
 } as const;
 
 export type Img = { src: string; alt: string };
@@ -290,7 +288,7 @@ export const STAGES: Stage[] = [
     short: "Salir a campo",
     question: "¿Cómo recolectamos datos confiables?",
     result: "Cámaras y grabadoras instaladas con un registro de esfuerzo",
-    image: IMAGES.forestPath,
+    image: IMAGES.feline,
     purpose:
       "La calidad de todo lo que viene después depende de cómo se instalan y registran los equipos. Un buen diseño de muestreo permite comparar sitios y temporadas; un registro ordenado permite que otras personas confíen en tus datos.",
     dzilam: {
@@ -335,7 +333,7 @@ export const STAGES: Stage[] = [
     short: "Analizar con IA",
     question: "¿Cómo convertimos miles de archivos en información?",
     result: "Especies y jaguares identificados y validados por personas",
-    image: IMAGES.platform,
+    image: IMAGES.dashboard,
     purpose:
       "Una campaña de fototrampeo puede generar cientos de miles de archivos. La IA filtra las imágenes vacías, propone la especie y ayuda a reconocer individuos. Las personas validan cada resultado antes de usarlo, y esa revisión humana es parte del método.",
     dzilam: {

@@ -2258,3 +2258,47 @@ html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg
   .tk-map { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .tk-map svg { min-width: 720px; }
 }
+
+/* ---- Fotos, protagonistas y cámara trampa -------------------------------- */
+.tk-photos { display: grid; gap: 10px; margin: 14px 0 22px; padding: 0; list-style: none; }
+.tk-photos--mosaic { grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-rows: 150px; }
+.tk-photos--mosaic li:first-child { grid-column: span 2; grid-row: span 2; }
+.tk-photos--pair { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: 240px; }
+.tk-photos li { min-width: 0; }
+.tk-photos button { position: relative; display: block; width: 100%; height: 100%; padding: 0; border: 0; border-radius: 14px; overflow: hidden; cursor: zoom-in; background: var(--tk-panel); }
+.tk-photos img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--tk-ease); }
+.tk-photos button:hover img { transform: scale(1.04); }
+.tk-photos button:focus-visible { outline: 2px solid var(--tk-accent); outline-offset: 2px; }
+.tk-photos-cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 10px 8px; font-size: 0.76rem; line-height: 1.35; text-align: left; color: #fff; background: linear-gradient(transparent, rgba(0, 0, 0, 0.72)); }
+.tk-gallery-block { margin-bottom: 8px; }
+.tk-lightbox { width: min(1200px, 96vw); max-width: 96vw; max-height: 94dvh; padding: 0; border: 0; border-radius: 14px; overflow: hidden; background: #000; color: #fff; }
+.tk-lightbox::backdrop { background: rgba(0, 0, 0, 0.82); }
+.tk-lightbox figure { position: relative; margin: 0; }
+.tk-lightbox img { display: block; width: 100%; max-height: 84dvh; object-fit: contain; background: #000; }
+.tk-lightbox figcaption { display: flex; justify-content: space-between; gap: 12px; padding: 10px 14px; font-size: 0.86rem; }
+.tk-lightbox-close { position: absolute; top: 10px; right: 10px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.4); background: rgba(0, 0, 0, 0.55); color: #fff; font-size: 1.5rem; cursor: pointer; }
+.tk-spot { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0 10px; padding: 0; list-style: none; }
+.tk-spot-card { display: flex; flex-direction: column; border: 1px solid var(--tk-line); border-radius: var(--tk-radius); overflow: hidden; background: var(--tk-panel); }
+.tk-spot-photo { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; }
+.tk-spot-body { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 18px; }
+.tk-spot-body strong { font-size: 1.02rem; }
+.tk-spot-role { font-size: 0.78rem; color: var(--tk-accent); }
+.tk-spot-body blockquote { margin: 8px 0 0; padding-left: 10px; border-left: 2px solid var(--tk-lime); font-size: 0.9rem; line-height: 1.5; color: var(--tk-text-2); }
+.tk-ct { margin: 10px 0 26px; }
+.tk-ct-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 14px 0; }
+.tk-ct-col { padding: 4px 16px 8px; border-radius: 14px; border: 1px solid rgba(var(--tk-lime-rgb), 0.35); background: rgba(var(--tk-lime-rgb), 0.05); }
+.tk-ct-col--alt { border-color: rgba(var(--tk-sky-rgb), 0.35); background: rgba(var(--tk-sky-rgb), 0.05); }
+@media (max-width: 1023px) {
+  .tk-spot { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tk-photos--mosaic { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .tk-spot { grid-template-columns: minmax(0, 1fr); }
+  .tk-spot-card { flex-direction: row; }
+  .tk-spot-photo { width: 110px; flex: none; aspect-ratio: auto; }
+  .tk-photos--mosaic { grid-auto-rows: 120px; }
+  .tk-photos--pair { grid-template-columns: minmax(0, 1fr); grid-auto-rows: 210px; }
+  .tk-ct-cols { grid-template-columns: minmax(0, 1fr); }
+}
+.tk-photos--trio { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 300px; }
+@media (max-width: 560px) { .tk-photos--trio { grid-template-columns: minmax(0, 1fr); grid-auto-rows: 260px; } }

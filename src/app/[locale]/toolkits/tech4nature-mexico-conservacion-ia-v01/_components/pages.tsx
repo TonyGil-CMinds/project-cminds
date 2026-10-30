@@ -45,7 +45,23 @@ import { BadgePanel } from "./Badge";
 import Achievements from "./Achievements";
 import Avatar from "./Avatar";
 import T4nMap from "./T4nMap";
-import { MAP_TEXT, T4N_HOME, TEAM_ALLIES, TEAM_CORE, TEAM_INTRO, TEAM_MORE, type TeamGroup } from "../t4n";
+import PhotoGrid from "./PhotoGrid";
+import {
+  CAMERA_TRAP,
+  GALLERY,
+  PAGE_PHOTOS,
+  MAP_TEXT,
+  SPOTLIGHT,
+  SPOTLIGHT_INTRO,
+  SPOTLIGHT_NOTE,
+  STAGE_PHOTOS,
+  T4N_HOME,
+  TEAM_ALLIES,
+  TEAM_CORE,
+  TEAM_INTRO,
+  TEAM_MORE,
+  type TeamGroup,
+} from "../t4n";
 import { ExternalLink, Rich, slugId } from "./rich";
 import { IconArrowRight, IconCalendar, IconCheckCircle, IconChevronLeft, IconExternal, IconPin } from "./icons";
 
@@ -251,6 +267,26 @@ function TeamStrip({ locale }: { locale: Locale }) {
   );
 }
 
+function Spotlight() {
+  return (
+    <>
+      <ul className="tk-spot">
+        {SPOTLIGHT.map((s) => (
+          <li key={s.name} className="tk-spot-card" data-reveal>
+            <img className="tk-spot-photo" src={s.photo} alt={`Retrato de ${s.name}`} loading="lazy" decoding="async" width={480} height={480} />
+            <div className="tk-spot-body">
+              <strong>{s.name}</strong>
+              <span className="tk-spot-role">{s.role}</span>
+              {s.quote ? <blockquote>“{s.quote}”</blockquote> : null}
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p className="tk-meta-line">{SPOTLIGHT_NOTE}</p>
+    </>
+  );
+}
+
 export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   return (
     <article className="tk-article" aria-labelledby="tk-page-title">
@@ -307,6 +343,12 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
         ))}
       </section>
 
+      <section aria-labelledby="quienes">
+        <H2 id="quienes">Quienes lo hacen posible</H2>
+        <p data-reveal>{SPOTLIGHT_INTRO}</p>
+        <Spotlight />
+      </section>
+
       <section aria-labelledby="logros">
         <H2 id="logros">Lo que hemos logrado</H2>
         <p data-reveal>Toca cada tarjeta para ver el detalle: el acuerdo de ampliación, el listado de especies, BioScanner y las fotos de los jaguares.</p>
@@ -326,6 +368,19 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
           ))}
         </ul>
         <p className="tk-meta-line">{MAP_TEXT.note}</p>
+      </section>
+
+      <section aria-labelledby="en-imagenes">
+        <H2 id="en-imagenes">El proyecto en imágenes</H2>
+        {GALLERY.map((g) => (
+          <section key={g.id} aria-labelledby={`galeria-${g.id}`} className="tk-gallery-block">
+            <h3 id={`galeria-${g.id}`} className="tk-h3">
+              {g.title}
+            </h3>
+            <p data-reveal>{g.text}</p>
+            <PhotoGrid photos={g.photos} label={g.title} />
+          </section>
+        ))}
       </section>
 
       <section aria-labelledby="linea-de-tiempo">
@@ -407,6 +462,8 @@ function PeopleGrid({ group, big }: { group: TeamGroup; big?: boolean }) {
 export function EquipoPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   return (
     <PageFrame page={page} locale={locale} kicker="Equipo" lead={<p>{TEAM_INTRO}</p>}>
+      <H2>Sus voces</H2>
+      <Spotlight />
       <H2>Primera fila</H2>
       {TEAM_CORE.map((g) => (
         <section key={g.id} aria-label={g.title}>
@@ -510,6 +567,7 @@ export function CreaPage({ page, locale }: { page: ToolkitPage; locale: Locale }
 export function PorQueImportaPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   return (
     <PageFrame page={page} locale={locale} lead={<p>{WHY.intro}</p>}>
+      <PhotoGrid photos={PAGE_PHOTOS["por-que-importa"]} label="Fotos de la reserva" variant="pair" />
       <H2>Datos y qué significan para tu proyecto</H2>
       <div className="tk-facts">
         {WHY.facts.map((c) => (
@@ -537,6 +595,7 @@ export function BioculturalPage({ page, locale }: { page: ToolkitPage; locale: L
   const e = BIOCULTURAL.elsewhere;
   return (
     <PageFrame page={page} locale={locale} kicker="Enfoque biocultural" lead={<p>{BIOCULTURAL.lead}</p>}>
+      <PhotoGrid photos={PAGE_PHOTOS.biocultural} label="Fotos del monitoreo biocultural" variant="pair" />
       <H2>Qué aporta el conocimiento del territorio</H2>
       <dl className="tk-glossary">
         {BIOCULTURAL.contributions.map((c) => (
@@ -602,6 +661,7 @@ export function SoberaniaPage({ page, locale }: { page: ToolkitPage; locale: Loc
   const e = SOVEREIGNTY.elsewhere;
   return (
     <PageFrame page={page} locale={locale} kicker="Gobernanza de datos" lead={<p>{SOVEREIGNTY.lead}</p>}>
+      <PhotoGrid photos={PAGE_PHOTOS.soberania} label="Fotos de talleres con la comunidad" variant="pair" />
       <H2>La Cadena de Suministro con Soberanía de Datos</H2>
       {SOVEREIGNTY.framework.map((p, i) => (
         <p key={i} data-reveal>
@@ -680,6 +740,7 @@ export function ListaVerdePage({ page, locale }: { page: ToolkitPage; locale: Lo
   const e = GREEN_LIST.elsewhere;
   return (
     <PageFrame page={page} locale={locale} kicker="Estándar de gestión" lead={<p>{GREEN_LIST.lead}</p>}>
+      <PhotoGrid photos={PAGE_PHOTOS.listaverde} label="Fotos del trabajo en el área protegida" variant="pair" />
       <H2>El Estándar en breve</H2>
       <dl className="tk-glossary">
         {GREEN_LIST.components.map((c) => (
@@ -804,6 +865,43 @@ function BioScannerInline() {
   );
 }
 
+function CameraTrap() {
+  return (
+    <section className="tk-ct" aria-labelledby="que-es-camara-trampa">
+      <H2 id="que-es-camara-trampa">¿Qué es una cámara trampa?</H2>
+      <p data-reveal>{CAMERA_TRAP.lead}</p>
+      <PhotoGrid photos={CAMERA_TRAP.photos} label="Cámaras trampa en Dzilam" variant="trio" />
+      <dl className="tk-glossary">
+        {CAMERA_TRAP.how.map((h) => (
+          <div key={h.title} className="tk-term" data-reveal>
+            <dt>{h.title}</dt>
+            <dd>{h.text}</dd>
+          </div>
+        ))}
+      </dl>
+      <div className="tk-ct-cols">
+        <div className="tk-ct-col" data-reveal>
+          <h3 className="tk-h3">Úsala cuando quieras…</h3>
+          <ul className="tk-list">
+            {CAMERA_TRAP.goodFor.map((g) => (
+              <li key={g}>{g}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="tk-ct-col tk-ct-col--alt" data-reveal>
+          <h3 className="tk-h3">Combínala con otras herramientas para…</h3>
+          <ul className="tk-list">
+            {CAMERA_TRAP.lessGood.map((g) => (
+              <li key={g}>{g}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <p className="tk-meta-line">{CAMERA_TRAP.tip}</p>
+    </section>
+  );
+}
+
 export function StagePage({ page, locale, stage }: { page: ToolkitPage; locale: Locale; stage: Stage }) {
   const nextPage = PAGES[PAGES.findIndex((p) => p.slug === page.slug) + 1];
   const label = `Etapa ${stage.n}`;
@@ -856,6 +954,10 @@ export function StagePage({ page, locale, stage }: { page: ToolkitPage; locale: 
           <figcaption>BioScanner identifica jaguares de forma individual por el patrón de sus manchas.</figcaption>
         </figure>
       ) : null}
+
+      {STAGE_PHOTOS[stage.id] ? <PhotoGrid photos={STAGE_PHOTOS[stage.id]} label={`Fotos: ${stage.title}`} variant="pair" /> : null}
+
+      {stage.id === "e2" ? <CameraTrap /> : null}
 
       <H2>Pasos clave</H2>
       <ol className="tk-steps">

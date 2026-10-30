@@ -400,20 +400,23 @@ export const TEAM_CORE: TeamGroup[] = [
     title: "C Minds",
     people: [
       { name: "Constanza Gómez-Mont", role: "Fundadora y presidenta de C Minds. Líder del proyecto", photo: "/core/constanzaGM.png" },
-      { name: "Regina Cervera", role: "Líder de programa. Coordinación del proyecto", photo: "/team/Regina Cervera.png" },
+      { name: "Regina Cervera", role: "Codirectora de programas de innovación para la naturaleza. Coordinación del proyecto", photo: `${T4N_FILES}/equipo/p-regina.jpg` },
       { name: "Ángel Escalante", role: "Líder de desarrollo tecnológico de BioScanner", photo: "/team/Angel Escalante.png" },
       { name: "Xiomara Vázquez", role: "Líder de marca y experiencia de BioScanner", photo: "/team/Xiomy Vazquez.png" },
-      { name: "Daniela Pérez", role: "Asistente de proyecto: campo, KoboToolbox y coordinación" },
+      { name: "Daniela Pérez", role: "Consultora de programas de conservación: campo, KoboToolbox y coordinación", photo: `${T4N_FILES}/equipo/p-daniela.jpg` },
     ],
   },
   {
     id: "territorio",
-    title: "En el territorio",
+    title: "En el territorio: Grupo de Monitoreo Chac Mool",
     people: [
+      { name: "Benjamín Campos", role: "Monitor fundador y líder comunitario", photo: `${T4N_FILES}/equipo/p-benja.jpg` },
+      { name: "Juan Castillo", role: "Monitor fundador", photo: `${T4N_FILES}/equipo/p-juan.jpg` },
+      { name: "Darwin Sosa", role: "Monitor fundador y líder de turismo sustentable", photo: `${T4N_FILES}/equipo/p-darwin.jpg` },
+      { name: "Efraín Uicab", role: "Monitor", photo: `${T4N_FILES}/equipo/p-efrain.jpg` },
+      { name: "Mateo Ordóñez", role: "Monitor", photo: `${T4N_FILES}/equipo/p-mateo.jpg` },
+      { name: "Josué Argáez", role: "Monitor", photo: `${T4N_FILES}/equipo/p-josue.jpg` },
       { name: "Toshio Yokoyama", role: "Liderazgo de operaciones de campo y política. Antes, director de Conservación en la SDS", photo: wix("0fecb2_bf6afc144c474ecbab6a298d5792b1fe~mv2.jpg") },
-      { name: "Juan Castillo", role: "Líder comunitario y de campo, Grupo Chac Mool", photo: wix("0fecb2_0ce587603b7549e4882644380d5053b4~mv2.jpeg") },
-      { name: "Benjamín Campos", role: "Líder comunitario y de campo, Grupo Chac Mool", photo: wix("0fecb2_ef6c5fba5add47a5aedd75c6b57df799~mv2.jpeg") },
-      { name: "Darwin Sosa", role: "Líder de turismo sustentable y monitoreo de campo", photo: wix("0fecb2_418860c28bfc4c26818c1fc2768815aa~mv2.jpeg") },
     ],
   },
   {
@@ -450,8 +453,7 @@ export const TEAM_MORE: TeamGroup[] = [
     people: [
       { name: "Javier Nadal", role: "Guardaparque y líder comunitario", org: "Reserva Estatal de Dzilam", photo: wix("0fecb2_39858f848de24a5b928e3d45872a69ce~mv2.jpeg") },
     ],
-    names: [{ label: "Equipo de monitoreo comunitario", list: ["Josué", "Efraín", "Manuel Mateo"] }],
-  },
+      },
   {
     id: "uicn-mas",
     title: "UICN",
@@ -534,3 +536,217 @@ export const TEAM_ALLIES: TeamGroup[] = [
     ],
   },
 ];
+
+// ---------------------------------------------------------------------------
+// Fotos de campo y de la serie de video
+
+const C = (file: string) => `${T4N_FILES}/campo/${file}.jpg`;
+const E = (file: string) => `${T4N_FILES}/equipo/${file}.jpg`;
+
+export type GalleryPhoto = { src: string; alt: string; caption?: string };
+
+export const GALLERY: { id: string; title: string; text: string; photos: GalleryPhoto[] }[] = [
+  {
+    id: "campo",
+    title: "En el monte",
+    text: "Los monitores del Grupo Chac Mool recorren la selva, los humedales y el manglar para revisar cámaras, cambiar baterías y buscar rastros. En temporada de lluvias, muchas veces el camino es de agua.",
+    photos: [
+      { src: C("juan-camara"), alt: "Juan Castillo revisa una cámara trampa sujeta a un árbol", caption: "Juan Castillo revisa una cámara trampa" },
+      { src: C("agua-b"), alt: "Monitores de pie en un humedal inundado", caption: "Recorrido por un humedal inundado" },
+      { src: C("caminata"), alt: "Equipo de campo caminando por la selva", caption: "Rumbo a una estación de monitoreo" },
+      { src: C("mateo-camara"), alt: "Mateo Ordóñez junto a una cámara trampa", caption: "Mateo Ordóñez junto a una cámara trampa" },
+      { src: C("cruce-humedal-b"), alt: "Integrantes del equipo cruzando un humedal con botas y machete", caption: "Cruce de humedal, fase 1" },
+      { src: C("darwin-senala"), alt: "Darwin Sosa señala hacia el monte", caption: "Darwin Sosa muestra por dónde pasa la fauna" },
+      { src: C("manglar"), alt: "Monitor sonriente de pie sobre las raíces del manglar", caption: "En el manglar" },
+      { src: C("equipo-camioneta"), alt: "Equipo de Tech4Nature México en la batea de una camioneta", caption: "Monitores y equipo antes de salir a campo" },
+    ],
+  },
+  {
+    id: "bioscanner",
+    title: "BioScanner en manos del territorio",
+    text: "En los talleres de BioScanner, monitores, guardaparques y equipos de áreas protegidas suben sus fotos, revisan lo que propone la IA y validan cada especie. Lo que antes tomaba de tres a cinco días de trabajo ahora se resuelve en minutos u horas.",
+    photos: [
+      { src: C("taller-bs"), alt: "Monitor sonriente en un taller de BioScanner con laptops", caption: "Taller de BioScanner" },
+      { src: C("taller-bs-e"), alt: "Participantes chocan las manos al final de un taller", caption: "Cierre de un taller" },
+      { src: C("taller-bs-b"), alt: "Dos participantes revisan resultados en una laptop", caption: "Revisando detecciones" },
+      { src: C("taller-bs-c"), alt: "Participantes conversan durante el taller", caption: "Aprender juntos" },
+      { src: C("taller-bs-d"), alt: "Facilitador explica frente a un grupo con laptops", caption: "Sesión de práctica" },
+      { src: C("taller-bs-f"), alt: "Participante recibe un kit al terminar el taller", caption: "Entrega de kits" },
+    ],
+  },
+  {
+    id: "festival",
+    title: "Festival del Jaguar Chac Mool",
+    text: "En 2025, Dzilam de Bravo celebró su primer Festival del Jaguar: realidad virtual, juegos, charlas y fotos de las cámaras para acercar la reserva y el jaguar a la gente. Los monitores recibieron un reconocimiento por su trabajo.",
+    photos: [
+      { src: C("festival-grupo"), alt: "Grupo numeroso frente al mural del Festival del Jaguar", caption: "¡Chac Mool!" },
+      { src: C("festival-vr"), alt: "Una niña prueba lentes de realidad virtual acompañada por monitores", caption: "La reserva en realidad virtual" },
+      { src: C("festival-premios"), alt: "Monitores reciben reconocimientos de madera con huellas de jaguar", caption: "Reconocimiento a los monitores" },
+      { src: C("festival-publico"), alt: "Público del festival con un micrófono", caption: "La comunidad pregunta y comparte" },
+      { src: C("festival-benja"), alt: "Benjamín Campos sonríe frente a una computadora", caption: "Benja Campos muestra los registros" },
+      { src: C("festival-charla"), alt: "Charla sobre especies en riesgo en el festival", caption: "Charla sobre especies en riesgo" },
+    ],
+  },
+  {
+    id: "comunidad",
+    title: "Talleres y escuelas",
+    text: "El proyecto también se cuenta en las escuelas, en talleres con familias y en salidas de campo con estudiantes de ingeniería, para que más personas conozcan lo que vive en su territorio.",
+    photos: [
+      { src: C("taller-comunidad"), alt: "Familias, monitores y equipo reunidos en una palapa", caption: "Taller con familias en Dzilam de Bravo" },
+      { src: C("taller-jovenes"), alt: "Jóvenes y adultos en círculo durante un taller bajo una palapa", caption: "Taller sobre áreas protegidas" },
+      { src: C("capacitacion-acustica"), alt: "Monitores aprenden a usar una grabadora acústica", caption: "Capacitación con grabadoras acústicas" },
+      { src: C("salida-upy"), alt: "Estudiantes de la UPY escuchan a un guía en campo", caption: "Salida de campo con estudiantes de la UPY" },
+    ],
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Protagonistas
+
+export type Spotlight = { name: string; role: string; photo: string; quote?: string; source?: string };
+
+export const SPOTLIGHT_INTRO =
+  "Tech4Nature México existe porque hay personas que conocen el monte, lo cuidan y decidieron demostrar lo que sabían. Estas son algunas de sus voces.";
+
+export const SPOTLIGHT: Spotlight[] = [
+  {
+    name: "Benjamín «Benja» Campos",
+    role: "Monitor fundador, Grupo de Monitoreo Chac Mool",
+    photo: E("p-benja"),
+    quote: "Juanito, Mateo, Efra y yo sabíamos que este lugar tenía mucha biodiversidad, pero no podíamos mostrárselo al mundo. Gracias a la tecnología, hoy podemos.",
+    source: "Episodio 1, El monte que nos ve",
+  },
+  {
+    name: "Juan Castillo",
+    role: "Monitor fundador, Grupo de Monitoreo Chac Mool",
+    photo: E("p-juan"),
+    quote: "Podemos capturar un jaguar, o incluso un pecarí de labios blancos.",
+    source: "Episodio 1, El monte que nos ve",
+  },
+  {
+    name: "Darwin Sosa",
+    role: "Monitor fundador, Grupo de Monitoreo Chac Mool",
+    photo: E("p-darwin"),
+    quote: "Todos sabemos que el jaguar es una especie paraguas. Si el jaguar desaparece, la Selva Maya desaparece.",
+    source: "Episodio 2, Te juro que todavía hay jaguares",
+  },
+  {
+    name: "Efraín Uicab",
+    role: "Monitor, Grupo de Monitoreo Chac Mool",
+    photo: E("p-efrain"),
+    quote: "Buscamos rastros que nos muestren por dónde se mueven los animales y, cuando identificamos esos sitios, colocamos cámaras trampa.",
+    source: "Episodio 1, El monte que nos ve",
+  },
+  {
+    name: "Mateo Ordóñez",
+    role: "Monitor, Grupo de Monitoreo Chac Mool",
+    photo: E("p-mateo"),
+    quote: "Nadie cree que hay jaguares por aquí. Pero ahora que estamos en la reserva, la gente empieza a entender.",
+    source: "Episodio 2, Te juro que todavía hay jaguares",
+  },
+  {
+    name: "Josué Argáez",
+    role: "Monitor, Grupo de Monitoreo Chac Mool",
+    photo: E("p-josue"),
+    quote: "Cada vez que entramos al monte es algo nuevo para nosotros.",
+    source: "Episodio 1, El monte que nos ve",
+  },
+  {
+    name: "Toshio Yokoyama",
+    role: "Liderazgo de operaciones de campo y política pública",
+    photo: wix("0fecb2_bf6afc144c474ecbab6a298d5792b1fe~mv2.jpg"),
+  },
+  {
+    name: "Daniela Pérez",
+    role: "Consultora de programas de conservación, C Minds",
+    photo: E("p-daniela"),
+    quote: "Hemos instalado varias cámaras trampa en esta zona, una comunidad ganadera donde la ganadería es parte de la vida local.",
+    source: "Episodio 1, El monte que nos ve",
+  },
+  {
+    name: "Regina Cervera",
+    role: "Codirectora de programas de innovación para la naturaleza, C Minds",
+    photo: E("p-regina"),
+    quote: "Estamos en Dzilam de Bravo, en el primer Festival del Jaguar, para acercar cada vez más la reserva y el jaguar a la gente.",
+    source: "Episodio 5, El Festival Chac Mool",
+  },
+];
+
+export const SPOTLIGHT_NOTE =
+  "Citas traducidas de los subtítulos de la serie de video Tech4Nature México (2026).";
+
+// ---------------------------------------------------------------------------
+// ¿Qué es una cámara trampa?
+
+export const CAMERA_TRAP = {
+  lead:
+    "Una cámara trampa es una cámara resistente al agua que se sujeta a un árbol o un poste y se dispara sola cuando detecta el calor y el movimiento de un animal. Toma fotos o videos de día y, con luz infrarroja, también de noche, sin que nadie esté presente. Así registra animales que casi nunca se dejan ver.",
+  photos: [
+    { src: C("juan-camara-trampa"), alt: "Juan Castillo junto a una cámara trampa instalada en un árbol de la selva", caption: "Una cámara trampa a la altura del paso de los animales" },
+    { src: C("instalacion-camara"), alt: "Monitor configurando una cámara trampa sujeta a un árbol", caption: "Configuración en campo: fecha, hora y modo de disparo" },
+    { src: C("daniela-camara"), alt: "Daniela Pérez revisa una cámara trampa en la selva", caption: "Revisión de baterías y tarjeta de memoria" },
+  ] as GalleryPhoto[],
+  how: [
+    { title: "Sensor", text: "Detecta la diferencia de calor de un animal en movimiento y activa la cámara en menos de un segundo." },
+    { title: "Fotos y video", text: "Guarda ráfagas de fotos o videos cortos con fecha y hora. De noche usa luz infrarroja que los animales casi no perciben." },
+    { title: "Autonomía", text: "Con pilas y una tarjeta de memoria puede trabajar semanas o meses. El equipo la visita para cambiar baterías y bajar los archivos." },
+  ],
+  goodFor: [
+    "Saber qué mamíferos medianos y grandes y qué aves de suelo viven en un lugar.",
+    "Documentar especies difíciles de ver, nocturnas o escasas, como el jaguar, el ocelote o el pecarí de labios blancos.",
+    "Identificar individuos con marcas únicas, como las rosetas del jaguar.",
+    "Comparar sitios y temporadas con el mismo esfuerzo de muestreo.",
+    "Registrar pasos de fauna, aguadas y encuentros con ganado o cacería.",
+  ],
+  lessGood: [
+    "Aves pequeñas, ranas e insectos: se registran mejor con grabadoras acústicas.",
+    "Conteos exactos de animales sin marcas individuales.",
+    "Sitios con mucha gente o riesgo de robo, salvo con candado y acuerdo comunitario.",
+    "Zonas sin quien pueda visitarlas con regularidad.",
+  ],
+  tip: "En Dzilam, las cámaras se colocan a la altura de la rodilla, a unos 3 o 4 metros del paso de fauna, y donde los monitores saben que pasan los animales. Cada estación tiene un nombre y una ficha de registro.",
+};
+
+/** Fotos que acompañan cada etapa. */
+export const STAGE_PHOTOS: Record<string, GalleryPhoto[]> = {
+  e1: [
+    { src: C("taller-comunidad"), alt: "Familias, monitores y equipo reunidos en una palapa", caption: "Taller con familias y monitores en Dzilam de Bravo" },
+    { src: C("equipo-camioneta"), alt: "Equipo en una camioneta antes de salir a campo", caption: "Comunidad, gobierno y C Minds, un mismo equipo" },
+  ],
+  e2: [
+    { src: C("caminata-b"), alt: "Equipo caminando en fila por la selva", caption: "Recorrido hacia las estaciones" },
+    { src: C("agua"), alt: "Monitores en un humedal inundado", caption: "En lluvias, el camino es de agua" },
+  ],
+  e3: [
+    { src: C("taller-bs"), alt: "Taller de BioScanner con monitores", caption: "Taller de BioScanner" },
+    { src: C("festival-benja"), alt: "Benjamín Campos frente a una computadora", caption: "Benja Campos revisa registros" },
+  ],
+  e4: [
+    { src: C("agua-b"), alt: "Monitores en un humedal", caption: "Humedales que conectan Dzilam con Ría Lagartos" },
+    { src: C("humedal"), alt: "Humedal con tule y manglar", caption: "Tule y manglar en la costa norte de Yucatán" },
+  ],
+  e5: [
+    { src: C("festival-premios"), alt: "Monitores reciben reconocimientos en el festival", caption: "Reconocimiento a los monitores en el Festival del Jaguar" },
+    { src: C("festival-grupo-b"), alt: "Grupo frente al mural del Festival del Jaguar", caption: "Devolver resultados al territorio" },
+  ],
+};
+
+/** Fotos para las páginas del marco de referencia. */
+export const PAGE_PHOTOS: Record<string, GalleryPhoto[]> = {
+  "por-que-importa": [
+    { src: C("cruce-humedal"), alt: "Equipo cruzando un humedal", caption: "Humedales de la Reserva Estatal de Dzilam" },
+    { src: C("atardecer"), alt: "Atardecer sobre la selva", caption: "Atardecer sobre la selva de Dzilam" },
+  ],
+  biocultural: [
+    { src: C("darwin-senala"), alt: "Darwin Sosa señala hacia el monte", caption: "Darwin Sosa muestra por dónde pasa la fauna" },
+    { src: C("capacitacion-acustica"), alt: "Monitores revisan una grabadora acústica", caption: "Capacitación con grabadoras acústicas" },
+  ],
+  soberania: [
+    { src: C("taller-jovenes"), alt: "Taller en círculo bajo una palapa", caption: "Conversaciones abiertas con la comunidad" },
+    { src: C("festival-publico"), alt: "Público del Festival del Jaguar", caption: "Devolver y compartir resultados" },
+  ],
+  listaverde: [
+    { src: C("daniela-camara-b"), alt: "Daniela Pérez revisa una cámara trampa", caption: "La evidencia de campo alimenta los criterios del Estándar" },
+    { src: C("equipo-campo"), alt: "Monitores conversan en campo", caption: "Gestión compartida entre comunidad y autoridad" },
+  ],
+};
