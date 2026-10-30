@@ -312,10 +312,9 @@ export default function Achievements({ locale }: { locale: string }) {
     },
     { id: "species", value: "146", label: "especies registradas con cámaras trampa y acústica en la fase 1; 40 en alguna categoría de riesgo", sheet: "species", cta: "Ver el listado" },
     { id: "bioscanner", value: nf(BIOSCANNER_REPORT.files), label: "fotos y videos analizados en BioScanner, la plataforma de IA que nació del proyecto", sheet: "bioscanner", cta: "Conocer BioScanner" },
-    { id: "jaguars", value: "16", label: "jaguares identificados de forma individual por sus manchas", note: "Catálogo en verificación", sheet: "jaguars", cta: "Ver fotos" },
-    { id: "km", value: "~40 km", label: "entre dos registros del mismo jaguar, de Dzilam hacia Ría Lagartos", href: "#donde-trabajamos", cta: "Ver en el mapa" },
+    { id: "jaguars", value: "16", label: "individuos de jaguar identificados a través de los años", note: "Catálogo en verificación", sheet: "jaguars", cta: "Ver fotos" },
+    { id: "km", value: "~40 km", label: "entre dos registros del mismo jaguar, de Dzilam hacia Ría Lagartos", href: "#area-de-impacto", cta: "Ver en el mapa" },
     { id: "gl", value: "2", label: "reservas con autoevaluación para la Lista Verde de la UICN: Dzilam y Ría Lagartos", href: toolkitHref(locale, "lista-verde-uicn"), cta: "Cómo lo hicimos" },
-    { id: "glomo", value: "GLOMO 2026", label: "Premio GSMA GLOMO América Latina al Impacto Social, mayo de 2026" },
   ];
 
   return (

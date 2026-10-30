@@ -44,7 +44,7 @@ export function T4NBadge({ width, locked = false }: { width?: number; locked?: b
 }
 
 const POST =
-  "Completé las cinco etapas del toolkit Crea tu propio Tech4Nature, de Tech4Nature México y C Minds: acordar con el territorio, salir a campo, analizar con IA, leer el paisaje y decidir y sostener. #Tech4Nature #ConservaciónConIA #Biodiversidad";
+  "Completé las cinco etapas del toolkit de replicabilidad de Tech4Nature México y C Minds: alineación de objetivos, co-diseño y despliegue, análisis con IA, observación del territorio, y decidir y sostener. #Tech4Nature #ConservaciónConIA #Biodiversidad";
 
 /** Descarga y publicación de la insignia. */
 export function BadgeShare() {

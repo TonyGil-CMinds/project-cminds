@@ -323,13 +323,19 @@ function Sidebar({ page, locale, onNavigate }: { page: ToolkitPage; locale: Loca
 
   return (
     <nav>
-      {GROUPS.map((group) => {
+      {GROUPS.map((group, gi) => {
         const pages = PAGES.filter((p) => p.group === group.id);
+        const section = group.section && group.section !== GROUPS[gi - 1]?.section ? group.section : null;
         const open = overrides[group.id] ?? group.id === page.group;
         const actions = pages.filter((p) => p.kind === "etapa");
         const doneCount = actions.filter((p) => p.ref && isDone(p.ref)).length;
         return (
-          <div key={group.id} className="tk-side-group" data-current={group.id === page.group || undefined}>
+          <div key={group.id} className={`tk-side-group${group.section ? " tk-side-group--in" : ""}`} data-current={group.id === page.group || undefined}>
+            {section ? (
+              <Link href={toolkitHref(locale, "crea-el-tuyo")} className="tk-side-section" onClick={onNavigate}>
+                {section}
+              </Link>
+            ) : null}
             <button
               type="button"
               className="tk-side-group-btn"

@@ -22,7 +22,7 @@ const stripRefs = (s: string) => s.replace(/\s*\[(?:R\d{2}|[EP]\d)(?:,\s*(?:R\d{
 /** El contenido solo existe en español: /en y /es declaran /es como canónica. */
 export function pageMetadata(page: ToolkitPage): Metadata {
   const canonical = toolkitHref("es", page.slug);
-  const title = page.kind === "inicio" ? "Crea tu propio Tech4Nature — Toolkit de conservación con IA" : `${page.title} · Crea tu propio Tech4Nature`;
+  const title = page.kind === "inicio" ? "Tech4Nature México — Toolkit de replicabilidad para la conservación con IA" : `${page.title} · Tech4Nature México`;
   return {
     title,
     description: page.description,
@@ -64,7 +64,7 @@ export function pageJsonLd(page: ToolkitPage) {
   const crumbs = [
     { name: "AI for Biodiversity", item: `${SITE_URL}/es/aiforbiodiversity` },
     { name: "Tech4Nature México", item: `${SITE_URL}/es/aiforbiodiversity/techfornature` },
-    { name: "Crea tu propio Tech4Nature", item: home },
+    { name: "Tech4Nature México", item: home },
     ...(page.kind === "inicio" ? [] : [{ name: page.label, item: url }]),
   ];
 

@@ -51,7 +51,7 @@ export type Table = { caption?: string; head: string[]; rows: string[][] };
 // Portada
 
 export const HERO = {
-  title: "Crea tu propio Tech4Nature",
+  title: "Tech4Nature México: toolkit de replicabilidad",
   subtitle:
     "Toolkit para co-diseñar, implementar y sostener proyectos de conservación con inteligencia artificial en América Latina y el Caribe",
   eyebrow: "Aprendizajes de Tech4Nature México (2022–2026) y de otras iniciativas de la región",
@@ -59,19 +59,19 @@ export const HERO = {
 
 export const INTRO = {
   paragraphs: [
-    "Sí, si trabajas en un área protegida, en una comunidad, en un gobierno local, en una universidad o en una organización y quieres saber qué especies viven en tu territorio, cómo cambian y qué decisiones se pueden tomar con esa información. Para empezar necesitas una pregunta clara y aliados dispuestos a responderla contigo; el programador y el presupuesto grande pueden llegar después.",
+    "Sí, si trabajas en un área protegida, en una comunidad, en un gobierno local, en una universidad o en una organización y quieres aprovechar el potencial de impacto positivo de las tecnologías y los datos para conservar efectivamente especies y territorios. Para empezar necesitas un objetivo y aliados dispuestos a avanzar por ese objetivo conjunto.",
     "Aquí encontrarás lo que aprendimos en cuatro años de trabajo en la Reserva Estatal de Dzilam, en Yucatán, junto con líderes comunitarios, el gobierno del estado, universidades y aliados tecnológicos. También encontrarás ejemplos de Colombia, Ecuador, Bolivia, Perú y otras zonas de Yucatán, porque cada territorio resuelve los mismos retos de forma distinta.",
   ],
   outcomes: [
-    "Definir una pregunta de conservación que alguien necesita responder para tomar una decisión.",
+    "Alinear objetivos entre instituciones para trabajar por un fin conjunto.",
     "Acordar con la comunidad y las instituciones quién decide sobre los datos y cómo se comparten.",
     "Ubicar cámaras trampa y dispositivos acústicos con el conocimiento local de senderos y pasos de fauna, con manuales en español.",
     "Usar BioScanner y otras herramientas gratuitas de IA para revisar miles de imágenes en días.",
-    "Analizar cambios de cobertura con QGIS, Google Earth Engine y MapBiomas México.",
-    "Llevar la evidencia a planes de manejo, procesos de política pública y estrategias de financiamiento.",
+    "Observar los cambios del territorio con plataformas de mapas e IA que no requieren programar.",
+    "Llevar la evidencia a decisiones de manejo y a modelos de sostenibilidad para el territorio.",
   ],
   howTo:
-    "El toolkit tiene cinco etapas. Puedes leerlas en orden o ir directo a la que necesitas. Cada etapa sigue la misma estructura: para qué sirve, lo que hicimos en Dzilam, pasos clave, un aprendizaje, herramientas para empezar y un ejemplo de otra iniciativa de la región.",
+    "El toolkit tiene cinco etapas. Puedes leerlas en orden o ir directo a la que necesitas. Cada etapa explica para qué sirve, lo que hicimos en Dzilam, cómo avanzar, un aprendizaje, herramientas para empezar y un ejemplo de otra iniciativa de la región.",
 };
 
 // ---------------------------------------------------------------------------
@@ -90,7 +90,7 @@ export const AUDIENCES: Audience[] = [
   {
     id: "territorio",
     title: "Líder comunitario o equipo de un área protegida",
-    short: "Etapa 1 (acordar con el territorio) y Etapa 2 (salir a campo)",
+    short: "Etapa 1 (alineación de objetivos) y Etapa 2 (co-diseño y despliegue)",
     path: ["E1", "E2"],
   },
   {
@@ -102,7 +102,7 @@ export const AUDIENCES: Audience[] = [
   {
     id: "academia",
     title: "Universidad, estudiante o equipo científico",
-    short: "Etapa 3 (analizar con IA) y Etapa 4 (leer el paisaje)",
+    short: "Etapa 3 (analizar con IA) y Etapa 4 (observar el territorio)",
     path: ["E3", "E4"],
   },
   {
@@ -118,37 +118,62 @@ export const AUDIENCES: Audience[] = [
 
 export const WHY = {
   intro:
-    "América Latina y el Caribe concentra una gran proporción de la biodiversidad del planeta y también registra las mayores caídas en las poblaciones. Al mismo tiempo, la región tiene una sólida tradición de conservación comunitaria y cada vez más herramientas abiertas para medir lo que ocurre en el territorio. La oportunidad está en juntar ambas cosas.",
-  facts: [
-    {
-      figure: "−95 %",
-      fact: "es el cambio promedio en las poblaciones de vertebrados monitoreadas de América Latina y el Caribe entre 1970 y 2022, el mayor de todas las regiones (Índice Planeta Vivo 2026, WWF y ZSL).",
-      meaning:
-        "Medir con método y continuidad permite saber si las acciones locales están funcionando. El índice describe un cambio promedio de tamaño poblacional; no equivale a especies extintas.",
-    },
-    {
-      figure: "12 %",
-      fact: "México alberga cerca del 12 % de las especies del mundo y ocupa el quinto lugar entre los 17 países megadiversos (CONANP).",
-      meaning: "Hay mucho por documentar, y buena parte ocurre fuera de las bases de datos nacionales.",
-    },
-    {
-      figure: "51 %",
-      fact: "El jaguar está catalogado como Casi Amenazado por la UICN y ocupa alrededor del 51 % de su distribución histórica (Grupo de Especialistas en Felinos de la UICN). El tercer Censo Nacional del Jaguar estimó 5,326 jaguares en México con datos a 2024, 1,699 de ellos en la Península de Yucatán.",
-      meaning:
-        "El jaguar es una especie paraguas: necesita territorios amplios y conectados, así que monitorearlo ayuda a entender y proteger el paisaje completo.",
-    },
-    {
-      figure: "70–95 %",
-      fact: "Entre 70 % y 95 % de las fotos de cámaras trampa suelen salir vacías (MegaDetector, Microsoft). Una persona experta clasifica entre 300 y 1,000 imágenes por hora (Wildlife Insights).",
-      meaning:
-        "La IA permite descartar imágenes vacías y pre-clasificar especies en horas. El tiempo de las personas expertas se dedica entonces a validar e interpretar.",
-    },
-    {
-      figure: "43 %",
-      fact: "En América Latina y el Caribe, el 43 % de la población rural tiene conectividad significativa, frente al 79 % de la urbana (IICA y aliados, 2022).",
-      meaning: "Diseña para trabajar sin conexión en campo y sincronizar después. Las herramientas de este toolkit lo permiten.",
-    },
-  ],
+    "América Latina y el Caribe concentra una gran proporción de la biodiversidad del planeta, y México alberga cerca del 12 % de las especies del mundo. La región también registra las mayores caídas en las poblaciones de fauna. Al mismo tiempo, tiene una sólida tradición de conservación comunitaria y cada vez más herramientas abiertas para medir lo que ocurre en el territorio. La oportunidad está en juntar ambas cosas.",
+  planet: {
+    title: "El planeta fuera de su espacio seguro",
+    source: "Planetary Health Check 2026 (Instituto de Potsdam, septiembre de 2026)",
+    text: "Siete de los nueve límites planetarios están transgredidos, y los siete en su nivel más alto registrado. Entre ellos están la integridad de la biosfera y el cambio en el uso del suelo, los dos que un proyecto como Tech4Nature ayuda a medir y atender.",
+    boundaries: [
+      { name: "Integridad de la biosfera", crossed: true, focus: true },
+      { name: "Cambio en el uso del suelo", crossed: true, focus: true },
+      { name: "Agua dulce", crossed: true },
+      { name: "Flujos de nitrógeno y fósforo", crossed: true },
+      { name: "Nuevas entidades", crossed: true },
+      { name: "Clima", crossed: true },
+      { name: "Acidificación del océano", crossed: true },
+      { name: "Capa de ozono", crossed: false },
+      { name: "Aerosoles en la atmósfera", crossed: false },
+    ],
+    meaning: "Medir la biodiversidad con método y continuidad permite saber si las acciones locales están ayudando a revertir la tendencia.",
+  },
+  lpr: {
+    title: "La mayor caída está en nuestra región",
+    source: "Informe Planeta Vivo 2026 (WWF y ZSL), cambio promedio de 1970 a 2022",
+    regions: [
+      { name: "América Latina y el Caribe", value: 95, focus: true },
+      { name: "África", value: 80 },
+      { name: "Asia-Pacífico", value: 49 },
+      { name: "América del Norte", value: 28 },
+      { name: "Europa y Asia central", value: 23 },
+    ],
+    meaning:
+      "El índice describe un cambio promedio en el tamaño de las poblaciones de vertebrados monitoreadas; no equivale a especies extintas. Medir con continuidad permite saber si las acciones locales funcionan.",
+  },
+  jaguar: {
+    title: "Un tercio de los jaguares de México vive en la península",
+    source: "Tercer Censo Nacional del Jaguar, datos a 2024; Grupo de Especialistas en Felinos de la UICN",
+    total: 5326,
+    peninsula: 1699,
+    text: "El jaguar está catalogado como Casi Amenazado por la UICN y ocupa alrededor del 51 % de su distribución histórica.",
+    meaning: "Es una especie paraguas: necesita territorios amplios y conectados, así que monitorearlo ayuda a entender y proteger el paisaje completo.",
+  },
+  empty: {
+    title: "Nueve de cada diez fotos salen vacías",
+    source: "Informe de proyecto de BioScanner para Tech4Nature México, 2022–2026",
+    total: 333087,
+    empty: 296622,
+    text: "En el monitoreo de Dzilam, 89 % de los archivos no tenían animales. En otros proyectos la proporción va de 70 % a 95 % (MegaDetector), y una persona experta revisa entre 300 y 1,000 imágenes por hora (Wildlife Insights).",
+    meaning: "La IA descarta lo vacío y propone especies en horas; el tiempo de las personas expertas se dedica a validar e interpretar.",
+  },
+  connectivity: {
+    title: "Menos conexión donde se monitorea",
+    source: "IICA y aliados (2022), conectividad significativa en América Latina y el Caribe",
+    bars: [
+      { name: "Población urbana", value: 79 },
+      { name: "Población rural", value: 43, focus: true },
+    ],
+    meaning: "Diseña para trabajar sin conexión en campo y sincronizar después. Las herramientas de este toolkit lo permiten.",
+  },
 };
 
 // ---------------------------------------------------------------------------
@@ -166,7 +191,7 @@ export type Kpi = {
 
 export const CASE = {
   intro: [
-    "Tech4Nature México nació en 2022 en la Reserva Estatal de Dzilam, en la costa norte de Yucatán, como parte de la alianza global Tech4Nature de la UICN y Huawei. Lo co-lideran C Minds, la Secretaría de Desarrollo Sustentable de Yucatán (SDS) y el Grupo Chac Mool, formado por líderes comunitarios de Dzilam de Bravo, con la colaboración de CONANP, la Universidad Autónoma de Yucatán, la Universidad Politécnica de Yucatán y Pronatura.",
+    "Tech4Nature México nació en 2022 en la Reserva Estatal de Dzilam, en la costa norte de Yucatán, como parte de la alianza global Tech4Nature de la UICN y Huawei. Lo co-lideran C Minds, la Secretaría de Desarrollo Sustentable de Yucatán (SDS) y el Grupo Chac Mool, formado por líderes comunitarios de la Reserva Estatal de Dzilam. Cuenta con la colaboración estratégica de Pronatura Península de Yucatán, la Universidad Politécnica de Yucatán y Fundación Pachamama.",
     "La pregunta de partida fue sencilla: ¿cómo usar la tecnología para conocer mejor la fauna de la reserva y apoyar las decisiones de quienes la cuidan? Para responderla, el equipo combinó cámaras trampa, monitoreo acústico y modelos de IA para detectar especies e identificar jaguares de forma individual. De ese trabajo nació BioScanner, la plataforma que hoy reúne esas capacidades para que otros equipos puedan usarlas.",
   ],
   kpis: [
@@ -174,15 +199,14 @@ export const CASE = {
     { text: "20+ / 60", label: "cámaras trampa / grabadoras acústicas desplegadas en la fase 1" },
     { value: 93, suffix: " %", label: "precisión del modelo en la detección de jaguar" },
     { value: 333087, label: "archivos procesados en BioScanner a octubre de 2026", note: "317,565 fotos y 15,522 videos" },
-    { value: 16, label: "jaguares identificados de forma individual", note: "En proceso de verificación" },
+    { value: 16, label: "individuos de jaguar identificados a través de los años", note: "En proceso de verificación" },
     { value: 40, prefix: "~", suffix: " km", label: "entre dos registros del mismo jaguar, de Dzilam hacia Ría Lagartos" },
     { value: 104304, suffix: " ha", label: "superficie de la Reserva Estatal de Dzilam tras su ampliación", note: "Antes, 69,000 ha" },
-    { text: "GLOMO 2026", label: "Premio GSMA GLOMO América Latina al Impacto Social, mayo de 2026" },
   ] satisfies Kpi[],
   timeline: [
     {
       range: "2022–2024 · Fase 1",
-      text: "Instalación de cámaras trampa y dispositivos de monitoreo acústico con los líderes comunitarios, primeros modelos de IA para especies y jaguares con la UPY y Rainforest Connection, dos tableros de visualización y un programa piloto de formación local. Resultado: 146 especies registradas en la reserva.",
+      text: "Co-diseño del proyecto a partir de las necesidades identificadas por los liderazgos locales y el gobierno; acuerdos entre pares multisectoriales sobre los roles de coordinación, seguimiento y aprendizaje; despliegue del esfuerzo de monitoreo; aprendizaje adaptativo y colecta continua de datos; análisis de la información, e ideación de BioScanner para la identificación individual de jaguares.",
     },
     {
       range: "2024",
@@ -194,7 +218,7 @@ export const CASE = {
     },
     {
       range: "2025–2026",
-      text: "BioScanner se consolida como plataforma, se construye el catálogo de jaguares, se estudia la conectividad con Ría Lagartos, se acompaña la actualización del programa de manejo y se realizan autoevaluaciones para la Lista Verde de la UICN en Dzilam y Ría Lagartos.",
+      text: "BioScanner se consolida como plataforma de análisis de datos de biodiversidad mediante fototrampeo para la toma de decisiones de conservación, regeneración y conectividad, con la identificación de jaguares como estrategia central. Se construye el catálogo de jaguares de la zona, se inicia un estudio de la conectividad con Ría Lagartos, se acompaña la actualización del programa de manejo y se realizan autoevaluaciones para la Lista Verde de la UICN en Dzilam y Ría Lagartos.",
     },
     {
       range: "Octubre 2026",
@@ -202,13 +226,14 @@ export const CASE = {
     },
   ],
   story: {
-    quote: "El día que yo me muera me gustaría convertirme en jaguar",
-    author: "Juan Castillo",
+    name: "Juan Castillo",
+    role: "Monitor fundador, Grupo de Monitoreo Chac Mool",
     paragraphs: [
-      "Juan Castillo creció en una familia que vivía de la caza, la agricultura y la ganadería en lo que hoy es la Reserva de Dzilam, donde por mucho tiempo se vio al jaguar como una amenaza para el ganado.",
-      "Con los años decidió retirar su ganado de la reserva y hoy es uno de los líderes comunitarios de Tech4Nature México y, junto con Benjamín Campos, cuida las cámaras trampa y los equipos acústicos y guía al equipo en el territorio.",
+      "Juan Castillo creció en el seno de una familia de nómadas que recorría la selva mucho antes de que esta obtuviera el estatus de área protegida. Al establecerse cerca de fuentes de agua, prosperaban gracias a la caza, la agricultura y la ganadería. Juan, al igual que su familia, solía creer que defender el ganado de los jaguares era lo más importante, incluso si eso significaba matar a estos grandes felinos.",
+      "Con el paso de los años, llegó a una profunda conclusión: eran él y su familia quienes invadían el hábitat del jaguar y consumían sus recursos, y no al revés. Tomó una decisión audaz al sacar su ganado de la reserva y mudarse a la ciudad.",
+      "Ahora que es abuelo, Juan transmite su amor por la naturaleza a sus nietos, inculcándoles la idea de que estas especies tienen más valor vivas que muertas, y que son cruciales para la supervivencia del bosque, de sus innumerables habitantes y, en última instancia, de las personas.",
+      "Hoy, Juan ha donado su terreno para la conservación. Junto a su amigo Benjamín, un ex cazador, se han convertido en destacados guías, exploradores y apasionados defensores de la conservación del jaguar y la preservación de su presa, la selva tropical y los manglares. Cuidan con esmero las cámaras trampa, garantizando la seguridad de todos dentro del proyecto Tech4Nature México. Juan Castillo se ha convertido en un defensor internacional de la conservación, admirado por su incansable dedicación a esta noble causa.",
     ],
-    closing: "La tecnología funcionó porque había personas del territorio dispuestas a usarla y a darle sentido.",
   },
 };
 
@@ -240,32 +265,33 @@ export const STAGES: Stage[] = [
     id: "e1",
     code: "E1",
     n: 1,
-    title: "Acordar con el territorio",
-    short: "Acordar con el territorio",
-    question: "¿Qué queremos saber, para qué y quién decide?",
-    result: "Una pregunta, un grupo de aliados y un acuerdo de datos",
+    title: "Alineación de objetivos con base en necesidades y contextos",
+    short: "Alineación de objetivos",
+    question: "¿Qué queremos lograr, para qué y quién decide?",
+    result: "Alineación de objetivos entre aliados y un acuerdo de datos",
     image: IMAGES.people,
     purpose:
-      "Antes de comprar equipo, conviene ponerse de acuerdo en qué se quiere saber y quién va a usar la respuesta. Un proyecto que arranca con una pregunta compartida entre comunidad, autoridad y academia tiene muchas más posibilidades de llegar a una decisión real.",
+      "Antes de decidir cuáles serán los métodos, es importante saber qué objetivo de conservación, regeneración, bienestar, Buen Vivir y prosperidad se busca. En los contextos actuales climáticos, sociales, geopolíticos y de acceso acelerado a sistemas de inteligencia artificial y datos, definir una ruta de acción que considere todas estas variables será clave para alcanzar resultados efectivos.",
     dzilam: {
       title: "Lo que hicimos en Dzilam",
       paragraphs: [
-        "La SDS participó desde el diseño, junto con el Grupo Chac Mool y C Minds. La pregunta sobre la presencia y el movimiento del jaguar respondía a una necesidad concreta de la autoridad estatal, que más adelante evaluaba la ampliación de la reserva. Los líderes comunitarios ayudaron a definir dónde instalar el equipo porque conocen los senderos y los sitios de paso de la fauna.",
+        "La base de estos procesos es la gobernanza. La SDS participó desde el diseño, junto con el Grupo Chac Mool y C Minds. Tech4Nature México tiene una historia anterior al proyecto: durante mucho tiempo, Juan Castillo, junto con líderes de las comunidades de Dzilam de Bravo y Dzilam González, expresó a las autoridades su preocupación por la cacería del jaguar en la zona. Cuando la SDS confirmó la presencia de la especie, la integración de tecnologías para monitorear la biodiversidad tomó especial relevancia. C Minds llegó a la mesa con protocolos y rutas de acción, visibilidad, soberanía de datos y articulación multisectorial, y la UICN y Huawei se sumaron para garantizar la alineación con la Lista Verde y la disposición de capacidades de cómputo, respectivamente.",
+        "Son los espacios de escucha, de trabajo en conjunto y de confianza, la suma de diferentes capacidades para que cada actor cumpla una función, y la capacidad de coordinar con transparencia las acciones y asegurar una gobernanza efectiva, lo que ha determinado el éxito de la iniciativa.",
       ],
     },
     steps: [
-      "Escribe tu pregunta en una frase y nombra la decisión que ayudará a tomar. Por ejemplo: “¿El jaguar usa la zona entre dos reservas?” para informar un corredor biológico.",
-      "Identifica a la institución o comunidad que tomará esa decisión e invítala desde el inicio.",
-      "Reúne a quienes conocen el territorio, a quienes pueden revisar el diseño científico y a quienes darán soporte técnico.",
-      "Con el consentimiento libre, previo e informado de la comunidad, acuerda por escrito quién es dueño de los datos, quién puede verlos, qué se publica y qué se protege. Las ubicaciones de especies sensibles se protegen siempre.",
-      "Define cómo se reconocerá y remunerará el trabajo de las personas de la comunidad.",
-      "Agenda desde ahora una reunión para devolver resultados al territorio.",
+      "Escucha las necesidades del territorio y de las instituciones: qué preocupa a la comunidad, qué necesita la autoridad y qué capacidades puede aportar cada aliado. En Dzilam, todo empezó con la preocupación de la comunidad por la cacería del jaguar.",
+      "Construye con los aliados un objetivo compartido de conservación, regeneración y bienestar, y nombra las decisiones que ayudará a tomar, como un corredor biológico o la actualización de un programa de manejo.",
+      "Acuerden el rol de cada actor: coordinación, trabajo de campo, revisión científica, soporte técnico, seguimiento y aprendizaje. Usa la ficha de arranque. [P1]",
+      "Definan cómo se tomarán las decisiones entre pares: espacios de diálogo, frecuencia de reuniones, cómo se registran los acuerdos y cómo se resuelven los desacuerdos.",
+      "Con el consentimiento libre, previo e informado de la comunidad, acuerden por escrito quién es dueño de los datos, quién puede verlos, qué se publica y qué se protege. Las ubicaciones de especies sensibles se protegen siempre. [P2]",
+      "Acuerden cómo se reconoce y remunera el trabajo de las personas del territorio y cómo se comparten los beneficios.",
     ],
     learning:
-      "En Dzilam, la alineación de objetivos entre el gobierno estatal, la comunidad y C Minds desde el diseño permitió que los datos se integraran a un proceso público. Cuando la autoridad participa desde el principio, la evidencia llega a tiempo para la decisión.",
+      "En Dzilam, la confianza entre la comunidad, el gobierno estatal y C Minds, construida desde el diseño, permitió que los datos se integraran a un proceso público. Cuando cada actor cumple una función clara y las acciones se coordinan con transparencia, la evidencia llega a tiempo para la decisión.",
     tools: [
       "[Cadena de Suministro con Soberanía de Datos](https://ecos.cminds.co/publicaciones/sovereign-data-supply-chain?reader=1) (Kinray Hub, NaturaTech LAC y Climate Collective), el marco que guía nuestros acuerdos de datos.",
-    "[Principios CREA para la gobernanza de datos indígenas](https://www.gida-global.org/s/Principios-CREA.pdf) (versión en español de los principios CARE, GIDA).",
+      "[Principios CREA para la gobernanza de datos indígenas](https://www.gida-global.org/s/Principios-CREA.pdf) (versión en español de los principios CARE, GIDA).",
       "[Buenas prácticas para generalizar datos de especies sensibles](https://docs.gbif.org/sensitive-species-best-practices/master/es/buenas-practicas-para-generalizar-datos-de-especies-sensibles-en-registros-biologicos.es.pdf) (GBIF, español).",
       "[Recomendación sobre la Ética de la Inteligencia Artificial](https://digitallibrary.un.org/record/4062376/files/1416674-ES.pdf) (UNESCO, español).",
       "[AI for Environment and Ecosystems Toolkit](https://www.unesco.org/ethics-ai/en/ai-environment-ecosystems-toolkit) (UNESCO, inglés), para equipos de gobierno.",
@@ -284,26 +310,26 @@ export const STAGES: Stage[] = [
     id: "e2",
     code: "E2",
     n: 2,
-    title: "Salir a campo",
-    short: "Salir a campo",
-    question: "¿Cómo recolectamos datos confiables?",
-    result: "Cámaras y grabadoras instaladas con un registro de esfuerzo",
+    title: "Co-diseño y despliegue",
+    short: "Co-diseño y despliegue",
+    question: "¿Cómo diseñamos el monitoreo con el territorio y recolectamos datos confiables?",
+    result: "Un diseño de monitoreo acordado y equipos instalados con su registro",
     image: IMAGES.feline,
     purpose:
-      "La calidad de todo lo que viene después depende de cómo se instalan y registran los equipos. Un buen diseño de muestreo permite comparar sitios y temporadas; un registro ordenado permite que otras personas confíen en tus datos.",
+      "El monitoreo se diseña en conjunto: el conocimiento del territorio, el rigor científico y las capacidades técnicas definen qué se mide, dónde y cómo. La calidad de todo lo que viene después depende de ese diseño y de un registro ordenado de cada equipo instalado.",
     dzilam: {
       title: "Lo que hicimos en Dzilam",
       paragraphs: [
-        "En la fase 1 se instalaron más de 20 cámaras trampa y 60 grabadoras acústicas en manglares y selva baja. El equipo Chac Mool se encargó de la instalación, el mantenimiento y la descarga de datos. Combinar imagen y sonido amplió los grupos de fauna registrados: las cámaras captan mamíferos medianos y grandes, y las grabadoras registran aves, anfibios e insectos. En la fase 2 se probaron tres formularios digitales para registrar actividades de campo.",
+        "Los líderes comunitarios del Grupo Chac Mool, la SDS y C Minds definieron juntos los sitios de monitoreo: los monitores sabían por dónde cruzaba el jaguar y dónde un equipo podía resistir las inundaciones. En la fase 1 se instalaron cámaras trampa y 60 grabadoras acústicas en manglares y selva baja, y el Grupo Chac Mool se encargó de la instalación, el mantenimiento y la descarga de datos. Combinar imagen y sonido amplió los grupos de fauna registrados: las cámaras captan mamíferos medianos y grandes, y las grabadoras registran aves, anfibios e insectos. En la fase 2 se probaron formularios digitales para registrar las actividades de campo.",
       ],
     },
     steps: [
-      "Elige el método según tu pregunta: cámaras trampa para mamíferos y jaguar; grabadoras acústicas para aves, anfibios y murciélagos; ambos para un inventario amplio.",
-      "Diseña la ubicación de las estaciones con quienes conocen los senderos, pasos de fauna, aguadas y zonas de cacería, y con apoyo de alguien con formación en ecología. Registra esos saberes en la plantilla 5. [P5]",
+      "Organiza un taller de co-diseño con el equipo comunitario, la autoridad y personas con formación en ecología: especies de interés, sitios, calendario de visitas, roles y presupuesto de campo.",
+      "Elige el método según el objetivo: cámaras trampa para mamíferos medianos y grandes y para el jaguar; grabadoras acústicas como AudioMoth para aves, anfibios, murciélagos e insectos; ambos para un inventario amplio.",
+      "Ubica las estaciones con quienes conocen senderos, pasos de fauna, aguadas y zonas de cacería, y combínalas con un diseño sistemático que permita comparar sitios. Registra esos saberes en la plantilla 5. [P5]",
       "Para identificar jaguares de forma individual, instala cámaras en pares, una frente a otra, para fotografiar ambos costados del animal.",
-      "Registra cada despliegue: código de estación, coordenadas, fechas de instalación y retiro, altura, configuración y fallas. Usa la plantilla 3. [P3]",
-      "Guarda siempre los archivos originales y haz una copia de respaldo antes de procesar.",
-      "Si no hay señal en campo, usa formularios que funcionen sin conexión y sincroniza al volver.",
+      "Registra cada cámara con los mismos campos que pide BioScanner, de preferencia en un formulario de KoboToolbox en un celular con buen GPS. Usa la plantilla 3. [P3]",
+      "Guarda los archivos originales en una carpeta por cámara y por visita, y haz una copia de respaldo antes de procesar.",
     ],
     learning:
       "El conocimiento local sobre dónde se mueve la fauna fue tan valioso como el equipo. Cuando el equipo comunitario participa en el diseño, también se hace cargo del mantenimiento, y el monitoreo se sostiene entre campañas.",
@@ -311,11 +337,9 @@ export const STAGES: Stage[] = [
       "[Manual de fototrampeo para estudio de fauna silvestre: el jaguar en México como estudio de caso](https://simec.conanp.gob.mx/Publicaciones2020/Publicaciones%20CONANP/Parte%203/Manuales/2013%20Manual%20fototrampeo%20jaguar.pdf) (Chávez y colaboradores, 2013).",
       "[Manual de fototrampeo: herramienta de investigación para la conservación de la biodiversidad en Colombia](http://hdl.handle.net/20.500.11761/31415) (Instituto Humboldt y Panthera, 2012).",
       "[BIOCOMUNI v2.0 Fauna](https://desarrollo.fmcn.org/wp-content/uploads/2025/06/BIOCOMUNI_v2.0_Fauna.pdf) (FMCN y CONAFOR), protocolo de monitoreo comunitario con formatos imprimibles.",
-      "[Protocolo de monitoreo con cámaras trampa](https://forestgeo.si.edu/sites/default/files/teamterrestrialvertebrate-pt-en-3.1.pdf) (TEAM Network, 2011, inglés): diseño científico con una cámara cada 2 km² y campañas de 30 días.",
-      "[Introducción al monitoreo ambiental comunitario](https://transformativepathways.net/wp-content/uploads/2024/07/JA-591-Introduction-to-community-based-environmental-monitoring-ICCS-ES-v2-FINAL.pdf) (Forest Peoples Programme, español): diseño del monitoreo con la comunidad, de las prioridades a la difusión.",
+      "[Introducción al monitoreo ambiental comunitario](https://transformativepathways.net/wp-content/uploads/2024/07/JA-591-Introduction-to-community-based-environmental-monitoring-ICCS-ES-v2-FINAL.pdf) (Forest Peoples Programme, español): diseño del monitoreo con la comunidad.",
       "[Buenas prácticas para gestionar y publicar datos de cámaras trampa](https://docs.gbif.org/camera-trap-guide/es/) (GBIF, 2026, español).",
-      "[Manual de configuración de AudioMoth](https://www.protocols.io/view/manual-de-configuraci-n-audiomoth-1-2-0-gu-a-de-8-cmvju64n.pdf) (Ciencia Ciudadana Perú, español), grabadora abierta de bajo costo.",
-      "[KoboToolbox](https://www.kobotoolbox.org), formularios de campo gratuitos que funcionan sin conexión.",
+      "[KoboToolbox](https://www.kobotoolbox.org), formularios de campo gratuitos que funcionan sin conexión y registran la ubicación con el GPS del celular.",
       "[SMART](https://smartconservationtools.org), herramienta gratuita para registrar patrullajes y observaciones en áreas protegidas.",
     ],
     elsewhere: {
@@ -341,17 +365,17 @@ export const STAGES: Stage[] = [
     dzilam: {
       title: "Lo que hicimos en Dzilam: BioScanner",
       paragraphs: [
-        "BioScanner es una plataforma desarrollada por C Minds en el marco de Tech4Nature México, incubada con la UICN y Huawei y construida sobre Huawei Cloud. Detecta y clasifica especies en fotos y videos, identifica jaguares de forma individual por el patrón de sus manchas y genera reportes. Su interfaz está disponible en español, inglés, portugués y maya. A octubre de 2026 había procesado 333,087 fotos y videos de la reserva.",
-        "BioScanner se diseñó para que equipos sin perfil técnico puedan usar IA. Se está construyendo en la dirección de que cada comunidad e institución decida sobre sus datos: quién los ve, qué se comparte y con quién.",
+        "BioScanner es una plataforma desarrollada por C Minds en el marco de Tech4Nature México, incubada con la UICN y Huawei y construida sobre Huawei Cloud. Detecta y clasifica especies en fotos y videos, identifica jaguares de forma individual por el patrón de sus manchas y genera informes. Su interfaz está disponible en español, inglés, portugués y maya. A octubre de 2026 había procesado 333,087 fotos y videos de la reserva.",
+        "Se diseñó para que equipos sin perfil técnico puedan usar IA, y en la dirección de que cada comunidad e institución decida sobre sus datos: quién los ve, qué se comparte y con quién.",
       ],
     },
     steps: [
-      "Empieza con un lote pequeño, de una o dos estaciones, para conocer la herramienta.",
-      "Sube los archivos con sus metadatos de estación y fecha, que son la base de cualquier análisis ecológico posterior.",
-      "Deja que la IA descarte vacíos y proponga especies; asigna a una persona para validar las detecciones.",
-      "Revisa con más cuidado las especies raras, las que se parecen entre sí y las que importan para tu decisión.",
-      "Para jaguares, compara ambos costados y confirma cada nueva identidad con al menos dos personas.",
-      "Exporta los resultados validados en un formato estándar, como Camtrap DP, para analizarlos o compartirlos.",
+      "Crea la organización y el proyecto, e invita al equipo. Empieza con un análisis pequeño, de una o dos cámaras, para conocer la herramienta.",
+      "Registra las cámaras importando el CSV de la plantilla 3 o deja que BioScanner lea las coordenadas GPS de los archivos. [P3]",
+      "Sube una carpeta por cámara y por visita, define el periodo y activa los módulos de detección, clasificación y agrupamiento.",
+      "Revisa en «Cámaras y fechas» que cada carpeta esté asignada a su cámara y que los relojes de las cámaras estuvieran bien.",
+      "Valida las especies propuestas, con más cuidado en las raras, las que se parecen entre sí y las que importan para tu decisión. Para jaguares, compara ambos costados y confirma cada nueva identidad con al menos dos personas.",
+      "Usa el informe del proyecto y descarga los resultados validados para analizarlos, compartirlos o publicarlos en un formato estándar como Camtrap DP.",
     ],
     learning:
       "La IA hizo posible trabajar con un archivo de más de 300,000 medios, y la revisión experta le dio confianza a los resultados. La participación de estudiantes en el desarrollo y la revisión de modelos formó además nuevas capacidades en la región.",
@@ -360,9 +384,7 @@ export const STAGES: Stage[] = [
       "[Repositorio público de Tech4Nature México en GitHub](https://github.com/aiforclimate/tech4naturemexico), con el cuaderno del modelo de identificación de jaguares.",
       "[Wildlife Insights](https://www.wildlifeinsights.org) (Google y aliados), plataforma en la nube gratuita para la mayoría de organizaciones de la región.",
       "[AddaxAI](https://github.com/PetervanLunteren/AddaxAI), programa de escritorio gratuito que usa MegaDetector sin programar y funciona sin internet.",
-      "[SpeciesNet](https://github.com/google/cameratrapai) (Google), clasificador abierto de más de 2,000 categorías con filtro por país.",
-      "[Timelapse](https://timelapse.ucalgary.ca), revisión y etiquetado de imágenes en tu computadora.",
-      "[BirdNET](https://birdnet.cornell.edu) y [Arbimon](https://arbimon.org), para identificar especies en grabaciones acústicas.",
+      "[Arbimon](https://arbimon.org) ([primeros pasos](https://help.rfcx.org/arbimon/get-started/getting-started-with-arbimon/)) y [BirdNET](https://birdnet.cornell.edu), para identificar especies en grabaciones acústicas.",
     ],
     elsewhere: {
       place: "comunidades kichwa de Napo, Ecuador",
@@ -374,37 +396,30 @@ export const STAGES: Stage[] = [
     id: "e4",
     code: "E4",
     n: 4,
-    title: "Leer el paisaje",
-    short: "Leer el paisaje",
-    question: "¿Qué está cambiando alrededor?",
-    result: "Mapas de cobertura, cambios y conectividad",
+    title: "Observar el territorio",
+    short: "Observar el territorio",
+    question: "¿Qué está cambiando en el territorio?",
+    result: "Una lectura compartida de los cambios del territorio",
     image: IMAGES.earth,
     purpose:
-      "Las cámaras te dicen qué especies están; las imágenes satelitales te dicen qué está pasando con su hábitat. Juntas permiten entender por dónde se mueve la fauna, qué zonas se están perdiendo y dónde conviene actuar.",
+      "Las cámaras dicen qué especies están; las imágenes satelitales muestran qué pasa con su hábitat. Juntas ayudan a entender por dónde se mueve la fauna, qué zonas cambian y dónde conviene actuar. Esta etapa es una orientación: hoy existen plataformas a las que puedes hacerles preguntas sin saber de sistemas de información geográfica.",
     dzilam: {
       title: "Lo que hicimos en Dzilam",
       paragraphs: [
         "El mismo jaguar fue fotografiado en dos sitios separados por cerca de 40 km, entre Dzilam y su transición hacia la Reserva de la Biosfera Ría Lagartos. Ese registro motivó un estudio de conectividad entre ambas reservas y abrió la conversación sobre una zona de acción conjunta. El registro confirma que el animal estuvo en ambos sitios; la ruta que siguió requiere más datos para conocerse.",
       ],
     },
-    steps: [
-      "Mapea tus estaciones y registros en QGIS, sobre una capa de vegetación y uso de suelo.",
-      "Consulta la cobertura y sus cambios en MapBiomas México, Dynamic World o Global Nature Watch, sin necesidad de programar.",
-      "Si tu equipo programa, usa Google Earth Engine para comparar años con Sentinel-2 o con los datos de pérdida forestal de Hansen.",
-      "Verifica en campo, con el equipo comunitario, los cambios que detectes en los mapas.",
-      "Si te interesa la conectividad, combina tus registros con modelos de resistencia del paisaje, como Circuitscape, y con apoyo especializado.",
-      "Presenta los mapas con fecha, fuente y escala, y protege las ubicaciones exactas de especies sensibles.",
-    ],
+    steps: [],
     learning:
       "Un solo registro bien documentado puede abrir una conversación entre instituciones. El valor del dato de 40 km estuvo en que se convirtió en una pregunta compartida entre dos reservas.",
     tools: [
-      "[QGIS](https://qgis.org), sistema de información geográfica gratuito, con [manual de aprendizaje en español](https://docs.qgis.org/latest/es/docs/training_manual/index.html).",
+      "[Global Nature Watch](https://www.globalnaturewatch.org) (WRI), con un asistente de IA que responde preguntas sobre cobertura y cambios del suelo.",
+      "[Agente de IA geoespacial de Planet](https://www.satellitetoday.com/imagery-and-sensing/2026/05/21/planet-is-building-an-agentic-geospatial-ai-query/), en beta privada desde mayo de 2026.",
+      "[Mosaicos tropicales de Planet (programa NICFI)](https://www.planet.com/nicfi/), imágenes de alta resolución gratuitas para uso no comercial en los trópicos.",
       "[MapBiomas México](https://mexico.mapbiomas.org), mapas anuales de cobertura y uso de suelo, gratuitos.",
       "[Dynamic World](https://dynamicworld.app), cobertura de suelo casi en tiempo real a 10 m.",
-      "[Global Nature Watch](https://www.globalnaturewatch.org) (WRI, antes Global Forest Watch), alertas y datos de pérdida de cobertura.",
-      "[Google Earth Engine](https://earthengine.google.com/noncommercial/), gratuito para uso no comercial, con cuotas mensuales.",
-      "[Copernicus Browser](https://dataspace.copernicus.eu/browser/), imágenes Sentinel-2 gratuitas con cuenta.",
       "[Global Mangrove Watch](https://www.globalmangrovewatch.org), útil para costas con manglar como Dzilam.",
+      "[QGIS](https://qgis.org) y [Google Earth Engine](https://earthengine.google.com/noncommercial/), para equipos con formación en análisis geográfico.",
     ],
     elsewhere: {
       place: "MAAP y FENAMAD, Madre de Dios, Perú",
@@ -421,11 +436,11 @@ export const STAGES: Stage[] = [
     n: 5,
     title: "Decidir y sostener",
     short: "Decidir y sostener",
-    question: "¿Cómo se usa la evidencia y cómo seguimos?",
-    result: "Una decisión informada y un plan de continuidad",
+    question: "¿Cómo se usa la evidencia y cómo sostenemos lo construido?",
+    result: "Decisiones informadas y un modelo de sostenibilidad para el territorio",
     image: IMAGES.pineLight,
     purpose:
-      "El monitoreo cumple su propósito cuando la evidencia llega a una decisión: un plan de manejo, una ampliación, un acuerdo entre reservas o una inversión. Para que el trabajo continúe, también se necesitan financiamiento, capacidades locales y una forma de compartir lo aprendido.",
+      "El monitoreo cumple su propósito cuando la evidencia llega a una decisión: un programa de manejo, una ampliación, un acuerdo entre reservas o una inversión. Cuando los datos se vuelven información que demuestra conservación, regeneración, pertinencia ecológica y cultural, y relevancia para la regulación climática, también abren modelos innovadores de sostenibilidad para el territorio.",
     dzilam: {
       title: "Lo que hicimos en Dzilam",
       paragraphs: [
@@ -433,19 +448,19 @@ export const STAGES: Stage[] = [
       ],
     },
     steps: [
-      "Identifica el calendario de la decisión (revisión del plan de manejo, presupuesto anual, consulta pública) y prepara la evidencia para ese momento.",
-      "Resume tus hallazgos en una página por audiencia: qué observaste, qué propones y qué falta saber. Usa la plantilla 4. [P4]",
-      "Devuelve los resultados al territorio en una sesión presencial y en el idioma de la comunidad.",
+      "Identifica el calendario de la decisión (revisión del programa de manejo, presupuesto anual, consulta pública) y prepara la evidencia para ese momento.",
+      "Resume los hallazgos en una página por audiencia, con las cifras del informe de BioScanner. Usa la plantilla 4. [P4]",
+      "Analiza e interpreta los resultados junto con el territorio y los socios locales, en espacios donde todos deciden qué significan y qué se hace con ellos, y en el idioma de la comunidad.",
       "Usa el Estándar de la Lista Verde de la UICN como guía para ordenar la evidencia de gestión, aunque no busques la certificación. Empieza con la hoja de trabajo de la plantilla 6. [P6]",
-      "Presupuesta la continuidad con al menos dos años de horizonte: salarios del equipo local, reposición de equipo, almacenamiento y revisión de datos.",
+      "Identifica oportunidades económicas alternativas y cómo los resultados pueden fortalecerlas: turismo comunitario, producción agroforestal regenerativa, educación o mecanismos financieros como créditos de biodiversidad y pagos por servicios ecosistémicos.",
       "Publica lo aprendido en formatos que otros puedan reutilizar, como una solución en PANORAMA o un conjunto de datos en GBIF.",
     ],
     learning:
       "La evidencia trazable y verificable es lo que más ayuda a abrir conversaciones con financiadores e instituciones. Un registro ordenado de qué se midió, cómo y con qué resultado vale más que una cifra llamativa.",
     tools: [
       "[Estándar de la Lista Verde de Áreas Protegidas y Conservadas, versión 1.1](https://www.iucn.org/sites/default/files/2024-03/estandar-lista-verde-version-1.1.pdf) (UICN, español).",
+      "[Estrategia Biocultural del Jaguar y Créditos Bioculturales del Jaguar](https://www.naturatech.org/en/minga-estrategia) (Alianza Cuencas Sagradas, Fundación Pachamama y NaturaTech LAC).",
       "[Directrices de la UICN sobre conflictos y coexistencia entre humanos y vida silvestre](https://doi.org/10.2305/CFRX2122) (2024, español).",
-      "[Programa de trabajo de la Iniciativa para la Conservación del Jaguar](https://www.cms.int/sites/default/files/011_jaguar-work-programme_s%20%283%29.pdf) (CITES y CMS, español).",
       "[PANORAMA Soluciones para un Planeta Saludable](https://panorama.solutions/es) (UICN y aliados), para publicar y consultar casos replicables.",
       "[Conservation Evidence Toolkit](https://about.conservationevidence.com/wp-content/uploads/2025/01/Conservation-Evidence-Toolkit-v1.0-15-01-2025.pdf) (inglés), para evaluar si las acciones funcionan.",
     ],
@@ -460,16 +475,67 @@ export const STAGES: Stage[] = [
   },
 ];
 
+/** Grabadoras acústicas (etapa 2). */
+export const AUDIO_RECORDER = {
+  title: "¿Y una grabadora acústica?",
+  lead:
+    "Una grabadora acústica autónoma, como AudioMoth, se sujeta a un árbol y graba el paisaje sonoro según un horario. Registra lo que una cámara no ve: aves, anfibios, murciélagos e insectos. Es abierta, de bajo costo y cabe en la palma de la mano.",
+  photo: { src: `${T4N}/toolkit/campo/audiomoth.jpg`, alt: "Una grabadora AudioMoth sin carcasa en la palma de una mano, junto a una cámara trampa y un celular en la selva" },
+  caption: "Una grabadora AudioMoth antes de instalarse, junto a una cámara trampa",
+  links: [
+    { label: "Manual de configuración e instalación de AudioMoth 1.2.0 (español, 2026)", url: "https://www.protocols.io/view/manual-de-configuraci-n-e-instalaci-n-de-audiomoth-hrpfb55jp.html" },
+    { label: "Manual de operación de AudioMoth (Open Acoustic Devices, inglés)", url: "https://github.com/OpenAcousticDevices/Application-Notes/blob/master/AudioMoth_Operation_Manual.pdf" },
+    { label: "Configurar AudioMoth para Arbimon (Rainforest Connection, inglés)", url: "https://help.rfcx.org/devices/field-recorders/configuring-your-audiomoth/" },
+    { label: "Primeros pasos en Arbimon, para analizar las grabaciones (inglés)", url: "https://help.rfcx.org/arbimon/get-started/getting-started-with-arbimon/" },
+  ],
+};
+
+/** Cómo funciona BioScanner (etapa 3), según la plataforma en octubre de 2026. */
+export const BIOSCANNER_FLOW = [
+  { title: "Organizaciones y proyectos", text: "Comunidades, gobiernos y organizaciones crean su espacio, invitan a su equipo y deciden si cada análisis es privado o público." },
+  { title: "Cámaras en el mapa", text: "Las cámaras se registran en el mapa, se importan desde un CSV o se leen del GPS de los archivos. Cada carpeta queda asignada a su cámara." },
+  { title: "Tres módulos de IA", text: "Detección de animales, clasificación de especies y agrupamiento de fotos en eventos e individuos." },
+  { title: "Jaguares", text: "BioScanner agrupa los registros por costado del animal y recomienda coincidencias; las personas las verifican antes de sumar un individuo al catálogo." },
+  { title: "Informe del proyecto", text: "Especies y jaguar por estación, eventos independientes, esfuerzo, comparación entre campañas, riqueza y actividad a lo largo del día." },
+  { title: "En el teléfono", text: "Un modo de consulta lleva análisis, galerías y reportes al campo. Quien conoce una especie también puede contribuir fotos para mejorar los modelos." },
+];
+
+/** Orientación de la etapa 4: por dónde empezar, de lo más sencillo a lo especializado. */
+export const E4_ORIENT = [
+  { title: "Pregúntale al mapa", text: "Plataformas como Global Nature Watch responden en lenguaje natural preguntas como «¿cuánta selva se perdió en este municipio desde 2020?». Planet desarrolla un agente similar sobre su archivo de imágenes." },
+  { title: "Mira los cambios", text: "MapBiomas México, Dynamic World y Global Mangrove Watch muestran la cobertura y sus cambios año con año, sin instalar nada." },
+  { title: "Acércate con imágenes", text: "Los mosaicos de Planet del programa NICFI ofrecen imágenes mensuales de alta resolución para el trópico, gratuitas para uso no comercial." },
+  { title: "Vuelve al territorio", text: "Verifica en campo, con el equipo comunitario, lo que ves en los mapas. Muchos cambios tienen una explicación local." },
+  { title: "Cuando el equipo crezca", text: "QGIS, Google Earth Engine y los modelos de conectividad requieren formación; súmalos con aliados académicos o especialistas." },
+  { title: "Cuida las ubicaciones", text: "Presenta los mapas con fecha, fuente y escala, y protege las ubicaciones exactas de especies sensibles." },
+];
+
+/** Modelos de sostenibilidad (etapa 5). */
+export const E5_MODELS = {
+  lead:
+    "Cuando la evidencia demuestra conservación, regeneración y pertinencia ecológica y cultural, puede sostener economías y mecanismos financieros que den continuidad al monitoreo y prosperidad al territorio.",
+  items: [
+    { title: "Turismo comunitario", text: "Recorridos, avistamiento y festivales que cuentan lo que vive en el territorio, como el Festival del Jaguar en Dzilam de Bravo." },
+    { title: "Producción regenerativa", text: "Sistemas agroforestales y ganadería que conviven con la fauna, con evidencia de su aporte a la conectividad." },
+    { title: "Educación y ciencia comunitaria", text: "Escuelas, universidades y monitores que forman nuevas capacidades y generan servicios de monitoreo." },
+    { title: "Créditos de biodiversidad", text: "Instrumentos que reconocen resultados verificables de conservación, como los Créditos Bioculturales del Jaguar en Ecuador." },
+    { title: "Pagos por servicios ecosistémicos", text: "Programas públicos y privados que retribuyen la conservación de selvas, manglares y agua." },
+    { title: "Fondos de permanencia", text: "Esquemas de largo plazo, como Herencia Maya en Yucatán, que aseguran recursos para las áreas protegidas." },
+  ],
+};
+
 // ---------------------------------------------------------------------------
 // Monitoreo biocultural: el conocimiento del territorio guía el muestreo
 
 export const BIOCULTURAL = {
   lead:
-    "Quienes viven en un territorio saben por dónde cruzan los animales, dónde beben, en qué temporada se mueven y cómo se llaman en su lengua. En un monitoreo biocultural, ese conocimiento define dónde se coloca cada cámara, qué se registra y cómo se interpretan los resultados. La tecnología amplía lo que la comunidad ya observa, y la comunidad le da sentido a lo que la tecnología registra.",
+    "Quienes habitan un territorio y conocen sus caminos tienen información muy valiosa: conocimiento empírico, tradicional y ancestral, que proviene de la observación, de la convivencia diaria y de la conexión con el espacio.",
+  leadMore:
+    "En un monitoreo biocultural, ese conocimiento define dónde se coloca cada cámara, qué se registra y cómo se interpretan los resultados. La tecnología amplía lo que la comunidad ya observa, y la comunidad le da sentido a lo que la tecnología registra.",
   contributions: [
     {
-      title: "Pasos y senderos de fauna",
-      text: "Brechas, veredas, bordes de aguada y cruces de camino por donde los animales pasan con frecuencia. Son los mejores sitios para una cámara.",
+      title: "Comportamiento de las especies de la región",
+      text: "Conocimiento sobre la presencia de los animales, sus comportamientos, por dónde andan, si han dejado de aparecer, si el clima y el tiempo han afectado sus vidas, y mucho más.",
     },
     {
       title: "Agua, alimento y refugio",
@@ -480,16 +546,8 @@ export const BIOCULTURAL = {
       text: "Zonas, temporadas y especies de cacería, pesca y extracción. Ayudan a entender por qué un sitio tiene menos registros y dónde conviene vigilar.",
     },
     {
-      title: "Nombres y categorías propias",
-      text: "Cómo se nombra y clasifica cada especie en la lengua local. Sirven para validar identificaciones y devolver resultados en el idioma de la comunidad.",
-    },
-    {
-      title: "Temporadas y comportamiento",
-      text: "Cuándo se reproducen, se desplazan o cambian de zona las especies, y cómo responden a lluvias, quemas o inundaciones.",
-    },
-    {
-      title: "Historias de encuentros",
-      text: "Avistamientos, ataques al ganado y relatos de las personas mayores que muestran dónde estaba la fauna antes y qué ha cambiado.",
+      title: "Nombres e historias en lenguas originarias",
+      text: "Cómo se nombra y clasifica cada especie en la lengua tradicional. Esto permite acercar la herencia cultural a los resultados científicos.",
     },
   ],
   dzilam: [
@@ -796,16 +854,16 @@ export const QUESTIONS = {
   intro:
     "Si puedes responder “sí” a la mayoría, estás listo para arrancar. Si no, las etapas 1 y 5 te ayudarán a resolverlas.",
   items: [
-    "¿Tenemos una pregunta escrita en una frase?",
-    "¿Sabemos qué decisión informará y quién la toma?",
-    "¿La autoridad ambiental o la comunidad que decide participa desde el inicio?",
+    "¿Tenemos un objetivo compartido entre comunidad, autoridad y aliados?",
+    "¿Sabemos qué decisiones ayudará a tomar y quién las toma?",
+    "¿Cada aliado tiene un rol claro y acordado?",
     "¿Hay un acuerdo sobre quién es dueño de los datos y qué se publica?",
     "¿Tenemos personas del territorio con tiempo remunerado para el trabajo de campo?",
     "¿Contamos con alguien que pueda revisar el diseño ecológico y las identificaciones?",
+    "¿Nuestros registros de campo usan los mismos campos que pedirá la plataforma de análisis?",
     "¿Sabemos cómo llegarán los datos del campo a la computadora si no hay señal?",
-    "¿Tenemos presupuesto para al menos una campaña completa y la devolución de resultados?",
-    "¿Hay una fecha acordada para presentar resultados al territorio?",
-    "¿Sabemos dónde y cómo compartiremos lo aprendido?",
+    "¿Hay espacios acordados para analizar los resultados junto con el territorio?",
+    "¿Identificamos oportunidades para sostener el proyecto, como economías locales, instrumentos financieros o programas públicos?",
   ],
 };
 
@@ -952,7 +1010,8 @@ export const TOOLBOX = {
 // ---------------------------------------------------------------------------
 // Plantillas
 
-export type TemplateField = { label: string; hint?: string };
+/** `key`: nombre de la columna en el CSV que importa BioScanner. */
+export type TemplateField = { label: string; hint?: string; key?: string };
 
 export type Template = {
   id: string;
@@ -966,6 +1025,10 @@ export type Template = {
   /** «form»: un campo por fila. «log»: registro con columnas. */
   layout: "form" | "log";
   fields: TemplateField[];
+  /** Nota que se muestra en la página de la plantilla. */
+  note?: string;
+  /** Descarga adicional, por ejemplo un formulario de KoboToolbox. */
+  extra?: { label: string; url: string };
 };
 
 export const TEMPLATES_INTRO = "Cada plantilla cabe en una página. Puedes copiarlas, imprimirlas o adaptarlas a tu proyecto.";
@@ -981,13 +1044,15 @@ export const TEMPLATES: Template[] = [
     layout: "form",
     fields: [
       { label: "Nombre del proyecto y territorio" },
-      { label: "Pregunta en una frase" },
-      { label: "Decisión que informará y quién la toma" },
-      { label: "Fecha en que se necesita la evidencia" },
-      { label: "Aliados y rol de cada uno", hint: "comunidad, autoridad, ciencia, tecnología" },
+      { label: "Necesidades que atiende", hint: "del territorio y de las instituciones" },
+      { label: "Objetivo compartido" },
+      { label: "Decisiones que informará y quién las toma" },
+      { label: "Aliados y rol de cada uno", hint: "coordinación, campo, ciencia, tecnología, seguimiento y aprendizaje" },
+      { label: "Cómo tomamos decisiones", hint: "espacios, frecuencia y registro de acuerdos" },
       { label: "Métodos", hint: "cámaras, acústica, imágenes satelitales, entrevistas" },
       { label: "Presupuesto disponible y meses cubiertos" },
-      { label: "Fecha de devolución de resultados al territorio" },
+      { label: "Espacios para analizar resultados en conjunto" },
+      { label: "Oportunidades de sostenibilidad" },
     ],
   },
   {
@@ -1015,19 +1080,26 @@ export const TEMPLATES: Template[] = [
     id: "p3",
     code: "P3",
     n: 3,
-    title: "Registro de estación de cámara trampa",
+    title: "Registro de cámaras y estaciones",
     short: "Registro de estación",
     stage: "E2",
     layout: "log",
+    note:
+      "Las columnas son las mismas que pide BioScanner para importar cámaras: el CSV se importa directo en la plataforma, sin trabajo extra de escritorio. Funciona en libreta, pero recomendamos capturarlo en KoboToolbox con un celular apto para campo y con buen GPS: el formulario guarda la ubicación, la altitud y la precisión al momento de registrar, trabaja sin señal y sincroniza al volver, sin copiar coordenadas a mano ni pasarlas por un GIS. Las coordenadas de las estaciones se tratan como información sensible.",
+    extra: { label: "Formulario KoboToolbox (.xlsx)", url: "/platforms/aiforbiodiversity/initiative-tech4nature/toolkit/plantillas/registro-camaras-kobotoolbox.xlsx" },
     fields: [
-      { label: "Código de estación" },
-      { label: "Coordenadas" },
-      { label: "Hábitat" },
-      { label: "Fecha de instalación" },
-      { label: "Fecha de retiro" },
-      { label: "Cámara y configuración" },
-      { label: "Fallas o notas" },
-      { label: "Responsable" },
+      { label: "Nombre de la cámara", hint: "por ejemplo Cam 1", key: "name" },
+      { label: "Latitud", hint: "grados decimales", key: "latitude" },
+      { label: "Longitud", hint: "grados decimales", key: "longitude" },
+      { label: "Altitud", hint: "metros", key: "altitude" },
+      { label: "Precisión del GPS", hint: "metros", key: "precision" },
+      { label: "Código de estación", hint: "las dos cámaras de un par comparten estación", key: "station_code" },
+      { label: "Fecha de instalación", hint: "AAAA-MM-DD", key: "install_date" },
+      { label: "Fecha de retiro", hint: "AAAA-MM-DD", key: "uninstall_date" },
+      { label: "Comunidad o ejido", key: "community" },
+      { label: "Transecto", key: "transect" },
+      { label: "Hábitat", hint: "selva baja, manglar, acahual…", key: "habitat" },
+      { label: "Notas", hint: "configuración, fallas, responsable", key: "notes" },
     ],
   },
   {
@@ -1038,14 +1110,18 @@ export const TEMPLATES: Template[] = [
     short: "Hallazgo en una página",
     stage: "E5",
     layout: "form",
+    note: "Los campos siguen las secciones del informe del proyecto de BioScanner, para que cada cifra se copie directo de la plataforma.",
     fields: [
       { label: "Para quién es" },
-      { label: "Qué observamos", hint: "dato, periodo, método" },
+      { label: "Proyecto y periodo", hint: "análisis o campañas de BioScanner" },
+      { label: "Esfuerzo", hint: "estaciones y días-cámara" },
+      { label: "Especies registradas", hint: "riqueza y eventos independientes a 30 min" },
+      { label: "Especies en riesgo", hint: "NOM-059 y Lista Roja de la UICN" },
+      { label: "Especie focal", hint: "eventos, estaciones e individuos identificados" },
       { label: "Qué significa para el territorio" },
       { label: "Qué proponemos" },
       { label: "Qué falta saber" },
-      { label: "Mapa o imagen de apoyo", hint: "con fecha y fuente" },
-      { label: "Contacto" },
+      { label: "Gráfica o mapa de apoyo", hint: "con fecha y fuente, sin ubicaciones sensibles" },
     ],
   },
   {
@@ -1059,7 +1135,7 @@ export const TEMPLATES: Template[] = [
     fields: [
       { label: "Lugar o referencia", hint: "nombre local; coordenadas solo si se acuerda" },
       { label: "Qué se sabe", hint: "paso de fauna, aguada, cacería, especie" },
-      { label: "Especie y nombre local" },
+      { label: "Especie y nombre en lengua originaria" },
       { label: "Temporada" },
       { label: "Quién lo comparte" },
       { label: "Nivel de cuidado", hint: "público, equipo o solo comunidad" },
@@ -1091,6 +1167,8 @@ export const TEMPLATES: Template[] = [
 
 export const SOURCES = [
   "WWF y ZSL (2026). [Informe Planeta Vivo 2026](https://www.wwf.org.uk/press-release/living-planet-report-2026).",
+  "Planetary Boundaries Science, Instituto de Potsdam para la Investigación del Impacto Climático (2026). [Planetary Health Check 2026](https://www.planetaryhealthcheck.org/), publicado el 21 de septiembre de 2026.",
+  "BioScanner (2026). Informe del proyecto Tech4Nature México, cámaras trampa de marzo de 2022 a agosto de 2026, generado el 29 de octubre de 2026.",
   "CONANP. [México megadiverso](https://www.gob.mx/conanp/articulos/mexico-megadiverso-173682).",
   "Grupo de Especialistas en Felinos de la UICN. [Jaguar](https://www.catsg.org/living-species-jaguar).",
   "Tercer Censo Nacional del Jaguar, datos a 2024, presentado en 2025. [Xataka México (2025)](https://www.xataka.com.mx/ecologia-y-naturaleza/alguien-ha-contado-cuantos-jaguares-salvajes-quedan-todo-mexico-hay-muy-buenas-noticias).",
@@ -1155,16 +1233,17 @@ export type ToolkitPage = {
   ref?: string;
 };
 
-export const GROUPS = [
+/** `section`: encabezado bajo el que se agrupan varios capítulos en la barra lateral. */
+export const GROUPS: { id: string; label: string; section?: string }[] = [
   { id: "t4n", label: "Tech4Nature México" },
-  { id: "empezar", label: "Crea el tuyo" },
-  { id: "etapas", label: "Las cinco etapas" },
-  { id: "herramientas", label: "Herramientas" },
-  { id: "plantillas", label: "Plantillas" },
-  { id: "cierre", label: "Cierre" },
+  { id: "marco", label: "Marco de referencia" },
+  { id: "etapas", label: "Las cinco etapas", section: "Toolkit de replicabilidad" },
+  { id: "herramientas", label: "Herramientas", section: "Toolkit de replicabilidad" },
+  { id: "plantillas", label: "Plantillas", section: "Toolkit de replicabilidad" },
+  { id: "cierre", label: "Fuentes", section: "Toolkit de replicabilidad" },
 ];
 
-export const stageSlug = (s: Stage) => `etapa-${s.n}-${slugify(s.title)}`;
+export const stageSlug = (s: Stage) => `etapa-${s.n}-${slugify(s.short)}`;
 export const templateSlug = (t: Template) => `plantilla-${t.n}-${slugify(t.short)}`;
 
 export const PAGES: ToolkitPage[] = [
@@ -1175,7 +1254,7 @@ export const PAGES: ToolkitPage[] = [
     label: "Inicio",
     group: "t4n",
     description:
-      "Tech4Nature México: comunidad, gobierno, ciencia e IA para conservar al jaguar en Yucatán. Logros, mapa, equipo y un toolkit con cinco etapas, plantillas y herramientas para crear el tuyo.",
+      "Tech4Nature México, iniciativa multisectorial de monitoreo de biodiversidad, alianzas y tecnologías de frontera en Yucatán. Resultados, área de impacto, equipo y un toolkit de replicabilidad con cinco etapas, plantillas y herramientas.",
   },
   {
     slug: "equipo",
@@ -1187,29 +1266,20 @@ export const PAGES: ToolkitPage[] = [
       "Líderes comunitarios, Gobierno de Yucatán, UICN, C Minds, universidades y aliados tecnológicos que hicieron posible Tech4Nature México entre 2022 y 2026.",
   },
   {
-    slug: "crea-el-tuyo",
-    kind: "crea",
-    title: "Crea tu propio Tech4Nature",
-    label: "Cómo usar el toolkit",
-    group: "empezar",
-    description:
-      "Para quién es el toolkit, qué podrás hacer con él, cómo recorrerlo según tu rol y las cinco etapas para co-diseñar, implementar y sostener un proyecto de conservación con IA.",
-  },
-  {
     slug: "por-que-importa",
     kind: "por-que-importa",
     title: "Por qué importa",
     label: "Por qué importa",
-    group: "empezar",
+    group: "marco",
     description:
-      "Datos de biodiversidad, jaguar, cámaras trampa y conectividad rural en América Latina y el Caribe, y qué significan para un proyecto de conservación con IA.",
+      "Gráficas del Informe Planeta Vivo 2026, el Planetary Health Check 2026, el jaguar, las cámaras trampa y la conectividad rural, y qué significan para un proyecto de conservación con IA.",
   },
   {
     slug: "monitoreo-biocultural",
     kind: "biocultural",
     title: "El territorio guía el monitoreo",
     label: "Monitoreo biocultural",
-    group: "empezar",
+    group: "marco",
     description:
       "Cómo el conocimiento local de pasos de fauna, senderos, cacería y especies orienta el muestreo y la interpretación del monitoreo de biodiversidad, con los casos de Dzilam y de la Estrategia Biocultural del Jaguar en Ecuador.",
   },
@@ -1218,7 +1288,7 @@ export const PAGES: ToolkitPage[] = [
     kind: "soberania",
     title: "Soberanía de datos",
     label: "Soberanía de datos",
-    group: "empezar",
+    group: "marco",
     description:
       "La Cadena de Suministro con Soberanía de Datos y sus cinco protocolos para que las comunidades tengan autoridad sobre sus datos, con preguntas abiertas para áreas de administración pública donde la comunidad monitorea y conserva.",
   },
@@ -1227,9 +1297,18 @@ export const PAGES: ToolkitPage[] = [
     kind: "listaverde",
     title: "Lista Verde de la UICN",
     label: "Lista Verde de la UICN",
-    group: "empezar",
+    group: "marco",
     description:
       "Cómo usar el Estándar de la Lista Verde de la UICN para guiar el trabajo de un área protegida: componentes, fases, autoevaluación GL-SAT y COMPASS, con el manual y la hoja de trabajo de Tech4Nature México.",
+  },
+  {
+    slug: "crea-el-tuyo",
+    kind: "crea",
+    title: "Aprende cómo crear una iniciativa como Tech4Nature México",
+    label: "Cómo usar el toolkit",
+    group: "etapas",
+    description:
+      "Para quién es el toolkit de replicabilidad, qué podrás hacer con él, cómo recorrerlo según tu rol y las cinco etapas para co-diseñar, implementar y sostener un proyecto de conservación con tecnología e IA.",
   },
   ...STAGES.map(
     (s): ToolkitPage => ({
@@ -1250,7 +1329,7 @@ export const PAGES: ToolkitPage[] = [
     label: "Diez preguntas rápidas",
     group: "herramientas",
     description:
-      "Diez preguntas para saber si tu proyecto está listo para arrancar: pregunta, decisión, acuerdos de datos, equipo de campo, presupuesto y devolución de resultados.",
+      "Diez preguntas para saber si tu proyecto está listo para arrancar: objetivo compartido, roles, acuerdos de datos, equipo de campo, registros compatibles, análisis en conjunto y sostenibilidad.",
   },
   {
     slug: "caja-de-herramientas",
@@ -1275,7 +1354,7 @@ export const PAGES: ToolkitPage[] = [
     label: "Todas las plantillas",
     group: "plantillas",
     description:
-      "Seis plantillas de una página para descargar: ficha de arranque, acuerdo de datos, registro de estación de cámara trampa, hallazgo en una página, mapa de saberes del territorio y hoja de trabajo de la Lista Verde de la UICN.",
+      "Seis plantillas de una página para descargar: ficha de arranque, acuerdo de datos, registro de cámaras en formato BioScanner con formulario de KoboToolbox, hallazgo en una página, mapa de saberes del territorio y hoja de trabajo de la Lista Verde de la UICN.",
   },
   ...TEMPLATES.map(
     (t): ToolkitPage => ({
@@ -1284,7 +1363,7 @@ export const PAGES: ToolkitPage[] = [
       title: `Plantilla ${t.n}. ${t.title}`,
       label: t.short,
       group: "plantillas",
-      description: `Plantilla ${t.n} del toolkit Crea tu propio Tech4Nature: ${t.title.toLowerCase()}. ${TEMPLATES_INTRO}`,
+      description: `Plantilla ${t.n} del toolkit de replicabilidad de Tech4Nature México: ${t.title.toLowerCase()}. ${TEMPLATES_INTRO}`,
       code: t.code,
       ref: t.id,
     }),
@@ -1295,7 +1374,7 @@ export const PAGES: ToolkitPage[] = [
     title: "Fuentes de los datos",
     label: "Fuentes y cita",
     group: "cierre",
-    description: "Fuentes de las cifras del toolkit Crea tu propio Tech4Nature y forma de citarlo.",
+    description: "Fuentes de las cifras del toolkit de replicabilidad de Tech4Nature México y forma de citarlo.",
   },
   {
     slug: "insignia",
@@ -1303,7 +1382,7 @@ export const PAGES: ToolkitPage[] = [
     title: "Tu insignia del toolkit",
     label: "Insignia",
     group: "cierre",
-    description: "Revisa las cinco etapas para desbloquear la insignia del toolkit Crea tu propio Tech4Nature, descárgala y compártela en redes.",
+    description: "Revisa las cinco etapas para desbloquear la insignia del toolkit de replicabilidad de Tech4Nature México, descárgala y compártela en redes.",
   },
 ];
 
@@ -1344,6 +1423,9 @@ export const LEGACY_SLUGS: Record<string, string> = {
   "t09-presupuesto-y-escenarios": "plantillas",
   "t10-tablero-de-aprendizaje": "plantillas",
   biblioteca: "caja-de-herramientas",
+  "etapa-1-acordar-con-el-territorio": stageSlug(STAGES[0]),
+  "etapa-2-salir-a-campo": stageSlug(STAGES[1]),
+  "etapa-4-leer-el-paisaje": stageSlug(STAGES[3]),
 };
 
 /** Ruta de una página del toolkit, con locale y ancla opcional. */

@@ -32,6 +32,8 @@ function sourceLine(t: Template): string {
 
 /** Hoja de trabajo: un campo por fila, o un registro con sus columnas. */
 export function templateCsv(t: Template): string {
+  // Con columnas de BioScanner, el CSV se importa tal cual: solo el encabezado.
+  if (t.fields.some((f) => f.key)) return toCsv([t.fields.map((f) => f.key ?? f.label)]);
   if (t.layout === "log") {
     return toCsv([
       t.fields.map((f) => f.label),

@@ -29,6 +29,10 @@ import {
   TOOLKIT_PATH,
   TOOLKIT_VERSION,
   WHY,
+  AUDIO_RECORDER,
+  BIOSCANNER_FLOW,
+  E4_ORIENT,
+  E5_MODELS,
   stageSlug,
   templateSlug,
   toolkitHref,
@@ -46,6 +50,7 @@ import Achievements from "./Achievements";
 import Avatar from "./Avatar";
 import PhotoGrid from "./PhotoGrid";
 import VideoList from "./VideoList";
+import WhyCharts from "./WhyCharts";
 import {
   CAMERA_TRAP,
   FINDINGS,
@@ -67,7 +72,7 @@ import {
   type TeamGroup,
 } from "../t4n";
 import { ExternalLink, Rich, slugId } from "./rich";
-import { IconArrowRight, IconCalendar, IconCheckCircle, IconChevronLeft, IconExternal, IconPin } from "./icons";
+import { IconArrowRight, IconCalendar, IconCheckCircle, IconChevronDown, IconChevronLeft, IconExternal, IconPin } from "./icons";
 
 const GROUP_LABEL = new Map(GROUPS.map((g) => [g.id, g.label]));
 
@@ -362,7 +367,7 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
       </section>
 
       <section aria-labelledby="logros">
-        <H2 id="logros">Lo que hemos logrado</H2>
+        <H2 id="logros">Resultados destacados</H2>
         <p data-reveal>Toca cada tarjeta para ver el detalle: el acuerdo de ampliación, el listado de especies, BioScanner y las fotos de los jaguares.</p>
         <Achievements locale={locale} />
       </section>
@@ -380,14 +385,18 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
           ))}
         </dl>
         <h3 className="tk-h3">Aprendizajes y recomendaciones</h3>
+        <p className="tk-meta-line">Abre cada aprendizaje para ver qué pasó y qué recomendamos.</p>
         <ul className="tk-lessons">
           {FINDINGS.lessons.map((l, i) => (
             <li key={l.title} className="tk-lesson" data-reveal>
-              <span className="tk-lesson-n" aria-hidden="true">
-                {i + 1}
-              </span>
-              <div>
-                <strong>{l.title}</strong>
+              <details>
+                <summary>
+                  <span className="tk-lesson-n" aria-hidden="true">
+                    {i + 1}
+                  </span>
+                  <strong>{l.title}</strong>
+                  <IconChevronDown />
+                </summary>
                 <p>{l.text}</p>
                 <p className="tk-lesson-rec">
                   <span>Recomendación:</span> {l.rec}
@@ -398,7 +407,7 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
                     </>
                   ) : null}
                 </p>
-              </div>
+              </details>
             </li>
           ))}
         </ul>
@@ -424,8 +433,8 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
         </a>
       </section>
 
-      <section aria-labelledby="donde-trabajamos">
-        <H2 id="donde-trabajamos">Dónde trabajamos</H2>
+      <section aria-labelledby="area-de-impacto">
+        <H2 id="area-de-impacto">Área de impacto</H2>
         <p data-reveal>{MAP_TEXT.lead}</p>
         <figure className="tk-gmap" data-reveal>
           <iframe
@@ -472,7 +481,7 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
       </section>
 
       <section aria-labelledby="linea-de-tiempo">
-        <H2 id="linea-de-tiempo">Cómo llegamos aquí</H2>
+        <H2 id="linea-de-tiempo">Tech4Nature México a través de los años</H2>
         <ol className="tk-ninety">
           {CASE.timeline.map((t) => (
             <li key={t.range}>
@@ -485,16 +494,23 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
         </ol>
       </section>
 
-      <figure className="tk-quote" data-reveal>
-        <blockquote>
-          <p>“{CASE.story.quote}”</p>
-        </blockquote>
-        <figcaption>{CASE.story.author}</figcaption>
-        {CASE.story.paragraphs.map((p, i) => (
-          <p key={i}>{p}</p>
-        ))}
-        <p className="tk-quote-closing">{CASE.story.closing}</p>
-      </figure>
+      <article className="tk-story" aria-labelledby="historia-juan" data-reveal>
+        <div className="tk-story-head">
+          <Avatar name={CASE.story.name} photo={SPOTLIGHT.find((p) => p.name === CASE.story.name)?.photo} size={88} />
+          <div>
+            <span className="tk-eyebrow">Historias del territorio</span>
+            <h3 id="historia-juan" className="tk-story-name">
+              {CASE.story.name}
+            </h3>
+            <span className="tk-story-role">{CASE.story.role}</span>
+          </div>
+        </div>
+        <div className="tk-story-body">
+          {CASE.story.paragraphs.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </div>
+      </article>
 
       <section aria-labelledby="quienes">
         <H2 id="quienes">Quienes lo hacen posible</H2>
@@ -522,13 +538,14 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
       </section>
 
       <section aria-labelledby="crea-el-tuyo-cta" className="tk-invite" data-reveal>
-        <h2 id="crea-el-tuyo-cta" className="tk-invite-title" data-toc="Crea el tuyo">
-          Crea tu propio <span className="tk-grad">Tech4Nature</span>
+        <span className="tk-eyebrow">Toolkit de replicabilidad</span>
+        <h2 id="crea-el-tuyo-cta" className="tk-invite-title" data-toc="Toolkit de replicabilidad">
+          Aprende cómo crear una iniciativa como <span className="tk-grad">Tech4Nature México</span>
         </h2>
         <p>{T4N_HOME.invite}</p>
         <div className="tk-start">
           <Link className="tk-cta" href={toolkitHref(locale, "crea-el-tuyo")}>
-            Empezar el toolkit
+            Ir al toolkit
             <IconArrowRight />
           </Link>
           <Link className="tk-ghost" href={toolkitHref(locale, stageSlug(STAGES[0]))}>
@@ -610,7 +627,7 @@ export function EquipoPage({ page, locale }: { page: ToolkitPage; locale: Locale
 
 export function CreaPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   return (
-    <PageFrame page={page} locale={locale} kicker="Crea el tuyo" lead={<p>{HERO.subtitle}.</p>}>
+    <PageFrame page={page} locale={locale} kicker="Toolkit de replicabilidad" lead={<p>{HERO.subtitle}.</p>}>
       <section aria-labelledby="para-ti">
         <H2 id="para-ti">¿Este toolkit es para ti?</H2>
         {INTRO.paragraphs.map((p, i) => (
@@ -649,14 +666,13 @@ export function CreaPage({ page, locale }: { page: ToolkitPage; locale: Locale }
         <p data-reveal>{INTRO.howTo}</p>
         <RouteSelector />
         <div className="tk-start" data-reveal>
-          <Link className="tk-cta" href={toolkitHref(locale, "por-que-importa")}>
-            Empezar el recorrido
+          <Link className="tk-cta" href={toolkitHref(locale, stageSlug(STAGES[0]))}>
+            Empezar por la etapa 1
             <IconArrowRight />
           </Link>
-          <Link className="tk-ghost" href={toolkitHref(locale, stageSlug(STAGES[0]))}>
-            Ir a las cinco etapas
+          <Link className="tk-ghost" href={toolkitHref(locale, "diez-preguntas")}>
+            Diez preguntas rápidas
           </Link>
-          <span>{PAGES.length} páginas · lectura por capítulos</span>
         </div>
       </section>
 
@@ -674,21 +690,8 @@ export function CreaPage({ page, locale }: { page: ToolkitPage; locale: Locale }
 
 export function PorQueImportaPage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   return (
-    <PageFrame page={page} locale={locale} lead={<p>{WHY.intro}</p>}>
-      <PhotoGrid photos={PAGE_PHOTOS["por-que-importa"]} label="Fotos de la reserva" variant="pair" />
-      <H2>Datos y qué significan para tu proyecto</H2>
-      <div className="tk-facts">
-        {WHY.facts.map((c) => (
-          <div key={c.figure} className="tk-fact" data-reveal>
-            <span className="tk-fact-figure">{c.figure}</span>
-            <p className="tk-fact-text">{c.fact}</p>
-            <div className="tk-fact-imp">
-              <strong>Qué significa para tu proyecto</strong>
-              <p>{c.meaning}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+    <PageFrame page={page} locale={locale} kicker="Marco de referencia" lead={<p>{WHY.intro}</p>}>
+      <WhyCharts />
       <p className="tk-meta-line">
         Consulta las <Link href={toolkitHref(locale, "fuentes")}>fuentes de los datos</Link>.
       </p>
@@ -703,9 +706,10 @@ export function BioculturalPage({ page, locale }: { page: ToolkitPage; locale: L
   const e = BIOCULTURAL.elsewhere;
   return (
     <PageFrame page={page} locale={locale} kicker="Enfoque biocultural" lead={<p>{BIOCULTURAL.lead}</p>}>
+      <p data-reveal>{BIOCULTURAL.leadMore}</p>
       <PhotoGrid photos={PAGE_PHOTOS.biocultural} label="Fotos del monitoreo biocultural" variant="pair" />
-      <H2>Qué aporta el conocimiento del territorio</H2>
-      <dl className="tk-glossary">
+      <H2>El conocimiento que proviene del territorio</H2>
+      <dl className="tk-glossary tk-glossary--2">
         {BIOCULTURAL.contributions.map((c) => (
           <div key={c.title} className="tk-term" data-reveal>
             <dt>{c.title}</dt>
@@ -1010,6 +1014,31 @@ function CameraTrap() {
   );
 }
 
+function AudioRecorder() {
+  const a = AUDIO_RECORDER;
+  return (
+    <section className="tk-audio" aria-labelledby="grabadora-acustica">
+      <H2 id="grabadora-acustica">{a.title}</H2>
+      <div className="tk-audio-grid">
+        <figure className="tk-audio-photo" data-reveal>
+          <img src={a.photo.src} alt={a.photo.alt} loading="lazy" decoding="async" width={1280} height={720} />
+          <figcaption>{a.caption}</figcaption>
+        </figure>
+        <div data-reveal>
+          <p>{a.lead}</p>
+          <ul className="tk-list tk-tools">
+            {a.links.map((l) => (
+              <li key={l.url}>
+                <ExternalLink href={l.url}>{l.label}</ExternalLink>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export function StagePage({ page, locale, stage }: { page: ToolkitPage; locale: Locale; stage: Stage }) {
   const nextPage = PAGES[PAGES.findIndex((p) => p.slug === page.slug) + 1];
   const label = `Etapa ${stage.n}`;
@@ -1057,29 +1086,74 @@ export function StagePage({ page, locale, stage }: { page: ToolkitPage; locale: 
       ) : null}
 
       {stage.id === "e3" ? (
-        <figure className="tk-figure">
-          <Image src={IMAGES.jaguar.src} alt={IMAGES.jaguar.alt} width={487} height={322} sizes="(max-width: 760px) 100vw, 720px" />
-          <figcaption>BioScanner identifica jaguares de forma individual por el patrón de sus manchas.</figcaption>
-        </figure>
+        <>
+          <h3 className="tk-h3">Cómo funciona BioScanner</h3>
+          <dl className="tk-glossary tk-glossary--3">
+            {BIOSCANNER_FLOW.map((f) => (
+              <div key={f.title} className="tk-term" data-reveal>
+                <dt>{f.title}</dt>
+                <dd>{f.text}</dd>
+              </div>
+            ))}
+          </dl>
+        </>
       ) : null}
 
       {STAGE_PHOTOS[stage.id] ? <PhotoGrid photos={STAGE_PHOTOS[stage.id]} label={`Fotos: ${stage.title}`} variant="pair" /> : null}
 
-      {stage.id === "e2" ? <CameraTrap /> : null}
+      {stage.id === "e2" ? (
+        <>
+          <CameraTrap />
+          <AudioRecorder />
+        </>
+      ) : null}
 
-      <H2>Pasos clave</H2>
-      <ol className="tk-steps">
-        {stage.steps.map((p, i) => (
-          <li key={i}>
-            <span className="tk-steps-n" aria-hidden="true">
-              {i + 1}
-            </span>
-            <p>
-              <Rich text={p} />
-            </p>
-          </li>
-        ))}
-      </ol>
+      {stage.steps.length ? (
+        <>
+          <H2>Pasos clave</H2>
+          <ol className="tk-steps">
+            {stage.steps.map((p, i) => (
+              <li key={i}>
+                <span className="tk-steps-n" aria-hidden="true">
+                  {i + 1}
+                </span>
+                <p>
+                  <Rich text={p} />
+                </p>
+              </li>
+            ))}
+          </ol>
+        </>
+      ) : null}
+
+      {stage.id === "e4" ? (
+        <>
+          <H2>Por dónde empezar</H2>
+          <dl className="tk-glossary tk-glossary--3">
+            {E4_ORIENT.map((o) => (
+              <div key={o.title} className="tk-term" data-reveal>
+                <dt>{o.title}</dt>
+                <dd>{o.text}</dd>
+              </div>
+            ))}
+          </dl>
+        </>
+      ) : null}
+
+      {stage.id === "e5" ? (
+        <>
+          <H2>Modelos de sostenibilidad</H2>
+          <p data-reveal>{E5_MODELS.lead}</p>
+          <dl className="tk-glossary tk-glossary--3">
+            {E5_MODELS.items.map((o) => (
+              <div key={o.title} className="tk-term" data-reveal>
+                <dt>{o.title}</dt>
+                <dd>{o.text}</dd>
+              </div>
+            ))}
+          </dl>
+        </>
+      ) : null}
 
       <CheckBox title="Aprendizaje" text={stage.learning} />
 
@@ -1202,6 +1276,7 @@ function TemplateSheet({ template }: { template: Template }) {
               {template.fields.map((f) => (
                 <th key={f.label} scope="col">
                   {f.label}
+                  {f.key ? <code className="tk-col-key">{f.key}</code> : null}
                 </th>
               ))}
             </tr>
@@ -1253,6 +1328,11 @@ export function TemplatePage({ page, locale, template }: { page: ToolkitPage; lo
     >
       <div className="tk-template-bar" data-hero>
         <TemplateDownloads id={template.id} />
+        {template.extra ? (
+          <a className="tk-ghost" href={template.extra.url} download>
+            {template.extra.label}
+          </a>
+        ) : null}
         <div className="tk-viewer-links">
           <span>Se usa en:</span>
           <Link href={toolkitHref(locale, stageSlug(stage))} data-ref={stage.code}>
@@ -1260,6 +1340,7 @@ export function TemplatePage({ page, locale, template }: { page: ToolkitPage; lo
           </Link>
         </div>
       </div>
+      {template.note ? <p className="tk-template-note">{template.note}</p> : null}
       <H2>{template.layout === "log" ? "Columnas" : "Campos"}</H2>
       <TemplateSheet template={template} />
       <p className="tk-meta-line">

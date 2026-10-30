@@ -290,10 +290,10 @@ export const BIOSCANNER_PHOTOS: Photo[] = [
 export const T4N_HOME = {
   title: "Tech4Nature México",
   subtitle:
-    "Comunidad, gobierno, ciencia e inteligencia artificial trabajando juntos para conservar al jaguar y la biodiversidad de la costa norte de Yucatán.",
-  eyebrow: "Crea tu propio Tech4Nature · Toolkit 2022–2026",
+    "Iniciativa multisectorial que fortalece la conservación de la naturaleza y la gobernanza del territorio en la península de Yucatán a través del monitoreo de biodiversidad, alianzas estratégicas y tecnologías de frontera para apoyar la toma de decisiones basada en datos.",
+  eyebrow: "Tech4Nature México · 2022–2026",
   invite:
-    "Este toolkit reúne lo que aprendimos en cuatro años para que otros territorios creen su propio Tech4Nature. Antes de los pasos, conoce la historia, los resultados y a las personas que lo hicieron posible.",
+    "El toolkit de replicabilidad reúne lo que aprendimos en cuatro años, en cinco etapas con herramientas y plantillas, para que otros territorios creen su propia iniciativa.",
 };
 
 export const EXPANSION = {
@@ -361,7 +361,7 @@ export const JAGUAR_PANEL = {
   lead:
     "El jaguar es la especie que dio origen a Tech4Nature México. Estas fotos son registros reales de las cámaras trampa del proyecto en la Reserva Estatal de Dzilam y sus alrededores.",
   facts: [
-    "16 jaguares identificados de forma individual por el patrón de sus rosetas. El catálogo está en verificación.",
+    "16 individuos de jaguar identificados a través de los años por el patrón de sus rosetas. El catálogo está en verificación.",
     "480 registros independientes de jaguar en 25 estaciones de cámara trampa, según el informe de BioScanner.",
     "Un mismo jaguar fue registrado en dos sitios a cerca de 40 km de distancia, de Dzilam hacia Ría Lagartos: evidencia de que el paisaje sigue conectado.",
   ],
@@ -373,7 +373,7 @@ export const JAGUAR_PANEL = {
 
 export const MAP_TEXT = {
   lead:
-    "Tech4Nature México trabaja en la costa norte de Yucatán, entre la Reserva Estatal de Dzilam y la Reserva de la Biosfera Ría Lagartos. Es un mosaico de selva baja, manglar, petenes, dunas costeras y lagunas, con comunidades que viven de la pesca, la ganadería y el turismo.",
+    "Tech4Nature México se ha enfocado en la costa norte de Yucatán, entre la Reserva Estatal de Dzilam y la Reserva de la Biosfera Ría Lagartos. Es un mosaico de selva baja, manglar, petenes, dunas costeras y lagunas, con comunidades que viven de la pesca, la ganadería y el turismo.",
   facts: [
     { value: "104,304 ha", label: "Reserva Estatal de Dzilam, tras su ampliación en 2024" },
     { value: "33", label: "estaciones de cámara trampa analizadas en BioScanner" },
@@ -546,23 +546,20 @@ export const GALLERY: { id: string; title: string; text: string; photos: Gallery
   {
     id: "campo",
     title: "En el monte",
-    text: "Los monitores del Grupo Chac Mool recorren la selva, los humedales y el manglar para revisar cámaras, cambiar baterías y buscar rastros. En temporada de lluvias, muchas veces el camino es de agua.",
+    text: "Los monitores del Grupo Chac Mool recorren la selva, los humedales y el manglar para seleccionar sitios de monitoreo, desplegar equipos, colectar datos y reportar actividades de cacería, incendios forestales y otras actividades en la zona.",
     photos: [
       { src: C("juan-camara"), alt: "Juan Castillo revisa una cámara trampa sujeta a un árbol", caption: "Juan Castillo revisa una cámara trampa" },
       { src: C("agua-b"), alt: "Monitores de pie en un humedal inundado", caption: "Recorrido por un humedal inundado" },
       { src: C("caminata"), alt: "Equipo de campo caminando por la selva", caption: "Rumbo a una estación de monitoreo" },
       { src: C("mateo-camara"), alt: "Mateo Ordóñez junto a una cámara trampa", caption: "Mateo Ordóñez junto a una cámara trampa" },
-      { src: C("cruce-humedal-b"), alt: "Integrantes del equipo cruzando un humedal con botas y machete", caption: "Cruce de humedal, fase 1" },
       { src: C("darwin-senala"), alt: "Darwin Sosa señala hacia el monte", caption: "Darwin Sosa muestra por dónde pasa la fauna" },
       { src: C("manglar"), alt: "Monitor sonriente de pie sobre las raíces del manglar", caption: "En el manglar" },
-      { src: C("equipo-camioneta"), alt: "Equipo de Tech4Nature México en la batea de una camioneta", caption: "Monitores y equipo antes de salir a campo" },
-      { src: C("cruce-humedal"), alt: "Equipo caminando por un humedal inundado", caption: "Rumbo al humedal en temporada de lluvias" },
     ],
   },
   {
     id: "bioscanner",
     title: "BioScanner en manos del territorio",
-    text: "En los talleres de BioScanner, monitores, guardaparques y equipos de áreas protegidas suben sus fotos, revisan lo que propone la IA y validan cada especie. Lo que antes tomaba de tres a cinco días de trabajo ahora se resuelve en minutos u horas.",
+    text: "En los talleres de BioScanner, monitores, guardaparques, estudiantes, aliados y equipos de áreas protegidas suben sus fotos, revisan la detección de especies y la identificación de jaguares que propone la IA, y validan cada especie.",
     photos: [
       { src: C("taller-bs"), alt: "Monitor sonriente en un taller de BioScanner con laptops", caption: "Taller de BioScanner" },
       { src: C("taller-bs-e"), alt: "Participantes chocan las manos al final de un taller", caption: "Cierre de un taller" },
@@ -574,11 +571,11 @@ export const GALLERY: { id: string; title: string; text: string; photos: Gallery
   {
     id: "festival",
     title: "Festival del Jaguar Chac Mool",
-    text: "En 2025, Dzilam de Bravo celebró su primer Festival del Jaguar: realidad virtual, juegos, charlas y fotos de las cámaras para acercar la reserva y el jaguar a la gente. Los monitores recibieron un reconocimiento por su trabajo.",
+    text: "En 2025, Dzilam de Bravo celebró su primer Festival del Jaguar: realidad virtual, juegos, charlas y fotos de las cámaras para acercar la reserva y el jaguar a la gente.",
     photos: [
       { src: C("festival-grupo"), alt: "Grupo numeroso frente al mural del Festival del Jaguar", caption: "¡Chac Mool!" },
       { src: C("festival-vr"), alt: "Una niña prueba lentes de realidad virtual acompañada por monitores", caption: "La reserva en realidad virtual" },
-      { src: C("festival-premios"), alt: "Monitores reciben reconocimientos de madera con huellas de jaguar", caption: "Reconocimiento a los monitores" },
+      { src: C("festival-premios"), alt: "Monitores reciben reconocimientos de madera con huellas de jaguar", caption: "Monitores del Grupo Chac Mool en el festival" },
       { src: C("festival-publico"), alt: "Público del festival con un micrófono", caption: "La comunidad pregunta y comparte" },
       { src: C("festival-benja"), alt: "Benjamín Campos sonríe frente a una computadora", caption: "Benja Campos muestra los registros" },
     ],
@@ -700,8 +697,8 @@ export const STAGE_PHOTOS: Record<string, GalleryPhoto[]> = {
     { src: C("humedal"), alt: "Humedal con tule y manglar", caption: "Tule y manglar en la costa norte de Yucatán" },
   ],
   e5: [
-    { src: C("festival-premios"), alt: "Monitores reciben reconocimientos en el festival", caption: "Reconocimiento a los monitores en el Festival del Jaguar" },
-    { src: C("festival-grupo-b"), alt: "Grupo frente al mural del Festival del Jaguar", caption: "Devolver resultados al territorio" },
+    { src: C("festival-premios"), alt: "Monitores reciben reconocimientos en el festival", caption: "Monitores del Grupo Chac Mool en el Festival del Jaguar" },
+    { src: C("festival-grupo-b"), alt: "Grupo frente al mural del Festival del Jaguar", caption: "Resultados que se analizan y celebran con la comunidad" },
   ],
 };
 
@@ -717,7 +714,7 @@ export const PAGE_PHOTOS: Record<string, GalleryPhoto[]> = {
   ],
   soberania: [
     { src: C("taller-jovenes"), alt: "Taller en círculo bajo una palapa", caption: "Conversaciones abiertas con la comunidad" },
-    { src: C("festival-publico"), alt: "Público del Festival del Jaguar", caption: "Devolver y compartir resultados" },
+    { src: C("festival-publico"), alt: "Público del Festival del Jaguar", caption: "Compartir resultados con la comunidad" },
   ],
   listaverde: [
     { src: C("daniela-camara-b"), alt: "Daniela Pérez revisa una cámara trampa", caption: "La evidencia de campo alimenta los criterios del Estándar" },
@@ -731,7 +728,7 @@ export const PAGE_PHOTOS: Record<string, GalleryPhoto[]> = {
 export type Video = { id: string; title: string; channel: string; start?: number };
 
 export const VIDEOS_INTRO =
-  "Tech4Nature México también se ha contado en video: desde el lanzamiento en 2022 hasta los primeros registros del jaguar, el camino a la fase 2 y el uso de la IA para acelerar el fototrampeo.";
+  "Revive más momentos de Tech4Nature México a través de los años.";
 
 export const VIDEOS: Video[] = [
   { id: "4cKLMpL_des", title: "Tech4Nature México", channel: "C Minds" },
@@ -801,50 +798,45 @@ export const FINDINGS = {
   ],
   lessons: [
     {
-      title: "El territorio marca el ritmo",
-      text: "Desplegar monitoreo en zonas de difícil acceso es más complejo de lo que se planea en una oficina: lluvias, inundaciones, caminos y equipos que fallan.",
-      rec: "Diseña el muestreo con quienes conocen el monte y adopta el monitoreo biocultural como principio, junto con un diseño científico que permita comparar sitios.",
+      title: "Reconocer la importancia de la adaptación",
+      text: "Desplegar monitoreo en zonas de difícil acceso cambia los planes: lluvias, inundaciones, caminos y equipos que fallan. Los proyectos que se adaptan aprenden más rápido.",
+      rec: "Diseña el monitoreo con quienes conocen el territorio, adopta el monitoreo biocultural como principio y revisa el plan en cada campaña.",
       href: "monitoreo-biocultural",
       link: "Monitoreo biocultural",
     },
     {
-      title: "La gobernanza de datos va primero",
-      text: "Decidir quién es dueño de los datos, quién los ve y qué se protege evita conflictos y construye confianza.",
-      rec: "Acuerda las reglas de los datos antes de instalar el primer equipo, con consentimiento libre, previo e informado.",
+      title: "La gobernanza, en todas sus dimensiones, es lo más importante",
+      text: "Quién decide, cómo se coordinan los aliados y quién es dueño de los datos determinan la confianza y la continuidad del proyecto.",
+      rec: "Acuerda roles, espacios de decisión y reglas de los datos antes de instalar el primer equipo, con consentimiento libre, previo e informado.",
       href: "soberania-de-datos",
       link: "Soberanía de datos",
     },
     {
-      title: "Lo que se construye con los usuarios se usa",
-      text: "BioScanner funciona porque se diseñó con monitores, guardaparques y la autoridad, probando cada versión en campo.",
+      title: "La adopción proviene de la co-construcción",
+      text: "BioScanner funciona porque se diseñó con monitores, guardaparques, estudiantes y la autoridad, probando cada versión en campo.",
       rec: "Incluye a quienes usarán la herramienta desde el diseño y prueba con ellos en ciclos cortos.",
     },
     {
-      title: "El gobierno, desde el inicio",
-      text: "La SDS participó desde el diseño, y eso permitió que la evidencia llegara a decisiones como la ampliación de la reserva.",
-      rec: "Invita a la autoridad que tomará la decisión desde el primer día, para que adopte los resultados y los traduzca a política pública.",
+      title: "La articulación multisectorial es clave desde el comienzo",
+      text: "Comunidad, gobierno, academia, sociedad civil y aliados tecnológicos aportan capacidades distintas. Cuando participan desde el diseño, la evidencia llega a decisiones como la ampliación de la reserva.",
+      rec: "Convoca desde el primer día a quienes tomarán las decisiones y documenta los acuerdos y los enlaces de cada institución.",
     },
     {
-      title: "La alfabetización digital es parte del proyecto",
-      text: "Usar celulares, formularios y plataformas requiere tiempo de aprendizaje y acompañamiento en la comunidad.",
-      rec: "Presupuesta capacitación continua, materiales en el idioma local y personas de apoyo cercanas.",
+      title: "Es importante trabajar por cerrar las brechas de capacidades",
+      text: "Usar celulares, formularios, plataformas de IA y análisis de datos requiere tiempo de aprendizaje y acompañamiento cercano.",
+      rec: "Presupuesta formación continua, materiales en el idioma local y personas de apoyo en el territorio.",
     },
     {
       title: "Más datos no siempre es mejor información",
-      text: "Cientos de miles de fotos solo se vuelven útiles cuando se organizan, se validan y responden una pregunta.",
-      rec: "Empieza por la pregunta y la decisión, y define qué datos necesitas para responderla.",
+      text: "Cientos de miles de fotos solo se vuelven útiles cuando se organizan, se validan y responden a un objetivo.",
+      rec: "Empieza por el objetivo y las decisiones, y define qué datos necesitas para lograrlo.",
     },
     {
-      title: "La continuidad se financia",
-      text: "Equipos, baterías, almacenamiento y el trabajo del equipo local tienen costos que siguen después del proyecto.",
-      rec: "Diseña desde el inicio mecanismos de financiamiento de largo plazo y vincula el monitoreo a instrumentos como la Lista Verde o esquemas de permanencia.",
-      href: "lista-verde-uicn",
-      link: "Lista Verde de la UICN",
-    },
-    {
-      title: "Articular gobiernos es un trabajo en sí mismo",
-      text: "Coordinar niveles de gobierno, administraciones que cambian y reservas vecinas es uno de los mayores retos.",
-      rec: "Documenta acuerdos, nombra enlaces en cada institución y deja la memoria del proyecto por escrito.",
+      title: "Considerar la sostenibilidad desde el inicio",
+      text: "La continuidad de un proyecto se diseña: los datos que demuestran conservación y regeneración pueden sostener economías y mecanismos financieros para el territorio.",
+      rec: "Diseña desde temprano mecanismos financieros innovadores para la continuidad, que garanticen la prosperidad y el buen vivir de quienes cuidan el territorio.",
+      href: "etapa-5-decidir-y-sostener",
+      link: "Decidir y sostener",
     },
     {
       title: "Compartir datos requiere confianza",
@@ -854,7 +846,7 @@ export const FINDINGS = {
   ],
   principles: [
     { title: "El territorio guía la tecnología", text: "El conocimiento local define dónde, cómo y para qué se monitorea; la IA amplía lo que la comunidad ya observa." },
-    { title: "La decisión define los datos", text: "Cada dato responde a una pregunta que alguien necesita contestar para decidir." },
+    { title: "El objetivo define los datos", text: "Cada dato responde a un objetivo compartido y a una decisión que alguien necesita tomar." },
     { title: "Los datos se gobiernan antes de recolectarse", text: "Acuerdos claros sobre propiedad, acceso y uso hacen posible la confianza y el intercambio." },
     { title: "La continuidad se diseña desde el primer día", text: "Capacidades locales, instituciones comprometidas y financiamiento sostienen el monitoreo en el tiempo." },
   ],

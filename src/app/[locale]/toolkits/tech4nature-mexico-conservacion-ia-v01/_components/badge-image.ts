@@ -139,7 +139,7 @@ export async function renderBadge(format: BadgeFormat, name: string): Promise<Bl
 
   const date = new Intl.DateTimeFormat("es-MX", { day: "numeric", month: "long", year: "numeric" }).format(new Date());
   const recipient = name.trim() ? `Otorgada a ${name.trim()}` : `${STAGES.length} de ${STAGES.length} etapas revisadas`;
-  const title = "Crea tu propio Tech4Nature";
+  const title = "Toolkit de replicabilidad";
   const eyebrow = "INSIGNIA DE FINALIZACIÓN";
   const meta = `Tech4Nature México · C Minds · ${date}`;
 
