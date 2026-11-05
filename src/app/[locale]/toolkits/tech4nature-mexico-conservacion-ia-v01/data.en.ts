@@ -1,4 +1,5 @@
 export * from "./data";
+import { absoluteUrl, asset } from "@/lib/assets";
 
 /**
  * English version of the toolkit texts. Same shape as data.ts; ids, codes,
@@ -701,8 +702,8 @@ export const GREEN_LIST = {
   learning:
     "Many gaps are about documentation: the team already does the work, but it has not been recorded. Organizing evidence from the start makes management visible, preserves institutional memory across administrations and connects biodiversity monitoring with outcomes the IUCN recognizes.",
   tools: [
-    `[Manual «Camino hacia la Lista Verde»](https://www.cminds.co${GL_MANUAL_URL}) (Tech4Nature Mexico, 2026, PDF, in Spanish), a four-stage guide: worksheets, document organization, GL-SAT and gap analysis.`,
-    `[Hoja de trabajo de la Lista Verde](https://www.cminds.co${GL_WORKSHEET_URL}) (Tech4Nature Mexico, 2026, Excel, in Spanish), with indicators, evidence types and a list of reference documents.`,
+    `[Manual «Camino hacia la Lista Verde»](${absoluteUrl(GL_MANUAL_URL, "https://www.cminds.co")}) (Tech4Nature Mexico, 2026, PDF, in Spanish), a four-stage guide: worksheets, document organization, GL-SAT and gap analysis.`,
+    `[Hoja de trabajo de la Lista Verde](${absoluteUrl(GL_WORKSHEET_URL, "https://www.cminds.co")}) (Tech4Nature Mexico, 2026, Excel, in Spanish), with indicators, evidence types and a list of reference documents.`,
     "[GL-SAT self-assessment tool](https://glsat.iucngreenlist.org/) (IUCN), an online platform with registration.",
     "[Estándar de la Lista Verde, versión 1.1](https://www.iucn.org/sites/default/files/2024-03/estandar-lista-verde-version-1.1.pdf) (IUCN, in Spanish).",
     "[Componentes y criterios del Estándar](https://iucngreenlist.org/es/estandar/components-criteria/) (IUCN, in Spanish).",
@@ -921,7 +922,7 @@ export const TEMPLATES: Template[] = [
     layout: "log",
     note:
       "The columns match the ones BioScanner requires to import cameras: the CSV imports straight into the platform, with no extra desk work. It works on paper, but we recommend capturing it in KoboToolbox on a field-ready phone with good GPS: the form saves location, altitude and accuracy at the moment of recording, works without signal and syncs when you return, with no copying coordinates by hand or running them through a GIS. Station coordinates are treated as sensitive information.",
-    extra: { label: "KoboToolbox form (.xlsx, in Spanish)", url: "/platforms/aiforbiodiversity/initiative-tech4nature/toolkit/plantillas/registro-camaras-kobotoolbox.xlsx" },
+    extra: { label: "KoboToolbox form (.xlsx, in Spanish)", url: asset("/platforms/aiforbiodiversity/initiative-tech4nature/toolkit/plantillas/registro-camaras-kobotoolbox.xlsx") },
     fields: [
       { label: "Camera name", hint: "for example Cam 1", key: "name" },
       { label: "Latitude", hint: "decimal degrees", key: "latitude" },

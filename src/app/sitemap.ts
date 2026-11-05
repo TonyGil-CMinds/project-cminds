@@ -3,7 +3,7 @@ import { LOCALES } from "@/i18n/config";
 import { PAGES as T4N_TOOLKIT_PAGES, toolkitHref } from "@/app/[locale]/toolkits/tech4nature-mexico-conservacion-ia-v01/data";
 
 const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.NEXT_PUBLIC_SITE_URL ||
   (process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : "https://www.cminds.co")

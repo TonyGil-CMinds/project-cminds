@@ -14,7 +14,7 @@ import { copy } from "../copy";
 
 const NAV_KEYS = ["home", "core", "mindscope", "careers"] as const;
 const VALID_COLORS = ["#5EC1F3", "#512AE5", "#876FE8"];
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.cminds.co";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.cminds.co";
 
 function hexToRgb(hex: string) {
   const n = parseInt(hex.slice(1), 16);

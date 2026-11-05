@@ -1,5 +1,6 @@
 export * from "./t4n";
 
+import { asset } from "@/lib/assets";
 import type { Photo, Person, TeamGroup, GalleryPhoto, Spotlight, Video, Partner } from "./t4n";
 import type * as Es from "./t4n";
 
@@ -10,13 +11,13 @@ type Text<K extends "TEAM_INTRO" | "SPOTLIGHT_INTRO" | "VIDEOS_INTRO"> = (typeof
 // English version of the user-facing constants in t4n.ts. Same shapes; src, id,
 // photo, href and url values are identical to the Spanish source.
 
-const T4N_FILES = "/platforms/aiforbiodiversity/initiative-tech4nature/toolkit";
+const T4N_FILES = asset("/platforms/aiforbiodiversity/initiative-tech4nature/toolkit");
 
 // ---------------------------------------------------------------------------
 // Photos
 
 const jag = (file: string, caption: string, alt = "Jaguar recorded by a camera trap in the Dzilam State Reserve"): Photo => ({
-  src: `${T4N_FILES}/jaguares/${file}.jpg`,
+  src: `${T4N_FILES}/jaguares/${file}.webp`,
   alt,
   caption,
 });
@@ -36,7 +37,7 @@ export const JAGUAR_PHOTOS: Photo[] = [
   jag("jaguar-2025-07-a", "July 2025"),
 ];
 
-const bs = (file: string, caption: string, alt: string): Photo => ({ src: `${T4N_FILES}/bioscanner/${file}.jpg`, alt, caption });
+const bs = (file: string, caption: string, alt: string): Photo => ({ src: `${T4N_FILES}/bioscanner/${file}.webp`, alt, caption });
 
 export const BIOSCANNER_PHOTOS: Photo[] = [
   bs("bs-puma-96", "Puma, 96% confidence", "Camera trap photo with a puma in a bounding box labeled Puma concolor 96%"),
@@ -161,10 +162,10 @@ export const TEAM_INTRO =
 
 const CORE_PEOPLE_CMINDS: Person[] = [
   { name: "Constanza Gómez-Mont", role: "Founder and President of C Minds. Project lead", photo: "/core/constanzaGM.png" },
-  { name: "Regina Cervera", role: "Director of Nature Innovation Programs. Project coordination", photo: `${T4N_FILES}/equipo/p-regina.jpg` },
+  { name: "Regina Cervera", role: "Director of Nature Innovation Programs. Project coordination", photo: `${T4N_FILES}/equipo/p-regina.webp` },
   { name: "Ángel Escalante", role: "BioScanner technology development lead", photo: "/team/Angel Escalante.png" },
   { name: "Xiomara Vázquez", role: "BioScanner brand and experience lead", photo: "/team/Xiomy Vazquez.png" },
-  { name: "Daniela Pérez", role: "Conservation programs consultant: fieldwork, KoboToolbox and coordination", photo: `${T4N_FILES}/equipo/p-daniela.jpg` },
+  { name: "Daniela Pérez", role: "Conservation programs consultant: fieldwork, KoboToolbox and coordination", photo: `${T4N_FILES}/equipo/p-daniela.webp` },
   { name: "Bryan Ruiz", role: "Creative experience lead", photo: "/team/Bryan Ruiz.png" },
 ];
 
@@ -178,13 +179,13 @@ export const TEAM_CORE: TeamGroup[] = [
     id: "territorio",
     title: "In the territory: Chac Mool Monitoring Group",
     people: [
-      { name: "Benjamín Campos", role: "Founding community monitor and community leader", photo: `${T4N_FILES}/equipo/p-benja.jpg` },
-      { name: "Juan Castillo", role: "Founding community monitor", photo: `${T4N_FILES}/equipo/p-juan.jpg` },
-      { name: "Darwin Sosa", role: "Founding community monitor and sustainable tourism leader", photo: `${T4N_FILES}/equipo/p-darwin.jpg` },
-      { name: "Efraín Uicab", role: "Community monitor", photo: `${T4N_FILES}/equipo/p-efrain.jpg` },
-      { name: "Mateo Ordóñez", role: "Community monitor", photo: `${T4N_FILES}/equipo/p-mateo.jpg` },
-      { name: "Josué Argáez", role: "Community monitor", photo: `${T4N_FILES}/equipo/p-josue.jpg` },
-      { name: "Toshio Yokoyama", role: "Field operations and policy leadership. Formerly Director of Conservation at the SDS", photo: `${T4N_FILES}/equipo/p-toshio.jpg` },
+      { name: "Benjamín Campos", role: "Founding community monitor and community leader", photo: `${T4N_FILES}/equipo/p-benja.webp` },
+      { name: "Juan Castillo", role: "Founding community monitor", photo: `${T4N_FILES}/equipo/p-juan.webp` },
+      { name: "Darwin Sosa", role: "Founding community monitor and sustainable tourism leader", photo: `${T4N_FILES}/equipo/p-darwin.webp` },
+      { name: "Efraín Uicab", role: "Community monitor", photo: `${T4N_FILES}/equipo/p-efrain.webp` },
+      { name: "Mateo Ordóñez", role: "Community monitor", photo: `${T4N_FILES}/equipo/p-mateo.webp` },
+      { name: "Josué Argáez", role: "Community monitor", photo: `${T4N_FILES}/equipo/p-josue.webp` },
+      { name: "Toshio Yokoyama", role: "Field operations and policy leadership. Formerly Director of Conservation at the SDS", photo: `${T4N_FILES}/equipo/p-toshio.webp` },
     ],
   },
   {
@@ -299,8 +300,8 @@ export const TEAM_ALLIES: TeamGroup[] = [
 // ---------------------------------------------------------------------------
 // Field photos and video series
 
-const C = (file: string) => `${T4N_FILES}/campo/${file}.jpg`;
-const E = (file: string) => `${T4N_FILES}/equipo/${file}.jpg`;
+const C = (file: string) => `${T4N_FILES}/campo/${file}.webp`;
+const E = (file: string) => `${T4N_FILES}/equipo/${file}.webp`;
 
 export const GALLERY: { id: string; title: string; text: string; photos: GalleryPhoto[] }[] = [
   {
@@ -498,7 +499,7 @@ export const VIDEOS: Video[] = [
 // ---------------------------------------------------------------------------
 // Partners
 
-const logo = (file: string) => `/platforms/aiforbiodiversity/initiative-tech4nature/${file}`;
+const logo = (file: string) => asset(`/platforms/aiforbiodiversity/initiative-tech4nature/${file}`);
 
 export const PARTNERS: { title: string; partners: Partner[] }[] = [
   {
@@ -506,7 +507,7 @@ export const PARTNERS: { title: string; partners: Partner[] }[] = [
     partners: [
       { name: "C Minds", logo: logo("ledby-cminds-1.svg") },
       { name: "AI for Climate and Biodiversity", logo: logo("ledby-aiforclimate-2.svg") },
-      { name: "Chac Mool Monitoring Group", logo: logo("partner-chacmool-w.png"), height: 64 },
+      { name: "Chac Mool Monitoring Group", logo: logo("partner-chacmool-w.webp"), height: 64 },
       { name: "Government of the State of Yucatán, Ministry of Sustainable Development", logo: logo("ledby-sds-3.svg") },
     ],
   },
@@ -522,8 +523,8 @@ export const PARTNERS: { title: string; partners: Partner[] }[] = [
   {
     title: "With strategic contributions from",
     partners: [
-      { name: "Pronatura Península de Yucatán", logo: logo("partner-pronatura-w.png"), height: 60 },
-      { name: "Fundación Pachamama", logo: logo("partner-pachamama-w.png") },
+      { name: "Pronatura Península de Yucatán", logo: logo("partner-pronatura-w.webp"), height: 60 },
+      { name: "Fundación Pachamama", logo: logo("partner-pachamama-w.webp") },
       { name: "Universidad Politécnica de Yucatán", logo: logo("innovationpartner-upy.svg") },
     ],
   },
@@ -618,14 +619,14 @@ export const FINDINGS = {
 export const LOCAL_VIDEOS = [
   {
     src: `${T4N_FILES}/video/festival-jaguar.mp4`,
-    poster: `${T4N_FILES}/video/festival-jaguar.jpg`,
+    poster: `${T4N_FILES}/video/festival-jaguar.webp`,
     title: "Where Dzilam de Bravo is",
     caption: "From the continent to the northern coast of Yucatán: this is how you reach the reserve and the Jaguar Festival.",
     loop: false,
   },
   {
     src: `${T4N_FILES}/video/dzilam-dron.mp4`,
-    poster: `${T4N_FILES}/video/dzilam-dron.jpg`,
+    poster: `${T4N_FILES}/video/dzilam-dron.webp`,
     title: "The Dzilam forest from the air",
     caption: "Drone footage of the low forest and the trails the team uses to reach the monitoring stations.",
     loop: true,

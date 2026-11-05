@@ -12,6 +12,8 @@
  * Las imágenes viven en `IMAGES`: cambiarlas ahí actualiza todo el toolkit.
  */
 
+import { absoluteUrl, asset } from "@/lib/assets";
+
 export const TOOLKIT_SLUG = "tech4nature-mexico-conservacion-ia-v01";
 export const TOOLKIT_PATH = `/toolkits/${TOOLKIT_SLUG}`;
 export const TOOLKIT_VERSION = "0.2";
@@ -20,27 +22,28 @@ export const TOOLKIT_DATE_LABEL = "Octubre de 2026";
 /** Clave del avance guardado en el navegador; cambia con la estructura de etapas. */
 export const STORAGE_KEY = "tk-t4n-v02";
 
-const T4N = "/platforms/aiforbiodiversity/initiative-tech4nature";
+/** Medios del toolkit: en R2 si NEXT_PUBLIC_ASSETS_URL está definida, si no en /public (ver src/lib/assets.ts). */
+const T4N = asset("/platforms/aiforbiodiversity/initiative-tech4nature");
 
 /** Imágenes del proyecto: fotos de campo, talleres y la serie de video de Tech4Nature México. */
 export const IMAGES = {
   hero: { src: `${T4N}/tech4nature-hero.png`, alt: "Equipo de campo de Tech4Nature México caminando por la selva de Yucatán" },
-  jaguar: { src: `${T4N}/theimpact-jaguar.png`, alt: "Jaguar descansando en la copa de un árbol" },
-  algorithm: { src: `${T4N}/theimpact-algorithm.png`, alt: "Código de un modelo de inteligencia artificial en una pantalla" },
-  platform: { src: `${T4N}/theimpact-platform.png`, alt: "Líderes de conservación revisando registros en una computadora" },
+  jaguar: { src: `${T4N}/theimpact-jaguar.webp`, alt: "Jaguar descansando en la copa de un árbol" },
+  algorithm: { src: `${T4N}/theimpact-algorithm.webp`, alt: "Código de un modelo de inteligencia artificial en una pantalla" },
+  platform: { src: `${T4N}/theimpact-platform.webp`, alt: "Líderes de conservación revisando registros en una computadora" },
   bioscanner: { src: `${T4N}/bioscanner.png`, alt: "Logotipo de BioScanner" },
   logo: { src: `${T4N}/logo-tech4nature.svg`, alt: "Tech4Nature México" },
   afbLogo: { src: "/platforms/aiforbiodiversity/logo-aiforclimate.svg", alt: "AI for Climate & Biodiversity" },
-  people: { src: `${T4N}/toolkit/campo/taller-comunidad.jpg`, alt: "Monitores, familias y equipo de Tech4Nature México reunidos en una palapa de Dzilam de Bravo" },
-  forestPath: { src: `${T4N}/toolkit/campo/caminata.jpg`, alt: "Equipo de campo caminando por la selva de la Reserva Estatal de Dzilam" },
-  kingfisher: { src: `${T4N}/toolkit/campo/capacitacion-acustica.jpg`, alt: "Monitores comunitarios revisando una grabadora acústica en el humedal" },
-  earth: { src: `${T4N}/toolkit/campo/agua-b.jpg`, alt: "Monitores cruzando un humedal inundado en la reserva" },
-  feline: { src: `${T4N}/toolkit/campo/juan-camara-trampa.jpg`, alt: "Juan Castillo junto a una cámara trampa instalada en un árbol" },
-  dashboard: { src: `${T4N}/toolkit/campo/taller-bs.jpg`, alt: "Taller de BioScanner con monitores y equipos de áreas protegidas" },
-  map: { src: `${T4N}/toolkit/campo/equipo-camioneta.jpg`, alt: "Equipo de Tech4Nature México en la batea de una camioneta antes de salir a campo" },
-  mistyForest: { src: `${T4N}/toolkit/campo/humedal.jpg`, alt: "Humedal con tule y manglar en la costa norte de Yucatán" },
-  pineLight: { src: `${T4N}/toolkit/campo/festival-grupo.jpg`, alt: "Asistentes al primer Festival del Jaguar Chac Mool en Dzilam de Bravo" },
-  turtle: { src: `${T4N}/toolkit/campo/atardecer.jpg`, alt: "Atardecer sobre la selva de Dzilam" },
+  people: { src: `${T4N}/toolkit/campo/taller-comunidad.webp`, alt: "Monitores, familias y equipo de Tech4Nature México reunidos en una palapa de Dzilam de Bravo" },
+  forestPath: { src: `${T4N}/toolkit/campo/caminata.webp`, alt: "Equipo de campo caminando por la selva de la Reserva Estatal de Dzilam" },
+  kingfisher: { src: `${T4N}/toolkit/campo/capacitacion-acustica.webp`, alt: "Monitores comunitarios revisando una grabadora acústica en el humedal" },
+  earth: { src: `${T4N}/toolkit/campo/agua-b.webp`, alt: "Monitores cruzando un humedal inundado en la reserva" },
+  feline: { src: `${T4N}/toolkit/campo/juan-camara-trampa.webp`, alt: "Juan Castillo junto a una cámara trampa instalada en un árbol" },
+  dashboard: { src: `${T4N}/toolkit/campo/taller-bs.webp`, alt: "Taller de BioScanner con monitores y equipos de áreas protegidas" },
+  map: { src: `${T4N}/toolkit/campo/equipo-camioneta.webp`, alt: "Equipo de Tech4Nature México en la batea de una camioneta antes de salir a campo" },
+  mistyForest: { src: `${T4N}/toolkit/campo/humedal.webp`, alt: "Humedal con tule y manglar en la costa norte de Yucatán" },
+  pineLight: { src: `${T4N}/toolkit/campo/festival-grupo.webp`, alt: "Asistentes al primer Festival del Jaguar Chac Mool en Dzilam de Bravo" },
+  turtle: { src: `${T4N}/toolkit/campo/atardecer.webp`, alt: "Atardecer sobre la selva de Dzilam" },
 } satisfies Record<string, Img>;
 
 export type Img = { src: string; alt: string };
@@ -480,7 +483,7 @@ export const AUDIO_RECORDER = {
   title: "¿Y una grabadora acústica?",
   lead:
     "Una grabadora acústica autónoma, como AudioMoth, se sujeta a un árbol y graba el paisaje sonoro según un horario. Registra lo que una cámara no ve: aves, anfibios, murciélagos e insectos. Es abierta, de bajo costo y cabe en la palma de la mano.",
-  photo: { src: `${T4N}/toolkit/campo/audiomoth.jpg`, alt: "Una grabadora AudioMoth sin carcasa en la palma de una mano, junto a una cámara trampa y un celular en la selva" },
+  photo: { src: `${T4N}/toolkit/campo/audiomoth.webp`, alt: "Una grabadora AudioMoth sin carcasa en la palma de una mano, junto a una cámara trampa y un celular en la selva" },
   caption: "Una grabadora AudioMoth antes de instalarse, junto a una cámara trampa",
   links: [
     { label: "Manual de configuración e instalación de AudioMoth 1.2.0 (español, 2026)", url: "https://www.protocols.io/view/manual-de-configuraci-n-e-instalaci-n-de-audiomoth-hrpfb55jp.html" },
@@ -675,7 +678,7 @@ export const SOVEREIGNTY = {
 // ---------------------------------------------------------------------------
 // Lista Verde de la UICN: el estándar que guía el trabajo en el área protegida
 
-const GL_FILES = "/platforms/aiforbiodiversity/initiative-tech4nature/toolkit";
+const GL_FILES = asset("/platforms/aiforbiodiversity/initiative-tech4nature/toolkit");
 export const GL_MANUAL_URL = `${GL_FILES}/manual-camino-hacia-la-lista-verde.pdf`;
 export const GL_WORKSHEET_URL = `${GL_FILES}/hoja-de-trabajo-lista-verde-uicn.xlsx`;
 
@@ -739,8 +742,8 @@ export const GREEN_LIST = {
   learning:
     "Muchas brechas son de documentación: el equipo ya realiza el trabajo, pero falta registrarlo. Ordenar la evidencia desde el inicio hace visible la gestión, preserva la memoria institucional entre administraciones y conecta el monitoreo de biodiversidad con resultados que la UICN reconoce.",
   tools: [
-    `[Manual «Camino hacia la Lista Verde»](https://www.cminds.co${GL_FILES}/manual-camino-hacia-la-lista-verde.pdf) (Tech4Nature México, 2026, PDF), guía en cuatro etapas: hojas de trabajo, organización documental, GL-SAT y análisis de brechas.`,
-    `[Hoja de trabajo de la Lista Verde](https://www.cminds.co${GL_FILES}/hoja-de-trabajo-lista-verde-uicn.xlsx) (Tech4Nature México, 2026, Excel), con indicadores, tipos de evidencia y un listado de documentos de referencia.`,
+    `[Manual «Camino hacia la Lista Verde»](${absoluteUrl(GL_MANUAL_URL, "https://www.cminds.co")}) (Tech4Nature México, 2026, PDF), guía en cuatro etapas: hojas de trabajo, organización documental, GL-SAT y análisis de brechas.`,
+    `[Hoja de trabajo de la Lista Verde](${absoluteUrl(GL_WORKSHEET_URL, "https://www.cminds.co")}) (Tech4Nature México, 2026, Excel), con indicadores, tipos de evidencia y un listado de documentos de referencia.`,
     "[Herramienta de autoevaluación GL-SAT](https://glsat.iucngreenlist.org/) (UICN), plataforma en línea con registro.",
     "[Estándar de la Lista Verde, versión 1.1](https://www.iucn.org/sites/default/files/2024-03/estandar-lista-verde-version-1.1.pdf) (UICN, español).",
     "[Componentes y criterios del Estándar](https://iucngreenlist.org/es/estandar/components-criteria/) (UICN, español).",
@@ -1087,7 +1090,7 @@ export const TEMPLATES: Template[] = [
     layout: "log",
     note:
       "Las columnas son las mismas que pide BioScanner para importar cámaras: el CSV se importa directo en la plataforma, sin trabajo extra de escritorio. Funciona en libreta, pero recomendamos capturarlo en KoboToolbox con un celular apto para campo y con buen GPS: el formulario guarda la ubicación, la altitud y la precisión al momento de registrar, trabaja sin señal y sincroniza al volver, sin copiar coordenadas a mano ni pasarlas por un GIS. Las coordenadas de las estaciones se tratan como información sensible.",
-    extra: { label: "Formulario KoboToolbox (.xlsx)", url: "/platforms/aiforbiodiversity/initiative-tech4nature/toolkit/plantillas/registro-camaras-kobotoolbox.xlsx" },
+    extra: { label: "Formulario KoboToolbox (.xlsx)", url: `${GL_FILES}/plantillas/registro-camaras-kobotoolbox.xlsx` },
     fields: [
       { label: "Nombre de la cámara", hint: "por ejemplo Cam 1", key: "name" },
       { label: "Latitud", hint: "grados decimales", key: "latitude" },

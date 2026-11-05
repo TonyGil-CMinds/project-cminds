@@ -1,6 +1,8 @@
 // Datos de la portada de Tech4Nature México: especies, fotos, mapa y equipo.
 // Generado a partir del reporte técnico de la fase 1 y del informe de BioScanner (29 oct 2026).
 
+import { asset } from "@/lib/assets";
+
 /** [nombre científico, nombre común, clase, NOM-059, UICN] */
 export type SpeciesP1 = [string, string, string, string, string];
 export const SPECIES_P1: SpeciesP1[] = [
@@ -248,12 +250,12 @@ export const MAP_POINTS = {"merida": [298, 202], "dzilam": [467, 96], "sanfelipe
 // ---------------------------------------------------------------------------
 // Fotos
 
-const T4N_FILES = "/platforms/aiforbiodiversity/initiative-tech4nature/toolkit";
+const T4N_FILES = asset("/platforms/aiforbiodiversity/initiative-tech4nature/toolkit");
 
 export type Photo = { src: string; alt: string; caption: string };
 
 const jag = (file: string, caption: string, alt = "Jaguar registrado por una cámara trampa en la Reserva Estatal de Dzilam"): Photo => ({
-  src: `${T4N_FILES}/jaguares/${file}.jpg`,
+  src: `${T4N_FILES}/jaguares/${file}.webp`,
   alt,
   caption,
 });
@@ -273,7 +275,7 @@ export const JAGUAR_PHOTOS: Photo[] = [
   jag("jaguar-2025-07-a", "Julio de 2025"),
 ];
 
-const bs = (file: string, caption: string, alt: string): Photo => ({ src: `${T4N_FILES}/bioscanner/${file}.jpg`, alt, caption });
+const bs = (file: string, caption: string, alt: string): Photo => ({ src: `${T4N_FILES}/bioscanner/${file}.webp`, alt, caption });
 
 export const BIOSCANNER_PHOTOS: Photo[] = [
   bs("bs-puma-96", "Puma, 96 % de confianza", "Foto de cámara trampa con un puma enmarcado y la etiqueta Puma concolor 96 %"),
@@ -405,10 +407,10 @@ export const TEAM_CORE: TeamGroup[] = [
     title: "C Minds",
     people: [
       { name: "Constanza Gómez-Mont", role: "Fundadora y presidenta de C Minds. Líder del proyecto", photo: "/core/constanzaGM.png" },
-      { name: "Regina Cervera", role: "Directora de programas de innovación para la naturaleza. Coordinación del proyecto", photo: `${T4N_FILES}/equipo/p-regina.jpg` },
+      { name: "Regina Cervera", role: "Directora de programas de innovación para la naturaleza. Coordinación del proyecto", photo: `${T4N_FILES}/equipo/p-regina.webp` },
       { name: "Ángel Escalante", role: "Líder de desarrollo tecnológico de BioScanner", photo: "/team/Angel Escalante.png" },
       { name: "Xiomara Vázquez", role: "Líder de marca y experiencia de BioScanner", photo: "/team/Xiomy Vazquez.png" },
-      { name: "Daniela Pérez", role: "Consultora de programas de conservación: campo, KoboToolbox y coordinación", photo: `${T4N_FILES}/equipo/p-daniela.jpg` },
+      { name: "Daniela Pérez", role: "Consultora de programas de conservación: campo, KoboToolbox y coordinación", photo: `${T4N_FILES}/equipo/p-daniela.webp` },
       { name: "Bryan Ruiz", role: "Líder de experiencia creativa", photo: "/team/Bryan Ruiz.png" },
     ],
   },
@@ -416,13 +418,13 @@ export const TEAM_CORE: TeamGroup[] = [
     id: "territorio",
     title: "En el territorio: Grupo de Monitoreo Chac Mool",
     people: [
-      { name: "Benjamín Campos", role: "Monitor fundador y líder comunitario", photo: `${T4N_FILES}/equipo/p-benja.jpg` },
-      { name: "Juan Castillo", role: "Monitor fundador", photo: `${T4N_FILES}/equipo/p-juan.jpg` },
-      { name: "Darwin Sosa", role: "Monitor fundador y líder de turismo sustentable", photo: `${T4N_FILES}/equipo/p-darwin.jpg` },
-      { name: "Efraín Uicab", role: "Monitor", photo: `${T4N_FILES}/equipo/p-efrain.jpg` },
-      { name: "Mateo Ordóñez", role: "Monitor", photo: `${T4N_FILES}/equipo/p-mateo.jpg` },
-      { name: "Josué Argáez", role: "Monitor", photo: `${T4N_FILES}/equipo/p-josue.jpg` },
-      { name: "Toshio Yokoyama", role: "Liderazgo de operaciones de campo y política. Antes, director de Conservación en la SDS", photo: `${T4N_FILES}/equipo/p-toshio.jpg` },
+      { name: "Benjamín Campos", role: "Monitor fundador y líder comunitario", photo: `${T4N_FILES}/equipo/p-benja.webp` },
+      { name: "Juan Castillo", role: "Monitor fundador", photo: `${T4N_FILES}/equipo/p-juan.webp` },
+      { name: "Darwin Sosa", role: "Monitor fundador y líder de turismo sustentable", photo: `${T4N_FILES}/equipo/p-darwin.webp` },
+      { name: "Efraín Uicab", role: "Monitor", photo: `${T4N_FILES}/equipo/p-efrain.webp` },
+      { name: "Mateo Ordóñez", role: "Monitor", photo: `${T4N_FILES}/equipo/p-mateo.webp` },
+      { name: "Josué Argáez", role: "Monitor", photo: `${T4N_FILES}/equipo/p-josue.webp` },
+      { name: "Toshio Yokoyama", role: "Liderazgo de operaciones de campo y política. Antes, director de Conservación en la SDS", photo: `${T4N_FILES}/equipo/p-toshio.webp` },
     ],
   },
   {
@@ -537,8 +539,8 @@ export const TEAM_ALLIES: TeamGroup[] = [
 // ---------------------------------------------------------------------------
 // Fotos de campo y de la serie de video
 
-const C = (file: string) => `${T4N_FILES}/campo/${file}.jpg`;
-const E = (file: string) => `${T4N_FILES}/equipo/${file}.jpg`;
+const C = (file: string) => `${T4N_FILES}/campo/${file}.webp`;
+const E = (file: string) => `${T4N_FILES}/equipo/${file}.webp`;
 
 export type GalleryPhoto = { src: string; alt: string; caption?: string };
 
@@ -743,7 +745,7 @@ export const VIDEOS: Video[] = [
 // ---------------------------------------------------------------------------
 // Socios
 
-const L = (file: string) => `/platforms/aiforbiodiversity/initiative-tech4nature/${file}`;
+const L = (file: string) => asset(`/platforms/aiforbiodiversity/initiative-tech4nature/${file}`);
 
 export type Partner = { name: string; logo: string; height?: number };
 
@@ -753,7 +755,7 @@ export const PARTNERS: { title: string; partners: Partner[] }[] = [
     partners: [
       { name: "C Minds", logo: L("ledby-cminds-1.svg") },
       { name: "AI for Climate and Biodiversity", logo: L("ledby-aiforclimate-2.svg") },
-      { name: "Grupo de Monitoreo Chac Mool", logo: L("partner-chacmool-w.png"), height: 64 },
+      { name: "Grupo de Monitoreo Chac Mool", logo: L("partner-chacmool-w.webp"), height: 64 },
       { name: "Gobierno del Estado de Yucatán, Secretaría de Desarrollo Sustentable", logo: L("ledby-sds-3.svg") },
     ],
   },
@@ -769,8 +771,8 @@ export const PARTNERS: { title: string; partners: Partner[] }[] = [
   {
     title: "Con las contribuciones estratégicas de",
     partners: [
-      { name: "Pronatura Península de Yucatán", logo: L("partner-pronatura-w.png"), height: 60 },
-      { name: "Fundación Pachamama", logo: L("partner-pachamama-w.png") },
+      { name: "Pronatura Península de Yucatán", logo: L("partner-pronatura-w.webp"), height: 60 },
+      { name: "Fundación Pachamama", logo: L("partner-pachamama-w.webp") },
       { name: "Universidad Politécnica de Yucatán", logo: L("innovationpartner-upy.svg") },
     ],
   },
@@ -865,14 +867,14 @@ export const FINDINGS = {
 export const LOCAL_VIDEOS = [
   {
     src: `${T4N_FILES}/video/festival-jaguar.mp4`,
-    poster: `${T4N_FILES}/video/festival-jaguar.jpg`,
+    poster: `${T4N_FILES}/video/festival-jaguar.webp`,
     title: "Dónde está Dzilam de Bravo",
     caption: "Del continente a la costa norte de Yucatán: así se llega a la reserva y al Festival del Jaguar.",
     loop: false,
   },
   {
     src: `${T4N_FILES}/video/dzilam-dron.mp4`,
-    poster: `${T4N_FILES}/video/dzilam-dron.jpg`,
+    poster: `${T4N_FILES}/video/dzilam-dron.webp`,
     title: "La selva de Dzilam desde el aire",
     caption: "Tomas de dron de la selva baja y los caminos por donde el equipo llega a las estaciones de monitoreo.",
     loop: true,

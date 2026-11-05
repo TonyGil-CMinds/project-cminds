@@ -3,6 +3,7 @@
 import type { Locale } from "@/i18n/config";
 import { getContent } from "../content";
 import { TOOLKIT_VERSION } from "../data";
+import { ASSETS_URL } from "@/lib/assets";
 
 const L = {
   es: {
@@ -30,8 +31,26 @@ export type BadgeFormat = "wide" | "square";
 const SIZES: Record<BadgeFormat, [number, number]> = { wide: [1200, 630], square: [1080, 1080] };
 
 /** El logotipo de Tech4Nature es de un solo color; se tiñe antes de dibujarlo en el lienzo. */
+/**
+ * SVG text of the logo. With NEXT_PUBLIC_ASSETS_URL the logo comes from R2, which
+ * needs CORS for this site's origin; if that fails, the same path is tried on this
+ * origin (the file is still deployed under /public), so the badge keeps working.
+ */
+async function fetchSvg(src: string): Promise<string> {
+  try {
+    const res = await fetch(src);
+    if (res.ok) return await res.text();
+    throw new Error(`HTTP ${res.status}`);
+  } catch (err) {
+    if (!ASSETS_URL || !src.startsWith(ASSETS_URL)) throw err;
+    const res = await fetch(src.slice(ASSETS_URL.length));
+    if (!res.ok) throw err;
+    return res.text();
+  }
+}
+
 async function loadLogo(color: string, src: string): Promise<HTMLImageElement> {
-  const svg = await (await fetch(src)).text();
+  const svg = await fetchSvg(src);
   const url = URL.createObjectURL(new Blob([svg.replace(/#101511/gi, color)], { type: "image/svg+xml" }));
   try {
     const img = new Image();

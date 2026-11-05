@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import type { Locale } from "@/i18n/config";
 import { IMAGES, TOOLKIT_VERSION, toolkitHref, type ToolkitPage } from "./data";
 import { getContent } from "./content";
+import { absoluteUrl } from "@/lib/assets";
 
 export const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL ??
+  process.env.NEXT_PUBLIC_SITE_URL ||
   (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "https://www.cminds.co")
 ).replace(/\/$/, "");
 
@@ -82,7 +83,7 @@ export function pageJsonLd(page: ToolkitPage, locale: Locale) {
       inLanguage: locale,
       isPartOf: { "@id": `${home}#toolkit` },
       breadcrumb: { "@id": `${url}#breadcrumb` },
-      primaryImageOfPage: `${SITE_URL}${OG_IMAGE}`,
+      primaryImageOfPage: absoluteUrl(OG_IMAGE, SITE_URL),
     },
     {
       "@type": "BreadcrumbList",
@@ -101,7 +102,7 @@ export function pageJsonLd(page: ToolkitPage, locale: Locale) {
       inLanguage: locale,
       version: TOOLKIT_VERSION,
       datePublished: "2026-10-27",
-      image: `${SITE_URL}${OG_IMAGE}`,
+      image: absoluteUrl(OG_IMAGE, SITE_URL),
       learningResourceType: en ? ["Guide", "Template", "Checklist"] : ["Guía", "Plantilla", "Lista de verificación"],
       audience: AUDIENCES.map((a) => ({ "@type": "Audience", audienceType: a.title })),
       about: en

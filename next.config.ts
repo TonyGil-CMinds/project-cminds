@@ -9,9 +9,33 @@ import type { NextConfig } from "next";
 // reviewed and the policy tightened to match actual app behavior, promote
 // this to a real `Content-Security-Policy` header.
 const cspReportOnly =
-  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; object-src 'none'";
+  "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' blob: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; object-src 'none'";
+
+/**
+ * Host of the Cloudflare R2 bucket that serves static media (see src/lib/assets.ts
+ * and docs/r2-assets.md). next/image only optimizes remote images whose host is
+ * listed in images.remotePatterns, so it is derived from the same variable.
+ * Read at build time: changing NEXT_PUBLIC_ASSETS_URL requires a new deploy.
+ */
+function assetsRemotePattern(): { protocol: "https"; hostname: string; pathname: string } | null {
+  const raw = process.env.NEXT_PUBLIC_ASSETS_URL?.trim();
+  if (!raw) return null;
+  try {
+    const url = new URL(raw);
+    if (url.protocol !== "https:") return null;
+    const base = url.pathname.replace(/\/+$/, "");
+    return { protocol: "https", hostname: url.hostname, pathname: `${base}/**` };
+  } catch {
+    return null;
+  }
+}
+
+const assetsPattern = assetsRemotePattern();
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: assetsPattern ? [assetsPattern] : [],
+  },
   typescript: {
     ignoreBuildErrors: true,
   },
