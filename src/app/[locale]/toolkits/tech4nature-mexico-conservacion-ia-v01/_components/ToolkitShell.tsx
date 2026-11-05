@@ -7,7 +7,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
-import SiteFooter from "@/components/SiteFooter";
 import { LOCALES, LOCALE_LABELS, localePath, swapLocale, type Locale } from "@/i18n/config";
 import {
   TOOLKIT_SLUG,
@@ -25,6 +24,7 @@ import CommandPalette from "./CommandPalette";
 import { LocaleProvider, useContent, useLocale } from "./i18n";
 import RefPreview from "./RefPreview";
 import { useClientValue } from "./useLocalStore";
+import { useGlider } from "./useGlider";
 import { IconArrowRight, IconCheck, IconChevronDown, IconClose, IconExternal, IconMenu, IconSearch } from "./icons";
 
 gsap.registerPlugin(ScrollTrigger, SplitText, useGSAP);
@@ -46,6 +46,7 @@ const L = {
     bioscanner: "Entrar a BioScanner",
     indexAria: "Índice del toolkit",
     index: "Índice",
+    dock: "Accesos rápidos",
     closeIndex: "Cerrar índice",
     rail: "Avance y recursos",
     reviewedOf: (done: number, total: number) => `${done} de ${total} revisadas`,
@@ -84,6 +85,7 @@ const L = {
     bioscanner: "Go to BioScanner",
     indexAria: "Toolkit index",
     index: "Index",
+    dock: "Quick actions",
     closeIndex: "Close index",
     rail: "Progress and resources",
     reviewedOf: (done: number, total: number) => `${done} of ${total} reviewed`,
@@ -147,7 +149,7 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const sidebarRef = useRef<HTMLElement>(null);
   const page = useCurrentPage();
-  const { reducedMotion, theme } = usePrefs();
+  const { reducedMotion } = usePrefs();
   const [navOpen, setNavOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const modKey = useClientValue(() => (/Mac|iPhone|iPad/.test(navigator.userAgent) ? "⌘" : "Ctrl"), "Ctrl");
@@ -191,7 +193,8 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
     if (!side || !link) return;
     const s = side.getBoundingClientRect();
     const l = link.getBoundingClientRect();
-    if (l.top < s.top + 60 || l.bottom > s.bottom - 60) side.scrollTo({ top: side.scrollTop + (l.top - s.top) - s.height / 3 });
+    const foot = side.querySelector<HTMLElement>(".tk-side-foot")?.offsetHeight ?? 0;
+    if (l.top < s.top + 60 || l.bottom > s.bottom - 60 - foot) side.scrollTo({ top: side.scrollTop + (l.top - s.top) - s.height / 3 });
   }, [page.slug]);
 
   // Atajos: Ctrl/⌘ K y "/" abren la búsqueda.
@@ -306,16 +309,6 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
         </a>
 
         <header className="tk-top">
-          <button
-            type="button"
-            className="tk-icon-btn"
-            aria-label={l.openIndex}
-            aria-expanded={navOpen}
-            aria-controls="tk-sidebar"
-            onClick={() => setNavOpen(true)}
-          >
-            <IconMenu />
-          </button>
           <div className="tk-top-brand">
             <Link href={localePath(locale, "/aiforbiodiversity")} aria-label="AI for Climate & Biodiversity">
               <img className="tk-top-logo" src={IMAGES.afbLogo.src} alt={IMAGES.afbLogo.alt} width={130} height={26} />
@@ -342,17 +335,6 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
               <kbd className="tk-kbd">{modKey} K</kbd>
             </button>
             <LangSwitch locale={locale} />
-            <A11yMenu />
-            <a
-              className="tk-cta tk-cta--top"
-              href={BIOSCANNER_APP}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={l.bioscannerAria}
-            >
-              <span className="tk-top-cta-label">{l.bioscanner}</span>
-              <IconExternal />
-            </a>
           </div>
           <div className="tk-top-progress" aria-hidden="true" />
         </header>
@@ -367,6 +349,13 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
             </div>
             <ProgressSummary compact locale={locale} />
             <Sidebar page={page} locale={locale} onNavigate={() => setNavOpen(false)} />
+            <div className="tk-side-foot">
+              <A11yMenu variant="side" />
+              <a className="tk-cta tk-side-cta" href={BIOSCANNER_APP} target="_blank" rel="noopener noreferrer" aria-label={l.bioscannerAria}>
+                <span>{l.bioscanner}</span>
+                <IconExternal />
+              </a>
+            </div>
           </aside>
 
           <main id="contenido" className="tk-main" tabIndex={-1}>
@@ -380,15 +369,43 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
           </aside>
         </div>
 
+        <nav className="tk-dock" aria-label={l.dock}>
+          <button
+            type="button"
+            className="tk-dock-btn"
+            aria-label={l.openIndex}
+            aria-expanded={navOpen}
+            aria-controls="tk-sidebar"
+            onClick={() => setNavOpen(true)}
+          >
+            <IconMenu />
+            <span aria-hidden="true">{l.index}</span>
+          </button>
+          <button type="button" className="tk-dock-btn" aria-label={l.searchAria} onClick={() => setSearchOpen(true)}>
+            <IconSearch />
+            <span aria-hidden="true">{l.search}</span>
+          </button>
+          <A11yMenu variant="dock" />
+          <a
+            className="tk-dock-btn tk-dock-btn--cta"
+            href={BIOSCANNER_APP}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label={l.bioscannerAria}
+          >
+            <span className="tk-dock-cta-icon">
+              <IconExternal />
+            </span>
+            <span aria-hidden="true">BioScanner</span>
+          </a>
+        </nav>
+
         <div className="tk-scrim" data-open={navOpen || undefined} onClick={() => setNavOpen(false)} aria-hidden="true" />
         <CommandPalette open={searchOpen} onClose={() => setSearchOpen(false)} />
         <RefPreview />
         <SpeechPlayer />
         <FocusReader />
         <CompletionDialog />
-      </div>
-      <div className="afb-footer-wrap tk-footer-wrap" data-theme={theme}>
-        <SiteFooter />
       </div>
     </>
   );
@@ -431,7 +448,7 @@ function Sidebar({ page, locale, onNavigate }: { page: ToolkitPage; locale: Loca
               ) : null}
               <IconChevronDown />
             </button>
-            <ul id={`tk-nav-${group.id}`} className="tk-side-list" hidden={!open}>
+            <SideList id={`tk-nav-${group.id}`} hidden={!open} activeKey={page.slug}>
               {pages.map((p) => (
                 <li key={p.slug}>
                   <Link
@@ -452,11 +469,21 @@ function Sidebar({ page, locale, onNavigate }: { page: ToolkitPage; locale: Loca
                   </Link>
                 </li>
               ))}
-            </ul>
+            </SideList>
           </div>
         );
       })}
     </nav>
+  );
+}
+
+/** Submenú de un grupo, con el indicador deslizante sobre la página actual. */
+function SideList({ id, hidden, activeKey, children }: { id: string; hidden: boolean; activeKey: string; children: ReactNode }) {
+  const ref = useGlider<HTMLUListElement>(activeKey);
+  return (
+    <ul ref={ref} id={id} className="tk-side-list tk-glider" hidden={hidden}>
+      {children}
+    </ul>
   );
 }
 
@@ -549,6 +576,7 @@ function PageToc({ slug }: { slug: string }) {
   const l = L[locale];
   const [items, setItems] = useState<{ id: string; text: string }[]>([]);
   const [active, setActive] = useState<string | null>(null);
+  const listRef = useGlider<HTMLOListElement>(`${items.length}:${active}`);
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => {
@@ -585,7 +613,7 @@ function PageToc({ slug }: { slug: string }) {
   return (
     <nav className="tk-toc" aria-label={l.onThisPage}>
       <p className="tk-toc-title">{l.onThisPage}</p>
-      <ol>
+      <ol ref={listRef} className="tk-glider">
         {items.map((item, i) => (
           <li key={item.id}>
             <a

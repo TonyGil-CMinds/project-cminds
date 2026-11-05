@@ -37,6 +37,8 @@ interface AwardBadgeProps {
   width?: number
   /** Accessible name; defaults to eyebrow + title. */
   label?: string
+  /** Corner radius in viewBox units (10 by default, 0 for square corners). */
+  corner?: number
   className?: string
 }
 
@@ -116,6 +118,7 @@ export const AwardBadge = ({
   stroke = "#bbb",
   width,
   label,
+  corner = 10,
   className,
 }: AwardBadgeProps) => {
   const uid = useId().replace(/:/g, "")
@@ -279,7 +282,7 @@ export const AwardBadge = ({
           <feGaussianBlur in="SourceGraphic" stdDeviation="3" />
         </filter>
         <mask id={`ab-mask-${uid}`}>
-          <rect width="260" height="54" fill="white" rx="10" />
+          <rect width="260" height="54" fill="white" rx={corner} />
         </mask>
         {Array.isArray(fill) ? (
           <linearGradient id={gradientId} x1="0" y1="0" x2="1" y2="1">
@@ -288,8 +291,8 @@ export const AwardBadge = ({
           </linearGradient>
         ) : null}
       </defs>
-      <rect width="260" height="54" rx="10" fill={Array.isArray(fill) ? `url(#${gradientId})` : fill} />
-      <rect x="4" y="4" width="252" height="46" rx="8" fill="transparent" stroke={stroke} strokeWidth="1" />
+      <rect width="260" height="54" rx={corner} fill={Array.isArray(fill) ? `url(#${gradientId})` : fill} />
+      <rect x="4" y="4" width="252" height="46" rx={Math.max(0, corner - 2)} fill="transparent" stroke={stroke} strokeWidth="1" />
       <text fontFamily="Helvetica-Bold, Helvetica, Arial, sans-serif" fontSize="9" fontWeight="bold" fill={ink} x={textX + 1} y="20" letterSpacing="0.4">
         {eyebrow}
       </text>

@@ -86,6 +86,7 @@ export function T4NBadge({ width, locked = false }: { width?: number; locked?: b
     <div className={locked ? "tk-badge tk-badge--locked" : "tk-badge"}>
       <AwardBadge
         width={width}
+        corner={7}
         eyebrow={l.eyebrow}
         title={locked ? l.lockedTitle : l.doneTitle}
         label={locked ? l.lockedLabel : l.doneLabel}

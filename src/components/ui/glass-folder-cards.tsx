@@ -99,6 +99,8 @@ export type GlassFolderProps = {
   onFileSelect?: (file: FolderFile, index: number) => void
   /** Width in px. Everything else scales with it; the height is 0.96 × width. */
   width?: number
+  /** Corner radius of the folder panels, in viewBox units (22 by default, 0 for square corners). */
+  corner?: number
   /** Assemble itself the first time it scrolls into view. */
   appear?: boolean
   /** Delay before that entrance, in ms — for staggering a row of folders. */
@@ -542,18 +544,23 @@ const FRONT_H = H - FRONT_TOP
 const SHEET_W = 272
 const SHEET_H = 184
 
-const BACK_PATH =
-  "M0 56A22 22 0 0 1 22 34L146 34C170 34 172 0 198 0L318 0A22 22 0 0 1 340 22L340 250A22 22 0 0 1 318 272L22 272A22 22 0 0 1 0 250Z"
-const FRONT_PATH =
-  "M0 22A22 22 0 0 1 22 0L118 0C144 0 146 32 172 32L318 32A22 22 0 0 1 340 54L340 " +
-  (FRONT_H - 22) +
-  "A22 22 0 0 1 318 " +
-  FRONT_H +
-  "L22 " +
-  FRONT_H +
-  "A22 22 0 0 1 0 " +
-  (FRONT_H - 22) +
-  "Z"
+/** Back panel outline; `r` is the corner radius (0 = square corners). */
+function backPath(r: number) {
+  return (
+    "M0 " + (34 + r) + "A" + r + " " + r + " 0 0 1 " + r + " 34L146 34C170 34 172 0 198 0L" + (340 - r) + " 0" +
+    "A" + r + " " + r + " 0 0 1 340 " + r + "L340 " + (272 - r) + "A" + r + " " + r + " 0 0 1 " + (340 - r) + " 272" +
+    "L" + r + " 272A" + r + " " + r + " 0 0 1 0 " + (272 - r) + "Z"
+  )
+}
+/** Front panel outline; `r` is the corner radius (0 = square corners). */
+function frontPath(r: number) {
+  return (
+    "M0 " + r + "A" + r + " " + r + " 0 0 1 " + r + " 0L118 0C144 0 146 32 172 32L" + (340 - r) + " 32" +
+    "A" + r + " " + r + " 0 0 1 340 " + (32 + r) + "L340 " + (FRONT_H - r) +
+    "A" + r + " " + r + " 0 0 1 " + (340 - r) + " " + FRONT_H + "L" + r + " " + FRONT_H +
+    "A" + r + " " + r + " 0 0 1 0 " + (FRONT_H - r) + "Z"
+  )
+}
 
 const MAX_VISIBLE = 4
 
@@ -581,6 +588,7 @@ export default function GlassFolder({
   onOpenChange,
   onFileSelect,
   width = 340,
+  corner = 22,
   appear = true,
   appearDelay = 0,
   strings,
@@ -588,6 +596,9 @@ export default function GlassFolder({
   style,
 }: GlassFolderProps) {
   const s = { ...DEFAULT_STRINGS, ...strings }
+  const r = Math.max(0, Math.min(corner, 30))
+  const BACK_PATH = backPath(r)
+  const FRONT_PATH = frontPath(r)
   const uid = React.useId().replace(/:/g, "")
   const rootRef = React.useRef<HTMLDivElement>(null)
   const filesRef = React.useRef<HTMLDivElement>(null)

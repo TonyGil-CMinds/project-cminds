@@ -55,7 +55,6 @@ export const T4N_HOME = {
   title: "Tech4Nature Mexico",
   subtitle:
     "A multisector initiative that strengthens nature conservation and territorial governance on the Yucatán Peninsula through biodiversity monitoring, strategic partnerships and frontier technologies that support data-driven decision-making.",
-  eyebrow: "Tech4Nature Mexico · 2022–2026",
   invite:
     "The replication toolkit brings together what we learned over four years, organized in five stages with tools and templates, so other territories can create their own initiative.",
 };

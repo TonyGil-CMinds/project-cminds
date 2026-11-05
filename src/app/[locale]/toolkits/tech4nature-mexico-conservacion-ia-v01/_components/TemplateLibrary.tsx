@@ -91,6 +91,7 @@ export function TemplateFolder({ template, index, width = 260 }: { template: Tem
   return (
     <GlassFolder
       width={width}
+      corner={10}
       tone={theme}
       art={ARTS[index % ARTS.length]}
       seed={index * 7 + 3}

@@ -167,8 +167,14 @@ function useReadOnFocusToggle() {
 }
 
 /** Botón de la barra superior y panel de preferencias de accesibilidad. */
-export function A11yMenu() {
+/**
+ * Botón y panel de accesibilidad.
+ * - `side`: pie de la barra lateral (escritorio); el panel se abre hacia arriba.
+ * - `dock`: barra inferior (móvil); el panel sube como hoja sobre la barra.
+ */
+export function A11yMenu({ variant }: { variant: "side" | "dock" }) {
   const { prefs, setPref, reset } = usePrefs();
+  const panelId = `tk-a11y-panel-${useId().replace(/[^a-zA-Z0-9_-]/g, "")}`;
   const toggleReadOnFocus = useReadOnFocusToggle();
   const locale = useLocale();
   const l = L[locale];
@@ -202,22 +208,23 @@ export function A11yMenu() {
   }, [open]);
 
   return (
-    <div className="tk-a11y">
+    <div className={`tk-a11y tk-a11y--${variant}`}>
       <button
         ref={triggerRef}
         type="button"
-        className="tk-icon-btn tk-icon-btn--always"
+        className={variant === "dock" ? "tk-dock-btn" : "tk-icon-btn tk-icon-btn--always"}
         aria-label={l.prefs}
         aria-expanded={open}
-        aria-controls="tk-a11y-panel"
+        aria-controls={panelId}
         onClick={() => setOpen((o) => !o)}
       >
         <IconAccessibility />
+        {variant === "dock" ? <span aria-hidden="true">{l.a11y}</span> : null}
       </button>
 
       <div
         ref={panelRef}
-        id="tk-a11y-panel"
+        id={panelId}
         className="tk-a11y-panel"
         role="dialog"
         aria-label={l.prefs}

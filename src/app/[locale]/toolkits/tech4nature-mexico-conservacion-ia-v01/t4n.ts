@@ -293,7 +293,6 @@ export const T4N_HOME = {
   title: "Tech4Nature México",
   subtitle:
     "Iniciativa multisectorial que fortalece la conservación de la naturaleza y la gobernanza del territorio en la península de Yucatán a través del monitoreo de biodiversidad, alianzas estratégicas y tecnologías de frontera para apoyar la toma de decisiones basada en datos.",
-  eyebrow: "Tech4Nature México · 2022–2026",
   invite:
     "El toolkit de replicabilidad reúne lo que aprendimos en cuatro años, en cinco etapas con herramientas y plantillas, para que otros territorios creen su propia iniciativa.",
 };

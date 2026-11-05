@@ -1,0 +1,15 @@
+/* Dot Pattern — see dot-pattern.tsx. Fills the nearest positioned ancestor. */
+.dot-pattern {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  fill: var(--dot-pattern-fill, rgba(100, 116, 139, 0.5));
+}
+
+@media (min-width: 768px) {
+  .dot-pattern {
+    fill: var(--dot-pattern-fill-md, var(--dot-pattern-fill, rgba(100, 116, 139, 0.7)));
+  }
+}

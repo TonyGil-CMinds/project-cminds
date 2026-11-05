@@ -28,6 +28,8 @@ import VideoList from "./VideoList";
 import WhyCharts from "./WhyCharts";
 import type { TeamGroup } from "../t4n";
 import { ExternalLink, Rich, slugId } from "./rich";
+import { Callout, CalloutTitle } from "./Callout";
+import { DotPattern } from "@/components/ui/dot-pattern";
 import { IconArrowRight, IconCalendar, IconCheckCircle, IconChevronDown, IconChevronLeft, IconExternal, IconPin } from "./icons";
 
 const L = {
@@ -565,9 +567,6 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
           </span>
           <span className="tk-chip">2022–2026</span>
         </div>
-        <p className="tk-hero-eyebrow tk-hero-eyebrow--top" data-hero>
-          {T4N_HOME.eyebrow}
-        </p>
         <h1 id="tk-page-title" className="tk-h1 tk-h1--hero">
           <span className="tk-grad">Tech4Nature</span> {l.mexico}
         </h1>
@@ -575,7 +574,7 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
           {T4N_HOME.subtitle}
         </p>
         <div className="tk-banner" data-hero>
-          <Image className="tk-banner-img" src={IMAGES.hero.src} alt={IMAGES.hero.alt} fill priority sizes="(max-width: 1023px) 100vw, 780px" />
+          <Image className="tk-banner-img" src={IMAGES.hero.src} alt={IMAGES.hero.alt} fill priority sizes="(max-width: 1023px) 100vw, 960px" />
           <div className="tk-banner-body">
             <img className="tk-banner-logo" src={IMAGES.logo.src} alt={IMAGES.logo.alt} width={297} height={199} />
             <div className="tk-banner-meta">
@@ -1006,18 +1005,15 @@ export function BioculturalPage({ page, locale }: { page: ToolkitPage; locale: L
         ))}
       </ul>
 
-      <section className="tk-callout tk-callout--sky tk-elsewhere" aria-labelledby="otro-biocultural" data-reveal>
-        <span className="tk-callout-label">{l.elsewhere}</span>
-        <h2 id="otro-biocultural" className="tk-elsewhere-title" data-toc={`${l.elsewhere}: ${e.place}`}>
-          {e.place}
-        </h2>
+      <Callout tone="sky" label={l.elsewhere} className="tk-elsewhere" aria-labelledby="otro-biocultural">
+        <CalloutTitle id="otro-biocultural" text={e.place} toc={`${l.elsewhere}: ${e.place}`} />
         {e.paragraphs.map((p, i) => (
           <p key={i}>{p}</p>
         ))}
-        <p>
+        <p className="tk-callout-cta">
           <ExternalLink href={e.link.url}>{e.link.label}</ExternalLink>
         </p>
-      </section>
+      </Callout>
     </PageFrame>
   );
 }
@@ -1087,18 +1083,15 @@ export function SoberaniaPage({ page, locale }: { page: ToolkitPage; locale: Loc
         ))}
       </ul>
 
-      <section className="tk-callout tk-callout--sky tk-elsewhere" aria-labelledby="otro-soberania" data-reveal>
-        <span className="tk-callout-label">{l.elsewhere}</span>
-        <h2 id="otro-soberania" className="tk-elsewhere-title" data-toc={`${l.elsewhere}: ${e.place}`}>
-          {e.place}
-        </h2>
+      <Callout tone="sky" label={l.elsewhere} className="tk-elsewhere" aria-labelledby="otro-soberania">
+        <CalloutTitle id="otro-soberania" text={e.place} toc={`${l.elsewhere}: ${e.place}`} />
         {e.paragraphs.map((p, i) => (
           <p key={i}>{p}</p>
         ))}
-        <p>
+        <p className="tk-callout-cta">
           <ExternalLink href={e.link.url}>{e.link.label}</ExternalLink>
         </p>
-      </section>
+      </Callout>
     </PageFrame>
   );
 }
@@ -1201,16 +1194,13 @@ export function ListaVerdePage({ page, locale }: { page: ToolkitPage; locale: Lo
         ))}
       </ul>
 
-      <section className="tk-callout tk-callout--sky tk-elsewhere" aria-labelledby="otro-listaverde" data-reveal>
-        <span className="tk-callout-label">{l.elsewhere}</span>
-        <h2 id="otro-listaverde" className="tk-elsewhere-title" data-toc={`${l.elsewhere}: ${e.place}`}>
-          {e.place}
-        </h2>
+      <Callout tone="sky" label={l.elsewhere} className="tk-elsewhere" aria-labelledby="otro-listaverde">
+        <CalloutTitle id="otro-listaverde" text={e.place} toc={`${l.elsewhere}: ${e.place}`} />
         <p>{e.text}</p>
-        <p>
+        <p className="tk-callout-cta">
           <ExternalLink href={e.link.url}>{e.link.label}</ExternalLink>
         </p>
-      </section>
+      </Callout>
     </PageFrame>
   );
 }
@@ -1222,10 +1212,16 @@ function BioScannerInline({ locale }: { locale: Locale }) {
   const { IMAGES } = getContent(locale);
   const l = L[locale];
   return (
-    <aside className="tk-inline-promo" aria-label="BioScanner">
-      <Image src={IMAGES.bioscanner.src} alt={IMAGES.bioscanner.alt} width={482} height={298} sizes="180px" />
-      <div>
-        <span className="tk-eyebrow">{l.bsEyebrow}</span>
+    <aside className="tk-inline-promo" aria-label="BioScanner" data-reveal>
+      <div className="tk-inline-promo-media">
+        <DotPattern width={8} height={8} cx={1} cy={1} cr={0.8} className="tk-inline-promo-dots" />
+        <Image src={IMAGES.bioscanner.src} alt={IMAGES.bioscanner.alt} width={482} height={298} sizes="(max-width: 640px) 100vw, 200px" />
+      </div>
+      <div className="tk-inline-promo-body">
+        <span className="tk-eyebrow tk-eyebrow--live">
+          <span className="tk-live-dot" aria-hidden="true" />
+          {l.bsEyebrow}
+        </span>
         <p className="tk-promo-title">{l.bsTitle}</p>
         <p>{l.bsText}</p>
         <div className="tk-inline-promo-actions">
@@ -1233,6 +1229,7 @@ function BioScannerInline({ locale }: { locale: Locale }) {
             {l.bsCta}
             <IconExternal />
           </a>
+          <span className="tk-inline-promo-url" aria-hidden="true">app.bioscanner.io</span>
         </div>
       </div>
     </aside>
@@ -1433,29 +1430,34 @@ export function StagePage({ page, locale, stage }: { page: ToolkitPage; locale: 
       </ul>
       {stage.id === "e3" ? <BioScannerInline locale={locale} /> : null}
       {STAGE_GREEN_LIST[stage.id] ? (
-        <section className="tk-callout tk-callout--amber" aria-label={l.greenList} data-reveal>
-          <span className="tk-callout-label">{l.greenList}</span>
+        <Callout tone="amber" label={l.greenList} aria-label={l.greenList}>
           <p>
-            <strong>{STAGE_GREEN_LIST[stage.id].criteria}.</strong> {STAGE_GREEN_LIST[stage.id].text}{" "}
-            <Link href={toolkitHref(locale, "lista-verde-uicn")}>{l.greenListLink}</Link>.
+            <strong>{STAGE_GREEN_LIST[stage.id].criteria}.</strong> {STAGE_GREEN_LIST[stage.id].text}
           </p>
-        </section>
+          <p className="tk-callout-cta">
+            <Link className="tk-callout-link" href={toolkitHref(locale, "lista-verde-uicn")}>
+              {l.greenListLink}
+              <IconArrowRight />
+            </Link>
+          </p>
+        </Callout>
       ) : null}
       <p className="tk-meta-line">
         {l.moreOptions}{" "}
         <Link href={toolkitHref(locale, "caja-de-herramientas")}>{l.toolbox}</Link>.
       </p>
 
-      <section className="tk-callout tk-callout--sky tk-elsewhere" aria-labelledby={`otro-${stage.id}`} data-reveal>
-        <span className="tk-callout-label">{l.elsewhere}</span>
-        <h2 id={`otro-${stage.id}`} className="tk-elsewhere-title" data-toc={`${l.elsewhere}: ${stage.elsewhere.place}`}>
-          {stage.elsewhere.place.charAt(0).toUpperCase() + stage.elsewhere.place.slice(1)}
-        </h2>
+      <Callout tone="sky" label={l.elsewhere} className="tk-elsewhere" aria-labelledby={`otro-${stage.id}`}>
+        <CalloutTitle
+          id={`otro-${stage.id}`}
+          text={stage.elsewhere.place.charAt(0).toUpperCase() + stage.elsewhere.place.slice(1)}
+          toc={`${l.elsewhere}: ${stage.elsewhere.place}`}
+        />
         <p>{stage.elsewhere.text}</p>
-        <p>
+        <p className="tk-callout-cta">
           <ExternalLink href={stage.elsewhere.link.url}>{stage.elsewhere.link.label}</ExternalLink>
         </p>
-      </section>
+      </Callout>
 
       <ActionFinish id={stage.id} code={stage.code} label={label} nextSlug={nextPage?.slug} nextLabel={nextPage?.label} />
     </PageFrame>
@@ -1646,10 +1648,9 @@ export function FuentesPage({ page, locale }: { page: ToolkitPage; locale: Local
           </li>
         ))}
       </ul>
-      <div className="tk-callout" data-reveal>
-        <span className="tk-callout-label">{l.living}</span>
+      <Callout as="div" label={l.living}>
         <p>{LIVING_NOTE}</p>
-      </div>
+      </Callout>
       <H2>{l.cite}</H2>
       <div className="tk-cite-box" data-reveal>
         <p>{cite}</p>
