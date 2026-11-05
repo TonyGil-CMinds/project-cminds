@@ -20,19 +20,52 @@ function negotiateLocale(header: string | null): Locale {
   return DEFAULT_LOCALE;
 }
 
+/** The visitor's saved language choice, else the browser's preference. */
+function preferredLocale(request: NextRequest): Locale {
+  const cookie = request.cookies.get("NEXT_LOCALE")?.value;
+  return isLocale(cookie) ? cookie : negotiateLocale(request.headers.get("accept-language"));
+}
+
+/**
+ * Short shareable links → the page they stand for (without the locale).
+ * Kept here rather than imported, so the proxy bundle stays small; the toolkit
+ * target must match TOOLKIT_PATH in its data.ts.
+ */
+const SHORT_LINKS: Record<string, string> = {
+  "/tech4nature-toolkit-v1": "/toolkits/tech4nature-mexico-conservacion-ia-v01",
+  "/tech4nature-mexico-toolkit-v1": "/toolkits/tech4nature-mexico-conservacion-ia-v01",
+};
+
+/** Target for a short link, keeping any sub-path (/tech4nature-toolkit-v1/insignia). */
+function shortLinkTarget(path: string): string | null {
+  for (const [short, target] of Object.entries(SHORT_LINKS)) {
+    if (path === short || path.startsWith(`${short}/`)) return target + path.slice(short.length);
+  }
+  return null;
+}
+
 export default function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
   const first = pathname.split("/")[1];
+  const hasLocale = isLocale(first);
+
+  // Short links work with or without a locale (/tech4nature-toolkit-v1, /es/tech4nature-toolkit-v1).
+  // Temporary redirect, so a short link can later point somewhere else.
+  const target = shortLinkTarget(hasLocale ? pathname.slice(first.length + 1) : pathname);
+  if (target) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/${hasLocale ? first : preferredLocale(request)}${target}`;
+    url.search = search;
+    return NextResponse.redirect(url, 307);
+  }
 
   // Already locale-prefixed — nothing to do.
-  if (isLocale(first)) return NextResponse.next();
+  if (hasLocale) return NextResponse.next();
 
   // Root: negotiate from the browser, remember the choice.
   if (pathname === "/") {
-    const cookie = request.cookies.get("NEXT_LOCALE")?.value;
-    const locale = isLocale(cookie) ? cookie : negotiateLocale(request.headers.get("accept-language"));
     const url = request.nextUrl.clone();
-    url.pathname = `/${locale}`;
+    url.pathname = `/${preferredLocale(request)}`;
     return NextResponse.redirect(url, 307);
   }
 
