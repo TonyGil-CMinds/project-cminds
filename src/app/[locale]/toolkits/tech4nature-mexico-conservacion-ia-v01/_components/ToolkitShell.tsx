@@ -20,6 +20,7 @@ import { PrefsProvider, usePrefs } from "./Preferences";
 import { A11yMenu, FocusReader, SpeechPlayer } from "./Accessibility";
 import { stop as stopSpeech } from "./speech";
 import { CompletionDialog } from "./CompletionDialog";
+import Onboarding from "./Onboarding";
 import CommandPalette from "./CommandPalette";
 import { LocaleProvider, useContent, useLocale } from "./i18n";
 import RefPreview from "./RefPreview";
@@ -406,6 +407,7 @@ function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
         <SpeechPlayer />
         <FocusReader />
         <CompletionDialog />
+        <Onboarding />
       </div>
     </>
   );

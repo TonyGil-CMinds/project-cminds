@@ -36,6 +36,19 @@ export const IconExternal = (p: IconProps) => (
 export const IconSliders = (p: IconProps) => (
   <svg {...base} {...p}><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
 );
+/* Perfiles de la bienvenida (rutas por público). */
+export const IconLeaf = (p: IconProps) => (
+  <svg {...base} {...p}><path d="M5 19c0-8 5.5-13.5 14-14 .5 8.5-5 14-13 14z" /><path d="M5 19l7.5-7.5" /></svg>
+);
+export const IconLandmark = (p: IconProps) => (
+  <svg {...base} {...p}><path d="M3.5 9.5L12 4.5l8.5 5M5 9.5v8M9.7 9.5v8M14.3 9.5v8M19 9.5v8M3.5 20h17" /></svg>
+);
+export const IconHandshake = (p: IconProps) => (
+  <svg {...base} {...p}><path d="M3 11.5l3.5-3.5 3 1.5 2.5-2 2.5 1 3-1.5L21 11" /><path d="M6.5 13.5l3.5 3.5a1.4 1.4 0 0 0 2-2M11 15.5l1.5 1.5a1.4 1.4 0 0 0 2-2l-1-1M13.5 13l1.5 1.5a1.4 1.4 0 0 0 2-2L14 9.5" /></svg>
+);
+export const IconCompass = (p: IconProps) => (
+  <svg {...base} {...p}><circle cx="12" cy="12" r="8.5" /><path d="M15.5 8.5l-2 5-5 2 2-5z" /></svg>
+);
 /* Reproductor de video. */
 export const IconPlayFill = (p: IconProps) => (
   <svg viewBox="0 0 24 24" aria-hidden="true" {...p}><path fill="currentColor" d="M8 5.6v12.8a1 1 0 0 0 1.5.86l10.2-6.4a1 1 0 0 0 0-1.72L9.5 4.74A1 1 0 0 0 8 5.6z" /></svg>
