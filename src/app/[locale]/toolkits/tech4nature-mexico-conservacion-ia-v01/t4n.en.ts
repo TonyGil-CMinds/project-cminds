@@ -2,6 +2,7 @@ export * from "./t4n";
 
 import { asset } from "@/lib/assets";
 import type { Photo, Person, TeamGroup, GalleryPhoto, Spotlight, Video, Partner } from "./t4n";
+import { P } from "./t4n";
 import type * as Es from "./t4n";
 
 // t4n.ts declares the *_INTRO strings without an annotation, so their type is the
@@ -498,31 +499,53 @@ export const VIDEOS: Video[] = [
 
 const logo = (file: string) => asset(`/platforms/aiforbiodiversity/initiative-tech4nature/${file}`);
 
+const TECH4NATURE_URL = "https://tech4nature.iucngreenlist.org/";
+
 export const PARTNERS: { title: string; partners: Partner[] }[] = [
   {
     title: "Led by",
     partners: [
-      { name: "C Minds", logo: logo("ledby-cminds-1.svg") },
-      { name: "AI for Climate and Biodiversity", logo: logo("ledby-aiforclimate-2.svg") },
-      { name: "Chac Mool Monitoring Group", logo: logo("partner-chacmool-w.webp"), height: 64 },
-      { name: "Government of the State of Yucatán, Ministry of Sustainable Development", logo: logo("ledby-sds-3.svg") },
+      {
+        name: "C Minds",
+        logo: logo("ledby-cminds-1.svg"),
+        mono: "dark",
+        joined: { name: "AI for Climate and Biodiversity", logo: logo("ledby-aiforclimate-2.svg"), mono: "dark" },
+      },
+      { name: "Chac Mool Monitoring Group", logo: logo("partner-chacmool-w.webp"), mono: "white", height: 64 },
+      {
+        name: "Government of the State of Yucatán, Ministry of Sustainable Development",
+        logo: logo("ledby-sds-3.svg"),
+        mono: "dark",
+        href: "https://sds.yucatan.gob.mx/",
+      },
     ],
   },
   {
     title: "With support from",
     partners: [
-      { name: "IUCN", logo: logo("supportedby-iucn-1.svg") },
-      { name: "Huawei", logo: logo("supportedby-huawei-3.svg") },
-      { name: "Tech4All", logo: logo("supportedby-tech4all-4.svg") },
-      { name: "IUCN Green List", logo: logo("supportedby-greenlist-2.svg") },
+      { name: "Huawei", logo: P("huawei-logo-lightmode.svg"), dark: P("huawei-logo-darkmode.svg"), href: "https://www.huawei.com/en/tech4all", height: 58 },
+      {
+        name: "Tech4Nature: Tech4All and IUCN Green List",
+        logo: P("tech4allgreenlist-logo-lightmode.svg"),
+        dark: P("tech4allgreenlist-logo-darkmode.svg"),
+        href: TECH4NATURE_URL,
+        height: 60,
+      },
+      { name: "IUCN", logo: P("iucn-logo-lightmode.svg"), dark: P("iucn-logo-darkmode.svg"), href: "https://iucn.org/", height: 54 },
     ],
   },
   {
     title: "With strategic contributions from",
     partners: [
-      { name: "Pronatura Península de Yucatán", logo: logo("partner-pronatura-w.webp"), height: 60 },
-      { name: "Fundación Pachamama", logo: logo("partner-pachamama-w.webp") },
-      { name: "Universidad Politécnica de Yucatán", logo: logo("innovationpartner-upy.svg") },
+      {
+        name: "Pronatura Península de Yucatán",
+        logo: P("pronatura-logo-lightmode.svg"),
+        dark: P("pronatura-logo-darkmode.svg"),
+        href: "https://www.pronatura-ppy.org.mx/",
+        height: 58,
+      },
+      { name: "Fundación Pachamama", logo: logo("partner-pachamama-w.webp"), mono: "white", href: "https://www.pachamama.org.ec/" },
+      { name: "Universidad Politécnica de Yucatán", logo: P("upy-logo-lightmode.svg"), dark: P("upy-logo-darkmode.svg"), href: "https://www.upy.edu.mx/" },
     ],
   },
 ];

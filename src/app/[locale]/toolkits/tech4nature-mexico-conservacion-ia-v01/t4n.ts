@@ -744,33 +744,77 @@ export const VIDEOS: Video[] = [
 
 const L = (file: string) => asset(`/platforms/aiforbiodiversity/initiative-tech4nature/${file}`);
 
-export type Partner = { name: string; logo: string; height?: number };
+/** Logos en color que entregaron los socios (servidos desde /public). */
+export const P = (file: string) => `/partners/tech4nature/${file}`;
+const TECH4NATURE_URL = "https://tech4nature.iucngreenlist.org/";
+
+export type PartnerLogo = {
+  name: string;
+  /** Logo en su color original (tema claro), o el único logo si es de un solo color. */
+  logo: string;
+  /** Versión para el tema oscuro, cuando el socio la entregó. */
+  dark?: string;
+  /**
+   * Logo de un solo color sin versión para el otro tema: «dark» se pinta de blanco en el
+   * tema oscuro y «white» de negro en el claro.
+   */
+  mono?: "dark" | "white";
+  /** Alto en px para logos más cuadrados, que a 46 px se ven chicos. */
+  height?: number;
+};
+
+export type Partner = PartnerLogo & {
+  /** Sitio del socio (se abre en una pestaña nueva). */
+  href?: string;
+  /** Segundo logo en el mismo bloque, separado por una línea vertical (p. ej. C Minds | AI for Climate). */
+  joined?: PartnerLogo;
+};
 
 export const PARTNERS: { title: string; partners: Partner[] }[] = [
   {
     title: "Liderado por",
     partners: [
-      { name: "C Minds", logo: L("ledby-cminds-1.svg") },
-      { name: "AI for Climate and Biodiversity", logo: L("ledby-aiforclimate-2.svg") },
-      { name: "Grupo de Monitoreo Chac Mool", logo: L("partner-chacmool-w.webp"), height: 64 },
-      { name: "Gobierno del Estado de Yucatán, Secretaría de Desarrollo Sustentable", logo: L("ledby-sds-3.svg") },
+      {
+        name: "C Minds",
+        logo: L("ledby-cminds-1.svg"),
+        mono: "dark",
+        joined: { name: "AI for Climate and Biodiversity", logo: L("ledby-aiforclimate-2.svg"), mono: "dark" },
+      },
+      { name: "Grupo de Monitoreo Chac Mool", logo: L("partner-chacmool-w.webp"), mono: "white", height: 64 },
+      {
+        name: "Gobierno del Estado de Yucatán, Secretaría de Desarrollo Sustentable",
+        logo: L("ledby-sds-3.svg"),
+        mono: "dark",
+        href: "https://sds.yucatan.gob.mx/",
+      },
     ],
   },
   {
     title: "Con el apoyo de",
     partners: [
-      { name: "UICN", logo: L("supportedby-iucn-1.svg") },
-      { name: "Huawei", logo: L("supportedby-huawei-3.svg") },
-      { name: "Tech4All", logo: L("supportedby-tech4all-4.svg") },
-      { name: "Lista Verde de la UICN", logo: L("supportedby-greenlist-2.svg") },
+      { name: "Huawei", logo: P("huawei-logo-lightmode.svg"), dark: P("huawei-logo-darkmode.svg"), href: "https://www.huawei.com/en/tech4all", height: 58 },
+      {
+        name: "Tech4Nature: Tech4All y Lista Verde de la UICN",
+        logo: P("tech4allgreenlist-logo-lightmode.svg"),
+        dark: P("tech4allgreenlist-logo-darkmode.svg"),
+        href: TECH4NATURE_URL,
+        height: 60,
+      },
+      { name: "UICN", logo: P("iucn-logo-lightmode.svg"), dark: P("iucn-logo-darkmode.svg"), href: "https://iucn.org/", height: 54 },
     ],
   },
   {
     title: "Con las contribuciones estratégicas de",
     partners: [
-      { name: "Pronatura Península de Yucatán", logo: L("partner-pronatura-w.webp"), height: 60 },
-      { name: "Fundación Pachamama", logo: L("partner-pachamama-w.webp") },
-      { name: "Universidad Politécnica de Yucatán", logo: L("innovationpartner-upy.svg") },
+      {
+        name: "Pronatura Península de Yucatán",
+        logo: P("pronatura-logo-lightmode.svg"),
+        dark: P("pronatura-logo-darkmode.svg"),
+        href: "https://www.pronatura-ppy.org.mx/",
+        height: 58,
+      },
+      { name: "Fundación Pachamama", logo: L("partner-pachamama-w.webp"), mono: "white", href: "https://www.pachamama.org.ec/" },
+      { name: "Universidad Politécnica de Yucatán", logo: P("upy-logo-lightmode.svg"), dark: P("upy-logo-darkmode.svg"), href: "https://www.upy.edu.mx/" },
     ],
   },
 ];

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { localePath, type Locale } from "@/i18n/config";
@@ -26,7 +26,7 @@ import Avatar from "./Avatar";
 import PhotoGrid from "./PhotoGrid";
 import VideoList, { LocalVideos } from "./VideoList";
 import WhyCharts from "./WhyCharts";
-import type { TeamGroup } from "../t4n";
+import type { PartnerLogo, TeamGroup } from "../t4n";
 import { ExternalLink, Rich, slugId } from "./rich";
 import { Callout, CalloutTitle } from "./Callout";
 import { DotPattern } from "@/components/ui/dot-pattern";
@@ -62,6 +62,7 @@ const L = {
     lessonsHint: "Abre cada aprendizaje para ver qué pasó y qué recomendamos.",
     recommendation: "Recomendación:",
     principles: "Principios para crear tu propio Tech4Nature",
+    newTab: " (se abre en una pestaña nueva)",
     pdfPages: (n: number) => `${n} páginas`,
     impact: "Área de impacto",
     mapTitle: "Mapa satelital de la Reserva Estatal de Dzilam en Google Maps",
@@ -191,6 +192,7 @@ const L = {
     lessonsHint: "Open each lesson to see what happened and what we recommend.",
     recommendation: "Recommendation:",
     principles: "Principles for creating your own Tech4Nature",
+    newTab: " (opens in a new tab)",
     pdfPages: (n: number) => `${n} pages`,
     impact: "Impact area",
     mapTitle: "Satellite map of the Dzilam State Reserve on Google Maps",
@@ -535,6 +537,22 @@ function Spotlight({ locale }: { locale: Locale }) {
   );
 }
 
+/**
+ * Logo de un socio. Con versión oscura se muestran dos imágenes y el tema decide cuál se ve;
+ * los logos de un solo color se adaptan al tema con un filtro (data-mono).
+ */
+function PartnerImage({ p }: { p: PartnerLogo }) {
+  const size = p.height ? ({ "--h": `${p.height}px` } as CSSProperties) : undefined;
+  return p.dark ? (
+    <>
+      <img className="tk-partner-img tk-partner-img--light" src={p.logo} alt={p.name} loading="lazy" decoding="async" style={size} />
+      <img className="tk-partner-img tk-partner-img--dark" src={p.dark} alt={p.name} loading="lazy" decoding="async" style={size} />
+    </>
+  ) : (
+    <img className="tk-partner-img" data-mono={p.mono} src={p.logo} alt={p.name} loading="lazy" decoding="async" style={size} />
+  );
+}
+
 export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }) {
   const {
     CASE,
@@ -611,11 +629,31 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
           <div key={g.title} className="tk-partners-group">
             <p className="tk-partners-title">{g.title}</p>
             <ul>
-              {g.partners.map((p) => (
-                <li key={p.name}>
-                  <img src={p.logo} alt={p.name} title={p.name} loading="lazy" decoding="async" style={p.height ? { height: p.height } : undefined} />
-                </li>
-              ))}
+              {g.partners.map((p) => {
+                const logo = (
+                  <>
+                    <PartnerImage p={p} />
+                    {p.joined ? (
+                      <>
+                        <span className="tk-partner-sep" aria-hidden="true" />
+                        <PartnerImage p={p.joined} />
+                      </>
+                    ) : null}
+                  </>
+                );
+                return (
+                  <li key={p.name}>
+                    {p.href ? (
+                      <a href={p.href} target="_blank" rel="noopener noreferrer" title={p.name}>
+                        {logo}
+                        <span className="sr-only">{l.newTab}</span>
+                      </a>
+                    ) : (
+                      <span title={p.joined ? `${p.name} · ${p.joined.name}` : p.name}>{logo}</span>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ))}

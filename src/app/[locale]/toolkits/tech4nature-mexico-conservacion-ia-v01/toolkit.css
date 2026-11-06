@@ -2897,13 +2897,25 @@ html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg
 .tk-gmap figcaption { margin-top: 8px; font-size: 0.82rem; color: var(--tk-text-2); }
 @media (max-width: 560px) { .tk-gmap iframe { height: 320px; } }
 /* Socios */
-.tk-partners { margin: 26px 0 10px; padding: 22px 24px 10px; border-radius: var(--tk-radius); background: #f4f5ef; color: #1a1f18; }
-.tk-partners .tk-h2 { color: #1a1f18; margin-top: 0; }
-.tk-partners .tk-anchor { color: #4a5c0a; }
-.tk-partners-group { margin-bottom: 18px; }
-.tk-partners-title { margin: 0 0 10px !important; font-size: 0.72rem !important; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #4a5c0a !important; }
-.tk-partners ul { display: flex; flex-wrap: wrap; align-items: center; gap: 18px 34px; margin: 0; padding: 0; list-style: none; }
-.tk-partners img { display: block; height: 46px; width: auto; max-width: 230px; object-fit: contain; }
+/* Socios: sin contenedor; cada logo en su color original, con versión para cada tema. */
+.tk-partners { margin: 30px 0 10px; }
+.tk-partners-group { margin: 0 0 26px; }
+.tk-partners-group + .tk-partners-group { padding-top: 22px; border-top: 1px solid var(--tk-line); }
+.tk-partners-title { margin: 0 0 14px !important; font-size: 0.72rem !important; font-weight: 700; letter-spacing: 0.16em; text-align: center; text-transform: uppercase; color: var(--tk-dim) !important; }
+.tk-partners ul { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 18px 34px; margin: 0; padding: 0; list-style: none; }
+.tk-partners li { display: flex; }
+.tk-partners li > a, .tk-partners li > span { display: flex; align-items: center; border-radius: var(--tk-radius-sm); transition: transform 0.25s var(--tk-ease), opacity 0.25s; }
+.tk-partners li > a:hover { transform: translateY(-2px); }
+.tk-partners li > a:focus-visible { outline: 2px solid var(--tk-accent); outline-offset: 6px; }
+.tk-partner-img { display: block; height: var(--h, 46px); width: auto; max-width: 230px; object-fit: contain; }
+/* Dos logos en un mismo bloque (C Minds | AI for Climate), separados por una línea fina. */
+.tk-partner-sep { flex: none; width: 1px; height: 40px; margin: 0 22px; background: rgba(var(--tk-fg-rgb), 0.35); }
+html[data-tk-theme="light"] .tk-partner-sep { background: rgba(0, 0, 0, 0.28); }
+.tk-partner-img--light { display: none; }
+html[data-tk-theme="light"] .tk-partner-img--light { display: block; }
+html[data-tk-theme="light"] .tk-partner-img--dark { display: none; }
+html:not([data-tk-theme="light"]) .tk-partner-img[data-mono="dark"] { filter: brightness(0) invert(1); }
+html[data-tk-theme="light"] .tk-partner-img[data-mono="white"] { filter: brightness(0); }
 /* Aprendizajes */
 .tk-lessons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 12px 0 20px; padding: 0; list-style: none; }
 .tk-lesson { display: flex; gap: 12px; padding: 16px; border: 1px solid var(--tk-line); border-radius: var(--tk-radius); background: var(--tk-panel); }
@@ -2936,14 +2948,9 @@ html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg
 .tk-principles span { font-size: 0.86rem; line-height: 1.55; color: var(--tk-text-2); }
 @media (max-width: 760px) { .tk-lessons { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) { .tk-principles { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 560px) { .tk-partners { padding: 18px 16px 6px; } .tk-partners img { height: 38px; max-width: 180px; } .tk-partners ul { gap: 14px 22px; } }
+@media (max-width: 560px) { .tk-partner-img { height: calc(var(--h, 46px) * 0.82); max-width: 170px; } .tk-partners ul { gap: 16px 26px; } .tk-partner-sep { height: 32px; margin: 0 14px; } }
 /* Socios en fondo oscuro con logos en blanco */
-.tk-partners { background: radial-gradient(120% 140% at 0% 0%, #2a4a45, #18302e 60%, #122624); color: #fff; }
-.tk-partners .tk-h2 { color: #fff; }
-.tk-partners .tk-anchor { color: var(--tk-lime); }
-.tk-partners-title { color: rgba(255, 255, 255, 0.72) !important; text-align: center; }
-.tk-partners ul { justify-content: center; }
-.tk-partners img[src$=".svg"] { filter: brightness(0) invert(1); }
+
 /* Hallazgos en una fila */
 .tk-glossary--3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
 @media (max-width: 760px) { .tk-glossary--3 { grid-template-columns: minmax(0, 1fr) !important; } }
