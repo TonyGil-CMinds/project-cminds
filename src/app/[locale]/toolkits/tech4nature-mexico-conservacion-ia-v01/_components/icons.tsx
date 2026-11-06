@@ -36,6 +36,34 @@ export const IconExternal = (p: IconProps) => (
 export const IconSliders = (p: IconProps) => (
   <svg {...base} {...p}><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
 );
+/* Reproductor de video. */
+export const IconPlayFill = (p: IconProps) => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" {...p}><path fill="currentColor" d="M8 5.6v12.8a1 1 0 0 0 1.5.86l10.2-6.4a1 1 0 0 0 0-1.72L9.5 4.74A1 1 0 0 0 8 5.6z" /></svg>
+);
+export const IconPauseFill = (p: IconProps) => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" {...p}><rect x="6.5" y="5" width="4" height="14" rx="1.2" fill="currentColor" /><rect x="13.5" y="5" width="4" height="14" rx="1.2" fill="currentColor" /></svg>
+);
+const Ten = () => (
+  <text x="12" y="15.6" textAnchor="middle" fontSize="7.4" fontWeight="700" fill="currentColor" stroke="none" fontFamily="system-ui, sans-serif">10</text>
+);
+export const IconReplay10 = (p: IconProps) => (
+  <svg {...base} {...p}><path d="M5.2 8.5A8 8 0 1 1 4 12.5" /><path d="M4.6 4.5v4.2h4.2" /><Ten /></svg>
+);
+export const IconForward10 = (p: IconProps) => (
+  <svg {...base} {...p}><path d="M18.8 8.5A8 8 0 1 0 20 12.5" /><path d="M19.4 4.5v4.2h-4.2" /><Ten /></svg>
+);
+export const IconVolume = (p: IconProps) => (
+  <svg {...base} {...p}><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z" fill="currentColor" /><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" /></svg>
+);
+export const IconVolumeOff = (p: IconProps) => (
+  <svg {...base} {...p}><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z" fill="currentColor" /><path d="M16 9.5l5 5M21 9.5l-5 5" /></svg>
+);
+export const IconFullscreen = (p: IconProps) => (
+  <svg {...base} {...p}><path d="M4.5 9V4.5H9M15 4.5h4.5V9M19.5 15v4.5H15M9 19.5H4.5V15" /></svg>
+);
+export const IconFullscreenExit = (p: IconProps) => (
+  <svg {...base} {...p}><path d="M9 4.5V9H4.5M19.5 9H15V4.5M15 19.5V15h4.5M4.5 15H9v4.5" /></svg>
+);
 export const IconAlert = (p: IconProps) => (
   <svg {...base} {...p}><path d="M10.3 4.2L2.8 17.5A2 2 0 0 0 4.5 20.5h15a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0z" /><path d="M12 9.5v4M12 17h.01" /></svg>
 );

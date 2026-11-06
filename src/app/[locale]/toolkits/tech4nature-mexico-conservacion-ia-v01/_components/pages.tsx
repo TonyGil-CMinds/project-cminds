@@ -24,7 +24,7 @@ import { BadgePanel } from "./Badge";
 import Achievements from "./Achievements";
 import Avatar from "./Avatar";
 import PhotoGrid from "./PhotoGrid";
-import VideoList from "./VideoList";
+import VideoList, { LocalVideos } from "./VideoList";
 import WhyCharts from "./WhyCharts";
 import type { TeamGroup } from "../t4n";
 import { ExternalLink, Rich, slugId } from "./rich";
@@ -62,6 +62,7 @@ const L = {
     lessonsHint: "Abre cada aprendizaje para ver qué pasó y qué recomendamos.",
     recommendation: "Recomendación:",
     principles: "Principios para crear tu propio Tech4Nature",
+    pdfPages: (n: number) => `${n} páginas`,
     impact: "Área de impacto",
     mapTitle: "Mapa satelital de la Reserva Estatal de Dzilam en Google Maps",
     openMaps: "Abrir en Google Maps",
@@ -190,6 +191,7 @@ const L = {
     lessonsHint: "Open each lesson to see what happened and what we recommend.",
     recommendation: "Recommendation:",
     principles: "Principles for creating your own Tech4Nature",
+    pdfPages: (n: number) => `${n} pages`,
     impact: "Impact area",
     mapTitle: "Satellite map of the Dzilam State Reserve on Google Maps",
     openMaps: "Open in Google Maps",
@@ -490,15 +492,21 @@ function TeamStrip({ locale }: { locale: Locale }) {
   const { TEAM_CORE } = getContent(locale);
   const l = L[locale];
   const people = TEAM_CORE.flatMap((g) => g.people);
+  const shown = [...people.filter((p) => p.photo), ...people.filter((p) => !p.photo)].slice(0, 5);
+  const more = people.length - shown.length;
   return (
     <Link className="tk-teamstrip" href={toolkitHref(locale, "equipo")} data-reveal>
       <span className="tk-teamstrip-faces" aria-hidden="true">
-        {people.map((p) => (
-          <Avatar key={p.name} name={p.name} photo={p.photo} size={52} />
+        {shown.map((p) => (
+          <Avatar key={p.name} name={p.name} photo={p.photo} size={48} />
         ))}
+        {more > 0 ? <span className="tk-teamstrip-more">+{more}</span> : null}
       </span>
       <span className="tk-teamstrip-text">
-        <strong>{l.teamPeople}</strong>{l.teamRest}
+        <span>
+          <strong>{l.teamPeople}</strong>
+          {l.teamRest}
+        </span>
         <span className="tk-next-cta">
           {l.teamCta} <IconArrowRight />
         </span>
@@ -668,13 +676,18 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
           ))}
         </ol>
         <a className="tk-report" href={FINDINGS.report.url} target="_blank" rel="noopener noreferrer" data-reveal>
-          <span className="tk-report-icon" aria-hidden="true">PDF</span>
+          <span className="tk-report-cover" aria-hidden="true">
+            <img src={FINDINGS.report.cover} alt="" width={560} height={722} loading="lazy" decoding="async" />
+          </span>
           <span className="tk-report-body">
             <span className="tk-eyebrow">{FINDINGS.report.eyebrow}</span>
             <strong>{FINDINGS.report.title}</strong>
-            <span>{FINDINGS.report.text}</span>
-            <span className="tk-next-cta">
-              {FINDINGS.report.label} <IconExternal />
+            <span className="tk-report-text">{FINDINGS.report.text}</span>
+            <span className="tk-report-foot">
+              <span className="tk-next-cta">
+                {FINDINGS.report.label} <IconExternal />
+              </span>
+              <span className="tk-report-meta">{l.pdfPages(FINDINGS.report.pages)}</span>
             </span>
           </span>
         </a>
@@ -698,24 +711,7 @@ export function HomePage({ page, locale }: { page: ToolkitPage; locale: Locale }
             </a>
           </figcaption>
         </figure>
-        <div className="tk-localvids">
-          {LOCAL_VIDEOS.map((v) => (
-            <figure key={v.src} className="tk-localvid" data-reveal>
-              <video
-                src={v.src}
-                poster={v.poster}
-                controls
-                playsInline
-                preload="none"
-                muted={v.loop}
-                loop={v.loop}
-              />
-              <figcaption>
-                <strong>{v.title}</strong> {v.caption}
-              </figcaption>
-            </figure>
-          ))}
-        </div>
+        <LocalVideos videos={LOCAL_VIDEOS} />
         <ul className="tk-mapfacts">
           {MAP_TEXT.facts.map((f) => (
             <li key={f.label} data-reveal>

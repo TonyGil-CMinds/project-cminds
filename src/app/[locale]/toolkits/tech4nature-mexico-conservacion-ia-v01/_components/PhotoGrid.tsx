@@ -6,9 +6,9 @@ import type { GalleryPhoto } from "../t4n";
 import { useLocale } from "./i18n";
 
 const L = {
-  es: { enlarge: "Ampliar foto", close: "Cerrar", prev: "Foto anterior", next: "Foto siguiente" },
-  en: { enlarge: "Enlarge photo", close: "Close", prev: "Previous photo", next: "Next photo" },
-} satisfies Record<Locale, Record<string, string>>;
+  es: { enlarge: "Ampliar foto", close: "Cerrar", prev: "Foto anterior", next: "Foto siguiente", more: (n: number) => `${n} ${n === 1 ? "foto más" : "fotos más"} en el visor` },
+  en: { enlarge: "Enlarge photo", close: "Close", prev: "Previous photo", next: "Next photo", more: (n: number) => `${n} more ${n === 1 ? "photo" : "photos"} in the viewer` },
+} satisfies Record<Locale, Record<string, string | ((n: number) => string)>>;
 
 /** Mosaico de fotos con visor a pantalla completa. */
 export default function PhotoGrid({ photos, label, variant = "mosaic" }: { photos: GalleryPhoto[]; label: string; variant?: "mosaic" | "pair" | "trio" }) {
@@ -34,17 +34,33 @@ export default function PhotoGrid({ photos, label, variant = "mosaic" }: { photo
   }, [open, photos.length]);
 
   const p = open !== null ? photos[open] : null;
+  // El mosaico cabe en cinco fotos; si hay más, la última visible indica cuántas faltan y abre el visor.
+  const max = variant === "mosaic" ? 5 : photos.length;
+  const shown = photos.slice(0, max);
+  const hidden = photos.length - shown.length;
   return (
     <>
       <ul className={`tk-photos tk-photos--${variant}`} aria-label={label}>
-        {photos.map((ph, i) => (
-          <li key={ph.src} data-reveal>
-            <button type="button" onClick={() => setOpen(i)} aria-label={`${l.enlarge}: ${ph.caption ?? ph.alt}`}>
-              <img src={ph.src} alt={ph.alt} loading="lazy" decoding="async" width={1500} height={1000} />
-              {ph.caption ? <span className="tk-photos-cap">{ph.caption}</span> : null}
-            </button>
-          </li>
-        ))}
+        {shown.map((ph, i) => {
+          const more = hidden > 0 && i === shown.length - 1;
+          return (
+            <li key={ph.src} data-reveal>
+              <button
+                type="button"
+                onClick={() => setOpen(i)}
+                aria-label={more ? `${l.enlarge}: ${ph.caption ?? ph.alt}. ${l.more(hidden)}` : `${l.enlarge}: ${ph.caption ?? ph.alt}`}
+              >
+                <img src={ph.src} alt={ph.alt} loading="lazy" decoding="async" width={1500} height={1000} />
+                {ph.caption ? <span className="tk-photos-cap">{ph.caption}</span> : null}
+                {more ? (
+                  <span className="tk-photos-more" aria-hidden="true">
+                    +{hidden}
+                  </span>
+                ) : null}
+              </button>
+            </li>
+          );
+        })}
       </ul>
       <dialog ref={ref} className="tk-lightbox" aria-label={label} onClose={() => setOpen(null)} onClick={(e) => e.target === ref.current && setOpen(null)}>
         {p ? (

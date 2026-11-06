@@ -376,10 +376,8 @@ export const MAP_TEXT = {
   lead:
     "Tech4Nature México se ha enfocado en la costa norte de Yucatán, entre la Reserva Estatal de Dzilam y la Reserva de la Biosfera Ría Lagartos. Es un mosaico de selva baja, manglar, petenes, dunas costeras y lagunas, con comunidades que viven de la pesca, la ganadería y el turismo.",
   facts: [
-    { value: "104,304 ha", label: "Reserva Estatal de Dzilam, tras su ampliación en 2024" },
     { value: "33", label: "estaciones de cámara trampa analizadas en BioScanner" },
     { value: "12,024", label: "días-cámara de monitoreo, de 2022 a 2026" },
-    { value: "~40 km", label: "entre dos registros del mismo jaguar, hacia Ría Lagartos" },
   ],
   googleEmbed:
     "https://www.google.com/maps?q=Reserva%20Estatal%20de%20Dzilam%2C%20Dzilam%20de%20Bravo%2C%20Yucat%C3%A1n&ll=21.4616374,-88.6608063&z=11&t=k&output=embed",
@@ -857,6 +855,8 @@ export const FINDINGS = {
     text: "Metodología, resultados, aprendizajes y recomendaciones de la primera fase del proyecto, incluido el uso responsable de la IA.",
     label: "Leer el reporte (PDF)",
     url: "https://b51f2df9-b416-4320-ac2c-b010b75f6691.filesusr.com/ugd/0fecb2_1520b2af718e4c9984e4c3d7f73f3405.pdf",
+    cover: `${T4N_FILES}/reporte-fase-1-portada.webp`,
+    pages: 41,
   },
 };
 

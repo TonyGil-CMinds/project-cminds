@@ -138,10 +138,8 @@ export const MAP_TEXT = {
   lead:
     "Tech4Nature Mexico has focused on the northern coast of Yucatán, between the Dzilam State Reserve and the Ría Lagartos Biosphere Reserve. It is a mosaic of low forest, mangroves, petenes (tree islands), coastal dunes and lagoons, with communities that make their living from fishing, livestock and tourism.",
   facts: [
-    { value: "104,304 ha", label: "Dzilam State Reserve, after its 2024 expansion" },
     { value: "33", label: "camera trap stations analyzed in BioScanner" },
     { value: "12,024", label: "camera-days of monitoring, 2022 to 2026" },
-    { value: "~40 km", label: "between two records of the same jaguar, toward Ría Lagartos" },
   ],
   googleEmbed:
     "https://www.google.com/maps?q=Reserva%20Estatal%20de%20Dzilam%2C%20Dzilam%20de%20Bravo%2C%20Yucat%C3%A1n&ll=21.4616374,-88.6608063&z=11&t=k&output=embed",
@@ -609,6 +607,8 @@ export const FINDINGS = {
     text: "Methodology, results, lessons learned and recommendations from the project's first phase, including the responsible use of AI.",
     label: "Read the report (PDF, in Spanish)",
     url: "https://b51f2df9-b416-4320-ac2c-b010b75f6691.filesusr.com/ugd/0fecb2_1520b2af718e4c9984e4c3d7f73f3405.pdf",
+    cover: `${T4N_FILES}/reporte-fase-1-portada.webp`,
+    pages: 41,
   },
 };
 

@@ -61,8 +61,8 @@ const L = {
     share: "Descargar y compartir",
     nextInRoute: "Siguiente en tu ruta",
     stage: "Etapa",
-    personalize: "Personaliza el recorrido",
-    pickRoute: "Elige una ruta por público",
+    personalize: "¿Por dónde empiezo?",
+    pickRoute: "Elige tu perfil y te marcamos qué etapas leer",
     onThisPage: "En esta página",
     promoTitle: "Valida tus datos con BioScanner",
     promoText:
@@ -100,8 +100,8 @@ const L = {
     share: "Download and share",
     nextInRoute: "Next on your route",
     stage: "Stage",
-    personalize: "Personalize your path",
-    pickRoute: "Choose a route by audience",
+    personalize: "Where do I start?",
+    pickRoute: "Pick your profile and we'll mark the stages to read",
     onThisPage: "On this page",
     promoTitle: "Validate your data with BioScanner",
     promoText:
@@ -558,7 +558,7 @@ function ProgressSummary({ compact = false, locale }: { compact?: boolean; local
           <IconArrowRight />
         </Link>
       ) : (
-        <Link className="tk-progress-next" href={toolkitHref(locale, "")}>
+        <Link className="tk-progress-next" href={toolkitHref(locale, "crea-el-tuyo", "como-recorrerlo")}>
           <span>
             <small>{l.personalize}</small>
             {l.pickRoute}

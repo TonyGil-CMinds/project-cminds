@@ -91,6 +91,9 @@ const L = {
     tJaguars: "Los jaguares de Dzilam",
     cExpansion: "La Reserva Estatal de Dzilam creció de 69,000 a 104,304 hectáreas en 2024, con estudios de Tech4Nature México en la fundamentación del acuerdo oficial.",
     aExpansion: "Ver el acuerdo",
+    growthAria: (b: string, a: string, p: number) => `Antes: ${b} ha. Desde 2024: ${a} ha, ${p} % más.`,
+    gBefore: "Antes",
+    since: "Desde 2024",
     cSpecies: "especies registradas con cámaras trampa y acústica en la fase 1; 40 en alguna categoría de riesgo",
     aSpecies: "Ver el listado",
     cBs: "fotos y videos analizados en BioScanner, la plataforma de IA que nació del proyecto",
@@ -147,6 +150,9 @@ const L = {
     tJaguars: "The jaguars of Dzilam",
     cExpansion: "The Dzilam State Reserve grew from 69,000 to 104,304 hectares in 2024, with Tech4Nature Mexico studies supporting the official agreement.",
     aExpansion: "See the agreement",
+    growthAria: (b: string, a: string, p: number) => `Before: ${b} ha. Since 2024: ${a} ha, ${p}% more.`,
+    gBefore: "Before",
+    since: "Since 2024",
     cSpecies: "species recorded with camera traps and acoustics in phase 1; 40 in a risk category",
     aSpecies: "See the list",
     cBs: "photos and videos analyzed in BioScanner, the AI platform that grew out of the project",
@@ -418,7 +424,7 @@ const titles = (l: (typeof L)[Locale]): Record<SheetId, string> => ({
 // ---------------------------------------------------------------------------
 // Tarjetas de logros
 
-type Card = { id: string; value: string; label: string; note?: string; sheet?: SheetId; href?: string; cta?: string; wide?: boolean };
+type Card = { id: string; value: string; label: string; note?: string; sheet?: SheetId; href?: string; cta?: string; wide?: boolean; extra?: ReactNode };
 
 export default function Achievements(props: { locale?: Locale }) {
   const ctxLocale = useLocale();
@@ -446,6 +452,25 @@ export default function Achievements(props: { locale?: Locale }) {
     last.current?.focus();
   };
 
+  // La tarjeta grande muestra el crecimiento de la reserva con dos barras proporcionales.
+  const growth = Math.round(((EXPANSION.after - EXPANSION.before) / EXPANSION.before) * 100);
+  const growthBars = (
+    <span className="tk-win-growth" role="img" aria-label={l.growthAria(nf(EXPANSION.before), nf(EXPANSION.after), growth)}>
+      <span className="tk-win-growth-row" aria-hidden="true">
+        <span className="tk-win-growth-label">{l.gBefore}</span>
+        <span className="tk-win-growth-bar" style={{ width: `${(EXPANSION.before / EXPANSION.after) * 100}%` }} />
+        <span className="tk-win-growth-val">{nf(EXPANSION.before)}</span>
+      </span>
+      <span className="tk-win-growth-row is-after" aria-hidden="true">
+        <span className="tk-win-growth-label">{l.since}</span>
+        <span className="tk-win-growth-bar" style={{ width: "100%" }} />
+        <span className="tk-win-growth-val">
+          {nf(EXPANSION.after)} <b>+{growth} %</b>
+        </span>
+      </span>
+    </span>
+  );
+
   const cards: Card[] = [
     {
       id: "expansion",
@@ -454,6 +479,7 @@ export default function Achievements(props: { locale?: Locale }) {
       sheet: "expansion",
       cta: l.aExpansion,
       wide: true,
+      extra: growthBars,
     },
     { id: "species", value: "146", label: l.cSpecies, sheet: "species", cta: l.aSpecies },
     { id: "bioscanner", value: nf(BIOSCANNER_REPORT.files), label: l.cBs, sheet: "bioscanner", cta: l.aBs },
@@ -471,6 +497,7 @@ export default function Achievements(props: { locale?: Locale }) {
               <span className="tk-win-num">{c.value}</span>
               <span className="tk-win-label">{c.label}</span>
               {c.note ? <span className="tk-kpi-note">{c.note}</span> : null}
+              {c.extra}
               {c.cta ? (
                 <span className="tk-win-cta">
                   {c.cta} <IconArrowRight />

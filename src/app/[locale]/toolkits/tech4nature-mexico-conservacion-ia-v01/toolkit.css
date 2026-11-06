@@ -2502,11 +2502,13 @@ a.tk-stepmap-card { color: inherit; text-decoration: none; }
 .tk-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* ---- Logros -------------------------------------------------------------- */
-.tk-wins { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 18px 0 30px; padding: 0; list-style: none; }
-.tk-win { display: flex; }
-.tk-win--wide { grid-column: span 2; }
+/* Resultados: la tarjeta grande ocupa 2 × 2 y las otras cinco completan una rejilla de 3 × 3. */
+.tk-wins { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 18px 0 30px; padding: 0; list-style: none; }
+.tk-win { display: flex; min-width: 0; }
+.tk-win--wide { grid-column: span 2; grid-row: span 2; }
 .tk-win-btn {
-  display: flex; flex-direction: column; gap: 8px; width: 100%; min-height: 168px; padding: 18px; text-align: left;
+  container-type: inline-size;
+  display: flex; flex-direction: column; gap: 8px; width: 100%; min-width: 0; min-height: 168px; padding: 18px; text-align: left;
   font: inherit; color: var(--tk-text); text-decoration: none; cursor: pointer;
   border: 1px solid var(--tk-line); border-radius: var(--tk-radius-btn); background: var(--tk-panel);
   transition: border-color 0.2s var(--tk-ease), background 0.2s var(--tk-ease), transform 0.2s var(--tk-ease);
@@ -2519,11 +2521,23 @@ a.tk-stepmap-card { color: inherit; text-decoration: none; }
   background: linear-gradient(135deg, rgba(var(--tk-lime-rgb), 0.16), rgba(var(--tk-sky-rgb), 0.06) 60%, transparent), var(--tk-panel);
   border-color: rgba(var(--tk-lime-rgb), 0.4);
 }
-.tk-win-num { font-size: clamp(1.7rem, 2.8vw, 2.3rem); font-weight: 700; line-height: 1; letter-spacing: -0.03em; color: var(--tk-accent); font-variant-numeric: tabular-nums; }
-.tk-win--wide .tk-win-num { font-size: clamp(2.2rem, 4vw, 3.1rem); }
+/* El tamaño de la cifra depende del ancho de su tarjeta (cqi), así nunca se sale. */
+.tk-win-num { font-size: clamp(1.5rem, 15cqi, 2.4rem); font-weight: 700; line-height: 1; letter-spacing: -0.03em; white-space: nowrap; color: var(--tk-accent); font-variant-numeric: tabular-nums; }
+.tk-win--wide .tk-win-num { font-size: clamp(2.2rem, 12cqi, 3.8rem); }
+.tk-win--wide .tk-win-label { max-width: 46ch; font-size: 0.92rem; }
 .tk-win-label { font-size: 0.86rem; line-height: 1.45; color: var(--tk-text); }
 .tk-win-cta { margin-top: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 0.8rem; font-weight: 600; color: var(--tk-accent); }
 .tk-win-cta svg { width: 14px; height: 14px; }
+
+/* Crecimiento de la reserva (tarjeta grande). */
+.tk-win-growth { display: grid; gap: 10px; margin-top: 14px; }
+.tk-win-growth-row { display: grid; grid-template-columns: 6.5em minmax(0, 1fr); grid-template-areas: "label val" "bar bar"; align-items: baseline; gap: 6px 10px; }
+.tk-win-growth-label { grid-area: label; font-size: 0.74rem; color: var(--tk-dim); }
+.tk-win-growth-val { grid-area: val; justify-self: end; font-size: 0.8rem; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--tk-text-2); }
+.tk-win-growth-val b { margin-left: 6px; padding: 1px 6px; border-radius: var(--tk-radius-sm); background: rgba(var(--tk-lime-rgb), 0.16); color: var(--tk-accent); font-size: 0.72rem; }
+.tk-win-growth-bar { grid-area: bar; height: 10px; border-radius: 2px; background: rgba(var(--tk-fg-rgb), 0.22); }
+.tk-win-growth-row.is-after .tk-win-growth-val { color: var(--tk-text); }
+.tk-win-growth-row.is-after .tk-win-growth-bar { background: linear-gradient(90deg, rgba(var(--tk-lime-rgb), 0.55), var(--tk-lime)); }
 
 /* ---- Panel lateral ------------------------------------------------------- */
 .tk-sheet {
@@ -2619,7 +2633,7 @@ html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg
 .tk-map-city circle { fill: var(--tk-dim); }
 .tk-map-city text { fill: var(--tk-text-2); font-size: 14px; }
 .tk-map-sea-label { fill: var(--tk-sky); font-size: 14px; font-style: italic; opacity: 0.85; }
-.tk-mapfacts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0 0 8px; padding: 0; list-style: none; }
+.tk-mapfacts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0 0 8px; padding: 0; list-style: none; }
 .tk-mapfacts li { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; border-radius: var(--tk-radius); border: 1px solid var(--tk-line); background: var(--tk-panel); }
 .tk-mapfacts strong { font-size: 1.25rem; color: var(--tk-accent); font-variant-numeric: tabular-nums; }
 .tk-mapfacts span { font-size: 0.8rem; line-height: 1.4; color: var(--tk-text-2); }
@@ -2629,10 +2643,40 @@ html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg
 .tk-avatar { display: inline-flex; flex: none; align-items: center; justify-content: center; border-radius: 50%; overflow: hidden; background: linear-gradient(135deg, rgba(var(--tk-lime-rgb), 0.3), rgba(var(--tk-sky-rgb), 0.25)); border: 2px solid var(--tk-bg); }
 .tk-avatar img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
 .tk-avatar-initials { font-weight: 700; font-size: 0.95rem; letter-spacing: 0.02em; color: var(--tk-text); }
-.tk-teamstrip { display: grid; gap: 14px; padding: 18px; color: var(--tk-text); text-decoration: none; border: 1px solid var(--tk-line); border-radius: var(--tk-radius); background: var(--tk-panel); transition: border-color 0.2s var(--tk-ease); }
+.tk-teamstrip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 14px 22px;
+  padding: 18px 20px;
+  color: var(--tk-text);
+  text-decoration: none;
+  border: 1px solid var(--tk-line);
+  border-radius: var(--tk-radius);
+  background: var(--tk-panel);
+  transition: border-color 0.2s var(--tk-ease);
+}
 .tk-teamstrip:hover { border-color: rgba(var(--tk-lime-rgb), 0.55); }
-.tk-teamstrip-faces { display: flex; flex-wrap: wrap; }
-.tk-teamstrip-faces .tk-avatar { margin-right: -10px; }
+/* Cinco rostros superpuestos y un círculo con los que faltan. */
+.tk-teamstrip-faces { display: flex; padding-left: 10px; }
+.tk-teamstrip-faces > * { margin-left: -10px; box-shadow: 0 0 0 2px var(--tk-panel); }
+.tk-teamstrip-faces .tk-avatar { border: 0; }
+.tk-teamstrip-more {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--tk-panel-3);
+  color: var(--tk-text);
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  transition: background 0.2s, color 0.2s;
+}
+.tk-teamstrip:hover .tk-teamstrip-more { background: var(--tk-lime); color: var(--tk-on-lime); }
+@media (max-width: 560px) { .tk-teamstrip { grid-template-columns: minmax(0, 1fr); } }
 .tk-teamstrip-text { display: flex; flex-direction: column; gap: 8px; line-height: 1.55; color: var(--tk-text-2); }
 .tk-teamstrip-text strong { color: var(--tk-text); }
 /* Tarjetas del equipo: perfil centrado; la rejilla pone tantas columnas como quepan sin apretar el texto. */
@@ -2677,11 +2721,13 @@ html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg
 
 @media (max-width: 1023px) {
   .tk-wins { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .tk-mapfacts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tk-win--wide { grid-row: auto; }
+  /* Cinco tarjetas en dos columnas: la última ocupa la fila completa. */
+  .tk-win:last-child { grid-column: span 2; }
 }
 @media (max-width: 560px) {
   .tk-wins { grid-template-columns: minmax(0, 1fr); }
-  .tk-win--wide { grid-column: auto; }
+  .tk-win--wide, .tk-win:last-child { grid-column: auto; }
   .tk-win-btn { min-height: 0; }
   .tk-sheet-head, .tk-sheet-body { padding-left: 16px; padding-right: 16px; }
   .tk-people, .tk-people--big { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
@@ -2707,6 +2753,9 @@ html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg
 .tk-photos img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s var(--tk-ease); }
 .tk-photos button:hover img { transform: scale(1.04); }
 .tk-photos button:focus-visible { outline: 2px solid var(--tk-accent); outline-offset: 2px; }
+.tk-photos-more { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(4, 3, 20, 0.58); color: #fff; font-size: clamp(1.5rem, 3vw, 2.1rem); font-weight: 700; letter-spacing: -0.02em; transition: background 0.25s; }
+.tk-photos button:hover .tk-photos-more { background: rgba(4, 3, 20, 0.42); }
+.tk-photos button:has(.tk-photos-more) .tk-photos-cap { display: none; }
 .tk-photos-cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 10px 8px; font-size: 0.76rem; line-height: 1.35; text-align: left; color: #fff; background: linear-gradient(transparent, rgba(0, 0, 0, 0.72)); }
 .tk-gallery-block { margin-bottom: 8px; }
 .tk-lightbox { width: min(1200px, 96vw); max-width: 96vw; max-height: 94dvh; padding: 0; border: 0; border-radius: var(--tk-radius); overflow: hidden; background: #000; color: #fff; }
@@ -2729,16 +2778,78 @@ html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg
 }
 .tk-photos--trio { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-rows: 300px; }
 @media (max-width: 560px) { .tk-photos--trio { grid-template-columns: minmax(0, 1fr); grid-auto-rows: 260px; } }
-.tk-videos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 16px 0 24px; padding: 0; list-style: none; }
-.tk-video-frame { position: relative; aspect-ratio: 16 / 9; border-radius: var(--tk-radius-media); overflow: hidden; background: #000; }
-.tk-video-frame iframe, .tk-video-frame button { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; padding: 0; cursor: pointer; background: #000; }
-.tk-video-frame img { width: 100%; height: 100%; object-fit: cover; opacity: 0.85; transition: opacity 0.2s; }
-.tk-video-frame button:hover img { opacity: 1; }
-.tk-video-play { position: absolute; left: 50%; top: 50%; width: 54px; height: 54px; margin: -27px 0 0 -27px; display: grid; place-items: center; border-radius: var(--tk-radius-btn); font-size: 1.2rem; color: var(--tk-on-lime); background: var(--tk-lime); }
-.tk-video-title { margin: 8px 0 2px; font-size: 0.9rem; font-weight: 700; line-height: 1.35; }
-.tk-video-meta { margin: 0; font-size: 0.78rem; color: var(--tk-dim); }
-@media (max-width: 1023px) { .tk-videos { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (max-width: 560px) { .tk-videos { grid-template-columns: minmax(0, 1fr); } }
+/* Videos: uno destacado y el resto en rejilla. Toda la tarjeta abre el reproductor. */
+.tk-vlist { display: grid; gap: 22px; margin: 16px 0 26px; }
+.tk-vfeature {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  border: 0;
+  border-radius: var(--tk-radius);
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.tk-vfeature img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform 0.7s var(--tk-ease); }
+.tk-vfeature::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.35) 38%, transparent 70%); pointer-events: none; }
+.tk-vfeature:hover img { transform: scale(1.03); }
+.tk-vfeature-body { position: absolute; left: 0; right: 0; bottom: 0; z-index: 1; display: flex; flex-direction: column; gap: 4px; padding: 22px 24px; }
+.tk-vfeature-meta { font-size: 0.78rem; font-weight: 600; color: rgba(255, 255, 255, 0.75); }
+.tk-vfeature-title { font-size: clamp(1.1rem, 2.2vw, 1.5rem); font-weight: 700; line-height: 1.25; text-wrap: balance; }
+
+.tk-vgrid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px 14px; margin: 0; padding: 0; list-style: none; }
+.tk-vgrid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 6px 0 18px; }
+.tk-vcard { display: flex; flex-direction: column; gap: 3px; width: 100%; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.tk-vthumb { position: relative; display: block; aspect-ratio: 16 / 9; margin-bottom: 8px; border-radius: var(--tk-radius-media); overflow: hidden; background: #000; }
+.tk-vthumb img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; transition: transform 0.5s var(--tk-ease), opacity 0.3s; }
+.tk-vcard:hover .tk-vthumb img { transform: scale(1.04); opacity: 1; }
+.tk-vcard-text { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.tk-vcard-title { display: -webkit-box; overflow: hidden; -webkit-line-clamp: 2; -webkit-box-orient: vertical; font-size: 0.9rem; font-weight: 700; line-height: 1.35; color: var(--tk-text); }
+.tk-vcard-meta { font-size: 0.78rem; line-height: 1.45; color: var(--tk-dim); }
+.tk-vgrid--2 .tk-vcard-meta { font-size: 0.82rem; color: var(--tk-text-2); }
+.tk-vcard:focus-visible, .tk-vfeature:focus-visible { outline: 2px solid var(--tk-accent); outline-offset: 3px; }
+
+/* Botón de reproducir: círculo translúcido; al pasar el cursor, lima. */
+.tk-vplay {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin: -27px 0 0 -27px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(8, 8, 12, 0.42);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  transition: transform 0.25s var(--tk-ease), background 0.25s, color 0.25s, border-color 0.25s;
+}
+.tk-vplay svg { width: 22px; height: 22px; margin-left: 2px; }
+.tk-vplay--big { width: 76px; height: 76px; margin: -38px 0 0 -38px; }
+.tk-vplay--big svg { width: 30px; height: 30px; }
+:is(.tk-vcard, .tk-vfeature):hover .tk-vplay { transform: scale(1.07); border-color: transparent; background: var(--tk-lime); color: var(--tk-on-lime); }
+@media (max-width: 1023px) { .tk-vgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) {
+  .tk-vgrid, .tk-vgrid--2 { grid-template-columns: minmax(0, 1fr); }
+  /* En móvil, la lista de YouTube pasa a filas compactas: miniatura a la izquierda. */
+  .tk-vgrid:not(.tk-vgrid--2) { gap: 14px; }
+  .tk-vgrid:not(.tk-vgrid--2) .tk-vcard { flex-direction: row; align-items: flex-start; gap: 12px; }
+  .tk-vgrid:not(.tk-vgrid--2) .tk-vthumb { flex: none; width: 46%; margin: 0; }
+  .tk-vgrid:not(.tk-vgrid--2) .tk-vplay { width: 40px; height: 40px; margin: -20px 0 0 -20px; }
+  .tk-vgrid:not(.tk-vgrid--2) .tk-vplay svg { width: 16px; height: 16px; }
+  .tk-vgrid:not(.tk-vgrid--2) .tk-vcard-title { -webkit-line-clamp: 3; font-size: 0.86rem; }
+  .tk-vfeature-body { padding: 14px 16px; }
+  .tk-vplay--big { width: 60px; height: 60px; margin: -30px 0 0 -30px; }
+}
 /* Protagonistas (portada): perfil horizontal con foto circular. Como máximo tres
    columnas y cada tarjeta de al menos 280px: con menos espacio la rejilla baja a dos
    o a una, en lugar de apretar el nombre y el rol. */
@@ -2800,13 +2911,32 @@ html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg
 .tk-lesson strong { display: block; margin-bottom: 4px; font-size: 0.95rem; }
 .tk-lesson p { margin: 0 0 6px !important; font-size: 0.85rem; line-height: 1.5; color: var(--tk-text-2); }
 .tk-lesson-rec span { font-weight: 700; color: var(--tk-accent); }
-.tk-principles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 12px 0 16px; padding: 0; list-style: none; counter-reset: p; }
-.tk-principles li { display: flex; flex-direction: column; gap: 6px; padding: 16px; border-radius: var(--tk-radius); border: 1px solid rgba(var(--tk-lime-rgb), 0.4); background: rgba(var(--tk-lime-rgb), 0.07); }
-.tk-principles strong { font-size: 0.95rem; line-height: 1.3; color: var(--tk-accent); }
-.tk-principles span { font-size: 0.82rem; line-height: 1.5; color: var(--tk-text-2); }
-@media (max-width: 1023px) { .tk-principles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* Principios: lista numerada en dos columnas, separada por líneas finas (sin cajas). */
+.tk-principles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; margin: 8px 0 20px; padding: 0; list-style: none; counter-reset: p; }
+.tk-principles li {
+  counter-increment: p;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  column-gap: 12px;
+  row-gap: 4px;
+  align-content: start;
+  padding: 16px 0;
+  border-top: 1px solid var(--tk-line);
+}
+.tk-principles li::before {
+  content: counter(p, decimal-leading-zero);
+  grid-row: span 2;
+  padding-top: 2px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--tk-accent);
+}
+.tk-principles strong { font-size: 0.98rem; line-height: 1.35; color: var(--tk-text); }
+.tk-principles span { font-size: 0.86rem; line-height: 1.55; color: var(--tk-text-2); }
 @media (max-width: 760px) { .tk-lessons { grid-template-columns: minmax(0, 1fr); } }
-@media (max-width: 560px) { .tk-principles { grid-template-columns: minmax(0, 1fr); } .tk-partners { padding: 18px 16px 6px; } .tk-partners img { height: 38px; max-width: 180px; } .tk-partners ul { gap: 14px 22px; } }
+@media (max-width: 760px) { .tk-principles { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 560px) { .tk-partners { padding: 18px 16px 6px; } .tk-partners img { height: 38px; max-width: 180px; } .tk-partners ul { gap: 14px 22px; } }
 /* Socios en fondo oscuro con logos en blanco */
 .tk-partners { background: radial-gradient(120% 140% at 0% 0%, #2a4a45, #18302e 60%, #122624); color: #fff; }
 .tk-partners .tk-h2 { color: #fff; }
@@ -2818,20 +2948,44 @@ html[data-tk-theme="light"] .tk-sheet-logo { filter: invert(1) hue-rotate(180deg
 .tk-glossary--3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
 @media (max-width: 760px) { .tk-glossary--3 { grid-template-columns: minmax(0, 1fr) !important; } }
 /* Reporte destacado */
-.tk-report { display: flex; gap: 18px; align-items: center; margin: 18px 0 8px; padding: 22px 24px; color: var(--tk-text); text-decoration: none; border-radius: var(--tk-radius); border: 1px solid rgba(var(--tk-lime-rgb), 0.5); background: linear-gradient(135deg, rgba(var(--tk-lime-rgb), 0.16), rgba(var(--tk-sky-rgb), 0.06) 70%), var(--tk-panel); transition: transform 0.2s var(--tk-ease); }
-.tk-report:hover { transform: translateY(-2px); }
-.tk-report-icon { flex: none; display: grid; place-items: center; width: 72px; height: 88px; border-radius: var(--tk-radius); font-weight: 800; letter-spacing: 0.05em; color: var(--tk-on-lime); background: var(--tk-lime); }
-.tk-report-body { display: flex; flex-direction: column; gap: 6px; }
-.tk-report-body strong { font-size: 1.2rem; line-height: 1.3; }
-.tk-report-body > span:not(.tk-eyebrow):not(.tk-next-cta) { font-size: 0.9rem; color: var(--tk-text-2); }
-@media (max-width: 560px) { .tk-report { flex-direction: column; align-items: flex-start; } }
+/* Reporte: portada real del PDF a la izquierda; al pasar el cursor, la portada se levanta. */
+.tk-report {
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr);
+  align-items: center;
+  gap: 24px;
+  margin: 18px 0 8px;
+  padding: 20px 24px 20px 20px;
+  color: var(--tk-text);
+  text-decoration: none;
+  border-radius: var(--tk-radius);
+  border: 1px solid var(--tk-line);
+  background: var(--tk-panel);
+  transition: border-color 0.25s var(--tk-ease), background 0.25s;
+}
+.tk-report:hover { border-color: rgba(var(--tk-lime-rgb), 0.5); background: var(--tk-panel-2); }
+.tk-report-cover { display: block; }
+.tk-report-cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--tk-radius-sm);
+  box-shadow: 0 0 0 1px var(--tk-line), 0 14px 30px -14px rgba(0, 0, 0, 0.7);
+  transition: transform 0.35s var(--tk-ease), box-shadow 0.35s var(--tk-ease);
+}
+.tk-report:hover .tk-report-cover img { transform: translateY(-4px) rotate(-1.5deg); box-shadow: 0 0 0 1px var(--tk-line), 0 22px 36px -16px rgba(0, 0, 0, 0.75); }
+.tk-report-body { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.tk-report-body strong { font-size: 1.12rem; line-height: 1.35; text-wrap: balance; }
+.tk-report-text { font-size: 0.88rem; line-height: 1.55; color: var(--tk-text-2); }
+.tk-report-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; margin-top: 4px; padding-top: 12px; }
+.tk-report-foot .tk-next-cta { margin: 0; padding: 0; }
+.tk-report-meta { font-size: 0.74rem; color: var(--tk-dim); }
+@media (max-width: 560px) {
+  .tk-report { grid-template-columns: 84px minmax(0, 1fr); align-items: start; gap: 16px; padding: 16px; }
+  .tk-report-body strong { font-size: 1rem; }
+}
 /* Videos de la zona */
-.tk-localvids { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 4px 0 14px; }
-.tk-localvid { margin: 0; }
-.tk-localvid video { display: block; width: 100%; aspect-ratio: 16 / 9; border-radius: var(--tk-radius-media); background: #000; object-fit: cover; }
-.tk-localvid figcaption { margin-top: 6px; font-size: 0.82rem; line-height: 1.45; color: var(--tk-text-2); }
-.tk-localvid figcaption strong { color: var(--tk-text); }
-@media (max-width: 760px) { .tk-localvids { grid-template-columns: minmax(0, 1fr); } }
+
 
 /* ---- v14: barra lateral por secciones ---- */
 .tk-side-section {
@@ -3112,4 +3266,136 @@ html[data-tk-theme="light"] .tk-phc-chip.is-focus::before { border-color: var(--
   .tk-facet { grid-template-columns: minmax(0, 1fr); padding: 12px 0; }
   .tk-lib-filters-label { display: none; }
   .tk-res { padding: 16px; }
+}
+
+/* ---- Reproductor de video ------------------------------------------------
+   Ventana grande y oscura. Controles en píldoras translúcidas: sobre la imagen en
+   videos propios (se ocultan solos) y debajo del video en YouTube. */
+.tk-vdialog {
+  width: min(1120px, 94vw, calc((100dvh - 190px) * 16 / 9));
+  max-width: 100vw;
+  max-height: 100dvh;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  overflow: visible;
+  background: #0c0c11;
+  color: #fff;
+  box-shadow: 0 40px 120px -20px rgba(0, 0, 0, 0.85);
+}
+.tk-vdialog::backdrop { background: rgba(4, 3, 20, 0.84); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.tk-vdialog[open] { animation: tk-vd-in 0.3s var(--tk-ease); }
+@keyframes tk-vd-in { from { opacity: 0; transform: translateY(14px) scale(0.98); } }
+.tk-vp-wrap { display: flex; flex-direction: column; }
+.tk-vp-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 14px 14px 12px 20px; }
+.tk-vp-head-text { min-width: 0; }
+.tk-vp-title { margin: 0; font-size: 1.02rem; font-weight: 700; line-height: 1.3; color: #fff; }
+.tk-vp-meta { margin: 3px 0 0; font-size: 0.8rem; line-height: 1.45; color: rgba(255, 255, 255, 0.62); }
+.tk-vp-meta a { display: inline-flex; align-items: center; gap: 4px; color: rgba(255, 255, 255, 0.88); text-underline-offset: 3px; }
+.tk-vp-meta a:hover { color: var(--tk-lime); }
+.tk-vp-meta svg { width: 12px; height: 12px; }
+.tk-vp-close { flex: none; display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 12px; background: rgba(255, 255, 255, 0.08); color: #fff; cursor: pointer; transition: background 0.2s; }
+.tk-vp-close:hover { background: rgba(255, 255, 255, 0.16); }
+.tk-vp-close:focus-visible { outline: 2px solid var(--tk-lime); outline-offset: 2px; }
+.tk-vp-close svg { width: 20px; height: 20px; }
+
+.tk-vp { position: relative; border-radius: 0 0 16px 16px; background: #000; }
+.tk-vp--file { overflow: hidden; }
+.tk-vp-stage { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #000; }
+.tk-vp--yt .tk-vp-stage { border-radius: 0; }
+.tk-vp-media { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; background: #000; }
+.tk-vp-yt iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.tk-vp-failed { position: absolute; inset: 0; display: grid; place-content: center; gap: 6px; padding: 20px; text-align: center; font-size: 0.9rem; color: rgba(255, 255, 255, 0.8); }
+.tk-vp-failed a { color: var(--tk-lime); }
+.tk-vp-spinner { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.18); border-top-color: var(--tk-lime); animation: tk-vp-spin 0.9s linear infinite; pointer-events: none; }
+@keyframes tk-vp-spin { to { transform: rotate(360deg); } }
+
+.tk-vp-controls { position: relative; z-index: 2; transition: opacity 0.3s var(--tk-ease), transform 0.3s var(--tk-ease); }
+.tk-vp--file .tk-vp-controls { position: absolute; left: 0; right: 0; bottom: 0; padding: 48px 14px 14px; background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent); }
+.tk-vp--file[data-idle] { cursor: none; }
+.tk-vp--file[data-idle] .tk-vp-controls { opacity: 0; transform: translateY(8px); pointer-events: none; }
+.tk-vp--yt .tk-vp-controls { padding: 8px 14px 14px; border-radius: 0 0 16px 16px; background: #0c0c11; }
+
+/* Barra de avance: fina; crece al pasar el cursor y muestra el tiempo. */
+.tk-vp-progress { position: relative; padding: 6px 0; }
+.tk-vp-seek, .tk-vp-volume { -webkit-appearance: none; appearance: none; display: block; margin: 0; background: transparent; cursor: pointer; }
+.tk-vp-seek { --th: 4px; width: 100%; height: 16px; }
+.tk-vp-progress:hover .tk-vp-seek, .tk-vp-seek:focus-visible { --th: 6px; }
+.tk-vp-seek::-webkit-slider-runnable-track {
+  height: var(--th);
+  border-radius: 4px;
+  background: linear-gradient(to right, var(--tk-lime) var(--p), rgba(255, 255, 255, 0.5) var(--p), rgba(255, 255, 255, 0.5) var(--b), rgba(255, 255, 255, 0.22) var(--b));
+}
+.tk-vp-seek::-moz-range-track {
+  height: var(--th);
+  border-radius: 4px;
+  background: linear-gradient(to right, var(--tk-lime) var(--p), rgba(255, 255, 255, 0.5) var(--p), rgba(255, 255, 255, 0.5) var(--b), rgba(255, 255, 255, 0.22) var(--b));
+}
+.tk-vp-seek::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; margin-top: calc((var(--th) - 14px) / 2); border: 0; border-radius: 50%; background: var(--tk-lime); transform: scale(0); transition: transform 0.15s; }
+.tk-vp-seek::-moz-range-thumb { width: 14px; height: 14px; border: 0; border-radius: 50%; background: var(--tk-lime); transform: scale(0); transition: transform 0.15s; }
+.tk-vp-progress:hover .tk-vp-seek::-webkit-slider-thumb, .tk-vp-seek:focus-visible::-webkit-slider-thumb { transform: scale(1); }
+.tk-vp-progress:hover .tk-vp-seek::-moz-range-thumb, .tk-vp-seek:focus-visible::-moz-range-thumb { transform: scale(1); }
+.tk-vp-seek:focus-visible { outline: none; }
+.tk-vp-hovertime { position: absolute; bottom: 24px; transform: translateX(-50%); padding: 3px 7px; border-radius: 6px; background: rgba(20, 20, 26, 0.92); font-size: 0.74rem; font-weight: 600; font-variant-numeric: tabular-nums; color: #fff; pointer-events: none; white-space: nowrap; }
+
+.tk-vp-bar { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.tk-vp-group { display: flex; align-items: center; gap: 2px; height: 48px; padding: 0 4px; border-radius: 14px; background: rgba(38, 38, 44, 0.66); -webkit-backdrop-filter: blur(16px) saturate(1.3); backdrop-filter: blur(16px) saturate(1.3); }
+.tk-vp--yt .tk-vp-group { background: rgba(255, 255, 255, 0.07); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.tk-vp-spacer { flex: 1; }
+.tk-vp-btn { display: grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 0; border-radius: 10px; background: none; color: #fff; font: inherit; cursor: pointer; transition: background 0.2s; }
+.tk-vp-btn:hover { background: rgba(255, 255, 255, 0.13); }
+.tk-vp-btn:focus-visible { outline: 2px solid var(--tk-lime); outline-offset: -2px; }
+.tk-vp-btn svg { width: 22px; height: 22px; }
+.tk-vp-btn--play { width: 68px; }
+.tk-vp-btn--play svg { width: 24px; height: 24px; }
+.tk-vp-btn--text { width: auto; min-width: 46px; padding: 0 8px; font-size: 0.86rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tk-vp-time { padding: 0 12px 0 6px; font-size: 0.88rem; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; color: #fff; }
+.tk-vp-dur { font-weight: 500; color: rgba(255, 255, 255, 0.6); }
+
+.tk-vp-vol { display: flex; align-items: center; }
+.tk-vp-volume { --th: 4px; width: 0; height: 16px; opacity: 0; transition: width 0.25s var(--tk-ease), opacity 0.2s, margin 0.25s; }
+.tk-vp-vol:hover .tk-vp-volume, .tk-vp-vol:focus-within .tk-vp-volume { width: 76px; margin: 0 8px 0 2px; opacity: 1; }
+.tk-vp-volume::-webkit-slider-runnable-track { height: 4px; border-radius: 4px; background: linear-gradient(to right, #fff var(--p), rgba(255, 255, 255, 0.28) var(--p)); }
+.tk-vp-volume::-moz-range-track { height: 4px; border-radius: 4px; background: linear-gradient(to right, #fff var(--p), rgba(255, 255, 255, 0.28) var(--p)); }
+.tk-vp-volume::-webkit-slider-thumb { -webkit-appearance: none; width: 12px; height: 12px; margin-top: -4px; border: 0; border-radius: 50%; background: #fff; }
+.tk-vp-volume::-moz-range-thumb { width: 12px; height: 12px; border: 0; border-radius: 50%; background: #fff; }
+.tk-vp-volume:focus-visible { outline: 2px solid var(--tk-lime); outline-offset: 2px; }
+
+.tk-vp-rate { position: relative; }
+.tk-vp-menu { position: absolute; right: -4px; bottom: calc(100% + 12px); z-index: 3; display: flex; flex-direction: column; gap: 2px; min-width: 136px; padding: 6px; border-radius: 12px; background: rgba(28, 28, 34, 0.97); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.55); }
+.tk-vp-menu-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; border: 0; border-radius: 8px; background: none; color: #fff; font: inherit; font-size: 0.86rem; text-align: left; cursor: pointer; }
+.tk-vp-menu-item:hover, .tk-vp-menu-item:focus-visible { background: rgba(255, 255, 255, 0.1); outline: none; }
+.tk-vp-menu-item[aria-checked="true"] { color: var(--tk-lime); font-weight: 700; }
+.tk-vp-menu-item[aria-checked="true"]::after { content: "✓"; }
+
+/* Pantalla completa: el escenario llena la pantalla y los controles quedan abajo. */
+.tk-vp[data-full] { display: flex; flex-direction: column; width: 100vw; height: 100vh; border-radius: 0; }
+.tk-vp[data-full] .tk-vp-stage { flex: 1; aspect-ratio: auto; }
+.tk-vp[data-full] .tk-vp-controls { border-radius: 0; }
+
+@media (hover: none) { .tk-vp-volume { display: none; } }
+@media (max-width: 640px) {
+  .tk-vdialog { width: 100vw; border-radius: 0; }
+  .tk-vp, .tk-vp--yt .tk-vp-controls { border-radius: 0; }
+  .tk-vp-head { padding: 12px 10px 10px 14px; }
+  .tk-vp-title { font-size: 0.92rem; }
+  .tk-vp-bar { gap: 6px; }
+  .tk-vp-group { height: 42px; padding: 0 2px; border-radius: 12px; }
+  .tk-vp-btn { width: 36px; height: 36px; }
+  .tk-vp-btn--play { width: 48px; }
+  .tk-vp-time { padding: 0 6px 0 4px; font-size: 0.78rem; }
+  /* En pantallas angostas los controles van debajo del video (no lo tapan) y no se ocultan. */
+  .tk-vp--file .tk-vp-controls,
+  .tk-vp--file[data-idle] .tk-vp-controls { position: relative; padding: 6px 8px 10px; background: #0c0c11; opacity: 1; transform: none; pointer-events: auto; }
+  .tk-vp--file[data-idle] { cursor: auto; }
+  .tk-vp--yt .tk-vp-controls { padding: 6px 8px 10px; }
+  .tk-vp--file .tk-vp-group { background: rgba(255, 255, 255, 0.07); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+@media (max-width: 420px) {
+  .tk-vp-dur { display: none; }
+  .tk-vp-btn--text { min-width: 38px; padding: 0 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tk-vdialog[open] { animation: none; }
+  .tk-vp-spinner { animation-duration: 2.4s; }
 }
