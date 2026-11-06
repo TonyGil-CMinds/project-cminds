@@ -33,6 +33,42 @@ export const IconClose = (p: IconProps) => (
 export const IconExternal = (p: IconProps) => (
   <svg {...base} {...p}><path d="M14 5h5v5M19 5l-8 8M10 6H6a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4" /></svg>
 );
+export const IconSliders = (p: IconProps) => (
+  <svg {...base} {...p}><path d="M4 7h10M18 7h2M4 17h4M12 17h8" /><circle cx="16" cy="7" r="2" /><circle cx="10" cy="17" r="2" /></svg>
+);
+export const IconAlert = (p: IconProps) => (
+  <svg {...base} {...p}><path d="M10.3 4.2L2.8 17.5A2 2 0 0 0 4.5 20.5h15a2 2 0 0 0 1.7-3L13.7 4.2a2 2 0 0 0-3.4 0z" /><path d="M12 9.5v4M12 17h.01" /></svg>
+);
+/* Filtros de la caja de herramientas: acceso, idioma y nivel. */
+export const IconKey = (p: IconProps) => (
+  <svg {...base} {...p}><circle cx="8" cy="15.5" r="4" /><path d="M10.9 12.6L19.5 4M15.5 8l2.5 2.5M17.7 5.8l2.3 2.3" /></svg>
+);
+export const IconUnlock = (p: IconProps) => (
+  <svg {...base} {...p}><rect x="5" y="10.5" width="14" height="10" rx="2" /><path d="M8 10.5V7.5a4 4 0 0 1 7.6-1.7" /><path d="M12 14.5v2" /></svg>
+);
+export const IconUser = (p: IconProps) => (
+  <svg {...base} {...p}><circle cx="12" cy="8.5" r="3.5" /><path d="M5 20a7 7 0 0 1 14 0" /></svg>
+);
+export const IconCoin = (p: IconProps) => (
+  <svg {...base} {...p}><circle cx="12" cy="12" r="8.5" /><path d="M14.6 9.4c-.5-.8-1.4-1.2-2.6-1.2-1.5 0-2.6.7-2.6 1.8 0 2.4 5.2 1.3 5.2 3.9 0 1.1-1.1 1.9-2.6 1.9-1.2 0-2.2-.5-2.7-1.3M12 6.6v1.6M12 15.8v1.6" /></svg>
+);
+export const IconLanguages = (p: IconProps) => (
+  <svg {...base} {...p}><path d="M3.5 5.5h9M8 3.5v2M10.5 5.5c-.6 3.2-2.6 5.7-5.5 7M5.8 7.8c.9 2 2.4 3.6 4.7 4.7M12.5 20.5l4-9 4 9M13.8 17.5h5.4" /></svg>
+);
+export const IconGlobe = (p: IconProps) => (
+  <svg {...base} {...p}><circle cx="12" cy="12" r="8.5" /><path d="M3.5 12h17M12 3.5c2.3 2.4 3.4 5.2 3.4 8.5s-1.1 6.1-3.4 8.5c-2.3-2.4-3.4-5.2-3.4-8.5S9.7 5.9 12 3.5z" /></svg>
+);
+export const IconStairs = (p: IconProps) => (
+  <svg {...base} {...p}><path d="M4 19.5h4.5V15H13v-4.5h4.5V6H20" /></svg>
+);
+/** Barras de nivel: se rellenan 1, 2 o 3 (básico, intermedio, avanzado). */
+export const IconLevel = ({ level, ...p }: IconProps & { level: 1 | 2 | 3 }) => (
+  <svg {...base} strokeWidth={2.6} {...p}>
+    <path d="M6 19v-4" />
+    <path d="M12 19v-8" opacity={level >= 2 ? 1 : 0.28} />
+    <path d="M18 19V7" opacity={level >= 3 ? 1 : 0.28} />
+  </svg>
+);
 export const IconChevronDown = (p: IconProps) => (
   <svg {...base} {...p}><path d="M6 9l6 6 6-6" /></svg>
 );

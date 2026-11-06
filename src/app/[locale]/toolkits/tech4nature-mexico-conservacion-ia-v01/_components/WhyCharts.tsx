@@ -1,5 +1,6 @@
 import type { Locale } from "@/i18n/config";
 import { getContent } from "../content";
+import { IconAlert, IconCheck } from "./icons";
 
 const nf = (n: number) => n.toLocaleString("en-US");
 
@@ -9,8 +10,10 @@ const L = {
     source: "Fuente:",
     of: "de",
     crossed: "límites planetarios transgredidos",
-    isCrossed: "Transgredido",
-    isSafe: "Dentro del límite",
+    crossedGroup: "Transgredidos",
+    safeGroup: "Dentro del límite",
+    focusLegend: "Los dos que un proyecto como Tech4Nature ayuda a medir y atender",
+    focusSr: " (Tech4Nature ayuda a medirlo)",
     lprAria: "Cambio promedio en las poblaciones de vertebrados monitoreadas por región",
     peninsula: "Península de Yucatán",
     rest: "Resto de México",
@@ -25,8 +28,10 @@ const L = {
     source: "Source:",
     of: "of",
     crossed: "planetary boundaries crossed",
-    isCrossed: "Crossed",
-    isSafe: "Within the boundary",
+    crossedGroup: "Crossed",
+    safeGroup: "Within the boundary",
+    focusLegend: "The two that a project like Tech4Nature helps measure and address",
+    focusSr: " (Tech4Nature helps measure it)",
     lprAria: "Average change in monitored vertebrate populations by region",
     peninsula: "Yucatán Peninsula",
     rest: "Rest of Mexico",
@@ -100,23 +105,62 @@ export default function WhyCharts({ locale = "es" }: { locale?: Locale }) {
   const { WHY } = getContent(locale);
   const l = L[locale];
   const { planet, lpr, jaguar, empty, connectivity } = WHY;
-  const crossed = planet.boundaries.filter((b) => b.crossed).length;
+  // Transgredidos primero (los de foco al inicio), luego los que siguen dentro del límite.
+  const crossedList = planet.boundaries.filter((b) => b.crossed).sort((a, b) => Number(!!b.focus) - Number(!!a.focus));
+  const safeList = planet.boundaries.filter((b) => !b.crossed);
+  const hasFocus = planet.boundaries.some((b) => b.focus);
+  const chip = (b: (typeof planet.boundaries)[number]) => (
+    <li key={b.name} className={`tk-phc-chip${b.focus ? " is-focus" : ""}`}>
+      {b.name}
+      {b.focus ? <span className="sr-only">{l.focusSr}</span> : null}
+    </li>
+  );
   return (
     <div className="tk-charts">
       <Card title={planet.title} source={planet.source} meaning={planet.meaning} l={l} wide>
         <div className="tk-phc">
-          <p className="tk-phc-big">
-            <strong>{crossed}</strong> {l.of} {planet.boundaries.length}
-            <span>{l.crossed}</span>
-          </p>
-          <ul className="tk-phc-grid">
-            {planet.boundaries.map((b) => (
-              <li key={b.name} className={`${b.crossed ? "is-crossed" : "is-safe"}${b.focus ? " is-focus" : ""}`}>
-                <span>{b.name}</span>
-                <small>{b.crossed ? l.isCrossed : l.isSafe}</small>
-              </li>
-            ))}
-          </ul>
+          <div className="tk-phc-head">
+            <p className="tk-phc-big">
+              <strong>{crossedList.length}</strong>
+              <span className="tk-phc-of">
+                {l.of} {planet.boundaries.length}
+              </span>
+            </p>
+            <div className="tk-phc-sum">
+              <p className="tk-phc-lead">{l.crossed}</p>
+              <span className="tk-phc-meter" aria-hidden="true">
+                {[...crossedList, ...safeList].map((b) => (
+                  <i key={b.name} className={b.crossed ? "is-crossed" : "is-safe"} />
+                ))}
+              </span>
+            </div>
+          </div>
+
+          <div className="tk-phc-groups">
+            <div className="tk-phc-group is-crossed">
+              <p className="tk-phc-label">
+                <IconAlert />
+                {l.crossedGroup}
+                <b>{crossedList.length}</b>
+              </p>
+              <ul className="tk-phc-chips">{crossedList.map(chip)}</ul>
+            </div>
+            <div className="tk-phc-group is-safe">
+              <p className="tk-phc-label">
+                <IconCheck />
+                {l.safeGroup}
+                <b>{safeList.length}</b>
+              </p>
+              <ul className="tk-phc-chips">{safeList.map(chip)}</ul>
+            </div>
+          </div>
+
+          {hasFocus ? (
+            <p className="tk-phc-legend" aria-hidden="true">
+              <i className="tk-phc-mark" />
+              {l.focusLegend}
+            </p>
+          ) : null}
         </div>
         <p className="tk-chart-text">{planet.text}</p>
       </Card>
