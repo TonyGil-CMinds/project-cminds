@@ -200,7 +200,7 @@ export default function MobileMenu() {
             <div className="mm-nav-col">
               <button
                 className="mm-nav-item mm-anim"
-                onClick={() => { window.open("https://ecos.naturatech.org", "_blank", "noopener,noreferrer"); }}
+                onClick={() => { window.open("https://ecos.cminds.co", "_blank", "noopener,noreferrer"); }}
               >
                 {t.mobileMenu.ecos}
               </button>
