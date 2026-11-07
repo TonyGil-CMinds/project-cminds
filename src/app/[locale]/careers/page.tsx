@@ -1,5 +1,7 @@
 ﻿"use client";
 
+import EcosNavLink from "@/components/EcosNavLink";
+
 import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "react";
 import { useGSAP } from "@gsap/react";
 import { useRouter } from "next/navigation";
@@ -72,7 +74,7 @@ export default function CareersPage() {
   const peopleTextRef        = useRef<HTMLDivElement>(null);
   const activePersonRef      = useRef(0);
   const peopleTouchStartX    = useRef(0);
-  const navItemRefs          = useRef<(HTMLDivElement | null)[]>([]);
+  const navItemRefs          = useRef<(HTMLElement | null)[]>([]);
   const navLightRef          = useRef<HTMLDivElement>(null);
   const [activePerson, setActivePerson]     = useState(0);
   const [hoverNav, setHoverNav]             = useState<number | null>(null);
@@ -292,6 +294,12 @@ export default function CareersPage() {
               {item}
             </div>
           ))}
+          <EcosNavLink
+            ref={(el) => { navItemRefs.current[4] = el; }}
+            onMouseEnter={() => setHoverNav(4)}
+            onFocus={() => setHoverNav(4)}
+            onBlur={() => setHoverNav(null)}
+          />
         </div>
         <NavSearch />
         <LanguageSwitcher />

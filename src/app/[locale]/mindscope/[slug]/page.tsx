@@ -1,5 +1,7 @@
 ﻿"use client";
 
+import EcosNavLink from "@/components/EcosNavLink";
+
 import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useGSAP } from "@gsap/react";
@@ -372,6 +374,7 @@ export default function PostPage() {
               {nav[key]}
             </div>
           ))}
+          <EcosNavLink />
         </div>
         <NavSearch />
         <LanguageSwitcher />

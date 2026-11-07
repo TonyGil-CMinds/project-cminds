@@ -1,5 +1,7 @@
 ﻿"use client";
 
+import EcosNavLink from "@/components/EcosNavLink";
+
 import { useRef, useLayoutEffect, useEffect, useState, useCallback, startTransition } from "react";
 import { useGSAP } from "@gsap/react";
 import { useRouter } from "next/navigation";
@@ -28,7 +30,7 @@ function hexToRgb(hex: string) {
 
 export default function CorePage() {
   const containerRef   = useRef<HTMLDivElement>(null);
-  const navItemRefs    = useRef<(HTMLDivElement | null)[]>([]);
+  const navItemRefs    = useRef<(HTMLElement | null)[]>([]);
   const navLightRef    = useRef<HTMLDivElement>(null);
   const [hoverNav, setHoverNav]           = useState<number | null>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
@@ -188,6 +190,12 @@ export default function CorePage() {
               {item.label}
             </div>
           ))}
+          <EcosNavLink
+            ref={(el) => { navItemRefs.current[4] = el; }}
+            onMouseEnter={() => setHoverNav(4)}
+            onFocus={() => setHoverNav(4)}
+            onBlur={() => setHoverNav(null)}
+          />
         </div>
         <NavSearch />
         <LanguageSwitcher />

@@ -1,5 +1,7 @@
 "use client";
 
+import EcosNavLink from "@/components/EcosNavLink";
+
 import { useEffect } from "react";
 import Link from "next/link";
 import gsap from "gsap";
@@ -63,6 +65,7 @@ export default function NotFoundClient() {
                 {item}
               </div>
             ))}
+            <EcosNavLink />
           </div>
         </nav>
 
