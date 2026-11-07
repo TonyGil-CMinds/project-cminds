@@ -6,6 +6,8 @@ import * as THREE from "three";
 import gsap from "gsap";
 import { useLocale } from "@/i18n/useLocale";
 import { copy } from "@/app/[locale]/mindscope/copy";
+import Link from "next/link";
+import { readerHref, type ReaderRef } from "@/components/reader3d/links";
 
 /* ─── Constants ───────────────────────────────────────────── */
 const CW               = 1.65;
@@ -158,12 +160,12 @@ function mapReport(raw: Record<string, unknown>, idx: number, locale: string): A
 
 /* ─── Fallback dummy data ─────────────────────────────────── */
 const DUMMY: ArchiveItem[] = [
-  { id: 0, title: "Reporte de Aprendizajes y Recomendaciones de Política Pública", date: "May 31, 2026", description: "Las recomendaciones de política pública se centran en tres áreas clave.", languages: ["ES", "EN", "PT"], downloadUrl: "#", coverImage: "", bg: ["#c026d3", "#6366f1"], label: "fAIr LAC\nJalisco", langData: {} },
-  { id: 1, title: "Tokens Digitales para la Acción Climática", date: "Mar 15, 2026", description: "Exploración de oportunidades para el uso de tokens digitales en América Latina.", languages: ["ES", "EN"], downloadUrl: "#", coverImage: "", bg: ["#1e3a5f", "#0f172a"], label: "Tokens\nDigitales", langData: {} },
-  { id: 2, title: "Gobernanza de Datos y las Nuevas Tecnologías de Mejora de la Privacidad", date: "Jan 10, 2026", description: "Panorama global y retos para Latinoamérica y el Caribe.", languages: ["ES"], downloadUrl: "#", coverImage: "", bg: ["#0f1e3d", "#172554"], label: "Gobernanza\nde Datos", langData: {} },
-  { id: 3, title: "A Ética en IA para América Latina", date: "Oct 22, 2025", description: "Marcos éticos para la IA en el contexto latinoamericano.", languages: ["ES", "PT"], downloadUrl: "#", coverImage: "", bg: ["#111827", "#1f2937"], label: "A Ética\nen IA", langData: {} },
-  { id: 4, title: "León Innovando para el Futuro del Trabajo — LIFT", date: "Sep 5, 2025", description: "Inserción laboral de las juventudes en León, México.", languages: ["ES"], downloadUrl: "#", coverImage: "", bg: ["#0c1a2e", "#1a3a5c"], label: "LIFT\nLeón", langData: {} },
-  { id: 5, title: "impactIA para la Recuperación Económica Sostenible", date: "Jul 18, 2025", description: "IA para la recuperación económica sostenible e inclusiva de México.", languages: ["ES", "EN"], downloadUrl: "#", coverImage: "", bg: ["#1a1a2e", "#0f0f1e"], label: "impactIA\nMéxico", langData: {} },
+  { id: 0, apiId: "", title: "Reporte de Aprendizajes y Recomendaciones de Política Pública", date: "May 31, 2026", description: "Las recomendaciones de política pública se centran en tres áreas clave.", languages: ["ES", "EN", "PT"], downloadUrl: "#", coverImage: "", bg: ["#c026d3", "#6366f1"], label: "fAIr LAC\nJalisco", langData: {} },
+  { id: 1, apiId: "", title: "Tokens Digitales para la Acción Climática", date: "Mar 15, 2026", description: "Exploración de oportunidades para el uso de tokens digitales en América Latina.", languages: ["ES", "EN"], downloadUrl: "#", coverImage: "", bg: ["#1e3a5f", "#0f172a"], label: "Tokens\nDigitales", langData: {} },
+  { id: 2, apiId: "", title: "Gobernanza de Datos y las Nuevas Tecnologías de Mejora de la Privacidad", date: "Jan 10, 2026", description: "Panorama global y retos para Latinoamérica y el Caribe.", languages: ["ES"], downloadUrl: "#", coverImage: "", bg: ["#0f1e3d", "#172554"], label: "Gobernanza\nde Datos", langData: {} },
+  { id: 3, apiId: "", title: "A Ética en IA para América Latina", date: "Oct 22, 2025", description: "Marcos éticos para la IA en el contexto latinoamericano.", languages: ["ES", "PT"], downloadUrl: "#", coverImage: "", bg: ["#111827", "#1f2937"], label: "A Ética\nen IA", langData: {} },
+  { id: 4, apiId: "", title: "León Innovando para el Futuro del Trabajo — LIFT", date: "Sep 5, 2025", description: "Inserción laboral de las juventudes en León, México.", languages: ["ES"], downloadUrl: "#", coverImage: "", bg: ["#0c1a2e", "#1a3a5c"], label: "LIFT\nLeón", langData: {} },
+  { id: 5, apiId: "", title: "impactIA para la Recuperación Económica Sostenible", date: "Jul 18, 2025", description: "IA para la recuperación económica sostenible e inclusiva de México.", languages: ["ES", "EN"], downloadUrl: "#", coverImage: "", bg: ["#1a1a2e", "#0f0f1e"], label: "impactIA\nMéxico", langData: {} },
 ];
 
 /* ─── Scatter layout ──────────────────────────────────────── */
@@ -474,6 +476,7 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
   const [mouseNY,     setMouseNY]     = useState(0);
   const [activeLang,  setActiveLang]  = useState(0);
   const [panelItem,   setPanelItem]   = useState<ArchiveItem | null>(null);
+  const [readers,     setReaders]     = useState<Record<string, ReaderRef>>({});
 
   // Keep ref always current so event handlers see fresh value without re-registering
   activeIdxRef.current = activeIdx;
@@ -508,6 +511,17 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
       .finally(() => setLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, locale]);
+
+  /* reportes con lector 3D (registro en R2) */
+  useEffect(() => {
+    if (!visible) return;
+    let alive = true;
+    fetch("/api/readers")
+      .then((r) => (r.ok ? r.json() : {}))
+      .then((data: Record<string, ReaderRef>) => { if (alive && data && typeof data === "object") setReaders(data); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [visible]);
 
   /* auto-open card when arriving from /reportes/[id] */
   useEffect(() => {
@@ -669,6 +683,7 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
   const panelDescription = activeLangData?.description ?? panelItem?.description ?? "";
   const panelDownload    = activeLangData?.downloadUrl ?? panelItem?.downloadUrl ?? "#";
   const panelCover       = activeLangData?.coverImage  ?? panelItem?.coverImage  ?? "";
+  const panelReader      = panelItem ? readers[panelItem.apiId] : undefined;
 
   if (!visible) return null;
 
@@ -756,17 +771,28 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
           <h3 className="archive-detail-title">{panelTitle}</h3>
           <p className="archive-detail-desc">{panelDescription}</p>
 
-          <button
-            className="archive-download-btn"
-            onClick={() => saveAs(panelItem.apiId, activeLangStr, panelTitle, panelDownload)}
-            disabled={!panelDownload || panelDownload === "#"}
-          >
-            {t.saveAsPdf}
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-          </button>
+          <div className="archive-actions">
+            {panelReader ? (
+              <Link className="archive-read3d-btn" href={readerHref(locale, panelReader, activeLangStr)}>
+                {t.read3d}
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 6.5C10.3 5.2 7.9 4.5 4 4.5v13c3.9 0 6.3.7 8 2 1.7-1.3 4.1-2 8-2v-13c-3.9 0-6.3.7-8 2z" />
+                <path d="M12 6.5v13" />
+              </svg>
+              </Link>
+            ) : null}
+            <button
+              className="archive-download-btn"
+              onClick={() => saveAs(panelItem.apiId, activeLangStr, panelTitle, panelDownload)}
+              disabled={!panelDownload || panelDownload === "#"}
+            >
+              {t.saveAsPdf}
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+              </svg>
+            </button>
+          </div>
         </div>
       )}
     </div>

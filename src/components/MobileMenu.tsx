@@ -6,7 +6,7 @@ import gsap from "gsap";
 import { common } from "@/i18n/common";
 import { useLocale, useLocalePath } from "@/i18n/useLocale";
 
-const HIDDEN_PATHS = ["/bioscanner-launch"];
+const HIDDEN_PATHS = ["/bioscanner-launch", "/lector"];
 
 export default function MobileMenu() {
   const [open, setOpen] = useState(false);

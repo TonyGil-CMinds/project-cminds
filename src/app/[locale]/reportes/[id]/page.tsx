@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import ReportDetail from "./ReportDetail";
 import { toLocale, OG_LOCALES } from "@/i18n/config";
 import { copy } from "./copy";
+import { loadReaderIndex } from "@/components/reader3d/load";
 
 interface RawReport {
   id:             string;
@@ -78,7 +79,7 @@ export default async function Page(
   { params }: { params: Promise<{ id: string; locale: string }> }
 ) {
   const { id } = await params;
-  const report  = await fetchReport(id);
+  const [report, readers] = await Promise.all([fetchReport(id), loadReaderIndex()]);
   if (!report) notFound();
-  return <ReportDetail report={report} />;
+  return <ReportDetail report={report} reader={readers[report.id]} />;
 }

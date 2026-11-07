@@ -31,6 +31,8 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const PUBLIC_DIR = join(ROOT, "public");
 const DEFAULT_PREFIXES = ["platforms/aiforbiodiversity/initiative-tech4nature"];
 const DEFAULT_CACHE = "public, max-age=31536000, immutable";
+// Los JSON (p. ej. el manifest del lector 3D) cambian sin cambiar de nombre: caché corta.
+const JSON_CACHE = "public, max-age=300";
 
 const CONTENT_TYPES = {
   ".jpg": "image/jpeg",
@@ -223,11 +225,12 @@ async function main() {
   for (const prefix of prefixes.length ? prefixes : DEFAULT_PREFIXES) {
     const dir = join(PUBLIC_DIR, prefix);
     const info = await stat(dir).catch(() => null);
-    if (!info?.isDirectory()) {
-      console.error(`No existe la carpeta public/${prefix}`);
+    if (!info?.isDirectory() && !info?.isFile()) {
+      console.error(`No existe public/${prefix}`);
       process.exit(1);
     }
-    for (const full of await walk(dir)) {
+    // Acepta carpetas o un archivo suelto (p. ej. readers/index.json).
+    for (const full of info.isFile() ? [dir] : await walk(dir)) {
       const key = relative(PUBLIC_DIR, full).split(sep).join("/");
       const ext = extname(full).toLowerCase();
       files.push({ full, key, size: (await stat(full)).size, type: CONTENT_TYPES[ext] ?? "application/octet-stream" });
@@ -283,7 +286,7 @@ async function main() {
     if (!upload) return console.log(`  ${state.padEnd(8)} ${mb(f.size).padStart(9)}  ${f.key}`);
     const res = await r2Request(cfg, "PUT", f.key, {
       body,
-      headers: { "content-type": f.type, "cache-control": cfg.cacheControl, "content-md5": md5.toString("base64") },
+      headers: { "content-type": f.type, "cache-control": f.type.startsWith("application/json") ? JSON_CACHE : cfg.cacheControl, "content-md5": md5.toString("base64") },
     });
     if (res.ok) {
       summary.subido++;

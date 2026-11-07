@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "r2:upload": "node --env-file-if-exists=.env.local scripts/r2-upload.mjs",
-    "images:webp": "node scripts/images-to-webp.mjs"
+    "images:webp": "node scripts/images-to-webp.mjs",
+    "reader:build": "node --env-file-if-exists=.env.local scripts/reader-build.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -35,6 +36,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@napi-rs/canvas": "1.0.12",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.43",
     "@types/pg": "^8.20.0",
@@ -43,6 +45,7 @@
     "@types/three": "^0.184.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
+    "pdfjs-dist": "6.4.299",
     "playwright": "^1.61.0",
     "prisma": "^7.8.0",
     "tailwindcss": "^4",

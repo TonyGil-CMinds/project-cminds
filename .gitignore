@@ -49,3 +49,6 @@ next-env.d.ts
 *AGENTS.md.env
 
 /generated/prisma
+
+# Lectores 3D generados (npm run reader:build): viven en R2, no en el repo.
+/public/readers/

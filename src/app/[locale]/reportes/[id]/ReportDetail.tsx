@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useLocale, useLocalePath } from "@/i18n/useLocale";
 import { copy } from "./copy";
+import { readerHref, type ReaderRef } from "@/components/reader3d/links";
 
 interface ReportFile {
   language:    string;
@@ -43,7 +44,7 @@ function saveAs(reportId: string, lang: string, title: string, url?: string) {
   document.body.removeChild(a);
 }
 
-export default function ReportDetail({ report }: { report: RawReport }) {
+export default function ReportDetail({ report, reader }: { report: RawReport; reader?: ReaderRef }) {
   const [activeLang, setActiveLang] = useState(0);
   const locale = useLocale();
   const lp = useLocalePath();
@@ -100,6 +101,15 @@ export default function ReportDetail({ report }: { report: RawReport }) {
           <p className="rp-desc">{desc}</p>
 
           <div className="rp-actions">
+            {reader ? (
+              <Link className="archive-read3d-btn" href={readerHref(locale, reader, file?.language)}>
+                {t.read3d}
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 6.5C10.3 5.2 7.9 4.5 4 4.5v13c3.9 0 6.3.7 8 2 1.7-1.3 4.1-2 8-2v-13c-3.9 0-6.3.7-8 2z" />
+                <path d="M12 6.5v13" />
+              </svg>
+              </Link>
+            ) : null}
             <button
               className="archive-download-btn"
               onClick={() => saveAs(report.id, file?.language ?? "", title, dlUrl)}
