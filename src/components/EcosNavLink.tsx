@@ -16,7 +16,7 @@ export default function EcosNavLink(props: EcosNavLinkProps) {
     <a
       {...props}
       className="nav-item nav-item--ecos"
-      href="https://ecos.naturatech.org"
+      href="https://ecos.cminds.co"
       target="_blank"
       rel="noopener noreferrer"
     >
