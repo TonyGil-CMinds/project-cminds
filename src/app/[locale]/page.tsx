@@ -1,5 +1,7 @@
 ﻿"use client";
 
+import EcosNavLink from "@/components/EcosNavLink";
+
 import { useEffect, useLayoutEffect, useRef, useState, startTransition } from "react";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
@@ -245,7 +247,7 @@ export default function Hero() {
   const [hoverNav, setHoverNav] = useState<number | null>(null);
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
-  const navRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const navRefs = useRef<(HTMLElement | null)[]>([]);
 
   // Sync globally CSS vars when color state changes
   useEffect(() => {
@@ -825,6 +827,12 @@ export default function Hero() {
                     {tNav[id]}
                   </div>
                 ))}
+                <EcosNavLink
+                  ref={(el) => { navRefs.current[4] = el; }}
+                  onMouseEnter={() => setHoverNav(4)}
+                  onFocus={() => setHoverNav(4)}
+                  onBlur={() => setHoverNav(null)}
+                />
               </div>
 
               <NavSearch />

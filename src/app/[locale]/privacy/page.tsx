@@ -1,5 +1,7 @@
 ﻿"use client";
 
+import EcosNavLink from "@/components/EcosNavLink";
+
 import { useRef, useLayoutEffect, useEffect, useState, startTransition } from "react";
 import { useRouter } from "next/navigation";
 import gsap from "gsap";
@@ -18,7 +20,7 @@ function hexToRgb(hex: string) {
 }
 
 export default function PrivacyPage() {
-  const navItemRefs   = useRef<(HTMLDivElement | null)[]>([]);
+  const navItemRefs   = useRef<(HTMLElement | null)[]>([]);
   const headerRef     = useRef<HTMLDivElement>(null);
   const [activeSection, setActiveSection]   = useState("sec-i");
   const [hoverNav, setHoverNav]             = useState<number | null>(null);
@@ -115,6 +117,12 @@ export default function PrivacyPage() {
               }}
             >{item}</div>
           ))}
+          <EcosNavLink
+            ref={(el) => { navItemRefs.current[4] = el; }}
+            onMouseEnter={() => setHoverNav(4)}
+            onFocus={() => setHoverNav(4)}
+            onBlur={() => setHoverNav(null)}
+          />
         </div>
         <NavSearch />
         <LanguageSwitcher />

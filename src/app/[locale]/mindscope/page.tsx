@@ -1,5 +1,7 @@
 ﻿"use client";
 
+import EcosNavLink from "@/components/EcosNavLink";
+
 import { useRef, useLayoutEffect, useEffect, useState, startTransition, Suspense } from "react";
 import { useGSAP } from "@gsap/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -70,7 +72,7 @@ function ArchiveBridge({ dockActive, onExpand }: { dockActive: number; onExpand:
 
 export default function MindscopePage() {
   const containerRef  = useRef<HTMLDivElement>(null);
-  const navItemRefs   = useRef<(HTMLDivElement | null)[]>([]);
+  const navItemRefs   = useRef<(HTMLElement | null)[]>([]);
   const navLightRef   = useRef<HTMLDivElement>(null);
   const reelRef       = useRef<HTMLDivElement>(null);
   const trackRef      = useRef<HTMLDivElement>(null);
@@ -330,6 +332,12 @@ export default function MindscopePage() {
               {nav[key]}
             </div>
           ))}
+          <EcosNavLink
+            ref={(el) => { navItemRefs.current[4] = el; }}
+            onMouseEnter={() => setHoverNav(4)}
+            onFocus={() => setHoverNav(4)}
+            onBlur={() => setHoverNav(null)}
+          />
         </div>
         <NavSearch />
         <LanguageSwitcher />
