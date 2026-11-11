@@ -73,7 +73,11 @@ export default function CycleSlider({
               {slide.icon ? (
                 <img src={slide.icon} alt="" style={{ height: slide.iconH, width: "auto", display: "block" }} />
               ) : (
-                <span className="cz-slide-badge">{slide.badge}</span>
+                slide.href ? (
+                  <a className="cz-slide-badge" href={slide.href} target="_blank" rel="noopener noreferrer">{slide.badge}</a>
+                ) : (
+                  <span className="cz-slide-badge">{slide.badge}</span>
+                )
               )}
             </div>
             <p className="cz-slide-text">{slide.text}</p>

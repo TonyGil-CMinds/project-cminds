@@ -5226,6 +5226,16 @@ body {
   width: fit-content;
 }
 
+.cz-slide-badge {
+  color: inherit;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+a.cz-slide-badge:hover {
+  color: var(--color-primary);
+}
+
 .cz-slide-text {
   font-size: 0.88rem;
   line-height: 1.68;
