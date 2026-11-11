@@ -1030,7 +1030,8 @@ export function createReaderEngine({ root, manifest: M, strings: s }: ReaderEngi
     if (h.kind === "link" || h.kind === "url") return;
     cardTitle.textContent = h.title;
     cardText.textContent = h.text;
-    cardNote.hidden = h.kind !== "photo";
+    cardNote.hidden = h.kind !== "photo" || !!h.caption;
+    cardNote.textContent = h.ai ? s.photoNoteAi : s.photoNote;
     cardCount.textContent = s.detail(detail.idx + 1, detail.list.length);
     cardPrev.hidden = cardNext.hidden = !many;
     card.hidden = false;

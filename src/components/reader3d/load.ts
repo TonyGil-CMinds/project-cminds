@@ -9,10 +9,17 @@ const LANG_RE = /^[a-z]{2}$/;
 
 /**
  * Lee el manifest de una carpeta y devuelve también la base para resolver sus imágenes.
- * En producción solo se lee de R2. En desarrollo, si no está en R2, se usa la copia de /public:
- * así se puede revisar una conversión (npm run reader:build) antes de subirla.
+ * En producción solo se lee de R2. En desarrollo manda la copia de /public (si existe): así se
+ * puede revisar una conversión o reconversión (npm run reader:build) antes de subirla.
  */
 async function fetchManifest(dir: string): Promise<{ data: unknown; base: string } | null> {
+  if (process.env.NODE_ENV !== "production") {
+    try {
+      return { data: JSON.parse(await readFile(join(process.cwd(), "public", dir, "manifest.json"), "utf8")), base: dir };
+    } catch {
+      // sin copia local: se intenta R2
+    }
+  }
   if (ASSETS_URL) {
     try {
       const res = await fetch(asset(`${dir}manifest.json`), { next: { revalidate: 300 } });
@@ -21,7 +28,7 @@ async function fetchManifest(dir: string): Promise<{ data: unknown; base: string
       // sin red o sin objeto: se intenta la copia local
     }
   }
-  if (!ASSETS_URL || process.env.NODE_ENV !== "production") {
+  if (!ASSETS_URL && process.env.NODE_ENV === "production") {
     try {
       return { data: JSON.parse(await readFile(join(process.cwd(), "public", dir, "manifest.json"), "utf8")), base: dir };
     } catch {
@@ -49,6 +56,14 @@ function isManifest(v: unknown): v is ReaderManifest {
 export type ReaderIndexEntry = { slug: string; title: string; langs: string[]; reportId?: string };
 
 async function fetchIndex(): Promise<unknown | null> {
+  // En desarrollo manda la copia local: así se ve lo recién convertido antes de subirlo.
+  if (process.env.NODE_ENV !== "production") {
+    try {
+      return JSON.parse(await readFile(join(process.cwd(), "public", "readers", "index.json"), "utf8"));
+    } catch {
+      // sin copia local: se lee la de R2
+    }
+  }
   if (ASSETS_URL) {
     try {
       const res = await fetch(asset("/readers/index.json"), { next: { revalidate: 300 } });
@@ -67,17 +82,47 @@ async function fetchIndex(): Promise<unknown | null> {
   return null;
 }
 
-/** Lectores por id de reporte del Archive: { [reportId]: { slug, langs } }. */
-export async function loadReaderIndex(): Promise<Record<string, { slug: string; langs: string[] }>> {
+/** Publicación que solo existe como lector y se muestra en The Archive (sin descarga). */
+export type StandaloneReader = { slug: string; langs: string[]; title: string; description: string; date: string; cover: string };
+
+const str = (v: unknown) => (typeof v === "string" ? v : "");
+
+async function indexEntries() {
   const data = await fetchIndex();
   const list = data && typeof data === "object" && Array.isArray((data as { readers?: unknown }).readers) ? (data as { readers: unknown[] }).readers : [];
-  const out: Record<string, { slug: string; langs: string[] }> = {};
+  const out: (Partial<ReaderIndexEntry> & { slug: string; langs: string[]; archive?: unknown })[] = [];
   for (const e of list) {
     if (!e || typeof e !== "object") continue;
-    const { slug, langs, reportId } = e as Partial<ReaderIndexEntry>;
-    if (typeof slug !== "string" || !SLUG_RE.test(slug) || typeof reportId !== "string" || !Array.isArray(langs)) continue;
+    const { slug, langs } = e as Partial<ReaderIndexEntry>;
+    if (typeof slug !== "string" || !SLUG_RE.test(slug) || !Array.isArray(langs)) continue;
     const ok = langs.filter((l): l is string => typeof l === "string" && LANG_RE.test(l));
-    if (ok.length) out[reportId] = { slug, langs: ok };
+    if (ok.length) out.push({ ...(e as object), slug, langs: ok });
+  }
+  return out;
+}
+
+/** Lectores por id de reporte del Archive: { [reportId]: { slug, langs } }. */
+export async function loadReaderIndex(): Promise<Record<string, { slug: string; langs: string[] }>> {
+  const out: Record<string, { slug: string; langs: string[] }> = {};
+  for (const e of await indexEntries()) if (typeof e.reportId === "string") out[e.reportId] = { slug: e.slug, langs: e.langs };
+  return out;
+}
+
+/** Publicaciones que se muestran en The Archive solo como lector (marcadas con --archive). */
+export async function loadStandaloneReaders(): Promise<StandaloneReader[]> {
+  const out: StandaloneReader[] = [];
+  for (const e of await indexEntries()) {
+    if (typeof e.reportId === "string" || !e.archive || typeof e.archive !== "object") continue;
+    const a = e.archive as Record<string, unknown>;
+    const cover = str(a.cover).replace(/^\/+/, "");
+    out.push({
+      slug: e.slug,
+      langs: e.langs,
+      title: str(e.title) || e.slug,
+      description: str(a.description),
+      date: str(a.date),
+      cover: cover && /^readers\/[a-z0-9/._-]+\.webp$/.test(cover) ? asset(`/${cover}`) : "",
+    });
   }
   return out;
 }

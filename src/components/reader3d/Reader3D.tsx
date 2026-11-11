@@ -224,21 +224,18 @@ export default function Reader3D({ manifest, locale, backHref, downloadHref, dow
       <div className="sr-only" data-r="live" aria-live="polite" />
 
       <div className="r3d-intro" data-r="intro">
-        <div>
+        {/* Jerarquía: contexto → título → subtítulo → acciones → nota. La carga va al pie. */}
+        <div className="r3d-intro-main">
           {manifest.kicker ? <p className="kick">{manifest.kicker}</p> : null}
-          <h1 lang={manifest.lang}>{manifest.title}</h1>
+          <h1 lang={manifest.lang} data-len={manifest.title.length > 70 ? "xl" : manifest.title.length > 36 ? "l" : undefined}>
+            {manifest.title}
+          </h1>
           {manifest.subtitle ? (
             <p className="sub" lang={manifest.lang}>
               {manifest.subtitle}
             </p>
           ) : null}
-          <div className="r3d-prog" aria-hidden="true">
-            <i data-r="progBar" />
-          </div>
-          <p className="r3d-status" data-r="status" role="status">
-            {s.preparing}
-          </p>
-          <div className="r3d-row" style={{ justifyContent: "center", flexWrap: "wrap" }}>
+          <div className="r3d-intro-actions">
             <button className="r3d-btn primary" data-r="bOpen" type="button" disabled>
               {s.open}
             </button>
@@ -247,6 +244,14 @@ export default function Reader3D({ manifest, locale, backHref, downloadHref, dow
             </button>
           </div>
           <p className="note">{s.introNote}</p>
+        </div>
+        <div className="r3d-intro-foot">
+          <div className="r3d-prog" aria-hidden="true">
+            <i data-r="progBar" />
+          </div>
+          <p className="r3d-status" data-r="status" role="status">
+            {s.preparing}
+          </p>
         </div>
       </div>
     </div>

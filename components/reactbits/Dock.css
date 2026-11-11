@@ -1,5 +1,7 @@
 .dock-outer {
   margin: 0 0.5rem;
+  /* Al crecer por la magnificación, el área vacía no debe tapar lo que hay detrás. */
+  pointer-events: none;
   display: flex;
   max-width: 100%;
   align-items: center;
@@ -21,6 +23,7 @@
   backdrop-filter: blur(20px) saturate(1.4);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.06);
   padding: 0 0.5rem 0.5rem;
+  pointer-events: auto;
 }
 
 .dock-item {
@@ -69,4 +72,9 @@
   color: rgba(255, 255, 255, 0.8);
   transform: translateX(-50%);
   pointer-events: none;
+}
+
+/* En pantallas táctiles el hover se queda pegado tras tocar: sin etiqueta flotante. */
+@media (hover: none) {
+  .dock-label { display: none; }
 }

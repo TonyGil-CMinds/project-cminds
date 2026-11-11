@@ -1,8 +1,15 @@
 import { NextResponse } from "next/server";
-import { loadReaderIndex } from "@/components/reader3d/load";
+import { loadReaderIndex, loadStandaloneReaders } from "@/components/reader3d/load";
 
-/** Reportes del Archive que tienen lector 3D: { [reportId]: { slug, langs } }. */
+/**
+ * Lectores 3D para The Archive:
+ * - reports: { [reportId]: { slug, langs } } para los reportes de Base44 que tienen lector;
+ * - standalone: publicaciones que solo existen como lector (sin descarga).
+ */
 export async function GET() {
-  const readers = await loadReaderIndex();
-  return NextResponse.json(readers, { headers: { "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600" } });
+  const [reports, standalone] = await Promise.all([loadReaderIndex(), loadStandaloneReaders()]);
+  return NextResponse.json(
+    { reports, standalone },
+    { headers: { "cache-control": "public, max-age=60, s-maxage=300, stale-while-revalidate=600" } },
+  );
 }

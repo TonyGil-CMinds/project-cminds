@@ -16,6 +16,7 @@ import { useSubscribeModal } from "@/components/SubscribeModalProvider";
 import { useLocale, useLocalePath } from "@/i18n/useLocale";
 import { common } from "@/i18n/common";
 import { copy } from "./copy";
+import PublicationsList from "@/components/PublicationsList";
 const TheArchive = dynamic(() => import("@/components/TheArchive"), { ssr: false });
 gsap.registerPlugin(ScrollTrigger);
 
@@ -33,9 +34,7 @@ function fmtDate(d: string, locale: string) {
   });
 }
 
-const ITEM_H = 84;
-const SCROLL_PER_ITEM = 180;
-
+/** Fondo de la lista de publicaciones: un tono oscuro por artículo. */
 const REEL_BG = [
   "#040314",
   "#180820",
@@ -74,14 +73,9 @@ export default function MindscopePage() {
   const containerRef  = useRef<HTMLDivElement>(null);
   const navItemRefs   = useRef<(HTMLElement | null)[]>([]);
   const navLightRef   = useRef<HTMLDivElement>(null);
-  const reelRef       = useRef<HTMLDivElement>(null);
-  const trackRef      = useRef<HTMLDivElement>(null);
-  const drumRef       = useRef<HTMLDivElement>(null);
-  const reelActiveRef = useRef(0);
   const pubSectionRef = useRef<HTMLElement>(null);
 
   const [posts, setPosts]               = useState<ReelPost[]>([]);
-  const [reelActive, setReelActive]     = useState(0);
   const [hoverNav, setHoverNav]         = useState<number | null>(null);
   const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0, opacity: 0 });
   const [primaryColor, setPrimaryColor] = useState('#5EC1F3');
@@ -122,35 +116,6 @@ export default function MindscopePage() {
     fetchPosts();
   }, [locale]);
 
-  // ── Reel: RAF-driven drum ──────────────────────────────────
-  useEffect(() => {
-    // Reset the drum index whenever the post set changes (e.g. locale switch)
-    // so we never carry a stale index from a different-length post list.
-    reelActiveRef.current = 0;
-    setReelActive(0);
-    if (posts.length === 0) return;
-    const loopLen = posts.length * 3;
-    let rafId: number;
-
-    const update = () => {
-      if (!reelRef.current || !trackRef.current) return;
-      const scrolled   = Math.max(0, -reelRef.current.getBoundingClientRect().top);
-      const floatIdx   = Math.min(scrolled / SCROLL_PER_ITEM, loopLen - 0.001);
-      const drumCenter = drumRef.current ? drumRef.current.offsetHeight / 2 : window.innerHeight * 0.4;
-      trackRef.current.style.transform =
-        `translateY(${drumCenter - floatIdx * ITEM_H - ITEM_H / 2}px)`;
-      const newActive = Math.floor(floatIdx);
-      if (newActive !== reelActiveRef.current) {
-        reelActiveRef.current = newActive;
-        setReelActive(newActive);
-      }
-    };
-
-    const onScroll = () => { cancelAnimationFrame(rafId); rafId = requestAnimationFrame(update); };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    update();
-    return () => { window.removeEventListener("scroll", onScroll); cancelAnimationFrame(rafId); };
-  }, [posts.length, locale]);
 
   // ── Color + subscribed cookies ────────────────────────────
   useLayoutEffect(() => {
@@ -299,9 +264,6 @@ export default function MindscopePage() {
     });
   }, { scope: containerRef });
 
-  const loopedPosts = posts.length > 0 ? [...posts, ...posts, ...posts] : [];
-  const displayIdx  = reelActive % Math.max(posts.length, 1);
-  const activeBg    = REEL_BG[displayIdx % REEL_BG.length];
   const featPost    = posts.length > 0
     ? [...posts].sort((a, b) => b.published_date.localeCompare(a.published_date))[0]
     : null;
@@ -491,54 +453,15 @@ export default function MindscopePage() {
         )}
       </section>
 
-      {/* Reel */}
-      {posts.length > 0 && (
-        <div
-          ref={reelRef}
-          className="ms-reel-section"
-          style={{ height: `calc(${posts.length * 3 * SCROLL_PER_ITEM}px + 100vh)` }}
-        >
-          <div className="ms-reel-sticky" style={{ background: activeBg }}>
-            <div className="ms-reel-progress">
-              <div
-                className="ms-reel-progress-thumb"
-                style={{ top: `${(displayIdx / Math.max(posts.length - 1, 1)) * 100}%` }}
-              />
-            </div>
-            <div className="ms-reel-left">
-              <div className="ms-reel-header">
-                <span>{t.reel.date}</span>
-                <span>{t.reel.title}</span>
-              </div>
-              <div className="ms-reel-drum" ref={drumRef}>
-                <div className="ms-reel-drum-center-line" />
-                <div className="ms-reel-drum-track" ref={trackRef}>
-                  {loopedPosts.map((post, i) => (
-                    <div
-                      key={`${post.id}-${Math.floor(i / posts.length)}`}
-                      className={`ms-reel-item${i === reelActive ? " ms-reel-active" : ""}`}
-                      onClick={() => openPost(post.slug)}
-                    >
-                      <span className="ms-reel-date">{fmtDate(post.published_date, locale)}</span>
-                      <p className="ms-reel-title">{post.title}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="ms-reel-right">
-              {posts.map((post, i) => (
-                <div
-                  key={post.id}
-                  className={`ms-reel-feat-img${i === displayIdx ? " ms-reel-feat-active" : ""}`}
-                  style={{ backgroundImage: `url(${post.cover_image})`, cursor: "pointer" }}
-                  onClick={() => openPost(post.slug)}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Publicaciones: lista con el artículo activo resaltado y vista previa de su portada */}
+      <PublicationsList
+        posts={posts}
+        palette={REEL_BG}
+        formatDate={(d) => fmtDate(d, locale)}
+        href={(slug) => lp(`/mindscope/${slug}`)}
+        onOpen={openPost}
+        t={t.pubs}
+      />
 
       <Suspense fallback={null}>
         <ArchiveBridge dockActive={dockActive} onExpand={setCardExpanded} />

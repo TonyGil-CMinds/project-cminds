@@ -14,6 +14,7 @@ const CW               = 1.65;
 const CH               = CW * (4 / 3);
 const N                = 6;
 const CAROUSEL_SPACING = 2.55;
+const CAROUSEL_LIFT    = 0.55;
 const INIT_CAROUSEL_OFF = ((6 - 1) / 2) * CAROUSEL_SPACING; // based on DUMMY length
 
 /* ─── Types ───────────────────────────────────────────────── */
@@ -158,6 +159,42 @@ function mapReport(raw: Record<string, unknown>, idx: number, locale: string): A
   };
 }
 
+/* ─── Publicaciones solo como lector 3D (no están en Base44) ── */
+const READER_ONLY = "reader:";
+
+interface StandaloneReader {
+  slug:        string;
+  langs:       string[];
+  title:       string;
+  description: string;
+  date:        string;
+  cover:       string;
+}
+
+interface ReadersPayload {
+  reports?:    Record<string, ReaderRef>;
+  standalone?: StandaloneReader[];
+}
+
+function standaloneItem(s: StandaloneReader, idx: number): ArchiveItem {
+  const langs = s.langs.map((l) => l.toUpperCase());
+  const words = s.title.split(/\s+/).filter(Boolean);
+  const data: LangData = { title: s.title, description: s.description, coverImage: s.cover, downloadUrl: "#", date: s.date || "—" };
+  return {
+    id:          idx,
+    apiId:       `${READER_ONLY}${s.slug}`,
+    title:       s.title,
+    date:        data.date,
+    description: s.description,
+    languages:   langs,
+    downloadUrl: "#",
+    coverImage:  s.cover,
+    bg:          BG_PALETTE[idx % BG_PALETTE.length],
+    label:       [words.slice(0, 2).join(" "), words.slice(2, 4).join(" ")].filter(Boolean).join("\n") || s.title,
+    langData:    Object.fromEntries(langs.map((l) => [l, data])),
+  };
+}
+
 /* ─── Fallback dummy data ─────────────────────────────────── */
 const DUMMY: ArchiveItem[] = [
   { id: 0, apiId: "", title: "Reporte de Aprendizajes y Recomendaciones de Política Pública", date: "May 31, 2026", description: "Las recomendaciones de política pública se centran en tres áreas clave.", languages: ["ES", "EN", "PT"], downloadUrl: "#", coverImage: "", bg: ["#c026d3", "#6366f1"], label: "fAIr LAC\nJalisco", langData: {} },
@@ -241,33 +278,6 @@ function makeGradientTexture(item: ArchiveItem): THREE.CanvasTexture {
   return new THREE.CanvasTexture(cv);
 }
 
-/* ─── Odometer title ─────────────────────────────────────── */
-function OdometerTitle({ text, className }: { text: string; className?: string }) {
-  const [current, setCurrent] = useState(text);
-  const charsRef   = useRef<(HTMLSpanElement | null)[]>([]);
-  const mountedRef = useRef(false);
-  useEffect(() => {
-    if (!mountedRef.current) { mountedRef.current = true; return; }
-    const chars = charsRef.current.filter(Boolean) as HTMLSpanElement[];
-    gsap.killTweensOf(chars);
-    gsap.to(chars, { y: 28, opacity: 0, duration: 0.2, stagger: { each: 0.011, from: "start" }, ease: "power3.in", onComplete: () => setCurrent(text) });
-  }, [text]);
-  useEffect(() => {
-    const chars = charsRef.current.filter(Boolean) as HTMLSpanElement[];
-    gsap.killTweensOf(chars);
-    gsap.fromTo(chars, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: 0.26, stagger: { each: 0.013, from: "start" }, ease: "power2.out" });
-  }, [current]);
-  return (
-    <span className={className}>
-      {current.split("").map((char, i) => (
-        <span key={i} ref={(el) => { charsRef.current[i] = el; }} style={{ display: "inline-block" }}>
-          {char === " " ? " " : char}
-        </span>
-      ))}
-    </span>
-  );
-}
-
 /* ─── Blur-fade date ──────────────────────────────────────── */
 function BlurDate({ text, className }: { text: string; className?: string }) {
   const [current, setCurrent] = useState(text);
@@ -294,12 +304,13 @@ interface CardProps {
   carouselOff:   number;
   activeIdx:     number | null;
   hoverIdx:      number | null;
+  focusIdx:      number | null;
   activeLangStr: string;
   onHover:       (i: number | null) => void;
   onClick:       (i: number) => void;
 }
 
-function ArchCard({ item, index, total, progress, carouselOff, activeIdx, hoverIdx, activeLangStr, onHover, onClick }: CardProps) {
+function ArchCard({ item, index, total, progress, carouselOff, activeIdx, hoverIdx, focusIdx, activeLangStr, onHover, onClick }: CardProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const matRef  = useRef<THREE.ShaderMaterial>(null);
 
@@ -350,16 +361,22 @@ function ArchCard({ item, index, total, progress, carouselOff, activeIdx, hoverI
     let tScale: number, tGray: number, tDim: number;
 
     if (!hasActive) {
+      // En el carrusel, el reporte del centro va a color, adelante y un poco más grande;
+      // sus vecinos se atenúan menos que el resto. Al entrar, las portadas quedan oscurecidas
+      // para que el título se lea, y se aclaran al acomodarse.
+      const isFocus = inCarousel && focusIdx === index;
+      const dist    = focusIdx === null ? 99 : Math.abs(focusIdx - index);
       const floatY = Math.sin(t * 0.7 + index * 1.1) * 0.08 * (1 - progress);
       tx  = SCAT_POS[index][0] + (cx - SCAT_POS[index][0]) * progress;
-      ty  = SCAT_POS[index][1] * (1 - progress) + floatY;
-      tz  = SCAT_POS[index][2] * (1 - progress);
+      // En el carrusel las portadas suben un poco: así nunca tapan los datos de abajo.
+      ty  = SCAT_POS[index][1] * (1 - progress) + floatY + CAROUSEL_LIFT * progress;
+      tz  = SCAT_POS[index][2] * (1 - progress) + (isFocus ? 0.45 : 0);
       tRX = SCAT_ROT[index][0] * (1 - progress);
       tRY = SCAT_ROT[index][1] * (1 - progress);
       tRZ = SCAT_ROT[index][2] * (1 - progress);
-      tScale = isHovered && inCarousel ? 1.06 : 1.0;
-      tGray  = inCarousel && !isHovered ? 0.88 : 0.0;
-      tDim   = 1.0;
+      tScale = isFocus ? 1.12 : isHovered && inCarousel ? 1.05 : 1.0;
+      tGray  = !inCarousel || isFocus || isHovered ? 0.0 : dist === 1 ? 0.55 : 0.85;
+      tDim   = !inCarousel ? 0.42 + 0.5 * progress : isFocus || isHovered ? 1.0 : dist === 1 ? 0.78 : 0.55;
     } else if (isActive) {
       const mob = window.innerWidth < 768;
       tx = mob ? 0 : -0.8; ty = mob ? 1.0 : 0; tz = 1.2;
@@ -370,7 +387,9 @@ function ArchCard({ item, index, total, progress, carouselOff, activeIdx, hoverI
     } else {
       const ai          = activeIdx as number;
       const isPeekLeft  = ai - 1 === index;
-      const isPeekRight = ai + 1 === index;
+      // En escritorio el panel ocupa la derecha: la portada siguiente sale de la vista en lugar
+      // de quedar (oscura) detrás del texto.
+      const isPeekRight = ai + 1 === index && window.innerWidth < 768;
       if (isPeekLeft)        tx = -4.1;
       else if (isPeekRight)  tx =  4.1;
       else if (index < ai)   tx = -14;
@@ -416,17 +435,19 @@ interface SceneProps {
   carouselOff:   number;
   hoverIdx:      number | null;
   activeIdx:     number | null;
+  focusIdx:      number | null;
   activeLangStr: string;
   mouseNY:       number;
   setHoverIdx:   (i: number | null) => void;
   onCardClick:   (i: number) => void;
 }
 
-function Scene({ items, progress, carouselOff, hoverIdx, activeIdx, activeLangStr, mouseNY, setHoverIdx, onCardClick }: SceneProps) {
+function Scene({ items, progress, carouselOff, hoverIdx, activeIdx, focusIdx, activeLangStr, mouseNY, setHoverIdx, onCardClick }: SceneProps) {
   const { camera } = useThree();
   useFrame(() => {
     const cam = camera as THREE.PerspectiveCamera;
-    cam.rotation.x += (mouseNY * -0.2 - cam.rotation.x) * 0.04;
+    // Inclinación leve con el cursor: más fuerte desplazaba el carrusel sobre los textos.
+    cam.rotation.x += (mouseNY * -0.05 - cam.rotation.x) * 0.04;
   });
   return (
     <>
@@ -440,6 +461,7 @@ function Scene({ items, progress, carouselOff, hoverIdx, activeIdx, activeLangSt
           carouselOff={carouselOff}
           activeIdx={activeIdx}
           hoverIdx={hoverIdx}
+          focusIdx={focusIdx}
           activeLangStr={activeLangStr}
           onHover={setHoverIdx}
           onClick={onCardClick}
@@ -486,14 +508,55 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
     [items.length]
   );
 
-  /* fetch reports */
+  /* Reporte al centro del carrusel (el que se abre con Enter y se describe abajo). */
+  const total    = items.length;
+  const focusIdx = progress > 0.85
+    ? Math.max(0, Math.min(total - 1, Math.round((total - 1) / 2 - carouselOff / CAROUSEL_SPACING)))
+    : null;
+  const focusRef = useRef<number | null>(null);
+  useEffect(() => { focusRef.current = focusIdx; }, [focusIdx]);
+
+  /* Lleva el carrusel a un reporte con una transición suave y deja el scroll en sintonía. */
+  const offTween = useRef<{ off: number }>({ off: INIT_CAROUSEL_OFF });
+  const snapTimer = useRef<number | null>(null);
+  const goTo = useCallback((i: number, instant = false) => {
+    const n = items.length;
+    if (!n) return;
+    const idx    = Math.max(0, Math.min(n - 1, i));
+    const half   = ((n - 1) / 2) * CAROUSEL_SPACING;
+    const target = ((n - 1) / 2 - idx) * CAROUSEL_SPACING;
+    progressRef.current = 1 + (half > 0 ? (1 - target / half) / 2 : 0);
+    setProgress(1);
+    gsap.killTweensOf(offTween.current);
+    if (instant) { offTween.current.off = target; setCarouselOff(target); return; }
+    setCarouselOff((cur) => { offTween.current.off = cur; return cur; });
+    gsap.to(offTween.current, {
+      off: target, duration: 0.55, ease: "power3.out",
+      onUpdate: () => setCarouselOff(offTween.current.off),
+    });
+  }, [items.length]);
+
+  /* Al dejar de desplazar, el carrusel se acomoda en el reporte más cercano. */
+  const scheduleSnap = useCallback(() => {
+    if (snapTimer.current) window.clearTimeout(snapTimer.current);
+    snapTimer.current = window.setTimeout(() => {
+      if (progressRef.current >= 0.95 && activeIdxRef.current === null && focusRef.current !== null) goTo(focusRef.current);
+    }, 160);
+  }, [goTo]);
+  useEffect(() => () => { if (snapTimer.current) window.clearTimeout(snapTimer.current); }, []);
+
+  /* fetch reports + lectores 3D (registro en R2) */
   useEffect(() => {
     if (!visible) return;
     setLoading(true);
-    fetch("/api/reports")
+    const readersReq: Promise<ReadersPayload> = fetch("/api/readers")
+      .then((r) => (r.ok ? r.json() : {}))
+      .catch(() => ({}));
+    const reportsReq = fetch("/api/reports")
       .then((r) => r.json())
-      .then((data) => {
-        // Log first item structure for debugging
+      .catch(() => null);
+    Promise.all([reportsReq, readersReq])
+      .then(([data, rd]) => {
         const rawArr: Record<string, unknown>[] = Array.isArray(data)
           ? data
           : Array.isArray(data?.reports)
@@ -501,27 +564,23 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
             : Array.isArray(data?.data)
               ? data.data
               : [];
-        if (rawArr.length > 0) {
-          const mapped = rawArr.slice(0, SCAT_POS.length).map((raw, idx) => mapReport(raw, idx, locale));
+        // Publicaciones que solo existen como lector: van primero y no se pueden descargar.
+        const standalone = Array.isArray(rd?.standalone) ? rd.standalone : [];
+        const extras = standalone.map((s, i) => standaloneItem(s, i));
+        const map: Record<string, ReaderRef> = { ...(rd?.reports && typeof rd.reports === "object" ? rd.reports : {}) };
+        for (const s of standalone) map[`${READER_ONLY}${s.slug}`] = { slug: s.slug, langs: s.langs };
+        setReaders(map);
+        if (rawArr.length > 0 || extras.length > 0) {
+          const mapped = [...extras, ...rawArr.map((raw) => mapReport(raw, 0, locale))]
+            .slice(0, SCAT_POS.length)
+            .map((it, idx) => ({ ...it, id: idx, bg: BG_PALETTE[idx % BG_PALETTE.length] }));
           setItems(mapped);
           setCarouselOff(((mapped.length - 1) / 2) * CAROUSEL_SPACING);
         }
       })
-      .catch(() => {})
       .finally(() => setLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visible, locale]);
-
-  /* reportes con lector 3D (registro en R2) */
-  useEffect(() => {
-    if (!visible) return;
-    let alive = true;
-    fetch("/api/readers")
-      .then((r) => (r.ok ? r.json() : {}))
-      .then((data: Record<string, ReaderRef>) => { if (alive && data && typeof data === "object") setReaders(data); })
-      .catch(() => {});
-    return () => { alive = false; };
-  }, [visible]);
 
   /* auto-open card when arriving from /reportes/[id] */
   useEffect(() => {
@@ -539,6 +598,8 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
 
   /* mouse → camera tilt */
   useEffect(() => {
+    // Solo con ratón: en pantallas táctiles los toques no deben inclinar la cámara.
+    if (!window.matchMedia("(pointer: fine)").matches) return;
     const h = (e: MouseEvent) => setMouseNY((e.clientY / window.innerHeight) * 2 - 1);
     window.addEventListener("mousemove", h);
     return () => window.removeEventListener("mousemove", h);
@@ -550,21 +611,26 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
     const h = (e: WheelEvent) => {
       if (activeIdxRef.current !== null) return;
       e.preventDefault();
-      progressRef.current = Math.max(0, Math.min(2, progressRef.current + e.deltaY * 0.0014));
+      gsap.killTweensOf(offTween.current);
+      // Rueda vertical u horizontal (trackpad) avanzan igual.
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      progressRef.current = Math.max(0, Math.min(2, progressRef.current + delta * 0.0014));
       const raw = progressRef.current;
       setProgress(Math.min(1, raw));
       const t = Math.max(0, Math.min(1, raw - 1));
       setCarouselOff(carouselHalf * (1 - 2 * t));
+      scheduleSnap();
     };
     window.addEventListener("wheel", h, { passive: false });
     return () => window.removeEventListener("wheel", h);
-  }, [visible, carouselHalf]);
+  }, [visible, carouselHalf, scheduleSnap]);
 
   /* touch drag (mobile) */
   useEffect(() => {
     if (!visible) return;
     const onStart = (e: TouchEvent) => {
       if (activeIdxRef.current !== null) return;
+      gsap.killTweensOf(offTween.current);
       touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       touchRawRef.current   = progressRef.current;
     };
@@ -584,7 +650,10 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
       const t = Math.max(0, Math.min(1, newRaw - 1));
       setCarouselOff(carouselHalf * (1 - 2 * t));
     };
-    const onEnd = () => { touchStartRef.current = null; };
+    const onEnd = () => {
+      if (touchStartRef.current) scheduleSnap();
+      touchStartRef.current = null;
+    };
     window.addEventListener("touchstart", onStart, { passive: true });
     window.addEventListener("touchmove",  onMove,  { passive: false });
     window.addEventListener("touchend",   onEnd);
@@ -593,7 +662,7 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
       window.removeEventListener("touchmove",  onMove);
       window.removeEventListener("touchend",   onEnd);
     };
-  }, [visible, carouselHalf]);
+  }, [visible, carouselHalf, scheduleSnap]);
 
   /* entry / exit */
   useEffect(() => {
@@ -611,16 +680,52 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
     }
   }, [visible]);
 
-  /* Escape to close */
+  /* Abrir / cerrar / cambiar de reporte en el panel */
+  const openAt = useCallback((i: number) => {
+    setActiveIdx(i); setActiveLang(0); onExpand?.(true);
+  }, [onExpand]);
+  const closePanel = useCallback(() => {
+    const last = activeIdxRef.current;
+    setActiveIdx(null); setActiveLang(0); onExpand?.(false);
+    // Al cerrar, el carrusel queda en el reporte que se estaba viendo.
+    if (last !== null) goTo(last, true);
+  }, [onExpand, goTo]);
+  const stepPanel = useCallback((d: number) => {
+    const cur = activeIdxRef.current;
+    if (cur === null) return;
+    const next = cur + d;
+    if (next < 0 || next >= items.length) return;
+    setActiveIdx(next); setActiveLang(0);
+  }, [items.length]);
+
+  /* Teclado: ← → recorren, Enter abre, Esc cierra */
   useEffect(() => {
+    if (!visible) return;
     const h = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && activeIdx !== null) {
-        setActiveIdx(null); setActiveLang(0); onExpand?.(false);
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+      const el = e.target as HTMLElement | null;
+      if (el && (el.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(el.tagName))) return;
+      const k = e.key;
+      if (activeIdxRef.current !== null) {
+        if (k === "Escape") closePanel();
+        else if (k === "ArrowRight") stepPanel(1);
+        else if (k === "ArrowLeft") stepPanel(-1);
+        else return;
+        e.preventDefault();
+        return;
       }
+      const f = focusRef.current;
+      if (k === "ArrowRight" || k === "ArrowDown") goTo(f === null ? 0 : f + 1);
+      else if (k === "ArrowLeft" || k === "ArrowUp") { if (f !== null) goTo(f - 1); else return; }
+      else if (k === "Home") goTo(0);
+      else if (k === "End") goTo(items.length - 1);
+      else if (k === "Enter" && f !== null && !(el && el.closest("button, a"))) openAt(f);
+      else return;
+      e.preventDefault();
     };
     window.addEventListener("keydown", h);
     return () => window.removeEventListener("keydown", h);
-  }, [activeIdx, onExpand]);
+  }, [visible, goTo, openAt, closePanel, stepPanel, items.length]);
 
   /* Panel show / switch / hide */
   useEffect(() => {
@@ -663,17 +768,19 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
 
   const handleCardClick = useCallback((i: number) => {
     if (activeIdx === null) {
-      if (progress < 0.85) return;
-      setActiveIdx(i); setActiveLang(0); onExpand?.(true);
+      // Durante la entrada, un clic acomoda el carrusel en esa portada.
+      if (progress < 0.85) { goTo(i); return; }
+      openAt(i);
     } else if (activeIdx === i) {
-      setActiveIdx(null); setActiveLang(0); onExpand?.(false);
+      closePanel();
     } else {
       setActiveIdx(i); setActiveLang(0);
     }
-  }, [progress, activeIdx, onExpand]);
+  }, [progress, activeIdx, goTo, openAt, closePanel]);
 
-  const hoverItem = hoverIdx !== null ? items[hoverIdx] : null;
-  const infoItem  = panelItem ?? (progress > 0.85 ? hoverItem : null);
+  // Abajo se describe el reporte bajo el cursor o, si no hay, el del centro.
+  const infoIdx  = progress > 0.85 ? (hoverIdx ?? focusIdx) : null;
+  const infoItem = infoIdx !== null ? items[infoIdx] : null;
 
   /* ── Derived panel content based on selected language ── */
   const activeLangStr  = panelItem?.languages[activeLang] ?? "";
@@ -701,6 +808,7 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
           carouselOff={carouselOff}
           hoverIdx={hoverIdx}
           activeIdx={activeIdx}
+          focusIdx={focusIdx}
           activeLangStr={activeLangStr}
           mouseNY={mouseNY}
           setHoverIdx={setHoverIdx}
@@ -733,41 +841,106 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
         </svg>
       </div>
 
-      {/* Info bar (hover, no active) */}
+      {/* Carrusel: flechas laterales */}
+      {focusIdx !== null && activeIdx === null && (
+        <>
+          <button
+            type="button"
+            className="archive-arrow archive-arrow--prev"
+            onClick={() => goTo(focusIdx - 1)}
+            disabled={focusIdx === 0}
+            aria-label={t.prev}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+          </button>
+          <button
+            type="button"
+            className="archive-arrow archive-arrow--next"
+            onClick={() => goTo(focusIdx + 1)}
+            disabled={focusIdx === total - 1}
+            aria-label={t.next}
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+          </button>
+        </>
+      )}
+
+      {/* Reporte del centro (o bajo el cursor): datos y acceso al detalle */}
       <div className={`archive-info-bar${infoItem && activeIdx === null ? " archive-info-bar--visible" : ""}`}>
         {infoItem && activeIdx === null && <>
-          <BlurDate text={infoItem.date} className="archive-info-date" />
-          <OdometerTitle text={infoItem.title.length > 45 ? infoItem.title.slice(0, 42) + "…" : infoItem.title} className="archive-info-title" />
+          <div className="archive-info-meta">
+            <span className="archive-info-count">
+              {String((infoIdx ?? 0) + 1).padStart(2, "0")}<span> / {String(total).padStart(2, "0")}</span>
+            </span>
+            <span className="archive-info-dot" aria-hidden="true" />
+            <BlurDate text={infoItem.date} className="archive-info-date" />
+            {infoItem.languages.length ? (
+              <span className="archive-info-langs">{infoItem.languages.join(" · ")}</span>
+            ) : null}
+            {readers[infoItem.apiId] ? <span className="archive-chip-3d">{t.badge3d}</span> : null}
+          </div>
+          {/* Cambio rápido (no letra por letra): al recorrer el carrusel el título siempre se lee. */}
+          <BlurDate text={infoItem.title.length > 90 ? infoItem.title.slice(0, 87) + "…" : infoItem.title} className="archive-info-title" />
+          <button type="button" className="archive-info-open" onClick={() => openAt(infoIdx ?? 0)} title={t.navHint}>
+            {t.open}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          </button>
         </>}
       </div>
+      <p className="sr-only" aria-live="polite">
+        {focusIdx !== null && activeIdx === null ? t.focused(focusIdx + 1, total, items[focusIdx]?.title ?? "") : ""}
+      </p>
 
       {/* Side panel */}
       {panelItem && (
-        <div ref={panelRef} className="archive-panel">
+        <div ref={panelRef} className="archive-panel" role="dialog" aria-label={panelTitle}>
+          {total > 1 ? (
+          <div className="archive-panel-bar">
+            <button type="button" className="archive-panel-step" onClick={() => stepPanel(-1)} disabled={!activeIdx} aria-label={t.prev}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+            </button>
+            <span className="archive-panel-count">
+              {String((activeIdx ?? 0) + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+            </span>
+            <button type="button" className="archive-panel-step" onClick={() => stepPanel(1)} disabled={activeIdx === total - 1} aria-label={t.next}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+            </button>
+          </div>
+          ) : null}
           <button
+            type="button"
             className="archive-panel-close"
-            onClick={() => { setActiveIdx(null); setActiveLang(0); onExpand?.(false); }}
+            onClick={closePanel}
             aria-label={t.close}
+            title={`${t.close} (Esc)`}
           >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
 
-          {/* Language tabs */}
-          <div className="archive-lang-tabs">
-            {panelItem.languages.map((lang, li) => (
-              <button
-                key={lang}
-                className={`archive-lang-btn${activeLang === li ? " archive-lang-btn--active" : ""}`}
-                onClick={() => setActiveLang(li)}
-              >
-                {lang}
-              </button>
-            ))}
+          {/* Jerarquía: metadatos discretos (fecha + idiomas) → título → descripción → acciones. */}
+          <div className="archive-detail-meta">
+            <span className="archive-detail-date">{panelDate}</span>
+            {panelItem.languages.length === 1 ? (
+              <span className="archive-lang-static">{panelItem.languages[0]}</span>
+            ) : panelItem.languages.length > 1 ? (
+              <div className="archive-lang-tabs" role="group">
+                {panelItem.languages.map((lang, li) => (
+                  <button
+                    key={lang}
+                    type="button"
+                    className={`archive-lang-btn${activeLang === li ? " archive-lang-btn--active" : ""}`}
+                    aria-pressed={activeLang === li}
+                    onClick={() => setActiveLang(li)}
+                  >
+                    {lang}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            {panelReader ? <span className="archive-chip-3d">{t.badge3d}</span> : null}
           </div>
-
-          <p className="archive-detail-date">{panelDate}</p>
           <h3 className="archive-detail-title">{panelTitle}</h3>
           <p className="archive-detail-desc">{panelDescription}</p>
 
@@ -781,6 +954,7 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
               </svg>
               </Link>
             ) : null}
+            {panelItem.apiId.startsWith(READER_ONLY) ? null : (
             <button
               className="archive-download-btn"
               onClick={() => saveAs(panelItem.apiId, activeLangStr, panelTitle, panelDownload)}
@@ -792,6 +966,7 @@ export default function TheArchive({ visible, onExpand, openReportId }: TheArchi
                 <polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
               </svg>
             </button>
+            )}
           </div>
         </div>
       )}

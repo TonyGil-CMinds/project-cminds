@@ -11,7 +11,8 @@
 //   - puntos de zoom sobre los párrafos importantes
 //   - enlaces: los del PDF (internos y externos) y, si el índice no está enlazado, los detecta
 //     por el texto («Título ...... 12»)
-//   - fotos (respetando el recorte) para el barniz y, si tienen pie de foto, un punto de zoom
+//   - fotos (respetando el recorte) para el barniz y, si tienen pie de foto, un punto de zoom;
+//     las que no lo tienen se devuelven en `pending` para describirlas aparte (describe.mjs)
 // No escribe en disco ni usa red: se puede llamar desde la línea de comandos o desde un servidor.
 
 import { createHash } from "node:crypto";
@@ -470,6 +471,7 @@ export async function convertPdf(bytes, opts) {
 
   // ---- 4. Páginas del lector
   const pages = [];
+  const pending = []; // fotos sin pie: { page, rect }
   let label = null;
   const report = { pages: raw.length, text: 0, headings: 0, hsText: 0, hsPhoto: 0, links: 0, urls: 0, tocLinks: 0, photos: 0, bodySize, offset };
   for (const [ti, entries] of tocLinks) for (const e of entries.filter((x) => x.top)) {
@@ -508,7 +510,11 @@ export async function convertPdf(bytes, opts) {
     if (i === 0) label = t.cover;
     else if (tocPages.has(i)) label = t.toc;
     else if (sec) label = sec.title;
-    else if (headings[0]) label = headings[0].text;
+    else {
+      // Antes de la primera sección: un título corto, no una cita destacada («Overfishing now affects…,»).
+      const h = headings.find((b) => b.text.length <= 48 && !/[,;:]$/.test(b.text.trim()) && b.text.trim().split(/\s+/).length <= 7);
+      if (h) label = h.text;
+    }
     const pageLabel = label;
 
     const head = ordered[0]?.role === "heading" ? ordered[0].text : headings[0]?.text;
@@ -546,9 +552,13 @@ export async function convertPdf(bytes, opts) {
         .filter((b) => b.role !== "heading" && b.text.length < 320 && b.r[1] >= r[3] - 60 && b.r[1] <= r[3] + 40 && xOverlap(b.r, r) > 0.4 * (b.r[2] - b.r[0]))
         .sort((x, y) => Math.abs(x.r[1] - r[3]) - Math.abs(y.r[1] - r[3]))[0];
       if (cap && nPhoto < MAX_PHOTO_HS) {
-        hs.push({ kind: "photo", zone: round(r), dot: round([(r[0] + r[2]) / 2, (r[1] + r[3]) / 2]), title: t.photo, text: cap.text });
+        hs.push({ kind: "photo", zone: round(r), dot: round([(r[0] + r[2]) / 2, (r[1] + r[3]) / 2]), title: t.photo, text: cap.text, caption: true });
         nPhoto++;
         report.hsPhoto++;
+      } else if (!cap && nPhoto < MAX_PHOTO_HS && area(r) < 0.8 * REF_W * REF_H) {
+        // Sin pie: se describe aparte. Los fondos a página completa no llevan punto de zoom.
+        pending.push({ page: i, rect: round(r) });
+        nPhoto++;
       }
     }
 
@@ -610,5 +620,5 @@ export async function convertPdf(bytes, opts) {
     build: { tool: TOOL, sha256, pdfPages: total, createdAt: new Date().toISOString() },
   };
   await task.destroy();
-  return { manifest, files, report: { ...report, sections: sections.map((s) => `${s.page + 1}: ${s.title}`), tocPages: [...tocPages].map((i) => i + 1) } };
+  return { manifest, files, pending, report: { ...report, sections: sections.map((s) => `${s.page + 1}: ${s.title}`), tocPages: [...tocPages].map((i) => i + 1) } };
 }
