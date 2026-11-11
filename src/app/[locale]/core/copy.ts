@@ -44,6 +44,11 @@ export const copy = {
         "Bridging worlds. The future needs translators who can connect science with policy, Indigenous wisdom with innovation, and finance with regeneration. Real impact happens in between.",
       slides: [
         {
+          badge: "The Sociable",
+          text: "Recognized by The Sociable among its AI leaders to watch in 2026, highlighting her work in ethical AI.",
+          href: "https://sociable.co/business/from-founders-to-researchers-the-sociables-20-ai-leaders-to-watch-in-2026/",
+        },
+        {
           icon: "/core/forbes.svg",
           iconH: 22,
           text: "Recognized by Forbes México and NTT DATA as a leader in AI 2024, highlighting her role in advancing AI in Mexico.",
@@ -138,6 +143,11 @@ export const copy = {
       quote:
         "Tender puentes entre mundos. El futuro necesita traductores capaces de unir ciencia con política pública, sabiduría indígena con innovación, y finanzas con regeneración. El impacto real ocurre en esos puntos de encuentro.",
       slides: [
+        {
+          badge: "The Sociable",
+          text: "Reconocida por The Sociable entre sus líderes de IA a seguir en 2026, destacando su trabajo en ética de IA.",
+          href: "https://sociable.co/business/from-founders-to-researchers-the-sociables-20-ai-leaders-to-watch-in-2026/",
+        },
         {
           icon: "/core/forbes.svg",
           iconH: 22,
