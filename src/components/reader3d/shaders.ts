@@ -8,6 +8,9 @@ vec3 deformP(vec2 p){
   float yn = p.y / (uSize.y * 0.5);
   float k = uBend * (1.0 + uTwist * yn);
   float th = uAngle; float x; float z;
+  // Que la curva no pase de la horizontal: si no, al aterrizar la hoja aun curvada se hunde bajo
+  // la pila y por un instante asoma la pagina de abajo (la anterior).
+  k = clamp(k, -th, 3.14159265 - th);
   if (abs(k) < 0.0005) { x = uSize.x * sig * cos(th); z = uSize.x * sig * sin(th); }
   else { x = uSize.x / k * (sin(th + k * sig) - sin(th)); z = uSize.x / k * (cos(th) - cos(th + k * sig)); }
   float g = 1.0 - clamp(sig / 0.3, 0.0, 1.0);
