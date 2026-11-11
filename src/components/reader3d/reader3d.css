@@ -407,7 +407,7 @@ html.r3d-lock body {
   inset: 6px;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.9);
-  animation: r3d-pulse 2.4s ease-out infinite;
+  opacity: 0.55;
 }
 .r3d .hs.active::before {
   background: var(--accent);
@@ -711,12 +711,7 @@ html.r3d-lock body {
   line-height: 1;
   letter-spacing: -0.03em;
   text-wrap: balance;
-  background: linear-gradient(100deg, #f4f8ff 20%, #5ec1f3 38%, #c9ecff 46%, #ffffff 54%, #f4f8ff 70%);
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: r3d-shine 6s linear infinite;
+  color: #f4f8ff;
 }
 /* Títulos largos (reportes del Archive): más pequeños para que el botón siga a la vista. */
 .r3d-intro h1[data-len="l"] {
