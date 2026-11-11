@@ -17,6 +17,10 @@ export type ReaderHotspot =
       dot?: [number, number];
       title: string;
       text: string;
+      /** Foto: el texto es su pie en la publicación. */
+      caption?: boolean;
+      /** Foto: descripción generada con IA (no forma parte de la publicación). */
+      ai?: boolean;
     }
   | {
       /** Enlace interno: lleva a otra página (índice de `pages`). */

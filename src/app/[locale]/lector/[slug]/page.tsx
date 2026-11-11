@@ -34,7 +34,8 @@ export default async function ReaderPage({ params, searchParams }: { params: Par
     : manifest.pdf && /^https?:\/\//.test(manifest.pdf)
       ? manifest.pdf
       : undefined;
-  const backHref = localePath(l, src ? `/mindscope?report=${encodeURIComponent(src.reportId)}` : "/mindscope");
+  // Volver al mismo reporte en The Archive (los que solo existen como lector usan «reader:<slug>»).
+  const backHref = localePath(l, `/mindscope?report=${encodeURIComponent(src ? src.reportId : `reader:${slug}`)}`);
 
   return <Reader3D manifest={manifest} locale={l} backHref={backHref} downloadHref={downloadHref} downloadName={`${manifest.title}.pdf`} />;
 }

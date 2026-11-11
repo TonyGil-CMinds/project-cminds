@@ -407,7 +407,7 @@ html.r3d-lock body {
   inset: 6px;
   border-radius: 50%;
   border: 2px solid rgba(255, 255, 255, 0.9);
-  animation: r3d-pulse 2.4s ease-out infinite;
+  opacity: 0.55;
 }
 .r3d .hs.active::before {
   background: var(--accent);
@@ -659,17 +659,23 @@ html.r3d-lock body {
   transform: translate(-50%, 0);
 }
 
-/* ---- portada de carga ---- */
+/* ---- portada de carga ----
+   Jerarquía: contexto (kicker) → título → subtítulo → acciones → nota.
+   La barra de carga y su estado van al pie, separados del contenido. */
 .r3d-intro {
   position: fixed;
   inset: 0;
   z-index: 40;
   display: grid;
+  grid-template-rows: 1fr auto;
   place-items: center;
-  padding: 24px;
+  padding: 24px 24px calc(env(safe-area-inset-bottom, 0px) + 28px);
   text-align: center;
   color: #eef2ff;
-  background: radial-gradient(120% 90% at 50% 40%, rgba(12, 32, 72, 0.35), rgba(4, 3, 20, 0.92));
+  /* Más denso al centro: el libro de fondo se intuye sin competir con el título. */
+  background:
+    radial-gradient(60% 55% at 50% 45%, rgba(4, 3, 20, 0.82), rgba(4, 3, 20, 0.55) 70%, transparent),
+    radial-gradient(120% 90% at 50% 40%, rgba(12, 32, 72, 0.4), rgba(4, 3, 20, 0.94));
   transition: opacity 0.9s, visibility 0.9s;
 }
 .r3d-intro.gone {
@@ -679,24 +685,47 @@ html.r3d-lock body {
 .r3d-intro :focus-visible {
   outline-color: #9fdcff;
 }
+.r3d-intro-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 880px;
+}
 .r3d-intro .kick {
-  margin: 0 0 10px;
-  font-size: 15px;
+  margin: 0 0 18px;
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: #b9c4e6;
 }
 .r3d-intro h1 {
   margin: 0;
   padding: 0 0.06em 0.08em;
   font-weight: 900;
-  font-size: clamp(50px, 9.5vw, 120px);
-  line-height: 1.02;
-  letter-spacing: -0.02em;
-  background: linear-gradient(100deg, #f4f8ff 20%, #5ec1f3 38%, #c9ecff 46%, #ffffff 54%, #f4f8ff 70%);
-  background-size: 300% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: r3d-shine 6s linear infinite;
+  font-size: clamp(46px, 8vw, 104px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  color: #f4f8ff;
+}
+/* Títulos largos (reportes del Archive): más pequeños para que el botón siga a la vista. */
+.r3d-intro h1[data-len="l"] {
+  margin-inline: auto;
+  max-width: 18ch;
+  font-size: clamp(36px, 5.4vw, 72px);
+  line-height: 1.04;
+}
+.r3d-intro h1[data-len="xl"] {
+  margin-inline: auto;
+  max-width: 24ch;
+  font-size: clamp(28px, 3.8vw, 52px);
+  line-height: 1.08;
+  letter-spacing: -0.025em;
 }
 @keyframes r3d-shine {
   from {
@@ -707,39 +736,26 @@ html.r3d-lock body {
   }
 }
 .r3d-intro .sub {
-  max-width: 620px;
-  margin: 14px auto 30px;
-  font-size: clamp(17px, 2.1vw, 21px);
-  line-height: 1.4;
-  color: #d5e2f7;
+  max-width: 600px;
+  margin: 18px auto 34px;
+  font-size: clamp(16px, 1.9vw, 20px);
+  line-height: 1.45;
+  color: #c9d5ec;
+  text-wrap: balance;
 }
-.r3d-prog {
-  width: min(320px, 70vw);
-  height: 2px;
-  margin: 0 auto 12px;
-  overflow: hidden;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.15);
-}
-.r3d-prog i {
-  display: block;
-  width: 0;
-  height: 100%;
-  background: linear-gradient(90deg, #5ec1f3, #c9ecff);
-  transition: width 0.3s;
-}
-.r3d-status {
-  min-height: 20px;
-  margin: 0 0 24px;
-  font-size: 14px;
-  color: #aab4d6;
+.r3d-intro-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
 }
 .r3d-intro .r3d-btn {
+  min-height: 48px;
   color: #eef2ff;
-  border-color: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.22);
 }
 .r3d-intro .r3d-btn.primary {
-  padding: 0 26px;
+  padding: 0 28px;
   background: #eef2ff;
   color: #040314;
   font-size: 16px;
@@ -750,8 +766,37 @@ html.r3d-lock body {
   cursor: wait;
 }
 .r3d-intro .note {
-  margin: 18px 0 0;
+  margin: 16px 0 0;
   font-size: 13px;
+  color: #8e98bb;
+}
+/* Carga: al pie de la pantalla, discreta. */
+.r3d-intro-foot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  align-self: end;
+}
+.r3d-prog {
+  width: min(240px, 60vw);
+  height: 2px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.12);
+}
+.r3d-prog i {
+  display: block;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #5ec1f3, #c9ecff);
+  transition: width 0.3s;
+}
+.r3d-status {
+  min-height: 18px;
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.04em;
   color: #8e98bb;
 }
 .r3d-fallback {

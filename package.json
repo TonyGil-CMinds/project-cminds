@@ -9,7 +9,8 @@
     "lint": "eslint",
     "r2:upload": "node --env-file-if-exists=.env.local scripts/r2-upload.mjs",
     "images:webp": "node scripts/images-to-webp.mjs",
-    "reader:build": "node --env-file-if-exists=.env.local scripts/reader-build.mjs"
+    "reader:build": "node --env-file-if-exists=.env.local scripts/reader-build.mjs",
+    "reader:sync": "node --env-file-if-exists=.env.local scripts/reader-sync.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -36,6 +37,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@anthropic-ai/sdk": "^1.7.0",
     "@napi-rs/canvas": "1.0.12",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20.19.43",

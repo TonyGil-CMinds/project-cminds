@@ -52,8 +52,6 @@ type LeafUniforms = SharedUniforms & {
   uPageB: U<number>;
   uCurF: U<THREE.Vector3>;
   uCurB: U<THREE.Vector3>;
-  uSweepF: U<number>;
-  uSweepB: U<number>;
   uRecv: U<number>;
 };
 type LeafMode = "rest" | "tween" | "drag" | "spring";
@@ -295,8 +293,6 @@ export function createReaderEngine({ root, manifest: M, strings: s }: ReaderEngi
       uPageB: { value: pb },
       uCurF: { value: new THREE.Vector3(0.5, 0.5, 0) },
       uCurB: { value: new THREE.Vector3(0.5, 0.5, 0) },
-      uSweepF: { value: -1 },
-      uSweepB: { value: -1 },
       uRecv: { value: 1 },
     });
     const mesh = new THREE.Mesh(leafGeo, new THREE.ShaderMaterial({ uniforms: u, vertexShader: PAGE_VS, fragmentShader: PAGE_FS, side: THREE.DoubleSide }));
@@ -307,12 +303,12 @@ export function createReaderEngine({ root, manifest: M, strings: s }: ReaderEngi
       stiff: i === 0 || i === N - 1 ? 0.6 : 1, target: 0, grabYn: -0.6, dragDir: 1, quiet: false, twistB: -0.3,
     });
   }
-  const DUSTN = isTouch ? 160 : 360;
+  const DUSTN = isTouch ? 90 : 200;
   const dg = new THREE.BufferGeometry(), dpos = new Float32Array(DUSTN * 3), drnd = new Float32Array(DUSTN * 3);
   for (let i = 0; i < DUSTN; i++) {
     dpos[i * 3] = (Math.random() - 0.5) * 4.6;
     dpos[i * 3 + 1] = (Math.random() - 0.5) * 3.2;
-    dpos[i * 3 + 2] = -0.9 + Math.random() * 2.2;
+    dpos[i * 3 + 2] = -1.6 + Math.random() * 1.2;
     drnd[i * 3] = Math.random();
     drnd[i * 3 + 1] = Math.random();
     drnd[i * 3 + 2] = Math.random();
@@ -349,7 +345,7 @@ export function createReaderEngine({ root, manifest: M, strings: s }: ReaderEngi
     bgU.uVig.value = dark ? 0.6 : 0.28;
     bgU.uGrain.value = dark ? 0.022 : 0.015;
     setRaw(dustU.uCol.value, v("--dust"), "#b9cfff");
-    dustU.uOpacity.value = dark ? 0.55 : 0.22;
+    dustU.uOpacity.value = dark ? 0.4 : 0.18;
     dust.material.blending = dark ? THREE.AdditiveBlending : THREE.NormalBlending;
     dust.material.needsUpdate = true;
     shadow.material.opacity = dark ? 0.75 : 0.32;
@@ -364,7 +360,6 @@ export function createReaderEngine({ root, manifest: M, strings: s }: ReaderEngi
   let single = false, side: Side = "R", opened = false, ready = false, time = 0, ambT = 0, pendingSettle = false;
   let detail: Detail | null = null, drag: Drag | null = null, press: Press | null = null, pinch: Pinch | null = null, flight: Flight | null = null, hover: Hover | null = null;
   let lastTap = { t: 0, x: 0, y: 0 };
-  const sweeps: { p: number; t: number; dur: number }[] = [];
   const pointers = new Map<number, Pt>();
   const ptr: { world: Pt | null; t: number; nx: number; ny: number; type: string } = { world: null, t: 0, nx: 0, ny: 0, type: "mouse" };
   const TINTS = Array.from({ length: N + 1 }, (_, k) => TINT[moodOf(k)]);
@@ -517,7 +512,7 @@ export function createReaderEngine({ root, manifest: M, strings: s }: ReaderEngi
       for (const key of KEYS) if (key !== "zoom") cam[key] = damp(cam[key], camT[key], 9, dt);
       cam.zoom = Math.exp(damp(Math.log(cam.zoom), Math.log(camT.zoom), 11, dt));
     }
-    const parOK = opened && !reduce && !isTouch && !drag && !pinch && !press && !detail;
+    const parOK = false;
     parX = damp(parX, parOK ? ptr.nx * 0.045 : 0, 2.2, dt);
     parY = damp(parY, parOK ? ptr.ny * 0.03 : 0, 2.2, dt);
     place(camera, cam, true);
@@ -625,23 +620,8 @@ export function createReaderEngine({ root, manifest: M, strings: s }: ReaderEngi
     shadow.scale.set(w + 0.26, H + 0.26, 1);
     shadow.position.set((left + right) / 2 + 0.03, -0.04, -0.03);
   }
-  function sweep(p: number, delay: number) {
-    for (let i = sweeps.length - 1; i >= 0; i--) if (sweeps[i].p === p) sweeps.splice(i, 1);
-    sweeps.push({ p, t: -(delay || 0), dur: 1.5 });
-  }
-  function updateSweeps(dt: number) {
-    for (let i = sweeps.length - 1; i >= 0; i--) {
-      const sw = sweeps[i], L = leaves[sw.p >> 1], u = sw.p % 2 ? L.u.uSweepB : L.u.uSweepF;
-      sw.t += dt;
-      if (sw.t >= sw.dur) {
-        u.value = -1;
-        sweeps.splice(i, 1);
-      } else u.value = sw.t < 0 ? -1 : sw.t / sw.dur;
-    }
-  }
   function onSettle() {
     void updateLOD();
-    if (!reduce && opened) pagesOf(spreadNow()).forEach((p, k) => sweep(p, k * 0.14));
   }
 
   /* ---------- navegación ---------- */
@@ -810,7 +790,7 @@ export function createReaderEngine({ root, manifest: M, strings: s }: ReaderEngi
       ptrTarget.set(cx + Math.sin(w) * 0.95, 0.42 + Math.cos(w * 0.8) * 0.36, Z_TOP + 0.75);
     }
     S.uPtrPos.value.lerp(ptrTarget, 1 - Math.exp(-(on ? 8 : 2) * dt));
-    S.uPtrI.value = damp(S.uPtrI.value, on ? 1.0 : 0.55, 3, dt);
+    S.uPtrI.value = 0;
     if (on && ptr.world) dustU.uPtr.value.set(ptr.world.x, ptr.world.y, 0.35);
     else dustU.uPtr.value.set(9, 9, 9);
   }
@@ -1030,7 +1010,8 @@ export function createReaderEngine({ root, manifest: M, strings: s }: ReaderEngi
     if (h.kind === "link" || h.kind === "url") return;
     cardTitle.textContent = h.title;
     cardText.textContent = h.text;
-    cardNote.hidden = h.kind !== "photo";
+    cardNote.hidden = h.kind !== "photo" || !!h.caption;
+    cardNote.textContent = h.ai ? s.photoNoteAi : s.photoNote;
     cardCount.textContent = s.detail(detail.idx + 1, detail.list.length);
     cardPrev.hidden = cardNext.hidden = !many;
     card.hidden = false;
@@ -1125,7 +1106,6 @@ export function createReaderEngine({ root, manifest: M, strings: s }: ReaderEngi
         }
         AUD.tick();
         if (viewPages().includes(h.goto)) {
-          sweep(h.goto, 0);
           AUD.chime(true);
           if (liveEl) liveEl.textContent = s.onFacing(PAGES[h.goto]?.label ?? "");
         } else goPage(h.goto);
@@ -1532,7 +1512,6 @@ export function createReaderEngine({ root, manifest: M, strings: s }: ReaderEngi
     S.uAmbT.value = ambT;
     updateLeaves(dt);
     updateBook(dt);
-    updateSweeps(dt);
     if (fb) {
       if (fbDirty) draw2D();
       return;
@@ -1726,10 +1705,6 @@ export function createReaderEngine({ root, manifest: M, strings: s }: ReaderEngi
     flyTo(fitState(), reduce ? 0 : 2.6, 0);
     onSpreadChange();
     if (!reduce) {
-      later(() => {
-        sweep(0, 0);
-        AUD.shimmer();
-      }, 1500);
       later(invitePeek, 2700);
     }
     later(() => showHint(HINT, 5200), reduce ? 300 : 2900);

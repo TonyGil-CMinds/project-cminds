@@ -8,6 +8,9 @@ vec3 deformP(vec2 p){
   float yn = p.y / (uSize.y * 0.5);
   float k = uBend * (1.0 + uTwist * yn);
   float th = uAngle; float x; float z;
+  // Que la curva no pase de la horizontal: si no, al aterrizar la hoja aun curvada se hunde bajo
+  // la pila y por un instante asoma la pagina de abajo (la anterior).
+  k = clamp(k, -th, 3.14159265 - th);
   if (abs(k) < 0.0005) { x = uSize.x * sig * cos(th); z = uSize.x * sig * sin(th); }
   else { x = uSize.x / k * (sin(th + k * sig) - sin(th)); z = uSize.x / k * (cos(th) - cos(th + k * sig)); }
   float g = 1.0 - clamp(sig / 0.3, 0.0, 1.0);
@@ -32,7 +35,7 @@ uniform float uTime; uniform float uAmbT; uniform vec3 uKeyDir; uniform vec3 uKe
 uniform vec3 uAmbTop; uniform vec3 uAmbBot; uniform vec3 uPtrPos; uniform vec3 uPtrCol; uniform float uPtrI;
 uniform float uEnvI; uniform float uExposure; uniform float uAspect;
 uniform vec4 uRectF; uniform vec4 uRectB; uniform float uTypeF; uniform float uTypeB; uniform float uPageF; uniform float uPageB;
-uniform vec3 uCurF; uniform vec3 uCurB; uniform vec4 uRip[8]; uniform float uSweepF; uniform float uSweepB;
+uniform vec4 uRip[8];
 uniform vec4 uShade; uniform float uRecv;
 varying vec2 vUv; varying vec3 vPosW; varying vec3 vNrmW; varying vec3 vLocal; varying float vSig;
 float hash12(vec2 p){ vec3 p3 = fract(vec3(p.xyx) * 0.1031); p3 += dot(p3, p3.yzx + 33.33); return fract((p3.x + p3.y) * p3.z); }
@@ -57,7 +60,6 @@ void main(){
   float fr = gl_FrontFacing ? 1.0 : 0.0;
   vec2 uv = mix(vec2(1.0 - vUv.x, vUv.y), vUv, fr);
   float page = mix(uPageB, uPageF, fr); vec4 rect = mix(uRectB, uRectF, fr); float type = mix(uTypeB, uTypeF, fr);
-  vec3 cur = mix(uCurB, uCurF, fr); float sweep = mix(uSweepB, uSweepF, fr);
   vec2 asp = vec2(1.0, uAspect);
   float inR = step(rect.x, uv.x) * step(uv.x, rect.z) * step(rect.y, uv.y) * step(uv.y, rect.w);
   vec2 duv = vec2(0.0); float crest = 0.0;
@@ -77,8 +79,7 @@ void main(){
   }
   vec2 suv = uv + duv;
   vec3 base = mix(texture2D(uMapB, suv).rgb, texture2D(uMapF, suv).rgb, fr);
-  vec3 fx = mix(texture2D(uFxB, uv).rgb, texture2D(uFxF, uv).rgb, fr);
-  float varnish = fx.r; float foil = fx.g; float glowM = fx.b;
+  float varnish = 0.0;
   vec3 alb = pow(base, vec3(2.2));
   vec3 N = normalize(vNrmW) * (fr * 2.0 - 1.0);
   vec3 V = normalize(cameraPosition - vPosW);
@@ -105,37 +106,7 @@ void main(){
     sh = 1.0 - s * uShade.y;
   }
   vec3 col = (alb * diff + spec + env) * ao * sh;
-  if (foil > 0.04) {
-    float lum = dot(base, vec3(0.299, 0.587, 0.114));
-    float holo = smoothstep(0.6, 0.9, foil);
-    float hue = dot(Rv, vec3(1.4, 1.0, 0.6)) + uv.x * 1.3 - uv.y * 0.9 + uAmbT * 0.03;
-    vec3 rainbow = 0.5 + 0.5 * cos(6.28318 * (hue + vec3(0.0, 0.33, 0.67)));
-    float shine = dot(envLight(Rv, 0.3), vec3(0.333));
-    vec3 tint = mix(alb * 1.25, mix(vec3(0.62), rainbow, 0.62), holo);
-    float glint = pow(max(dot(N, Hp), 0.0), 70.0) * att * 3.0;
-    vec3 metal = tint * (0.3 + 1.6 * shine + glint) + spec * 3.0;
-    col = mix(col, metal * (0.45 + lum) * sh, smoothstep(0.04, 0.3, foil) * smoothstep(0.25, 0.6, lum));
-  }
   col += vec3(0.9, 0.95, 1.0) * crest * 0.18;
-  if (type > 1.5 && type < 2.5) {
-    float dist = length((uv - cur.xy) * asp);
-    float lit = (1.0 - smoothstep(0.05, 0.27, dist)) * cur.z;
-    col *= mix(1.0, mix(0.12, 1.15, lit), inR);
-    float pulse = 0.7 + 0.3 * sin(uAmbT * 1.6 + uv.y * 14.0 + uv.x * 5.0);
-    col += glowM * inR * vec3(0.3, 0.95, 1.0) * (0.35 * pulse + 0.9 * lit);
-    col += vec3(0.5, 0.9, 1.0) * exp(-pow((dist - 0.25) * 70.0, 2.0)) * cur.z * 0.08 * inR;
-  }
-  if (type > 2.5) {
-    vec2 d = (uv - cur.xy) * asp;
-    float near = exp(-dot(d, d) * 30.0) * cur.z;
-    col += glowM * inR * vec3(0.35, 0.62, 1.0) * 1.3 * near;
-    col += glowM * inR * vec3(0.9, 0.95, 1.0) * 0.25 * near * (0.6 + 0.4 * sin(uAmbT * 3.0));
-  }
-  if (sweep >= 0.0) {
-    float q = uv.x * 0.7 + (1.0 - uv.y) * 0.5; float c = mix(-0.25, 1.45, sweep);
-    float band = exp(-pow((q - c) * 9.0, 2.0)) + 0.35 * exp(-pow((q - c + 0.09) * 26.0, 2.0));
-    col += band * vec3(1.0, 0.96, 0.88) * (0.1 + 0.5 * varnish + 0.6 * foil) * (1.0 - smoothstep(0.85, 1.0, sweep));
-  }
   col = tone(col * uExposure);
   gl_FragColor = vec4(pow(col, vec3(1.0 / 2.2)), 1.0);
 }`;
@@ -150,10 +121,10 @@ void main(){
   vec3 c = mix(uBot, uTop, smoothstep(0.0, 1.0, vUv.y));
   vec2 p = (vUv - vec2(0.5, 0.55)) * vec2(uAspect, 1.0); c += uSpot * exp(-dot(p, p) * 2.6);
   vec2 q = (vUv - vec2(0.12, 1.08)) * vec2(uAspect, 1.0); float ang = atan(q.x, -q.y);
-  float beam = exp(-pow((ang - 0.5) * 5.0, 2.0)) * (1.0 - smoothstep(0.2, 1.6, length(q))) * (0.75 + 0.25 * sin(uTime * 0.25 + ang * 8.0));
+  float beam = exp(-pow((ang - 0.5) * 5.0, 2.0)) * (1.0 - smoothstep(0.2, 1.6, length(q))) * 0.75;
   c += uBeam * beam;
   vec2 v = (vUv - 0.5) * vec2(uAspect, 1.0); c *= 1.0 - uVig * smoothstep(0.35, 1.25, length(v));
-  c += (hash(vUv * 1000.0 + fract(uTime) * 7.0) - 0.5) * uGrain;
+  c += (hash(vUv * 1000.0) - 0.5) * uGrain;
   gl_FragColor = vec4(c, 1.0);
 }`;
 

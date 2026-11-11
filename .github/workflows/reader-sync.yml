@@ -1,0 +1,62 @@
+# Lector 3D: convierte solos los reportes nuevos (o con PDF nuevo) de The Archive y los sube a R2.
+# El sitio los muestra con «Leer en 3D» en cuanto el registro de R2 se actualiza (sin redeploy).
+#
+# Secretos del repositorio (Settings → Secrets and variables → Actions):
+#   R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET, NEXT_PUBLIC_ASSETS_URL  (obligatorios)
+#   REPORTES_API_KEY   opcional: sin él se lee el feed público de www.cminds.co/api/reports
+#   ANTHROPIC_API_KEY  opcional: describe con IA las fotos sin pie de foto
+#   R2_CACHE_CONTROL   opcional
+
+name: Lector 3D · conversión automática
+
+on:
+  schedule:
+    - cron: "17 */6 * * *" # cada 6 horas
+  workflow_dispatch:
+    inputs:
+      only:
+        description: "Solo estos reportes (ids separados por coma)"
+        required: false
+      force:
+        description: "Reconvertir aunque el PDF no haya cambiado"
+        type: boolean
+        default: false
+  repository_dispatch:
+    types: [report-published] # para dispararlo desde Base44 al publicar
+
+concurrency:
+  group: reader-sync
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      # sharp y @napi-rs/canvas traen binarios precompilados para Linux: no hacen falta scripts de instalación.
+      - run: npm ci --ignore-scripts
+      - name: Convertir y subir
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_CACHE_CONTROL: ${{ secrets.R2_CACHE_CONTROL }}
+          NEXT_PUBLIC_ASSETS_URL: ${{ secrets.NEXT_PUBLIC_ASSETS_URL }}
+          REPORTES_API_KEY: ${{ secrets.REPORTES_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ONLY: ${{ github.event.inputs.only || github.event.client_payload.id }}
+          FORCE: ${{ github.event.inputs.force }}
+        run: |
+          set -- --upload --limit 12
+          [ -n "$ONLY" ] && set -- "$@" --only "$ONLY"
+          [ "$FORCE" = "true" ] && set -- "$@" --force
+          node scripts/reader-sync.mjs "$@"

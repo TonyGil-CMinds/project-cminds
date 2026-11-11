@@ -17,9 +17,13 @@ export const copy = {
       subscribed: "Subscribed",
       cancel: "Cancel subscription",
     },
-    reel: {
-      date: "Date",
-      title: "Title",
+    pubs: {
+      heading: "Publications",
+      count: (n: number) => `${n} articles`,
+      soundOn: "Sound on",
+      soundOff: "Sound off",
+      read: "Read article",
+      minutes: (n: number) => `${n} min`,
     },
     empty: {
       title: "Nothing here yet",
@@ -47,6 +51,12 @@ export const copy = {
       saveAsPdf: "Save as PDF",
       read3d: "Read in 3D",
       close: "Close",
+      prev: "Previous report",
+      next: "Next report",
+      open: "View details",
+      badge3d: "3D",
+      navHint: "← → to browse · Enter to open",
+      focused: (n: number, total: number, title: string) => `Report ${n} of ${total}: ${title}`,
     },
   },
   es: {
@@ -65,9 +75,13 @@ export const copy = {
       subscribed: "Suscrito",
       cancel: "Cancelar suscripción",
     },
-    reel: {
-      date: "Fecha",
-      title: "Título",
+    pubs: {
+      heading: "Publicaciones",
+      count: (n: number) => `${n} artículos`,
+      soundOn: "Activar sonido",
+      soundOff: "Silenciar",
+      read: "Leer artículo",
+      minutes: (n: number) => `${n} min`,
     },
     empty: {
       title: "Todavía no hay nada aquí",
@@ -95,6 +109,12 @@ export const copy = {
       saveAsPdf: "Guardar como PDF",
       read3d: "Leer en 3D",
       close: "Cerrar",
+      prev: "Reporte anterior",
+      next: "Reporte siguiente",
+      open: "Ver detalles",
+      badge3d: "3D",
+      navHint: "← → para recorrer · Enter para abrir",
+      focused: (n: number, total: number, title: string) => `Reporte ${n} de ${total}: ${title}`,
     },
   },
 } satisfies Record<Locale, unknown>;
