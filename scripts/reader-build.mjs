@@ -147,6 +147,7 @@ console.log(`  Texto: ${report.text} bloques (${report.headings} títulos) · cu
 console.log(`  Puntos de zoom: ${report.hsText} de texto, ${report.hsPhoto} de fotos · fotos detectadas: ${report.photos}`);
 if (ai) console.log(`  Fotos sin pie descritas con IA: ${ai.described} de ${pending.length}${ai.failed ? ` (${ai.failed} fallaron)` : ""}`);
 console.log(`  Enlaces: ${report.links} internos del PDF, ${report.tocLinks} del índice, ${report.urls} externos`);
+if (report.skipped?.length) console.log(`  Omitidas (páginas sueltas diminutas del PDF): ${report.skipped.join(", ")}`);
 if (report.tocPages.length) console.log(`  Índice en la página ${report.tocPages.join(", ")} · desfase de numeración: ${report.offset}`);
 if (report.sections.length) console.log(`  Secciones: ${report.sections.slice(0, 12).join(" | ")}${report.sections.length > 12 ? " …" : ""}`);
 console.log(`  Archivos: ${relative(ROOT, outDir)}`);

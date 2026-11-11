@@ -326,10 +326,16 @@ export async function convertPdf(bytes, opts) {
   // ---- 1. Leer cada página
   const raw = [];
   const files = new Map();
+  const skipped = []; // páginas sueltas diminutas (restos de exportación): no son páginas del libro
   for (let n = from; n <= to; n++) {
     log(`Página ${n} de ${to}`);
     const page = n === from ? first : await doc.getPage(n);
     const base = page.getViewport({ scale: 1 });
+    if (base.width < 0.4 * base0.width && base.height < 0.4 * base0.height) {
+      skipped.push(n);
+      page.cleanup();
+      continue;
+    }
     const vp = page.getViewport({ scale: REF_W / base.width });
     const toRef = (r) => {
       const a = vp.convertToViewportPoint(r[0], r[1]), b = vp.convertToViewportPoint(r[2], r[3]);
@@ -398,7 +404,7 @@ export async function convertPdf(bytes, opts) {
     // El nombre lleva un hash del contenido: las imágenes se guardan en caché como inmutables,
     // así que una página que cambia al reconvertir debe tener otro nombre.
     const tag = (buf) => createHash("sha1").update(buf).digest("hex").slice(0, 8);
-    const num = `p${String(n - from + 1).padStart(3, "0")}`;
+    const num = `p${String(raw.length + 1).padStart(3, "0")}`;
     const src = `pages/${num}-${tag(hi)}.webp`, low = `pages/${num}-${tag(lowBuf)}-low.webp`;
     files.set(src, hi);
     files.set(low, lowBuf);
@@ -423,15 +429,39 @@ export async function convertPdf(bytes, opts) {
     const num = lines.find((l) => (l.r[3] < top || l.r[1] > bottom) && isNum(l.str));
     printed[i] = num ? Number(num.str) : null;
   });
-  // Desfase entre número impreso y página del PDF (el más frecuente).
+  // Desfase entre número impreso y página del libro (el más frecuente).
   const offsets = new Map();
-  printed.forEach((v, i) => v != null && offsets.set(raw[i].n - v, (offsets.get(raw[i].n - v) || 0) + 1));
+  printed.forEach((v, i) => v != null && offsets.set(i - v, (offsets.get(i - v) || 0) + 1));
   const offset = [...offsets].sort((a, b) => b[1] - a[1])[0]?.[0] ?? 0;
+  const printedIndex = (num) => {
+    const i = num + offset;
+    return i >= 0 && i < raw.length ? i : null;
+  };
 
   // Tamaño de letra del cuerpo: el más común por cantidad de caracteres.
   const sizeHist = new Map();
   for (const { blocks } of perPage) for (const b of blocks) sizeHist.set(Math.round(b.size), (sizeHist.get(Math.round(b.size)) || 0) + b.text.length);
   const bodySize = [...sizeHist].sort((a, b) => b[1] - a[1])[0]?.[0] || 10;
+
+  // Entrada del índice → página del libro. Primero por el título: la primera página después del
+  // índice con un título que coincide (los números impresos de algunos PDF no cuadran con sus
+  // páginas). Si no aparece, por el número impreso.
+  const norm = (x) =>
+    String(x)
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/^\s*(?:\d+\s*[.)]?|annex\s+[ivx]+\.?|anexo\s+[ivx]+\.?|anexo\s+\d+\.?)\s*/, "")
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+  const headsOf = perPage.map(({ blocks }) => blocks.filter((b) => b.size >= bodySize * 1.25 && b.text.length < 200).map((b) => norm(b.text)));
+  const tocTarget = (entry, after) => {
+    const key = norm(entry.title).split(" ").slice(0, 5).join(" ");
+    if (key.length >= 4) {
+      for (let i = after + 1; i < raw.length; i++) if (headsOf[i].some((h) => h.startsWith(key) || (h.length >= 6 && key.startsWith(h)))) return i;
+    }
+    return printedIndex(entry.num);
+  };
 
   // ---- 3. Índice sin enlaces: líneas «Título ... 12»
   const tocPages = new Set();
@@ -464,18 +494,19 @@ export async function convertPdf(bytes, opts) {
   });
 
   // Índice de página del libro a partir de un número de página del PDF.
+  // (si esa página se omitió, la siguiente que sí está en el libro)
   const bookIndex = (pdfPage) => {
-    const i = pdfPage - from;
-    return i >= 0 && i < raw.length ? i : null;
+    const i = raw.findIndex((p) => p.n >= pdfPage);
+    return i >= 0 ? i : null;
   };
 
   // ---- 4. Páginas del lector
   const pages = [];
   const pending = []; // fotos sin pie: { page, rect }
   let label = null;
-  const report = { pages: raw.length, text: 0, headings: 0, hsText: 0, hsPhoto: 0, links: 0, urls: 0, tocLinks: 0, photos: 0, bodySize, offset };
+  const report = { pages: raw.length, skipped, text: 0, headings: 0, hsText: 0, hsPhoto: 0, links: 0, urls: 0, tocLinks: 0, photos: 0, bodySize, offset };
   for (const [ti, entries] of tocLinks) for (const e of entries.filter((x) => x.top)) {
-    const b = bookIndex(e.num + offset);
+    const b = tocTarget(e, ti);
     if (b != null && b > ti) sections.push({ title: e.title, page: b });
   }
   if (outline?.length && !sections.length) {
@@ -578,7 +609,7 @@ export async function convertPdf(bytes, opts) {
     }
     // Índice detectado por el texto
     for (const e of tocLinks.get(i) || []) {
-      const b = bookIndex(e.num + offset);
+      const b = tocTarget(e, i);
       if (b == null || b === i) continue;
       hs.push({ kind: "link", zone: round(pad([e.r[0] - 4, e.r[1], e.r[2] + 4, e.r[3]], 3, REF_W, REF_H)), goto: b, title: `${t.goTo} ${e.title}` });
       report.tocLinks++;
